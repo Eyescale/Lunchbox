@@ -40,6 +40,9 @@ public:
 
     Attribute& operator = ( const Attribute& from );
 
+    bool operator == ( const Attribute& rhs ) const;
+    bool operator != ( const Attribute& rhs ) const { return !(*this == rhs); }
+
     void orphan() { attribute_ = 0; } //!< Released by parent dash::Attribute
 
     void map( const Context& from, const Context& to );
@@ -55,12 +58,27 @@ public:
     void apply( const Change& change );
 
 private:
+    SERIALIZABLE()
+
     dash::Attribute* attribute_;
     AnyCtxPtr value_;
 
     Attribute();
     void notifyValueChanged_( Context& context, AnyCtxPtr::Value value );
 };
+
+
+template< class Archive >
+inline void Attribute::save( Archive& ar, const unsigned int version ) const
+{
+    EQUNIMPLEMENTED
+}
+
+template< class Archive >
+inline void Attribute::load( Archive& ar, const unsigned int version )
+{
+    EQUNIMPLEMENTED
+}
 
 }
 }

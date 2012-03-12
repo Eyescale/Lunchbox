@@ -61,6 +61,14 @@ Attribute& Attribute::operator = ( const Attribute& from )
     return *this;
 }
 
+bool Attribute::operator == ( const Attribute& rhs ) const
+{
+    if( this == &rhs )
+        return true;
+    EQUNIMPLEMENTED;
+    return false;
+}
+
 void Attribute::notifyValueChanged_( Context& context, AnyCtxPtr::Value value )
 {
     Change change( attribute_, value );

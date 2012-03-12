@@ -23,6 +23,7 @@
 
 #include "types.h"
 
+#include <dash/api.h>
 #include <dash/Vector.h> // member
 #include <co/base/types.h>
 
@@ -38,7 +39,7 @@ public:
     Context(); //!< Create a new context
     ~Context();
 
-    static Context& getCurrent();
+    DASH_API static Context& getCurrent();
 
     static size_t getNumSlots();
     size_t getSlot() const { return slot_; }

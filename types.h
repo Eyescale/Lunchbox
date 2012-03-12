@@ -23,7 +23,7 @@
 
 #include <dash/types.h>
 #include <dash/Vector.h>
-#include <boost/any.hpp>
+#include <dash/detail/Any.h>
 #include <vector>
 
 
@@ -66,7 +66,7 @@ typedef Attributes::iterator AttributesIter;
 typedef Attributes::const_iterator AttributesCIter;
 typedef ContextPtr< dash::Attributes > AttributesCtxPtr;
 
-typedef ContextPtr< boost::any > AnyCtxPtr;
+typedef ContextPtr< detail::Any > AnyCtxPtr;
 }
 }
 

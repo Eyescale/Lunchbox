@@ -48,9 +48,9 @@ public:
     void map( const Context& from, const Context& to );
     void unmap( Context& context );
 
-    void set( const boost::any& value ) { *value_ = value; }
-    boost::any& get() { return *value_; }
-    const boost::any& get() const { return *value_; }
+    void set( const detail::Any& value ) { *value_ = value; }
+    detail::Any& get() { return *value_; }
+    const detail::Any& get() const { return *value_; }
 
     dash::Attribute* getAttribute() { return attribute_; }
     const dash::Attribute* getAttribute() const { return attribute_; }
@@ -71,13 +71,13 @@ private:
 template< class Archive >
 inline void Attribute::save( Archive& ar, const unsigned int version ) const
 {
-    EQUNIMPLEMENTED
+    ar << *value_;
 }
 
 template< class Archive >
 inline void Attribute::load( Archive& ar, const unsigned int version )
 {
-    EQUNIMPLEMENTED
+    ar >> *value_;
 }
 
 }

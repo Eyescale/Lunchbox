@@ -31,6 +31,7 @@
     {                                                                   \
         ar << *getImpl();                                               \
     }                                                                   \
+                                                                        \
     template<>                                                          \
     void class::load( iarchive& ar, const unsigned int version )        \
     {                                                                   \
@@ -39,7 +40,7 @@
 
 //! Provides serialization implementation with boost.textArchive for classes
 //! using a pimpl.
-#define SERIALIZABLETEXTARCHIVE( class )                    \
+#define SERIALIZABLETEXTARCHIVE( class )                        \
     SERIALIZABLEIMPL( class, boost::archive::text_oarchive,     \
                              boost::archive::text_iarchive )    \
 

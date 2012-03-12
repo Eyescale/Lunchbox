@@ -65,6 +65,10 @@ bool Attribute::operator == ( const Attribute& rhs ) const
 {
     if( this == &rhs )
         return true;
+
+    if( get().type() != rhs.get().type() )
+        return false;
+
     EQUNIMPLEMENTED;
     return false;
 }

@@ -85,7 +85,7 @@ Change::Change( const Type t, NodePtr p, dash::AttributePtr a )
     }
 }
 
-Change::Change( dash::AttributePtr a, std::tr1::shared_ptr< boost::any > v )
+Change::Change( dash::AttributePtr a, std::tr1::shared_ptr< detail::Any > v )
         : type( ATTRIBUTE_CHANGED )
         , attribute( a )
         , value( v )

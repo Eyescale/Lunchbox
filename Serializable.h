@@ -39,7 +39,7 @@
 
 //! Provides serialization implementation with boost.textArchive for classes
 //! using a pimpl.
-#define SERIALIZABLEIMPLTEXTARCHIVE( class )                    \
+#define SERIALIZABLETEXTARCHIVE( class )                    \
     SERIALIZABLEIMPL( class, boost::archive::text_oarchive,     \
                              boost::archive::text_iarchive )    \
 

@@ -24,6 +24,8 @@
 #include "Any.h"
 
 #include <boost/serialization/export.hpp>
+#include <boost/serialization/extended_type_info.hpp>
+
 
 BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<short>,
                         "a5cf8ba4-aacc-439a-8f3e-726813a5c3a9");

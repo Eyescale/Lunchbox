@@ -20,7 +20,6 @@
 
 #include "AnySerialization.h"
 
-#include <boost/serialization/extended_type_info.hpp>
 
 BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<short>);
 BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<unsigned short>);

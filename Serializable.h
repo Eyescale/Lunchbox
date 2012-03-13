@@ -44,5 +44,4 @@
     SERIALIZABLEIMPL( class, boost::archive::text_oarchive,     \
                              boost::archive::text_iarchive )    \
 
-
 #endif // DASH_DETAIL_SERIALIZABLE_H

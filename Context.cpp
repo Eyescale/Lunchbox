@@ -103,7 +103,7 @@ Context::Context()
 
 Context::~Context()
 {
-    EQASSERTINFO( getCommit()->empty(), "Destroyed context has active changes" );
+    EQASSERTINFO( getCommit()->empty(), "Destroyed context has active changes");
     delete commit_;
     commit_ = 0;
 

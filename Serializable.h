@@ -23,6 +23,8 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 //! Provides generic serialization implementation for classes using a pimpl.
 #define SERIALIZABLEIMPL( class, oarchive, iarchive )                   \
@@ -43,5 +45,11 @@
 #define SERIALIZABLETEXTARCHIVE( class )                        \
     SERIALIZABLEIMPL( class, boost::archive::text_oarchive,     \
                              boost::archive::text_iarchive )    \
+
+//! Provides serialization implementation with boost.binaryArchive for classes
+//! using a pimpl.
+#define SERIALIZABLEBINARYARCHIVE( class )                        \
+    SERIALIZABLEIMPL( class, boost::archive::binary_oarchive,     \
+                             boost::archive::binary_iarchive )    \
 
 #endif // DASH_DETAIL_SERIALIZABLE_H

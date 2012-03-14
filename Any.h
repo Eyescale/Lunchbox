@@ -37,8 +37,11 @@
 #include <boost/type_traits/is_reference.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // See boost/python/type_id.hpp
 // TODO: add BOOST_TYPEID_COMPARE_BY_NAME to config.hpp
@@ -60,7 +63,7 @@ namespace detail
     public: // structors
 
         Any()
-          : content(0)
+          : content()
         {
         }
 
@@ -77,7 +80,6 @@ namespace detail
 
         ~Any()
         {
-            delete content;
         }
 
     public: // modifiers
@@ -138,6 +140,8 @@ namespace detail
 
         };
 
+        BOOST_SERIALIZATION_ASSUME_ABSTRACT(placeholder)
+
         template<typename ValueType>
         class holder : public placeholder
         {
@@ -185,7 +189,7 @@ namespace detail
 
     public: // representation (public so any_cast can be non-friend)
 
-        placeholder * content;
+        boost::shared_ptr<placeholder> content;
 
     private:
         friend class boost::serialization::access;
@@ -216,7 +220,7 @@ namespace detail
 #else
             operand->type() == typeid(ValueType)
 #endif
-            ? &static_cast<Any::holder<ValueType> *>(operand->content)->held
+            ? &static_cast<Any::holder<ValueType> *>(operand->content.get())->held
             : 0;
     }
 

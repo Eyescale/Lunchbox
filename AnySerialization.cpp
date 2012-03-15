@@ -17,18 +17,3 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
-#include "AnySerialization.h"
-
-#include <boost/serialization/string.hpp>
-
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<short>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<unsigned short>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<int>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<unsigned int>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<long>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<unsigned long>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<bool>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<float>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<double>);
-BOOST_CLASS_EXPORT_IMPLEMENT(dash::detail::Any::holder<std::string>);

@@ -23,28 +23,102 @@
 
 #include "Any.h"
 
+#include <boost/mpl/list.hpp>
+#include <boost/mpl/for_each.hpp>
+
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/extended_type_info.hpp>
 
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<short>,
-                        "a5cf8ba4-aacc-439a-8f3e-726813a5c3a9");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<unsigned short>,
-                        "90a49245-c935-4eef-959c-f30d77849231");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<int>,
-                        "0019edb4-4d23-43ea-97d1-5452d5dd0381");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<unsigned int>,
-                        "7e458b15-e2ee-48ac-a6e4-5db7344bc0d0");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<long>,
-                        "1b1dce63-523e-4232-8bf0-2829e161c57c");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<unsigned long>,
-                        "3e92decc-b8c0-4574-ae18-087b28984067");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<bool>,
-                        "166234f5-0819-4822-866e-0812f2e98002");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<float>,
-                        "7ce8eb79-3a0e-47b4-a793-06d16db8218b");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<double>,
-                        "2ec87dca-935f-459b-aeac-1420f2d5fd89");
-BOOST_CLASS_EXPORT_KEY2(dash::detail::Any::holder<std::string>,
-                        "01ba025d-656d-474f-8448-111b6baf4291");
+
+/**
+ * Declares the given class to be serializable within a dash::detail::Any.
+ * User is supposed to use this macro on global scope and in the compilation
+ * unit where this class is to be serialized.
+ */
+#define SERIALIZABLEANY( CLASS ) \
+    BOOST_CLASS_EXPORT( dash::detail::Any::holder< CLASS > )
+
+/**
+ * Enables the given archive to serialize all POD types through a
+ * dash::detail::Any. Without this registration, user may experience exceptions
+ * being thrown complaining about unregistered classes.
+ */
+#define ANYARCHIVE( ar )   \
+    dash::detail::registerAnyPodTypes( ar );
+
+
+namespace dash
+{
+namespace detail
+{
+
+/** List of supported POD types for dash::detail::Any serialization. */
+typedef boost::mpl::list< short, unsigned short,
+                          int, unsigned int,
+                          long, unsigned long,
+                          bool, float, double, std::string > podTypes;
+
+/**
+ * Registers the given type for serializing it inside a dash::detail::Any
+ * through the given archive.
+ */
+template< class T, class Archive >
+void registerAnyType( Archive& ar )
+{
+    ar.template register_type< dash::detail::Any::holder< T > >();
+}
+
+/**
+ * Utility struct for registering types for dash::detail::Any from a type list.
+ * @internal
+ */
+template< class Archive >
+struct registerWrapper
+{
+    registerWrapper( Archive& ar ) : ar_( ar ) {}
+    Archive& ar_;
+
+    template< typename U >
+    void operator()( U )
+    {
+        registerAnyType< U >( ar_ );
+    }
+};
+
+/**
+ * Registers the types from the given type list for serializing it inside a
+ * dash::detail::Any through the given archive.
+ */
+template< class Archive, class TypeList >
+void registerAnyTypes( Archive& ar )
+{
+    boost::mpl::for_each< TypeList >( registerWrapper< Archive >( ar ) );
+}
+
+/**
+ * Registers POD types for serializing them inside a dash::detail::Any through
+ * the given archive.
+ */
+template< class Archive >
+void registerAnyPodTypes( Archive& ar )
+{
+    registerAnyTypes< Archive, podTypes >( ar );
+}
+
+/**
+ * Serializes the given object which can be a dash::detail::Any through the
+ * given archive type to/from the given stream.
+ */
+template< class Archive, class Object, class Stream >
+void serializeAny( Object& object, Stream& stream )
+{
+    Archive ar( stream );
+    ANYARCHIVE( ar );
+    ar & object;
+}
+
+}
+}
+
 
 #endif

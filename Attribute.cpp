@@ -66,11 +66,11 @@ bool Attribute::operator == ( const Attribute& rhs ) const
     if( this == &rhs )
         return true;
 
-    if( get().type() == rhs.get().type() )
-        return true;
+    if( get().type() != rhs.get().type() )
+        return false;
 
     EQUNIMPLEMENTED;
-    return false;
+    return true;
 }
 
 void Attribute::notifyValueChanged_( Context& context, AnyCtxPtr::Value value )

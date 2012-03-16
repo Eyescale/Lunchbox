@@ -124,6 +124,13 @@ public:
         }
 
 private:
+    friend class boost::serialization::access;
+    template< class Archive >
+    void serialize( Archive& ar, const unsigned int version )
+    {
+        ar & get();
+    }
+
     typedef Vector< Value > Values;
     Values values_;
     changed_t cb_;

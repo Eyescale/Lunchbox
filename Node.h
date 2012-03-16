@@ -26,6 +26,8 @@
 #include <dash/Attribute.h> // AttributePtr return value
 #include <co/base/referenced.h> // base class
 
+#include <boost/serialization/vector.hpp>
+
 namespace dash
 {
 namespace detail
@@ -36,10 +38,13 @@ class Node : public co::base::Referenced, public co::base::NonCopyable
 {
 public:
     explicit Node( dash::Node* node );
-    explicit Node( dash::Node* node, NodePtr from );
+    Node( dash::Node* node, NodePtr from );
     ~Node();
 
     Node& operator = ( const Node& from );
+
+    bool operator == ( const Node& rhs ) const;
+    bool operator != ( const Node& rhs ) const { return !(*this == rhs); }
 
     /** Set up a new slot for the node. */
     void map( const Context& from, const Context& to );
@@ -81,14 +86,34 @@ public:
     const dash::Node* getNode() const { return node_; }
 
 private:
+    SERIALIZABLE()
+
     friend int test::main( int argc, char **argv );
     dash::Node* node_;
     ParentsCtxPtr parents_;
     ChildrenCtxPtr children_;
     AttributesCtxPtr attributes_;
 
-    Node();
+    Node() {}
 };
+
+template< class Archive >
+inline void Node::save( Archive& ar, const unsigned int version ) const
+{
+    ar << node_;
+    ar << parents_;
+    ar << children_;
+    ar << attributes_;
+}
+
+template< class Archive >
+inline void Node::load( Archive& ar, const unsigned int version )
+{
+    ar >> node_;
+    ar >> parents_;
+    ar >> children_;
+    ar >> attributes_;
+}
 
 }
 }

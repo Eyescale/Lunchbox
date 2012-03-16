@@ -84,6 +84,31 @@ Node& Node::operator = ( const Node& from )
     return *this;
 }
 
+bool Node::operator == ( const Node& rhs ) const
+{
+    if( this == &rhs )
+        return true;
+
+    if( parents_->size() != rhs.parents_->size() ||
+        children_->size() != rhs.children_->size() ||
+        attributes_->size() != rhs.attributes_->size( ))
+    {
+        return false;
+    }
+
+    Attributes::const_iterator it = attributes_->begin();
+    Attributes::const_iterator rhsIt = rhs.attributes_->begin();
+    for( ; it != attributes_->end() && rhsIt != rhs.attributes_->end();
+         ++it, ++rhsIt )
+    {
+        if( **it != **rhsIt )
+            return false;
+    }
+
+    return true;
+}
+
+
 void Node::map( const Context& from, const Context& to )
 {
     parents_.map( from, to );

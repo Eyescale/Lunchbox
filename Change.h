@@ -46,16 +46,16 @@ struct Change
     Change() : type( NONE ) {}
     Change( const Type t, NodePtr n, dash::NodePtr c );
     Change( const Type t, NodePtr n, dash::AttributePtr a );
-    Change( dash::AttributePtr a, std::tr1::shared_ptr<detail::Any> value );
+    Change( dash::AttributePtr a, boost::shared_ptr<detail::Any> value );
 
     Type type;
     NodePtr node;
     dash::NodePtr child;
 
     dash::AttributePtr attribute;
-    std::tr1::shared_ptr< detail::Any > value;
+    boost::shared_ptr< detail::Any > value;
 
-    std::tr1::shared_ptr< dash::Context > context;
+    boost::shared_ptr< dash::Context > context;
 };
 
 DASH_API std::ostream& operator << ( std::ostream& os, const Change& change );

@@ -35,7 +35,7 @@ template< class T > class ContextPtr
 {
 public:
     /** The value pointer. */
-    typedef std::tr1::shared_ptr< T > Value;
+    typedef boost::shared_ptr< T > Value;
 
     /** The type of the callback function invoked after a copy-on-write. */
     typedef boost::function< void( Context&, Value ) > changed_t;

@@ -65,7 +65,7 @@ Change::Change( const Type t, NodePtr p, dash::NodePtr c )
     // OPT: Single context does not record changes
     if( Context::getNumSlots() > 1 && t == NODE_INSERT )
     {
-        context = std::tr1::shared_ptr< dash::Context >(
+        context = boost::shared_ptr< dash::Context >(
             new dash::Context, NodeContextDeleter( child ));
         dash::Context::getCurrent().map( child, *context );
     }
@@ -79,13 +79,13 @@ Change::Change( const Type t, NodePtr p, dash::AttributePtr a )
     // OPT: Single context does not record changes
     if( Context::getNumSlots() > 1 && t == ATTRIBUTE_INSERT )
     {
-        context = std::tr1::shared_ptr< dash::Context >(
+        context = boost::shared_ptr< dash::Context >(
             new dash::Context, AttributeContextDeleter( a ));
         dash::Context::getCurrent().map( a, *context );
     }
 }
 
-Change::Change( dash::AttributePtr a, std::tr1::shared_ptr< detail::Any > v )
+Change::Change( dash::AttributePtr a, boost::shared_ptr< detail::Any > v )
         : type( ATTRIBUTE_CHANGED )
         , attribute( a )
         , value( v )

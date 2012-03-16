@@ -41,7 +41,7 @@ template< class T > class ContextPtr;
 
 struct Change;
 typedef Vector< Change, 32 > Changes;
-typedef std::tr1::shared_ptr< Changes > ChangesPtr;
+typedef boost::shared_ptr< Changes > ChangesPtr;
 typedef Changes::iterator ChangesIter;
 typedef Changes::const_iterator ChangesCIter;
 

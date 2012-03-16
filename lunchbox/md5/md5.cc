@@ -46,7 +46,6 @@ documentation and/or software.
 
 #include <assert.h>
 #include <string.h>
-#include <strings.h>
 #include <iostream>
 
 

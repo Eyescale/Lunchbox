@@ -39,7 +39,7 @@
 #  pragma message ("Thread affinity not supported on WIN32")
 #endif
 
-#ifdef Linux
+#ifdef __linux__
 #  include <sys/prctl.h>
 #endif
 
@@ -229,7 +229,7 @@ void Thread::yield()
 #ifdef _MSC_VER
     ::Sleep( 0 ); // sleeps thread
     // or ::SwitchToThread() ? // switches to another waiting thread, if exists
-#elif defined (Darwin)
+#elif defined (__APPLE__)
     ::pthread_yield_np();
 #else
     ::sched_yield();
@@ -332,7 +332,7 @@ void Thread::setName( const std::string& name )
 #  endif
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     pthread_setname_np( name.c_str( ));
-#elif defined(Linux)
+#elif defined(__linux__)
     prctl( PR_SET_NAME, name.c_str(), 0, 0, 0 );
 #else
     // Not implemented

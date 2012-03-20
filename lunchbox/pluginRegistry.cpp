@@ -64,7 +64,7 @@ Strings _initPluginDirectories()
             pluginDirectories.push_back( getDirname( cwd ));
 #endif
 
-#ifdef Darwin
+#ifdef __APPLE__
         env = getenv( "DYLD_LIBRARY_PATH" );
 #else
         env = getenv( "LD_LIBRARY_PATH" );
@@ -133,7 +133,7 @@ void PluginRegistry::init()
 #ifdef _WIN32
         Strings files = searchDirectory( dir, "EqualizerCompressor*.dll");
         const char DIRSEP = '\\';
-#elif defined (Darwin)
+#elif defined (__APPLE__)
         Strings files = searchDirectory( dir, "libEqualizerCompressor*.dylib" );
         Strings oldFiles = searchDirectory( dir, "libeqCompressor*.dylib" );
         files.insert( files.end(), oldFiles.begin(), oldFiles.end( ));

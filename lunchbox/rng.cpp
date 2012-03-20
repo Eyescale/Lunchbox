@@ -42,7 +42,7 @@ namespace base
 {
 namespace
 {
-#ifdef Linux
+#ifdef __linux__
 static int _fd = -1;
 #elif defined (_WIN32)
 static HCRYPTPROV _provider = 0;
@@ -60,9 +60,9 @@ RNG::~RNG()
 
 bool RNG::_init()
 {
-#ifdef Darwin
+#ifdef __APPLE__
     srandomdev();
-#elif defined (Linux)
+#elif defined (__linux__)
     static int fd = -1; // prevent static initializer fiasco
     if( fd >= 0 )
         return true;
@@ -101,7 +101,7 @@ bool RNG::_init()
 
 void RNG::_exit()
 {
-#ifdef Linux
+#ifdef __linux__
     if( _fd >= 0 )
     {
         ::close( _fd );
@@ -117,14 +117,14 @@ void RNG::_exit()
 
 void RNG::reseed()
 {
-#ifdef Darwin
+#ifdef __APPLE__
     srandomdev();
 #endif
 }
 
 bool RNG::_get( void* data, const size_t size )
 {
-#ifdef Linux
+#ifdef __linux__
     EQASSERTINFO( _fd >= 0, "init() not called?" );
     int read = ::read( _fd, data, size );
     EQASSERTINFO( read == ssize_t( size ),
@@ -142,7 +142,7 @@ bool RNG::_get( void* data, const size_t size )
         EQERROR << "random number generator not working" << std::endl;
         return false;
     }
-#else // Darwin
+#else // __APPLE__
     uint8_t* ptr = reinterpret_cast< uint8_t* >( data );
     for( size_t i=0; i < size; ++i )
         ptr[i] = ( random() & 0xff );

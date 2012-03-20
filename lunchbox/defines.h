@@ -1,5 +1,5 @@
  
-/* Copyright (c) 2010-2011, Stefan Eilemann <eile@eyescale.ch> 
+/* Copyright (c) 2010-2012, Stefan Eilemann <eile@eyescale.ch> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -22,7 +22,7 @@
 #  include <co/base/definesDarwin.h>
 #endif
 #ifdef __linux
-#  include <co/base/definesLinux.h>
+#  include <co/base/defines__linux__.h>
 #endif
 #ifdef _WIN32 //_MSC_VER
 #  include <co/base/definesWin32.h>

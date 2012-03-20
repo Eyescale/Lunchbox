@@ -21,7 +21,7 @@
 #include "os.h"
 
 #include <co/base/os.h>
-#ifdef Darwin
+#ifdef __APPLE__
 // http://developer.apple.com/qa/qa2004/qa1398.html
 #  include <mach/mach_time.h>
 #endif
@@ -38,7 +38,7 @@ namespace detail
 class Clock
 {
 public:
-#ifdef Darwin
+#ifdef __APPLE__
     uint64_t start;
     mach_timebase_info_data_t timebaseInfo;
 #elif defined (_WIN32)
@@ -54,7 +54,7 @@ Clock::Clock()
         : _impl( new detail::Clock )
 {
     reset();
-#ifdef Darwin
+#ifdef __APPLE__
     mach_timebase_info( &_impl->timebaseInfo );
 #elif defined (_WIN32)
     QueryPerformanceFrequency( &_impl->frequency );
@@ -68,7 +68,7 @@ Clock::~Clock()
 
 void Clock::reset()
 {
-#ifdef Darwin
+#ifdef __APPLE__
     _impl->start = mach_absolute_time();
 #elif defined (_WIN32)
     QueryPerformanceCounter( &_impl->start );
@@ -80,7 +80,7 @@ void Clock::reset()
 void Clock::set( const int64_t time )
 {
     reset();
-#ifdef Darwin
+#ifdef __APPLE__
     _impl->start -= static_cast< uint64_t >(
         time * _impl->timebaseInfo.denom / _impl->timebaseInfo.numer *
                                      1000000 );
@@ -102,7 +102,7 @@ void Clock::set( const int64_t time )
 
 float Clock::getTimef() const
 {
-#ifdef Darwin
+#ifdef __APPLE__
     const int64_t elapsed = mach_absolute_time() - _impl->start;
     return ( elapsed * _impl->timebaseInfo.numer / _impl->timebaseInfo.denom /
              1000000.f );
@@ -121,7 +121,7 @@ float Clock::getTimef() const
 
 float Clock::resetTimef()
 {
-#ifdef Darwin
+#ifdef __APPLE__
     const uint64_t now = mach_absolute_time();
     const int64_t elapsed = now - _impl->start;
     const float time = elapsed * _impl->timebaseInfo.numer /
@@ -143,7 +143,7 @@ float Clock::resetTimef()
 
 int64_t Clock::getTime64() const
 {
-#ifdef Darwin
+#ifdef __APPLE__
     const int64_t elapsed = mach_absolute_time() - _impl->start;
     return ( elapsed * _impl->timebaseInfo.numer /
             _impl->timebaseInfo.denom + 500000 ) / 1000000;
@@ -162,7 +162,7 @@ int64_t Clock::getTime64() const
 
 double Clock::getTimed() const
 {
-#ifdef Darwin
+#ifdef __APPLE__
     const int64_t elapsed = mach_absolute_time() - _impl->start;
     return ( elapsed * _impl->timebaseInfo.numer / _impl->timebaseInfo.denom /
              1000000. );
@@ -181,7 +181,7 @@ double Clock::getTimed() const
 
 float Clock::getMilliSecondsf() const
 {
-#if defined (Darwin) || defined (_WIN32)
+#if defined (__APPLE__) || defined (_WIN32)
     double time = getTimed();
     return static_cast<float>
         (time - static_cast<unsigned>(time/1000.) * 1000);

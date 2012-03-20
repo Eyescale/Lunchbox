@@ -1,0 +1,44 @@
+
+       The following people have contributed to LunchBox:
+
+------ Core Team ------
+
+Daniel Nachbaur
+Stefan Eilemann
+
+-------- Contributions pre-LunchBox -------
+
+Ahmet Bilgili
+Andreas Kirsch
+Carsten Rohn
+Cedric Stalder
+Christian Marten
+Christian Vix
+Daniel Pfeifer
+Dardo D. Kleiner
+Dustin Wüest
+Hui Chang
+Jan Ciger
+Jaroslav Skarvada
+Jens Willebrand
+Jonas Boesch
+Lucas Peetz Dulley
+Marc Treib
+Mario Degenhardt
+Markus Duensser
+Martin Lambers
+Matthew Dawson
+Maxim Makhinya
+Michael Dürig
+Paul E.C. Melis
+Philippe Robert
+Robert Hauck
+Sarah Amsellem
+Shree Kumar
+Stefan Roettger
+Stephen Furlani
+Tamer Fahmy
+Thomas McGuire
+Tobias Wolf
+Tomas Garcia-Pozuelo Barrios
+

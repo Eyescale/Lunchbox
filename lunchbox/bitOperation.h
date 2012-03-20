@@ -36,7 +36,7 @@ namespace base
 
     template<> inline int32_t getIndexOfLastBit< uint32_t >( uint32_t value )
     {
-#ifdef Darwin
+#ifdef __APPLE__
         return ::fls( value ) - 1;
 #elif defined __GNUC__
         return value ? (31 - __builtin_clz( value )) : -1;
@@ -72,12 +72,12 @@ namespace base
 #endif
     }
 
-#if defined(Linux) && defined(_LP64)
+#if defined(__linux__) && defined(_LP64)
     template<> inline int32_t 
     getIndexOfLastBit< unsigned long long >( unsigned long long value )
         { return getIndexOfLastBit( static_cast< uint64_t >( value )); }
 #endif
-#ifdef Darwin
+#ifdef __APPLE__
 #  ifdef _LP64
     template<> inline
     int32_t getIndexOfLastBit< unsigned long >( unsigned long value )

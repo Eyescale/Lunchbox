@@ -52,7 +52,7 @@
 #  include <sys/param.h>  // for MIN/MAX
 #endif
 
-#ifdef Darwin
+#ifdef __APPLE__
 #  include <crt_externs.h>
 #  define environ (*_NSGetEnviron())
 #elif !defined(_WIN32)

@@ -131,9 +131,9 @@ bool Node::isMapped( const Context& context ) const
 void Node::insert( dash::NodePtr child )
 {
     Change change( Change::NODE_INSERT, this, child );
-    children_->push_back( child );
-    child->getImpl()->parents_->push_back( this );
     Context::getCurrent().addChange( change );
+    children_->push_back( child );
+    child->getImpl()->parents_->push_back( this );    
 }
 
 bool Node::erase( dash::NodePtr child )
@@ -159,8 +159,8 @@ bool Node::erase( dash::NodePtr child )
 void Node::insert( dash::AttributePtr attribute )
 {
     Change change( Change::ATTRIBUTE_INSERT, this, attribute );
-    attributes_->push_back( attribute );
     Context::getCurrent().addChange( change );
+    attributes_->push_back( attribute );    
 }
 
 bool Node::erase( dash::AttributePtr attribute )

@@ -53,9 +53,7 @@ struct Change
     dash::NodePtr child;
 
     dash::AttributePtr attribute;
-    boost::shared_ptr< detail::Any > value;
-
-    boost::shared_ptr< dash::Context > context;
+    boost::shared_ptr< detail::Any > value;    
 };
 
 DASH_API std::ostream& operator << ( std::ostream& os, const Change& change );

@@ -34,6 +34,7 @@ namespace detail
 
 Commit::Commit()
      : changes_( new Changes )
+     , context_()
 {
 }
 
@@ -43,6 +44,16 @@ Commit::~Commit()
 
 void Commit::add( const Change& change )
 {
+    EQASSERT( Context::getNumSlots() > 1 );
+
+    if( !context_ )
+        context_.reset( new dash::Context );
+
+    if( change.type == Change::NODE_INSERT )
+        dash::Context::getCurrent().map( change.child, *context_ );
+    else if( change.type == Change::ATTRIBUTE_INSERT )
+        dash::Context::getCurrent().map( change.attribute, *context_ );
+
     changes_->push_back( change );
 }
 
@@ -56,8 +67,7 @@ void Commit::apply() const
           case Change::NODE_INSERT:
               if( change.node->isMapped( ))
               {
-                  change.context->map( change.child,
-                                       dash::Context::getCurrent( ));
+                  context_->map( change.child, dash::Context::getCurrent( ));
                   change.node->insert( change.child );
               }
               else
@@ -73,14 +83,13 @@ void Commit::apply() const
           case Change::ATTRIBUTE_INSERT:
               if( change.node->isMapped( ))
               {
-                  change.context->map( change.attribute,
-                                       dash::Context::getCurrent( ));
+                  context_->map( change.attribute,
+                                 dash::Context::getCurrent( ));
                   change.node->insert( change.attribute );
               }
               else
                   EQINFO << "Ignoring Node::insert change, parent not mapped"
                          << std::endl;
-
               break;
 
           case Change::ATTRIBUTE_ERASE:

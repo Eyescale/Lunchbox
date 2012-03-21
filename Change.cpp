@@ -20,55 +20,20 @@
 
 #include "Change.h"
 
-#include "Attribute.h"
 #include "Node.h"
 
-#include <dash/Context.h>
 #include <dash/Node.h>
 
 namespace dash
 {
 namespace detail
 {
-namespace
-{
-struct NodeContextDeleter
-{
-    NodeContextDeleter( dash::NodePtr n ) : node( n ) {}
-    void operator()( dash::Context* context ) const
-        {
-            context->unmap( node );
-            delete context;
-        }
-
-    dash::NodePtr node;
-};
-
-struct AttributeContextDeleter
-{
-    AttributeContextDeleter( dash::AttributePtr a ) : attribute( a ) {}
-    void operator()( dash::Context* context ) const
-        {
-            context->unmap( attribute );
-            delete context;
-        }
-
-    dash::AttributePtr attribute;
-};
-}
 
 Change::Change( const Type t, NodePtr p, dash::NodePtr c )
         : type( t )
         , node( p )
         , child( c )
 {
-    // OPT: Single context does not record changes
-    if( Context::getNumSlots() > 1 && t == NODE_INSERT )
-    {
-        context = boost::shared_ptr< dash::Context >(
-            new dash::Context, NodeContextDeleter( child ));
-        dash::Context::getCurrent().map( child, *context );
-    }
 }
 
 Change::Change( const Type t, NodePtr p, dash::AttributePtr a )
@@ -76,13 +41,6 @@ Change::Change( const Type t, NodePtr p, dash::AttributePtr a )
         , node( p )
         , attribute( a )
 {
-    // OPT: Single context does not record changes
-    if( Context::getNumSlots() > 1 && t == ATTRIBUTE_INSERT )
-    {
-        context = boost::shared_ptr< dash::Context >(
-            new dash::Context, AttributeContextDeleter( a ));
-        dash::Context::getCurrent().map( a, *context );
-    }
 }
 
 Change::Change( dash::AttributePtr a, boost::shared_ptr< detail::Any > v )

@@ -49,6 +49,8 @@ private:
 
     ChangesPtr changes_;
 
+    boost::shared_ptr< dash::Context > context_;
+
     Commit( const Commit& from ); // disable copy
     Commit& operator = ( const Commit& from ); // disable assignment
 };

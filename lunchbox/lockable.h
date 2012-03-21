@@ -18,8 +18,8 @@
 #ifndef COBASE_LOCKABLE_H
 #define COBASE_LOCKABLE_H
 
-#include <co/base/log.h> // used inline
-#include <co/base/nonCopyable.h> // base class
+#include <lunchbox/log.h> // used inline
+#include <lunchbox/nonCopyable.h> // base class
 #include <iostream>
 
 namespace co

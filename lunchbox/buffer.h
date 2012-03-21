@@ -18,8 +18,8 @@
 #ifndef COBASE_BUFFER_H
 #define COBASE_BUFFER_H
 
-#include <co/base/debug.h>       // EQASSERT macro
-#include <co/base/types.h>
+#include <lunchbox/debug.h>       // EQASSERT macro
+#include <lunchbox/types.h>
 
 #include <cstdlib>      // for malloc
 

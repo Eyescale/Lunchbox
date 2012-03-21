@@ -19,7 +19,7 @@
 #ifndef COBASE_BITOPERATION_H
 #define COBASE_BITOPERATION_H
 
-#include <co/base/types.h>
+#include <lunchbox/types.h>
 #ifdef _MSC_VER
 #  pragma warning (push)
 #  pragma warning (disable: 4985) // inconsistent decl of ceil

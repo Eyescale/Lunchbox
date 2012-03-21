@@ -52,7 +52,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(OUTPUT_INCLUDE_DIR ${LunchBox_BINARY_DIR}/include)
 file(MAKE_DIRECTORY ${OUTPUT_INCLUDE_DIR})
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/lunchbox ${OUTPUT_INCLUDE_DIR})
+include_directories(BEFORE ${CMAKE_SOURCE_DIR} ${OUTPUT_INCLUDE_DIR})
 
 set(LUNCHBOX_FEATURES)
 
@@ -82,8 +82,8 @@ if(MSVC)
 endif(MSVC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  include(LbCompilerVersion)
-  LB_COMPILER_DUMPVERSION(GCC_COMPILER_VERSION)
+  include(EqCompilerVersion)
+  EQ_COMPILER_DUMPVERSION(GCC_COMPILER_VERSION)
   if(GCC_COMPILER_VERSION VERSION_LESS 4.1)
     message(ERROR "GCC 4.1 or later required, found ${GCC_COMPILER_VERSION}")
   endif()
@@ -137,7 +137,7 @@ SET(LIBRARY_DIR lib${LIB_SUFFIX})
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(LINUX TRUE)
   add_definitions(-fPIC) # 64bit Linux wants this
-endif(LINUX)
+endif()
 
 if(APPLE)
   if(_CMAKE_OSX_MACHINE MATCHES "ppc")

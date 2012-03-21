@@ -18,16 +18,16 @@
 #ifndef COBASE_REFERENCED_H
 #define COBASE_REFERENCED_H
 
-#include <co/base/api.h>      // for COBASE_API
-#include <co/base/atomic.h>   // member
-#include <co/base/debug.h>    // for EQERROR
-#include <co/base/refPtr.h>   // CO_REFERENCED_ARGS
+#include <lunchbox/api.h>      // for COBASE_API
+#include <lunchbox/atomic.h>   // member
+#include <lunchbox/debug.h>    // for EQERROR
+#include <lunchbox/refPtr.h>   // CO_REFERENCED_ARGS
 
 #ifdef CO_REFERENCED_DEBUG
-#  include <co/base/hash.h>
-#  include <co/base/lock.h>
-#  include <co/base/lockable.h>
-#  include <co/base/scopedMutex.h>
+#  include <lunchbox/hash.h>
+#  include <lunchbox/lock.h>
+#  include <lunchbox/lockable.h>
+#  include <lunchbox/scopedMutex.h>
 #endif
 
 namespace co

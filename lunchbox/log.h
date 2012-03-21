@@ -27,8 +27,8 @@
 #ifndef COBASE_LOG_H
 #define COBASE_LOG_H
 
-#include <co/base/api.h>
-#include <co/base/types.h>
+#include <lunchbox/api.h>
+#include <lunchbox/types.h>
 
 #include <assert.h>
 #include <iomanip>

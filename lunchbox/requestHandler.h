@@ -18,9 +18,9 @@
 #ifndef COBASE_REQUESTHANDLER_H
 #define COBASE_REQUESTHANDLER_H
 
-#include <co/base/api.h>       // COBASE_API definition
-#include <co/base/thread.h>    // thread-safety macros
-#include <co/base/types.h>
+#include <lunchbox/api.h>       // COBASE_API definition
+#include <lunchbox/thread.h>    // thread-safety macros
+#include <lunchbox/types.h>
 
 #include <list>
 

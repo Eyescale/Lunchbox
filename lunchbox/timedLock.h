@@ -18,9 +18,9 @@
 #ifndef COBASE_TIMEDLOCK_H
 #define COBASE_TIMEDLOCK_H
 
-#include <co/base/api.h>
-#include <co/base/nonCopyable.h> // base class
-#include <co/base/types.h>
+#include <lunchbox/api.h>
+#include <lunchbox/nonCopyable.h> // base class
+#include <lunchbox/types.h>
 
 namespace co
 {

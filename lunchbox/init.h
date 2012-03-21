@@ -18,7 +18,7 @@
 #ifndef COBASE_INIT_H
 #define COBASE_INIT_H
 
-#include <co/base/api.h>
+#include <lunchbox/api.h>
 
 namespace co
 {

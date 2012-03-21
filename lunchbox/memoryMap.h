@@ -18,8 +18,8 @@
 #ifndef COBASE_MEMORYMAP_H
 #define COBASE_MEMORYMAP_H
 
-#include <co/base/api.h>
-#include <co/base/nonCopyable.h>
+#include <lunchbox/api.h>
+#include <lunchbox/nonCopyable.h>
 
 #include <string>
 

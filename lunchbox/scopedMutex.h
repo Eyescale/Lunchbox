@@ -18,10 +18,10 @@
 #ifndef COBASE_SCOPEDMUTEX_H
 #define COBASE_SCOPEDMUTEX_H
 
-#include <co/base/lock.h>        // used in inline method
-#include <co/base/lockable.h>    // used in inline method
-#include <co/base/nonCopyable.h> // base class
-#include <co/base/types.h>
+#include <lunchbox/lock.h>        // used in inline method
+#include <lunchbox/lockable.h>    // used in inline method
+#include <lunchbox/nonCopyable.h> // base class
+#include <lunchbox/types.h>
 
 namespace co
 {

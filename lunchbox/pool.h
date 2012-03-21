@@ -18,10 +18,10 @@
 #ifndef COBASE_POOL_H
 #define COBASE_POOL_H
 
-#include <co/base/nonCopyable.h>  // base class
-#include <co/base/scopedMutex.h>  // member
-#include <co/base/spinLock.h>     // member
-#include <co/base/thread.h>       // thread-safety checks
+#include <lunchbox/nonCopyable.h>  // base class
+#include <lunchbox/scopedMutex.h>  // member
+#include <lunchbox/spinLock.h>     // member
+#include <lunchbox/thread.h>       // thread-safety checks
 
 namespace co
 {

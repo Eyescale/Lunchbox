@@ -18,8 +18,8 @@
 #ifndef COBASE_DEBUG_H
 #define COBASE_DEBUG_H
 
-#include <co/base/defines.h>
-#include <co/base/log.h>
+#include <lunchbox/defines.h>
+#include <lunchbox/log.h>
 
 #include <typeinfo>
 

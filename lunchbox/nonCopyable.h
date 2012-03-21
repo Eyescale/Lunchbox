@@ -18,7 +18,7 @@
 #ifndef COBASE_NONCOPYABLE_H
 #define COBASE_NONCOPYABLE_H
 
-#include <co/base/api.h> // for COBASE_API
+#include <lunchbox/api.h> // for COBASE_API
 
 namespace co
 {

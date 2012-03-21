@@ -18,7 +18,7 @@
 #ifndef COBASE_THREADID_H
 #define COBASE_THREADID_H
 
-#include <co/base/api.h>     // COBASE_API definition
+#include <lunchbox/api.h>     // COBASE_API definition
 
 #include <ostream>
 

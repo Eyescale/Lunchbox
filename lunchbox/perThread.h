@@ -18,7 +18,7 @@
 #ifndef COBASE_PERTHREAD_H
 #define COBASE_PERTHREAD_H
 
-#include <co/base/nonCopyable.h>
+#include <lunchbox/nonCopyable.h>
 
 #include <cstdio>
 #include <string.h>
@@ -128,8 +128,8 @@ namespace detail { class PerThread; }
 
 #ifdef HAVE_PTHREAD_H
 
-#include <co/base/debug.h>
-#include <co/base/thread.h>
+#include <lunchbox/debug.h>
+#include <lunchbox/thread.h>
 
 namespace co
 {

@@ -18,8 +18,8 @@
 #ifndef COBASE_HASH_H
 #define COBASE_HASH_H
 
-#include <co/base/refPtr.h>
-#include <co/base/stdExt.h>
+#include <lunchbox/refPtr.h>
+#include <lunchbox/stdExt.h>
 
 namespace co
 {

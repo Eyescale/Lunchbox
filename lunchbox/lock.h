@@ -18,8 +18,8 @@
 #ifndef COBASE_LOCK_H
 #define COBASE_LOCK_H
 
-#include <co/base/api.h>
-#include <co/base/nonCopyable.h>
+#include <lunchbox/api.h>
+#include <lunchbox/nonCopyable.h>
 
 namespace co
 {

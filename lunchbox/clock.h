@@ -19,8 +19,8 @@
 #ifndef COBASE_CLOCK_H
 #define COBASE_CLOCK_H
 
-#include <co/base/api.h>
-#include <co/base/types.h>
+#include <lunchbox/api.h>
+#include <lunchbox/types.h>
 
 namespace co
 {

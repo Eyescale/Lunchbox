@@ -15,9 +15,9 @@
 #ifndef COBASE_ATOMIC_H
 #define COBASE_ATOMIC_H
 
-#include <co/base/api.h>
-#include <co/base/compiler.h>       // GCC version
-#include <co/base/types.h>
+#include <lunchbox/api.h>
+#include <lunchbox/compiler.h>       // GCC version
+#include <lunchbox/types.h>
 
 #ifdef _MSC_VER
 #  pragma warning (push)

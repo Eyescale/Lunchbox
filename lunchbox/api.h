@@ -23,7 +23,7 @@
 #ifndef COBASE_API_H
 #define COBASE_API_H
 
-#include <co/base/defines.h>
+#include <lunchbox/defines.h>
 
 #if defined(_MSC_VER) || defined(__declspec)
 #  define EQ_DLLEXPORT __declspec(dllexport)

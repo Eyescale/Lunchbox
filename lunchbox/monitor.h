@@ -19,9 +19,9 @@
 #ifndef COBASE_MONITOR_H
 #define COBASE_MONITOR_H
 
-#include <co/base/nonCopyable.h> // base class
-#include <co/base/condition.h>   // member
-#include <co/base/types.h>
+#include <lunchbox/nonCopyable.h> // base class
+#include <lunchbox/condition.h>   // member
+#include <lunchbox/types.h>
 
 #include <errno.h>
 #include <string.h>

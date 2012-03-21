@@ -27,7 +27,7 @@
 #include "scopedMutex.h"
 #include "sleep.h"
 
-#include <co/base/lock.h>
+#include <lunchbox/lock.h>
 
 #include <errno.h>
 #include <pthread.h>

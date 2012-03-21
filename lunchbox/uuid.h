@@ -18,7 +18,7 @@
 #ifndef COBASE_UUID_H
 #define COBASE_UUID_H
 
-#include <co/base/uint128_t.h> // base class
+#include <lunchbox/uint128_t.h> // base class
 
 namespace co
 {

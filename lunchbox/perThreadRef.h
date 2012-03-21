@@ -18,8 +18,8 @@
 #ifndef COBASE_PERTHREADREF_H
 #define COBASE_PERTHREADREF_H
 
-#include <co/base/debug.h>
-#include <co/base/refPtr.h>
+#include <lunchbox/debug.h>
+#include <lunchbox/refPtr.h>
 
 namespace co
 {

@@ -24,8 +24,8 @@
 #ifndef COBASE_STDEXT_H
 #define COBASE_STDEXT_H
 
-#include <co/base/compiler.h>
-#include <co/base/uint128_t.h>
+#include <lunchbox/compiler.h>
+#include <lunchbox/uint128_t.h>
 
 #include <algorithm>
 #include <string>

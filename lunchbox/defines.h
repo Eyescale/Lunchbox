@@ -19,13 +19,13 @@
 #define COBASE_DEFINES_H
 
 #ifdef __APPLE__
-#  include <co/base/definesDarwin.h>
+#  include <lunchbox/definesDarwin.h>
 #endif
 #ifdef __linux
-#  include <co/base/defines__linux__.h>
+#  include <lunchbox/definesLinux.h>
 #endif
 #ifdef _WIN32 //_MSC_VER
-#  include <co/base/definesWin32.h>
+#  include <lunchbox/definesWin32.h>
 #endif
 
 // Defining our own min/max macros seems to be the only sane way to get this

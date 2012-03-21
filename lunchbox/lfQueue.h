@@ -18,10 +18,10 @@
 #ifndef COBASE_LFQUEUE_H
 #define COBASE_LFQUEUE_H
 
-#include <co/base/atomic.h> // member
-#include <co/base/debug.h>  // used in inline method
-#include <co/base/nonCopyable.h>  // base class
-#include <co/base/thread.h> // thread-safety checks
+#include <lunchbox/atomic.h> // member
+#include <lunchbox/debug.h>  // used in inline method
+#include <lunchbox/nonCopyable.h>  // base class
+#include <lunchbox/thread.h> // thread-safety checks
 
 #include <vector>
 

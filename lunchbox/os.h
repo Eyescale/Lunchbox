@@ -23,8 +23,8 @@
 #ifndef COBASE_OS_H
 #define COBASE_OS_H
 
-#include <co/base/defines.h>
-#include <co/base/compiler.h>
+#include <lunchbox/defines.h>
+#include <lunchbox/compiler.h>
 
 #ifdef _WIN32
 #  ifndef _MSC_VER

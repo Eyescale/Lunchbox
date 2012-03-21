@@ -16,8 +16,8 @@
  */
 
 #include "spinLock.h"
-#include <co/base/atomic.h>
-#include <co/base/thread.h>
+#include <lunchbox/atomic.h>
+#include <lunchbox/thread.h>
 
 namespace co
 {

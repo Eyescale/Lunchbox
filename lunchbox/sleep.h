@@ -18,8 +18,8 @@
 #ifndef COBASE_SLEEP_H
 #define COBASE_SLEEP_H
 
-#include <co/base/api.h>
-#include <co/base/types.h>
+#include <lunchbox/api.h>
+#include <lunchbox/types.h>
 
 namespace co
 {

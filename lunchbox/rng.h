@@ -18,10 +18,10 @@
 #ifndef COBASE_RNG_H
 #define COBASE_RNG_H
 
-#include <co/base/debug.h> // for EQASSERT
-#include <co/base/init.h>  // friend function
-#include <co/base/nonCopyable.h>
-#include <co/base/types.h>
+#include <lunchbox/debug.h> // for EQASSERT
+#include <lunchbox/init.h>  // friend function
+#include <lunchbox/nonCopyable.h>
+#include <lunchbox/types.h>
 
 #include <limits>
 

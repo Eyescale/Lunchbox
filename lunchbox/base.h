@@ -27,22 +27,22 @@
  * non-virtual destructors are not intended to be subclassed.
  */
 
-#include <co/base/api.h>
-#include <co/base/atomic.h>
-#include <co/base/clock.h>
-#include <co/base/debug.h>
-#include <co/base/errorRegistry.h>
-#include <co/base/file.h>
-#include <co/base/global.h>
-#include <co/base/monitor.h>
-#include <co/base/perThread.h>
-#include <co/base/rng.h>
-#include <co/base/scopedMutex.h>
-#include <co/base/sleep.h>
-#include <co/base/spinLock.h>
+#include <lunchbox/api.h>
+#include <lunchbox/atomic.h>
+#include <lunchbox/clock.h>
+#include <lunchbox/debug.h>
+#include <lunchbox/errorRegistry.h>
+#include <lunchbox/file.h>
+#include <lunchbox/global.h>
+#include <lunchbox/monitor.h>
+#include <lunchbox/perThread.h>
+#include <lunchbox/rng.h>
+#include <lunchbox/scopedMutex.h>
+#include <lunchbox/sleep.h>
+#include <lunchbox/spinLock.h>
 
 #ifdef EQ_SYSTEM_INCLUDES
-#  include <co/base/os.h>
+#  include <lunchbox/os.h>
 #endif
 
 #endif // COBASE_H

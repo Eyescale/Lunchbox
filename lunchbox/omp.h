@@ -18,7 +18,7 @@
 #ifndef COBASE_OMP_H
 #define COBASE_OMP_H
 
-#include <co/base/api.h>
+#include <lunchbox/api.h>
 
 #ifdef CO_USE_OPENMP
 #  include <omp.h>

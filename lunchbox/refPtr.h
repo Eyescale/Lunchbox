@@ -18,7 +18,7 @@
 #ifndef COBASE_REFPTR_H
 #define COBASE_REFPTR_H
 
-#include <co/base/debug.h>
+#include <lunchbox/debug.h>
 
 #include <iostream>
 #include <stdlib.h>

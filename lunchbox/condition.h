@@ -18,9 +18,9 @@
 #ifndef COBASE_CONDITION_H
 #define COBASE_CONDITION_H
 
-#include <co/base/api.h>
-#include <co/base/debug.h>
-#include <co/base/types.h>
+#include <lunchbox/api.h>
+#include <lunchbox/debug.h>
+#include <lunchbox/types.h>
 
 namespace co
 {

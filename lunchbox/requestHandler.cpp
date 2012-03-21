@@ -19,10 +19,10 @@
 
 #include "scopedMutex.h"
 
-#include <co/base/debug.h>
-#include <co/base/stdExt.h>
-#include <co/base/spinLock.h>
-#include <co/base/timedLock.h>
+#include <lunchbox/debug.h>
+#include <lunchbox/stdExt.h>
+#include <lunchbox/spinLock.h>
+#include <lunchbox/timedLock.h>
 
 namespace co
 {

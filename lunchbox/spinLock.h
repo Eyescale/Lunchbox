@@ -18,9 +18,9 @@
 #ifndef COBASE_SPINLOCK_H
 #define COBASE_SPINLOCK_H
 
-#include <co/base/atomic.h>         // member
-#include <co/base/nonCopyable.h>    // base class
-#include <co/base/thread.h>         // used in inline method
+#include <lunchbox/atomic.h>         // member
+#include <lunchbox/nonCopyable.h>    // base class
+#include <lunchbox/thread.h>         // used in inline method
 
 namespace co
 {

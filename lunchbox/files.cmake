@@ -15,10 +15,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   debug.h
   defines.h
   dso.h
-  error.h
-  errorRegistry.h
   file.h
-  global.h
   hash.h
   init.h
   launcher.h
@@ -34,7 +31,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   os.h
   perThread.h
   perThreadRef.h
-  pluginRegistry.h
   pool.h
   refPtr.h
   referenced.h
@@ -53,34 +49,23 @@ set(LUNCHBOX_PUBLIC_HEADERS
   )
 
 set(LUNCHBOX_HEADERS 
-  compressor.h
-  compressorInfo.h
-  cpuCompressor.h
   memcpy.h
-  plugin.h
   )
 
 set(LUNCHBOX_SOURCES
   atomic.cpp
   clock.cpp
-  compressor.cpp
   condition.cpp
   condition_w32.ipp
-  cpuCompressor.cpp
   debug.cpp
   dso.cpp
-  error.cpp
-  errorRegistry.cpp
   file.cpp
-  global.cpp
   init.cpp
   launcher.cpp
   lock.cpp
   log.cpp
   memoryMap.cpp
   omp.cpp
-  plugin.cpp
-  pluginRegistry.cpp
   referenced.cpp
   requestHandler.cpp
   rng.cpp
@@ -92,10 +77,6 @@ set(LUNCHBOX_SOURCES
   uint128_t.cpp
   uuid.cpp
   )
-
-if(LUNCHBOX_USE_BOOST_SERIALIZATION)
-  list(APPEND LUNCHBOX_SOURCES dataIStreamArchive.cpp dataOStreamArchive.cpp)
-endif()
 
 set(LUNCHBOX_ALL ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_HEADERS}
   ${LUNCHBOX_SOURCES})

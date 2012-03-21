@@ -19,11 +19,11 @@
 #ifndef COBASE_UINT128_H
 #define COBASE_UINT128_H
 
-#include <co/base/api.h>
+#include <lunchbox/api.h>
 #include <sstream>
 
 #ifdef _MSC_VER
-// Don't include <co/base/types.h> to be minimally intrusive for apps
+// Don't include <lunchbox/types.h> to be minimally intrusive for apps
 // using uint128_t
 #  include <basetsd.h>
 typedef UINT64     uint64_t;

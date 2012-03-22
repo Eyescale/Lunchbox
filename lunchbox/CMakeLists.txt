@@ -4,7 +4,7 @@
 include(configure.cmake)
 include(files.cmake)
 
-set(LUNCHBOX_LINKLIB)
+set(LUNCHBOX_LINKLIB ${PTHREAD_LIBRARIES})
 if(WIN32)
   list(APPEND LUNCHBOX_LINKLIB ws2_32 mswsock)
 endif(WIN32)

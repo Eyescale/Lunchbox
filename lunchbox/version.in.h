@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, Stefan Eilemann <eile@eyescale.ch> 
+/* Copyright (c) 2011-2012, Stefan Eilemann <eile@eyescale.ch> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -26,16 +26,16 @@ namespace lunchbox
 {
     // LunchBox version macros and functions
     /** The current major version. @version 0.4 */
-#   define LUNCHBOX_VERSION_MAJOR ${VERSION_MAJOR}
+#   define LUNCHBOX_VERSION_MAJOR @VERSION_MAJOR@
 
     /** The current minor version. @version 0.4 */
-#   define LUNCHBOX_VERSION_MINOR ${VERSION_MINOR}
+#   define LUNCHBOX_VERSION_MINOR @VERSION_MINOR@
 
     /** The current patch level. @version 0.4 */
-#   define LUNCHBOX_VERSION_PATCH ${VERSION_PATCH}
+#   define LUNCHBOX_VERSION_PATCH @VERSION_PATCH@
 
     /** The current DSO binary revision. @version 0.4 */
-#   define LUNCHBOX_VERSION_ABI ${VERSION_ABI}
+#   define LUNCHBOX_VERSION_ABI @VERSION_ABI@
 
 /** True if the current version is newer than the given one. @version 0.4 */
 #   define LUNCHBOX_VERSION_GT( MAJOR, MINOR, PATCH )                   \

@@ -34,20 +34,22 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 set(DEFINES_FILE ${OUTPUT_INCLUDE_DIR}/lunchbox/defines${ARCH}.h)
+set(DEFINES_FILE_IN ${CMAKE_CURRENT_BINARY_DIR}/defines${ARCH}.h.in)
 
-file(WRITE ${DEFINES_FILE}
+file(WRITE ${DEFINES_FILE_IN}
   "#ifndef LUNCHBOX_DEFINES_${ARCH}_H\n"
   "#define LUNCHBOX_DEFINES_${ARCH}_H\n\n"
   )
 
 foreach(DEF ${LUNCHBOX_DEFINES})
-  file(APPEND ${DEFINES_FILE}
+  file(APPEND ${DEFINES_FILE_IN}
     "#ifndef ${DEF}\n"
     "#  define ${DEF}\n"
     "#endif\n"
     )
 endforeach(DEF ${LUNCHBOX_DEFINES})
 
-file(APPEND ${DEFINES_FILE}
+file(APPEND ${DEFINES_FILE_IN}
   "\n#endif /* LUNCHBOX_DEFINES_${ARCH}_H */\n"
   )
+update_file(${DEFINES_FILE_IN} ${DEFINES_FILE})

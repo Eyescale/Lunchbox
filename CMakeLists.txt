@@ -161,6 +161,7 @@ function(INSTALL_SYMLINK FROM TO WHERE)
   install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${FROM} ${TO} WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${WHERE})" )
 endfunction()
 
+include(pthreads/CMakeLists.txt)
 add_subdirectory(lunchbox)
 #add_subdirectory(tests)
 add_subdirectory(doc) # must be after all targets

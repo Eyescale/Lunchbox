@@ -14,6 +14,7 @@ list(APPEND CMAKE_MODULE_PATH ${LunchBox_SOURCE_DIR}/CMake)
 list(APPEND CMAKE_PREFIX_PATH ${SystemDrive}:/cygwin/bin)
 
 include(revision)
+include(UpdateFile)
 
 set(LUNCHBOX_RELEASE OFF) # OFF or 'Mm0' ABI version
 set(VERSION_MAJOR "0")

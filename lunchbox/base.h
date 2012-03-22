@@ -31,9 +31,7 @@
 #include <lunchbox/atomic.h>
 #include <lunchbox/clock.h>
 #include <lunchbox/debug.h>
-#include <lunchbox/errorRegistry.h>
 #include <lunchbox/file.h>
-#include <lunchbox/global.h>
 #include <lunchbox/monitor.h>
 #include <lunchbox/perThread.h>
 #include <lunchbox/rng.h>

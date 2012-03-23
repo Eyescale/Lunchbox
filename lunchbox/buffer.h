@@ -35,7 +35,7 @@ namespace lunchbox
      * data, e.g., in eq::Image. The implementation works like a pool, that is,
      * data is only released when the buffer is deleted or clear() is called.
      */
-    template< typename T > class Buffer
+    template< class T > class Buffer
     {
     public:
         /** Construct a new, empty buffer. @version 1.0 */
@@ -245,7 +245,5 @@ namespace lunchbox
         /** The allocation _size of the buffer. */
         uint64_t _maxSize;
     };
-
-    typedef Buffer< uint8_t > Bufferb;
 }
 #endif //COBASE_BUFFER_H

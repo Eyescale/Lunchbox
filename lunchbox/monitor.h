@@ -37,7 +37,7 @@ namespace lunchbox
      * state. The caller is blocked until the condition is fulfilled. The
      * concept is similar to a pthread condition, with more usage convenience.
      */
-    template< typename T > class Monitor
+    template< class T > class Monitor
     {
     public:
         /** Construct a new monitor with a default value of 0. @version 1.0 */

@@ -130,9 +130,6 @@ private:
     mutable T _value;
 };
 
-typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable
-typedef Atomic< ssize_t > a_ssize_t; //!< An atomic signed size variable
-
 // Implementation
 #ifdef EQ_GCC_4_1_OR_LATER
 template< class T > T Atomic< T >::getAndAdd( T& value, const T increment )

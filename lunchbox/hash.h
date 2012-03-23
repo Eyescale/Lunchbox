@@ -70,7 +70,7 @@ namespace lunchbox
 #endif
 
 /** A hash for UUID keys. @version 1.0 */
-template<class T> class UUIDHash : public stde::hash_map<co::base::UUID, T> {};
+template<class T> class UUIDHash : public stde::hash_map<lunchbox::UUID, T> {};
 
 }
 #endif // COBASE_HASH_H

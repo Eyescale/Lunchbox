@@ -130,11 +130,24 @@ namespace lunchbox
 typedef std::vector< std::string > Strings;
 typedef Strings::const_iterator StringsCIter;
 
+
 class Clock;
 class Lock;
+class NonCopyable;
+class Referenced;
+class RequestHandler;
 class SpinLock;
 class UUID;
 class uint128_t;
+
+template< class > class Atomic;
+template< class > class Buffer;
+template< class > class Monitor;
+template< class, class> class Lockable;
+
+typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable
+typedef Atomic< ssize_t > a_ssize_t; //!< An atomic signed size variable
+typedef Buffer< uint8_t > Bufferb; //!< a byte buffer
 
 }
 

@@ -24,14 +24,12 @@
 
 namespace lunchbox
 {
-    class Lock;
-
     /**
      * A convenience structure to hold data together with a lock for access.
      * 
      * Locking the data still has to be done manually, e.g, using a ScopedMutex.
      */
-    template< typename D, class L = Lock > class Lockable : public NonCopyable
+    template< class D, class L = Lock > class Lockable : public NonCopyable
     {
     public:
         /** Construct a new lockable data structure. @version 1.0 */

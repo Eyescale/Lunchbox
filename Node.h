@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -24,7 +24,7 @@
 #include "ContextPtr.h" // member (Nodes)
 #include "ContextPtr.h" // member (Nodes)
 #include <dash/Attribute.h> // AttributePtr return value
-#include <co/base/referenced.h> // base class
+#include <lunchbox/referenced.h> // base class
 
 #include <boost/serialization/vector.hpp>
 

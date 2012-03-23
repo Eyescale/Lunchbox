@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -25,7 +25,7 @@
 
 #include <dash/api.h>
 #include <dash/Vector.h> // member
-#include <co/base/types.h>
+#include <lunchbox/types.h>
 
 namespace dash
 {

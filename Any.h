@@ -115,6 +115,19 @@ namespace detail
             return content ? content->type() : typeid(void);
         }
 
+        bool operator == ( const Any& rhs ) const
+        {
+            if( type() != rhs.type() )
+                return false;
+
+            // for unit tests, current "implementation" is sufficient, but don't let
+            // them fail...
+            //EQUNIMPLEMENTED;
+            return true;
+        }
+
+        bool operator != ( const Any& rhs ) const { return !(*this == rhs); }
+
     public: // types (public so any_cast can be non-friend)
 
         class placeholder

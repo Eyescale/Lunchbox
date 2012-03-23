@@ -34,7 +34,7 @@ namespace detail
 {
 
 /** The node implementation. */
-class Node : public co::base::Referenced, public co::base::NonCopyable
+class Node : public lunchbox::Referenced, public lunchbox::NonCopyable
 {
 public:
     explicit Node( dash::Node* node );

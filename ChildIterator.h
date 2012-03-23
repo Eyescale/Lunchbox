@@ -32,7 +32,7 @@ template< class T >
 class ChildIterator : public Iterator< ChildIterator< T >, T, T >
 {
     typedef Iterator< ChildIterator< T >, T, T > Super;
-    typedef co::base::RefPtr< T > TPtr;
+    typedef lunchbox::RefPtr< T > TPtr;
 
 public:
     ChildIterator() : Super( 0, 0 ) {}

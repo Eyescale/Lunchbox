@@ -32,7 +32,7 @@ template< class N, class A >
 class AttributeIterator : public Iterator< AttributeIterator< N, A >, N, A >
 {
     typedef Iterator< AttributeIterator< N, A >, N, A > Super;
-    typedef co::base::RefPtr< A > APtr;
+    typedef lunchbox::RefPtr< A > APtr;
 
 public:
     AttributeIterator() : Super( 0, 0 ) {}

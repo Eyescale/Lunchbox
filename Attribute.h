@@ -31,7 +31,7 @@ namespace detail
 {
 
 /** The attribute implementation. */
-class Attribute : public co::base::Referenced, public co::base::NonCopyable
+class Attribute : public lunchbox::Referenced, public lunchbox::NonCopyable
 {
 public:
     explicit Attribute( dash::Attribute* attribute );

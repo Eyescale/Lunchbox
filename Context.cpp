@@ -36,7 +36,7 @@ namespace detail
 
 namespace
 {
-co::base::a_int32_t numSlots_;
+lunchbox::a_int32_t numSlots_;
 Vector< int32_t > freeSlots_;
 
 static int32_t allocSlot_()
@@ -134,7 +134,7 @@ void Context::map( dash::NodePtr node, const Context& to )
     {
         std::stringstream out;
         out << "Source dash::Context has pending changes: " << getCommit()
-            << ", called from " << co::base::backtrace;
+            << ", called from " << lunchbox::backtrace;
         throw std::runtime_error( out.str( ));
     }
 

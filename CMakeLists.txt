@@ -164,7 +164,7 @@ endfunction()
 
 include(pthreads/CMakeLists.txt)
 add_subdirectory(lunchbox)
-#add_subdirectory(tests)
+add_subdirectory(tests)
 add_subdirectory(doc) # must be after all targets
 
 install(FILES CMake/FindLunchBox.cmake CMake/FindHWLOC.cmake

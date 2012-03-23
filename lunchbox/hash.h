@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_HASH_H
-#define COBASE_HASH_H
+#ifndef LUNCHBOX_HASH_H
+#define LUNCHBOX_HASH_H
 
 #include <lunchbox/refPtr.h>
 #include <lunchbox/stdExt.h>
@@ -73,4 +73,4 @@ namespace lunchbox
 template<class T> class UUIDHash : public stde::hash_map<lunchbox::UUID, T> {};
 
 }
-#endif // COBASE_HASH_H
+#endif // LUNCHBOX_HASH_H

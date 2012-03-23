@@ -28,8 +28,8 @@
    It was originally written by Jason Gunthorpe.
 */
 
-#ifndef COBASE_RING_H
-#define COBASE_RING_H
+#ifndef LUNCHBOX_RING_H
+#define LUNCHBOX_RING_H
 
 #include <sys/types.h>
 
@@ -248,4 +248,4 @@ public:
         }
 };
 
-#endif // COBASE_RING_H
+#endif // LUNCHBOX_RING_H

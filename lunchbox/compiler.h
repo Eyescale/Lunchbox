@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_COMPILER_H
-#define COBASE_COMPILER_H
+#ifndef LUNCHBOX_COMPILER_H
+#define LUNCHBOX_COMPILER_H
 
 #ifdef _MSC_VER
 /** Declare and align a variable to a 8-byte boundary. */
@@ -63,4 +63,4 @@
 #  endif
 #endif // GCC
 
-#endif //COBASE_COMPILER_H
+#endif //LUNCHBOX_COMPILER_H

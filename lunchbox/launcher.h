@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_LAUNCHER_H
-#define COBASE_LAUNCHER_H
+#ifndef LUNCHBOX_LAUNCHER_H
+#define LUNCHBOX_LAUNCHER_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
@@ -39,4 +39,4 @@ namespace lunchbox
     };
 }
 
-#endif // COBASE_LAUNCHER_H
+#endif // LUNCHBOX_LAUNCHER_H

@@ -21,8 +21,8 @@
  * Include extensions to the STL and define a uniform interface to them.
  */
 
-#ifndef COBASE_STDEXT_H
-#define COBASE_STDEXT_H
+#ifndef LUNCHBOX_STDEXT_H
+#define LUNCHBOX_STDEXT_H
 
 #include <lunchbox/compiler.h>
 #include <lunchbox/uint128_t.h>
@@ -215,4 +215,4 @@ CO_STDEXT_NAMESPACE_OPEN
 
 CO_STDEXT_NAMESPACE_CLOSE
 
-#endif // COBASE_STDEXT_H
+#endif // LUNCHBOX_STDEXT_H

@@ -20,8 +20,8 @@
  *
  * Includes key system header files and defines essential base macros.
  */
-#ifndef COBASE_OS_H
-#define COBASE_OS_H
+#ifndef LUNCHBOX_OS_H
+#define LUNCHBOX_OS_H
 
 #include <lunchbox/defines.h>
 #include <lunchbox/compiler.h>
@@ -59,4 +59,4 @@
 extern "C" char **environ;
 #endif
 
-#endif //COBASE_OS_H
+#endif //LUNCHBOX_OS_H

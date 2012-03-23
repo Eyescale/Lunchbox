@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_SCOPEDMUTEX_H
-#define COBASE_SCOPEDMUTEX_H
+#ifndef LUNCHBOX_SCOPEDMUTEX_H
+#define LUNCHBOX_SCOPEDMUTEX_H
 
 #include <lunchbox/lock.h>        // used in inline method
 #include <lunchbox/lockable.h>    // used in inline method
@@ -101,4 +101,4 @@ namespace lunchbox
     /** A scoped mutex for a write operation. @version 1.1.5 */
     typedef ScopedMutex< Lock, WriteOp > ScopedWrite;
 }
-#endif //COBASE_SCOPEDMUTEX_H
+#endif //LUNCHBOX_SCOPEDMUTEX_H

@@ -21,8 +21,8 @@
  * Basic type definitions not provided by the operating system.
  */
 
-#ifndef COBASE_TYPES_H
-#define COBASE_TYPES_H
+#ifndef LUNCHBOX_TYPES_H
+#define LUNCHBOX_TYPES_H
 
 #include <string>
 #include <vector>
@@ -151,4 +151,4 @@ typedef Buffer< uint8_t > Bufferb; //!< a byte buffer
 
 }
 
-#endif //COBASE_TYPES_H
+#endif //LUNCHBOX_TYPES_H

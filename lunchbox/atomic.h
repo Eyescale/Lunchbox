@@ -12,8 +12,8 @@
    Original at http://tim.klingt.org/git?p=boost_lockfree.git;a=tree
 */
 
-#ifndef COBASE_ATOMIC_H
-#define COBASE_ATOMIC_H
+#ifndef LUNCHBOX_ATOMIC_H
+#define LUNCHBOX_ATOMIC_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/compiler.h>       // GCC version
@@ -257,4 +257,4 @@ bool Atomic< T >::compareAndSwap( const T expected, const T newValue )
 }
 
 }
-#endif  // COBASE_ATOMIC_H
+#endif  // LUNCHBOX_ATOMIC_H

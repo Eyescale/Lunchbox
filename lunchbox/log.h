@@ -24,8 +24,8 @@
  * is a std::ostream. EQVERB is always inactive in release builds.
  */
 
-#ifndef COBASE_LOG_H
-#define COBASE_LOG_H
+#ifndef LUNCHBOX_LOG_H
+#define LUNCHBOX_LOG_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
@@ -243,4 +243,4 @@ namespace lunchbox
 #define EQLOG(topic)  (lunchbox::Log::topics & (topic))  &&  \
     lunchbox::Log::instance( __FILE__, __LINE__ )
 
-#endif //COBASE_LOG_H
+#endif //LUNCHBOX_LOG_H

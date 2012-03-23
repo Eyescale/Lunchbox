@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_BUFFER_H
-#define COBASE_BUFFER_H
+#ifndef LUNCHBOX_BUFFER_H
+#define LUNCHBOX_BUFFER_H
 
 #include <lunchbox/debug.h>       // EQASSERT macro
 #include <lunchbox/types.h>
@@ -246,4 +246,4 @@ namespace lunchbox
         uint64_t _maxSize;
     };
 }
-#endif //COBASE_BUFFER_H
+#endif //LUNCHBOX_BUFFER_H

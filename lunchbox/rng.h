@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_RNG_H
-#define COBASE_RNG_H
+#ifndef LUNCHBOX_RNG_H
+#define LUNCHBOX_RNG_H
 
 #include <lunchbox/debug.h> // for EQASSERT
 #include <lunchbox/init.h>  // friend function
@@ -91,4 +91,4 @@ namespace detail { class RNG; }
         return ( get< uint32_t >() & 1 );
     }
 }
-#endif  // COBASE_RNG_H
+#endif  // LUNCHBOX_RNG_H

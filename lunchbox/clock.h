@@ -16,8 +16,8 @@
  */
 
 
-#ifndef COBASE_CLOCK_H
-#define COBASE_CLOCK_H
+#ifndef LUNCHBOX_CLOCK_H
+#define LUNCHBOX_CLOCK_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
@@ -85,4 +85,4 @@ namespace detail { class Clock; }
         detail::Clock* const _impl;
     };
 }
-#endif  // COBASE_CLOCK_H
+#endif  // LUNCHBOX_CLOCK_H

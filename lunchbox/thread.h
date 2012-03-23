@@ -16,8 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_THREAD_H
-#define COBASE_THREAD_H
+#ifndef LUNCHBOX_THREAD_H
+#define LUNCHBOX_THREAD_H
 
 #include <lunchbox/api.h>         // LUNCHBOX_API definition
 #include <lunchbox/debug.h>       // debug macros in thread-safety checks
@@ -273,4 +273,4 @@ private:
 #endif
 
 }
-#endif //COBASE_THREAD_H
+#endif //LUNCHBOX_THREAD_H

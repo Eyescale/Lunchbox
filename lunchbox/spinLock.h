@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_SPINLOCK_H
-#define COBASE_SPINLOCK_H
+#ifndef LUNCHBOX_SPINLOCK_H
+#define LUNCHBOX_SPINLOCK_H
 
 #include <lunchbox/atomic.h>         // member
 #include <lunchbox/nonCopyable.h>    // base class
@@ -103,4 +103,4 @@ namespace detail { class SpinLock; }
         detail::SpinLock* const _impl;
     };
 }
-#endif //COBASE_SPINLOCK_H
+#endif //LUNCHBOX_SPINLOCK_H

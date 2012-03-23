@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_LOCK_H
-#define COBASE_LOCK_H
+#ifndef LUNCHBOX_LOCK_H
+#define LUNCHBOX_LOCK_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/nonCopyable.h>
@@ -68,4 +68,4 @@ namespace detail { class Lock; }
         detail::Lock* const _impl;
     };
 }
-#endif //COBASE_LOCK_H
+#endif //LUNCHBOX_LOCK_H

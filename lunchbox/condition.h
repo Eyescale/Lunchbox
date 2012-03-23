@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_CONDITION_H
-#define COBASE_CONDITION_H
+#ifndef LUNCHBOX_CONDITION_H
+#define LUNCHBOX_CONDITION_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/debug.h>
@@ -74,4 +74,4 @@ namespace detail { class Condition; }
     };
 }
 
-#endif //COBASE_CONDITION_H
+#endif //LUNCHBOX_CONDITION_H

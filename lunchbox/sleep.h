@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_SLEEP_H
-#define COBASE_SLEEP_H
+#ifndef LUNCHBOX_SLEEP_H
+#define LUNCHBOX_SLEEP_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
@@ -26,4 +26,4 @@ namespace lunchbox
     /** Sleep the current thread for a number of milliseconds. @version 1.0 */
     LUNCHBOX_API void sleep( const uint32_t milliSeconds );
 }
-#endif  // COBASE_SLEEP_H
+#endif  // LUNCHBOX_SLEEP_H

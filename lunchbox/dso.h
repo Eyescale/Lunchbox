@@ -16,8 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_DSO_H
-#define COBASE_DSO_H
+#ifndef LUNCHBOX_DSO_H
+#define LUNCHBOX_DSO_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/nonCopyable.h>
@@ -69,4 +69,4 @@ namespace detail { class DSO; }
 
 }
 
-#endif //COBASE_DSO_H
+#endif //LUNCHBOX_DSO_H

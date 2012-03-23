@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_REFPTR_H
-#define COBASE_REFPTR_H
+#ifndef LUNCHBOX_REFPTR_H
+#define LUNCHBOX_REFPTR_H
 
 #include <lunchbox/debug.h>
 
@@ -242,4 +242,4 @@ inline void serialize( Archive& ar, lunchbox::RefPtr< T >& t,
 }
 
 #endif // LUNCHBOX_USE_BOOST_SERIALIZATION
-#endif //COBASE_REFPTR_H
+#endif //LUNCHBOX_REFPTR_H

@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_DEFINES_H
-#define COBASE_DEFINES_H
+#ifndef LUNCHBOX_DEFINES_H
+#define LUNCHBOX_DEFINES_H
 
 #ifdef __APPLE__
 #  include <lunchbox/definesDarwin.h>
@@ -51,4 +51,4 @@
 #  define CO_UNLIKELY(x)     x
 #endif
 
-#endif // COBASE_DEFINES_H
+#endif // LUNCHBOX_DEFINES_H

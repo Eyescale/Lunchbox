@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_REQUESTHANDLER_H
-#define COBASE_REQUESTHANDLER_H
+#ifndef LUNCHBOX_REQUESTHANDLER_H
+#define LUNCHBOX_REQUESTHANDLER_H
 
 #include <lunchbox/api.h>       // LUNCHBOX_API definition
 #include <lunchbox/thread.h>    // thread-safety macros
@@ -154,4 +154,4 @@ namespace detail { class RequestHandler; }
     LUNCHBOX_API std::ostream& operator << ( std::ostream&,
                                              const RequestHandler& );
 }
-#endif //COBASE_REQUESTHANDLER_H
+#endif //LUNCHBOX_REQUESTHANDLER_H

@@ -16,8 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_FILE_H
-#define COBASE_FILE_H
+#ifndef LUNCHBOX_FILE_H
+#define LUNCHBOX_FILE_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
@@ -43,4 +43,4 @@ LUNCHBOX_API std::string getFilename( const std::string& filename );
 LUNCHBOX_API std::string getDirname( const std::string& filename );
 
 }
-#endif //COBASE_FILE_H
+#endif //LUNCHBOX_FILE_H

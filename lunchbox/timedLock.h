@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_TIMEDLOCK_H
-#define COBASE_TIMEDLOCK_H
+#ifndef LUNCHBOX_TIMEDLOCK_H
+#define LUNCHBOX_TIMEDLOCK_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/nonCopyable.h> // base class
@@ -69,4 +69,4 @@ namespace detail { class TimedLock; }
         detail::TimedLock* const _impl;
     };
 }
-#endif //COBASE_TIMEDLOCK_H
+#endif //LUNCHBOX_TIMEDLOCK_H

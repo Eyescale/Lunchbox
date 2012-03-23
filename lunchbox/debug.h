@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_DEBUG_H
-#define COBASE_DEBUG_H
+#ifndef LUNCHBOX_DEBUG_H
+#define LUNCHBOX_DEBUG_H
 
 #include <lunchbox/defines.h>
 #include <lunchbox/log.h>
@@ -144,4 +144,4 @@ template< class T > inline std::string className( T* object )
     EQASSERT( in == 0 || dynamic_cast< to >( static_cast< to >( in )))
 
 
-#endif //COBASE_DEBUG_H
+#endif //LUNCHBOX_DEBUG_H

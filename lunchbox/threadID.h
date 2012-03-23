@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_THREADID_H
-#define COBASE_THREADID_H
+#ifndef LUNCHBOX_THREADID_H
+#define LUNCHBOX_THREADID_H
 
 #include <lunchbox/api.h>     // LUNCHBOX_API definition
 
@@ -64,4 +64,4 @@ namespace detail { class ThreadID; }
     /** Print the thread to the given output stream. */
     LUNCHBOX_API std::ostream& operator << ( std::ostream&, const ThreadID& );
 }
-#endif // COBASE_THREADID_H
+#endif // LUNCHBOX_THREADID_H

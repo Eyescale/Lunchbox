@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COBASE_PERTHREADREF_H
-#define COBASE_PERTHREADREF_H
+#ifndef LUNCHBOX_PERTHREADREF_H
+#define LUNCHBOX_PERTHREADREF_H
 
 #include <lunchbox/debug.h>
 #include <lunchbox/refPtr.h>
@@ -224,4 +224,4 @@ bool PerThreadRef<T>::isValid() const
 #endif // HAVE_PTHREAD_H
 
 }
-#endif //COBASE_PERTHREADREF_H
+#endif //LUNCHBOX_PERTHREADREF_H

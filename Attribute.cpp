@@ -66,13 +66,7 @@ bool Attribute::operator == ( const Attribute& rhs ) const
     if( this == &rhs )
         return true;
 
-    if( get().type() != rhs.get().type() )
-        return false;
-
-    // for unit tests, current "implementation" is sufficient, but don't let
-    // them fail...
-//  EQUNIMPLEMENTED;
-    return true;
+    return get() == rhs.get();
 }
 
 void Attribute::notifyValueChanged_( Context& context, AnyCtxPtr::Value value )

@@ -58,9 +58,11 @@ public:
     void apply( CommitConstPtr commit );
 
 private:
+    SERIALIZABLE()
+
     friend int test::main( int argc, char **argv );
 
-    const size_t slot_; //!< lookup index for data of this Context
+    size_t slot_; //!< lookup index for data of this Context
     dash::Commit* commit_; //!< pending changes
 
     Context( const Context& from ); // disable copy
@@ -68,6 +70,18 @@ private:
 
     EQ_TS_VAR( thread_ );
 };
+
+template< class Archive >
+inline void Context::save( Archive& ar, const unsigned int version ) const
+{
+    ar << slot_;
+}
+
+template< class Archive >
+inline void Context::load( Archive& ar, const unsigned int version )
+{
+    ar >> slot_;
+}
 
 }
 }

@@ -26,6 +26,8 @@
 #include <dash/Vector.h> // member
 #include <lunchbox/types.h>
 
+#include <dash/Context.h>
+
 namespace dash
 {
 namespace detail
@@ -38,12 +40,17 @@ public:
     Commit();
     ~Commit();
 
+    bool operator == ( const Commit& rhs ) const;
+    bool operator != ( const Commit& rhs ) const { return !(*this == rhs); }
+
     bool empty() const { return changes_->empty(); }
 
     void add( const Change& change );
     void apply() const;
 
-private:
+//private:
+    SERIALIZABLE()
+
     friend int test::main( int argc, char **argv );
     friend std::ostream& operator << ( std::ostream& os, const Commit& commit );
 
@@ -58,6 +65,31 @@ private:
 inline std::ostream& operator << ( std::ostream& os, const Commit& commit )
 {
     return os << commit.changes_;
+}
+
+template< class Archive >
+inline void Commit::save( Archive& ar, const unsigned int version ) const
+{
+    //ar << context_;
+    //dash::Context& current = dash::Context::getCurrent();
+    //context_->setCurrent();
+    ar << dash::Context::getCurrent();
+    ar << changes_;
+    //current.setCurrent();
+}
+
+template< class Archive >
+inline void Commit::load( Archive& ar, const unsigned int version )
+{
+    if( !context_ )
+        context_.reset( new dash::Context );
+
+    ar >> *context_;
+
+    dash::Context& current = dash::Context::getCurrent();
+    context_->setCurrent();
+    ar >> changes_;
+    current.setCurrent();
 }
 
 }

@@ -22,7 +22,11 @@
 #define DASH_DETAIL_CHANGE_H
 
 #include "types.h"
+#include "Node.h"
 #include <dash/api.h>
+#include <dash/Serializable.h>
+#include <dash/Context.h>
+#include "Commit.h"
 #include <iostream>
 
 namespace dash
@@ -48,16 +52,67 @@ struct Change
     Change( const Type t, NodePtr n, dash::AttributePtr a );
     Change( dash::AttributePtr a, boost::shared_ptr<detail::Any> value );
 
+    bool operator == ( const Change& rhs ) const;
+    bool operator != ( const Change& rhs ) const { return !(*this == rhs); }
+
     Type type;
     NodePtr node;
     dash::NodePtr child;
 
     dash::AttributePtr attribute;
-    boost::shared_ptr< detail::Any > value;    
+    boost::shared_ptr< detail::Any > value;
+    Commit* commit;
+
+private:
+    SERIALIZABLE()
 };
 
 DASH_API std::ostream& operator << ( std::ostream& os, const Change& change );
 DASH_API std::ostream& operator << ( std::ostream& os, const Change::Type& type);
+
+template< class Archive >
+inline void Change::save( Archive& ar, const unsigned int version ) const
+{
+    ar << type;
+    ar << node;
+    if( type == Change::NODE_INSERT )
+    {
+        //dash::Context& current = dash::Context::getCurrent();
+        //commit->context_->setCurrent();
+        ar << child;
+        //current.setCurrent();
+    }
+    else if( type == Change::ATTRIBUTE_INSERT )
+    {
+        //dash::Context& current = dash::Context::getCurrent();
+        //commit->context_->setCurrent();
+        ar << attribute;
+        //current.setCurrent();
+    }
+    ar << value;
+}
+
+template< class Archive >
+inline void Change::load( Archive& ar, const unsigned int version )
+{
+    ar >> type;
+    ar >> node;
+    if( type == Change::NODE_INSERT )
+    {
+        //dash::Context& current = dash::Context::getCurrent();
+        //commit->context_->setCurrent();
+        ar >> child;
+        //current.setCurrent();
+    }
+    else if( type == Change::ATTRIBUTE_INSERT )
+    {
+        //dash::Context& current = dash::Context::getCurrent();
+        //commit->context_->setCurrent();
+        ar >> attribute;
+        //current.setCurrent();
+    }
+    ar >> value;
+}
 
 }
 }

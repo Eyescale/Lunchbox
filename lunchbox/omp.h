@@ -36,7 +36,7 @@ namespace base
          * @return the number of threads used in a parallel region.
          * @version 1.0
          */
-        COBASE_API static unsigned getNThreads();
+        LUNCHBOX_API static unsigned getNThreads();
     };
 }
 

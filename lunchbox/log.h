@@ -84,7 +84,7 @@ namespace base
         void disableHeader() { ++_noHeader; } // use counted variable to allow
         void enableHeader()  { --_noHeader; } //   nested enable/disable calls
 
-        COBASE_API void setThreadName( const std::string& name );
+        LUNCHBOX_API void setThreadName( const std::string& name );
         const char* getThreadName() const { return _thread; }
 
         void setLogInfo( const char* file, const int line )
@@ -147,28 +147,28 @@ namespace base
         void enableHeader()  { _logBuffer.enableHeader();  }
 
         /** The current log level. */
-        static COBASE_API int level;
+        static LUNCHBOX_API int level;
 
         /** The current log topics. */
-        static COBASE_API unsigned topics;
+        static LUNCHBOX_API unsigned topics;
 
         /** The per-thread logger. */
-        static COBASE_API Log& instance();
+        static LUNCHBOX_API Log& instance();
 
         /** The per-thread logger. */
-        static COBASE_API Log& instance( const char* file, const int line );
+        static LUNCHBOX_API Log& instance( const char* file, const int line );
 
         /** Exit the log instance for the current thread. */
-        static COBASE_API void exit();
+        static LUNCHBOX_API void exit();
 
         /** The string representation of the current log level. */
         static std::string& getLogLevelString();
 
         /** Change the output stream. */
-        static COBASE_API void setOutput( std::ostream& stream );
+        static LUNCHBOX_API void setOutput( std::ostream& stream );
 
         /** Get the current output stream. @internal */
-        static COBASE_API std::ostream& getOutput ();
+        static LUNCHBOX_API std::ostream& getOutput ();
 
         /**
          * Set the reference clock.
@@ -178,7 +178,7 @@ namespace base
          *
          * @param clock the reference clock.
          */
-        static COBASE_API void setClock( Clock* clock );
+        static LUNCHBOX_API void setClock( Clock* clock );
 
         /** @internal */
         void setThreadName( const std::string& name )
@@ -202,21 +202,21 @@ namespace base
      * lines to be intended by four characters.
      * @version 1.0
      */
-    COBASE_API std::ostream& indent( std::ostream& os );
+    LUNCHBOX_API std::ostream& indent( std::ostream& os );
     /** Decrease the indent of the Log stream. @version 1.0 */
-    COBASE_API std::ostream& exdent( std::ostream& os );
+    LUNCHBOX_API std::ostream& exdent( std::ostream& os );
 
     /** Disable flushing of the Log stream. @version 1.0 */
-    COBASE_API std::ostream& disableFlush( std::ostream& os );
+    LUNCHBOX_API std::ostream& disableFlush( std::ostream& os );
     /** Re-enable flushing of the Log stream. @version 1.0 */
-    COBASE_API std::ostream& enableFlush( std::ostream& os );
+    LUNCHBOX_API std::ostream& enableFlush( std::ostream& os );
     /** Flush the Log stream regardless of the auto-flush state. @version 1.0 */
-    COBASE_API std::ostream& forceFlush( std::ostream& os );
+    LUNCHBOX_API std::ostream& forceFlush( std::ostream& os );
 
     /** Disable printing of the Log header for subsequent lines. @version 1.0 */
-    COBASE_API std::ostream& disableHeader( std::ostream& os );
+    LUNCHBOX_API std::ostream& disableHeader( std::ostream& os );
     /** Re-enable printing of the Log header. @version 1.0 */
-    COBASE_API std::ostream& enableHeader( std::ostream& os );
+    LUNCHBOX_API std::ostream& enableHeader( std::ostream& os );
 }
 }
 

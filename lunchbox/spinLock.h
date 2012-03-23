@@ -41,16 +41,16 @@ namespace detail { class SpinLock; }
     {
     public:
         /** Construct a new lock. @version 1.0 */
-        COBASE_API SpinLock();
+        LUNCHBOX_API SpinLock();
 
         /** Destruct the lock. @version 1.0 */
-        COBASE_API ~SpinLock();
+        LUNCHBOX_API ~SpinLock();
 
         /** Acquire the lock exclusively. @version 1.0 */
-        COBASE_API void set();
+        LUNCHBOX_API void set();
 
         /** Release an exclusive lock. @version 1.0 */
-        COBASE_API void unset();
+        LUNCHBOX_API void unset();
 
         /** 
          * Attempt to acquire the lock exclusively.
@@ -59,13 +59,13 @@ namespace detail { class SpinLock; }
          *         it was not set.
          * @version 1.0
          */
-        COBASE_API bool trySet();
+        LUNCHBOX_API bool trySet();
 
         /** Acquire the lock shared with other readers. @version 1.1.2 */
-        COBASE_API void setRead();
+        LUNCHBOX_API void setRead();
 
         /** Release a shared read lock. @version 1.1.2 */
-        COBASE_API void unsetRead();
+        LUNCHBOX_API void unsetRead();
 
         /** 
          * Attempt to acquire the lock shared with other readers.
@@ -74,7 +74,7 @@ namespace detail { class SpinLock; }
          *         it was not set.
          * @version 1.1.2
          */
-        COBASE_API bool trySetRead();
+        LUNCHBOX_API bool trySetRead();
 
         /**
          * Test if the lock is set.
@@ -83,7 +83,7 @@ namespace detail { class SpinLock; }
          *         it is not set.
          * @version 1.0
          */
-        COBASE_API bool isSet();
+        LUNCHBOX_API bool isSet();
 
         /**
          * Test if the lock is set exclusively.
@@ -91,7 +91,7 @@ namespace detail { class SpinLock; }
          * @return true if the lock is set, false if it is not set.
          * @version 1.1.2
          */
-        COBASE_API bool isSetWrite();
+        LUNCHBOX_API bool isSetWrite();
 
         /**
          * Test if the lock is set shared.
@@ -99,7 +99,7 @@ namespace detail { class SpinLock; }
          * @return true if the lock is set, false if it is not set.
          * @version 1.1.2
          */
-        COBASE_API bool isSetRead();
+        LUNCHBOX_API bool isSetRead();
 
     private:
         detail::SpinLock* const _impl;

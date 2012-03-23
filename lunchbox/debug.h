@@ -34,13 +34,13 @@ namespace base
  * Used to trap into an infinite loop to allow debugging of assertions
  * @internal
  */
-COBASE_API void abort();
+LUNCHBOX_API void abort();
 
 /**
  * Check the consistency of the heap and abort on error (Win32 only).
  * @internal
  */
-COBASE_API void checkHeap();
+LUNCHBOX_API void checkHeap();
 
 /** 
  * Print a textual description of the current system error.
@@ -48,7 +48,7 @@ COBASE_API void checkHeap();
  * The current system error is OS-specific, e.g., errno or GetLastError().
  * @version 1.0
  */
-COBASE_API std::ostream& sysError( std::ostream& os );
+LUNCHBOX_API std::ostream& sysError( std::ostream& os );
 
 /** 
  * Print the current call stack.
@@ -56,9 +56,9 @@ COBASE_API std::ostream& sysError( std::ostream& os );
  * May not be implemented on all platforms.
  * @version 1.0
  */
-COBASE_API std::ostream& backtrace( std::ostream& os );
+LUNCHBOX_API std::ostream& backtrace( std::ostream& os );
 
-COBASE_API std::string demangleTypeID( const char* mangled ); //!< @internal
+LUNCHBOX_API std::string demangleTypeID( const char* mangled ); //!< @internal
 
 /** Print the RTTI name of the given class. @version 1.0 */
 template< class T > inline std::string className( T* object )

@@ -18,7 +18,7 @@
 #ifndef COBASE_REQUESTHANDLER_H
 #define COBASE_REQUESTHANDLER_H
 
-#include <lunchbox/api.h>       // COBASE_API definition
+#include <lunchbox/api.h>       // LUNCHBOX_API definition
 #include <lunchbox/thread.h>    // thread-safety macros
 #include <lunchbox/types.h>
 
@@ -47,10 +47,10 @@ namespace detail { class RequestHandler; }
     {
     public:
         /** Construct a new request handler.  @version 1.0 */
-        COBASE_API RequestHandler();
+        LUNCHBOX_API RequestHandler();
 
         /** Destruct the request handler. */
-        COBASE_API ~RequestHandler();
+        LUNCHBOX_API ~RequestHandler();
 
         /** 
          * Register a new request.
@@ -60,7 +60,7 @@ namespace detail { class RequestHandler; }
          * @return the request identifier.
          * @version 1.0
          */
-        COBASE_API uint32_t registerRequest( void* data = 0 );
+        LUNCHBOX_API uint32_t registerRequest( void* data = 0 );
 
         /** 
          * Unregister a request.
@@ -72,7 +72,7 @@ namespace detail { class RequestHandler; }
          * @param requestID the request identifier.
          * @version 1.0
          */
-        COBASE_API void unregisterRequest( const uint32_t requestID );
+        LUNCHBOX_API void unregisterRequest( const uint32_t requestID );
 
         /**
          * Wait a given time for the completion of a request.
@@ -88,20 +88,20 @@ namespace detail { class RequestHandler; }
          * @return true if the request was served, false if not.
          * @version 1.0
          */
-        COBASE_API bool waitRequest( const uint32_t requestID, void*& result,
+        LUNCHBOX_API bool waitRequest( const uint32_t requestID, void*& result,
                                const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
 
         /** Wait for a request with an uint32_t result. @version 1.0 */
-        COBASE_API bool waitRequest( const uint32_t requestID, uint32_t& result,
+        LUNCHBOX_API bool waitRequest( const uint32_t requestID, uint32_t& result,
                                const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
         /** Wait for a request with a bool result. @version 1.0 */
-        COBASE_API bool waitRequest( const uint32_t requestID, bool& result,
+        LUNCHBOX_API bool waitRequest( const uint32_t requestID, bool& result,
                                const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
         /** Wait for a request with an uint128_t result. @version 1.0 */
-        COBASE_API bool waitRequest(const uint32_t requestID, uint128_t& result,
+        LUNCHBOX_API bool waitRequest(const uint32_t requestID, uint128_t& result,
                                const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
         /** Wait for a request without a result. @version 1.0 */
-        COBASE_API bool waitRequest( const uint32_t requestID );
+        LUNCHBOX_API bool waitRequest( const uint32_t requestID );
 
         /** 
          * Poll for the completion of a request.
@@ -112,7 +112,7 @@ namespace detail { class RequestHandler; }
          * @return true if the request has been served, false if it is pending.
          * @version 1.0
          */
-        COBASE_API bool isRequestServed( const uint32_t requestID ) const;
+        LUNCHBOX_API bool isRequestServed( const uint32_t requestID ) const;
 
         /** 
          * Retrieve the user-specific data for a request.
@@ -121,7 +121,7 @@ namespace detail { class RequestHandler; }
          * @return the user-specific data for the request.
          * @version 1.0
          */
-        COBASE_API void* getRequestData( const uint32_t requestID );
+        LUNCHBOX_API void* getRequestData( const uint32_t requestID );
 
         /** 
          * Serve a request with a void* result.
@@ -130,30 +130,30 @@ namespace detail { class RequestHandler; }
          * @param result the result of the request.
          * @version 1.0
          */
-        COBASE_API void serveRequest( const uint32_t requestID,
+        LUNCHBOX_API void serveRequest( const uint32_t requestID,
                                         void* result = 0 );
         /** Serve a request with an uint32_t result. @version 1.0 */
-        COBASE_API void serveRequest( const uint32_t requestID,
+        LUNCHBOX_API void serveRequest( const uint32_t requestID,
                                         uint32_t result );
         /** Serve a request with a bool result. @version 1.0 */
-        COBASE_API void serveRequest( const uint32_t requestID, bool result );
+        LUNCHBOX_API void serveRequest( const uint32_t requestID, bool result );
         /** Serve a request with an uint128_t result. @version 1.0 */
-        COBASE_API void serveRequest( const uint32_t requestID,
+        LUNCHBOX_API void serveRequest( const uint32_t requestID,
                                       const uint128_t& result );
         /**
          * @return true if this request handler has pending requests.
          * @version 1.0
          */
-        COBASE_API bool hasPendingRequests() const;
+        LUNCHBOX_API bool hasPendingRequests() const;
 
     private:
         detail::RequestHandler* const _impl;
-        friend COBASE_API std::ostream& operator << ( std::ostream&,
+        friend LUNCHBOX_API std::ostream& operator << ( std::ostream&,
                                                      const RequestHandler& );
         EQ_TS_VAR( _thread );
     };
 
-    COBASE_API std::ostream& operator << ( std::ostream&,
+    LUNCHBOX_API std::ostream& operator << ( std::ostream&,
                                            const RequestHandler& );
 }
 

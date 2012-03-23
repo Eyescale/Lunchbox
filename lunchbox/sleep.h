@@ -26,7 +26,7 @@ namespace co
 namespace base
 {
     /** Sleep the current thread for a number of milliseconds. @version 1.0 */
-    COBASE_API void sleep( const uint32_t milliSeconds );
+    LUNCHBOX_API void sleep( const uint32_t milliSeconds );
 }
 }
 #endif  // COBASE_SLEEP_H

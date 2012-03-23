@@ -35,14 +35,14 @@ namespace base
  * @return all file names matching the given pattern in the given directory.
  * @version 1.0
  */
-COBASE_API Strings searchDirectory( const std::string& directory,
+LUNCHBOX_API Strings searchDirectory( const std::string& directory,
                                     const std::string& pattern );
 
 /** @return the file name part of a path. @version 1.0 */
-COBASE_API std::string getFilename( const std::string& filename );
+LUNCHBOX_API std::string getFilename( const std::string& filename );
 
 /** @return the directory name part of a path. @version 1.0 */
-COBASE_API std::string getDirname( const std::string& filename );
+LUNCHBOX_API std::string getDirname( const std::string& filename );
 
 }
 }

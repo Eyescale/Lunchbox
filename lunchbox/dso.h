@@ -35,10 +35,10 @@ namespace detail { class DSO; }
     {
     public:
         /** Construct a new dynamic shared object. @version 1.0 */
-        COBASE_API DSO();
+        LUNCHBOX_API DSO();
 
         /** Destruct this DSO handle. @version 1.0 */
-        COBASE_API ~DSO();
+        LUNCHBOX_API ~DSO();
 
         /** 
          * Open a dynamic shared object.
@@ -47,23 +47,23 @@ namespace detail { class DSO; }
          * @return true if the DSO was opened, false upon error.
          * @version 1.0
          */
-        COBASE_API bool open( const std::string& fileName );
+        LUNCHBOX_API bool open( const std::string& fileName );
 
         /**
          * Close the DSO, invalidates retrieved function pointers.
          * @version 1.0
          */
-        COBASE_API void close();
+        LUNCHBOX_API void close();
     
         /**
          * @return a function pointer in the DSO, or 0 if the function is not
          *         exported by the DSO.
          * @version 1.0
          */
-        COBASE_API void* getFunctionPointer( const std::string& functionName );
+        LUNCHBOX_API void* getFunctionPointer( const std::string& functionName );
 
         /** @return true if the DSO is loaded. @version 1.0 */
-        COBASE_API bool isOpen() const;
+        LUNCHBOX_API bool isOpen() const;
 
     private:
         detail::DSO* const _impl;

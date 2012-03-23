@@ -33,10 +33,10 @@ namespace detail { class TimedLock; }
     {
     public:
         /** Construct a new timed lock. @version 1.0 */
-        COBASE_API TimedLock();
+        LUNCHBOX_API TimedLock();
 
         /** Destruct the lock. @version 1.0 */
-        COBASE_API ~TimedLock();
+        LUNCHBOX_API ~TimedLock();
 
         /** 
          * Set the lock. 
@@ -46,10 +46,10 @@ namespace detail { class TimedLock; }
          * @return true if the lock was acquired, false if not.
          * @version 1.0
          */
-        COBASE_API bool set( const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
+        LUNCHBOX_API bool set( const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
 
         /** Release the lock. @version 1.0 */
-        COBASE_API void unset();
+        LUNCHBOX_API void unset();
 
         /** 
          * Attempt to set the lock.
@@ -57,7 +57,7 @@ namespace detail { class TimedLock; }
          * @return true if the lock was acquired, false if not.
          * @version 1.0
          */
-        COBASE_API bool trySet();
+        LUNCHBOX_API bool trySet();
 
         /** 
          * Test if the lock is set.
@@ -65,7 +65,7 @@ namespace detail { class TimedLock; }
          * @return true if the lock is set, false if it is not set.
          * @version 1.0
          */
-        COBASE_API bool isSet();
+        LUNCHBOX_API bool isSet();
 
     private:
         detail::TimedLock* const _impl;

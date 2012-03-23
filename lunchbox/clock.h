@@ -33,44 +33,44 @@ namespace detail { class Clock; }
     {
     public :
         /** Construct a new clock. @version 1.0 */
-        COBASE_API Clock();
+        LUNCHBOX_API Clock();
 
         /** Destroy the clock. @version 1.0 */
-        COBASE_API ~Clock();
+        LUNCHBOX_API ~Clock();
 
         /**
          * Reset the base time of the clock to the current time.
          * @version 1.0
          */
-        COBASE_API void reset();
+        LUNCHBOX_API void reset();
 
         /** Set the current time of the clock. @version 1.0 */
-        COBASE_API void set( const int64_t time );
+        LUNCHBOX_API void set( const int64_t time );
 
         /** 
          * @return the elapsed time in milliseconds since the last clock reset.
          * @version 1.0
          */
-        COBASE_API float getTimef() const;
+        LUNCHBOX_API float getTimef() const;
 
         /** 
          * @return the elapsed time in milliseconds since the last clock reset
          *         and atomically reset the clock.
          * @version 1.0
          */
-        COBASE_API float resetTimef();
+        LUNCHBOX_API float resetTimef();
 
         /** 
          * @return the elapsed time in milliseconds since the last clock reset.
          * @version 1.0
          */
-        COBASE_API int64_t getTime64() const;
+        LUNCHBOX_API int64_t getTime64() const;
 
         /** 
          * @return the elapsed time in milliseconds since the last clock reset.
          * @version 1.0
          */
-        COBASE_API double getTimed() const;
+        LUNCHBOX_API double getTimed() const;
 
         /** 
          * Returns the millisecond part of the time elapsed since the last
@@ -81,7 +81,7 @@ namespace detail { class Clock; }
          * @return the millisecond part of the time elapsed. 
          * @version 1.0
          */
-        COBASE_API float getMilliSecondsf() const;
+        LUNCHBOX_API float getMilliSecondsf() const;
 
     private:
         detail::Clock* const _impl;

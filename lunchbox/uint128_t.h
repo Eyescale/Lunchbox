@@ -70,7 +70,7 @@ namespace base
             }
 
         /** Assign an 128 bit value from a std::string. @version 1.0 */
-        COBASE_API uint128_t& operator = ( const std::string& from );
+        LUNCHBOX_API uint128_t& operator = ( const std::string& from );
 
         /**
          * @return true if the values are equal, false if not.
@@ -188,7 +188,7 @@ namespace base
         }
 
         /** The NULL value. @version 1.1.1 */
-        static COBASE_API const uint128_t ZERO;
+        static LUNCHBOX_API const uint128_t ZERO;
 
     private:
         uint64_t _high;

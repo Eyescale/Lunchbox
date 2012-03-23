@@ -32,7 +32,7 @@ namespace base
      * @return true if the library was successfully initialised, false otherwise
      * @version 1.0
      */
-    COBASE_API bool init( const int argc, char** argv );
+    LUNCHBOX_API bool init( const int argc, char** argv );
 
     /**
      * De-initialize the Equalizer base classes.
@@ -41,7 +41,7 @@ namespace base
      *         <code>false</code> otherwise.
      * @version 1.0
      */
-    COBASE_API bool exit();
+    LUNCHBOX_API bool exit();
 }
 }
 #endif // COBASE_INIT_H

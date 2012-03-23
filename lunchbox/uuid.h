@@ -39,7 +39,7 @@ namespace base
          * UUID is cleared, i.e., it is equal to UUID::ZERO.
          * @version 1.0
          */
-        COBASE_API explicit UUID( const bool generate = false );
+        LUNCHBOX_API explicit UUID( const bool generate = false );
 
         /**
          * Construct a new universally unique identifier.

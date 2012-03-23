@@ -30,7 +30,7 @@ namespace base
     {
     public:
         /** Execute the given command in a new process. @version 1.0 */
-        COBASE_API static bool run( const std::string& command );
+        LUNCHBOX_API static bool run( const std::string& command );
 
     private:
         Launcher(){}

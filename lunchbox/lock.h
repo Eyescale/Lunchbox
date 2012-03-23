@@ -35,16 +35,16 @@ namespace detail { class Lock; }
     {
     public:
         /** Construct a new lock. @version 1.0 */
-        COBASE_API Lock();
+        LUNCHBOX_API Lock();
 
         /** Destruct the lock. @version 1.0 */
-        COBASE_API ~Lock();
+        LUNCHBOX_API ~Lock();
 
         /** Acquire the lock. @version 1.0 */
-        COBASE_API void set();
+        LUNCHBOX_API void set();
 
         /** Release the lock. @version 1.0 */
-        COBASE_API void unset();
+        LUNCHBOX_API void unset();
 
         /** 
          * Attempt to acquire the lock.
@@ -55,7 +55,7 @@ namespace detail { class Lock; }
          *         it was not set.
          * @version 1.0
          */
-        COBASE_API bool trySet();
+        LUNCHBOX_API bool trySet();
 
         /** 
          * Test if the lock is set.
@@ -64,7 +64,7 @@ namespace detail { class Lock; }
          *         it is not set.
          * @version 1.0
          */
-        COBASE_API bool isSet();
+        LUNCHBOX_API bool isSet();
 
     private:
         detail::Lock* const _impl;

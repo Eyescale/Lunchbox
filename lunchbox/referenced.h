@@ -18,7 +18,7 @@
 #ifndef COBASE_REFERENCED_H
 #define COBASE_REFERENCED_H
 
-#include <lunchbox/api.h>      // for COBASE_API
+#include <lunchbox/api.h>      // for LUNCHBOX_API
 #include <lunchbox/atomic.h>   // member
 #include <lunchbox/debug.h>    // for EQERROR
 #include <lunchbox/refPtr.h>   // CO_REFERENCED_ARGS
@@ -139,7 +139,7 @@ namespace base
         /** Assign another object to this object. @version 1.1.3 */
         Referenced& operator = ( const Referenced& rhs ) { return *this; }
 
-        COBASE_API void deleteReferenced( const Referenced* object ) const;
+        LUNCHBOX_API void deleteReferenced( const Referenced* object ) const;
 
     private:
         mutable a_int32_t _refCount;

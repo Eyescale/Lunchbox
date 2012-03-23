@@ -19,7 +19,7 @@
 #ifndef COBASE_THREAD_H
 #define COBASE_THREAD_H
 
-#include <lunchbox/api.h>         // COBASE_API definition
+#include <lunchbox/api.h>         // LUNCHBOX_API definition
 #include <lunchbox/debug.h>       // debug macros in thread-safety checks
 #include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/threadID.h>    // member
@@ -46,13 +46,13 @@ namespace detail { class Thread; }
         };
 
         /** Construct a new thread. @version 1.0 */
-        COBASE_API Thread();
+        LUNCHBOX_API Thread();
 
         /** Copy constructor. @version 1.1.2 */
-        COBASE_API Thread( const Thread& from );
+        LUNCHBOX_API Thread( const Thread& from );
 
         /** Destruct the thread. @version 1.0 */
-        COBASE_API virtual ~Thread();
+        LUNCHBOX_API virtual ~Thread();
 
         /** 
          * Start the thread.
@@ -62,7 +62,7 @@ namespace detail { class Thread; }
          * @sa init(), run()
          * @version 1.0
          */
-        COBASE_API virtual bool start();
+        LUNCHBOX_API virtual bool start();
 
         /** 
          * The init function for the child thread.
@@ -95,7 +95,7 @@ namespace detail { class Thread; }
          *
          * @version 1.0
          */
-        COBASE_API virtual void exit();
+        LUNCHBOX_API virtual void exit();
 
         /** 
          * Cancel (stop) the child thread.
@@ -103,7 +103,7 @@ namespace detail { class Thread; }
          * This function is not to be called from the child thread.
          * @version 1.0
          */
-        COBASE_API void cancel();
+        LUNCHBOX_API void cancel();
 
         /** 
          * Wait for the exit of the child thread.
@@ -111,7 +111,7 @@ namespace detail { class Thread; }
          * @return true if the thread was joined, false otherwise.
          * @version 1.0
          */
-        COBASE_API bool join();
+        LUNCHBOX_API bool join();
 
         /** 
          * Return if the thread is stopped.
@@ -122,7 +122,7 @@ namespace detail { class Thread; }
          * @return true if the thread is stopped, false if not.
          * @version 1.0
          */
-        COBASE_API bool isStopped() const;
+        LUNCHBOX_API bool isStopped() const;
 
         /** 
          * Return if the thread is running.
@@ -133,26 +133,26 @@ namespace detail { class Thread; }
          * @return true if the thread is running, false if not.
          * @version 1.0
          */
-        COBASE_API bool isRunning() const;
+        LUNCHBOX_API bool isRunning() const;
 
         /** 
          * @return true if the calling thread is the same thread as this
          *         thread, false otherwise.
          * @version 1.0
          */
-        COBASE_API bool isCurrent() const;
+        LUNCHBOX_API bool isCurrent() const;
 
         /** @return a unique identifier for the calling thread. @version 1.0 */
-        COBASE_API static ThreadID getSelfThreadID();
+        LUNCHBOX_API static ThreadID getSelfThreadID();
 
         /** @internal */
-        COBASE_API static void yield();
+        LUNCHBOX_API static void yield();
 
         /** @internal */
         static void pinCurrentThread();
 
         /** @internal */
-        COBASE_API static void setName( const std::string& name );
+        LUNCHBOX_API static void setName( const std::string& name );
 
         /** @internal
          * Set the affinity of the calling thread.
@@ -164,7 +164,7 @@ namespace detail { class Thread; }
          *
          * @param affinity the affinity value (see above).
          */
-        COBASE_API static void setAffinity( const int32_t affinity );
+        LUNCHBOX_API static void setAffinity( const int32_t affinity );
 
     private:
         detail::Thread* const _impl;

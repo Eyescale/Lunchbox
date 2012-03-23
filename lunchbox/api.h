@@ -20,8 +20,8 @@
  *
  * Defines export visibility macros for co::base.
  */
-#ifndef COBASE_API_H
-#define COBASE_API_H
+#ifndef LUNCHBOX_API_H
+#define LUNCHBOX_API_H
 
 #include <lunchbox/defines.h>
 
@@ -34,11 +34,11 @@
 #endif // _MSC_VER
 
 #if defined(LUNCHBOX_STATIC)
-#  define COBASE_API
+#  define LUNCHBOX_API
 #elif defined(LUNCHBOX_SHARED)
-#  define COBASE_API EQ_DLLEXPORT
+#  define LUNCHBOX_API EQ_DLLEXPORT
 #else
-#  define COBASE_API EQ_DLLIMPORT
+#  define LUNCHBOX_API EQ_DLLIMPORT
 #endif
 
-#endif //COBASE_API_H
+#endif //LUNCHBOX_API_H

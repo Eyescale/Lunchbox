@@ -19,7 +19,7 @@
 #define LUNCHBOX_VERSION_H
 
 #include <lunchbox/api.h>
-#include <lunchbox/base/types.h>
+#include <lunchbox/types.h>
 #include <string>
 
 namespace lunchbox

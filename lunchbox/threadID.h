@@ -18,7 +18,7 @@
 #ifndef COBASE_THREADID_H
 #define COBASE_THREADID_H
 
-#include <lunchbox/api.h>     // COBASE_API definition
+#include <lunchbox/api.h>     // LUNCHBOX_API definition
 
 #include <ostream>
 
@@ -33,38 +33,38 @@ namespace detail { class ThreadID; }
     {
     public:
         /** Construct a new, zero thread identifier. @version 1.0 */
-        COBASE_API ThreadID();
+        LUNCHBOX_API ThreadID();
 
         /** Construct a copy of a thread identifier. @version 1.0 */
-        COBASE_API ThreadID( const ThreadID& from );
+        LUNCHBOX_API ThreadID( const ThreadID& from );
 
         /** Destruct this thread identifier. @version 1.0 */
-        COBASE_API ~ThreadID();
+        LUNCHBOX_API ~ThreadID();
 
         /** Assign another thread identifier. @version 1.0 */
-        COBASE_API ThreadID& operator = ( const ThreadID& from );
+        LUNCHBOX_API ThreadID& operator = ( const ThreadID& from );
 
         /** @return true if the threads are equal, false if not. @version 1.0 */
-        COBASE_API bool operator == ( const ThreadID& rhs ) const;
+        LUNCHBOX_API bool operator == ( const ThreadID& rhs ) const;
 
         /**
          * @return true if the threads are different, false otherwise.
          * @version 1.0
          */
-        COBASE_API bool operator != ( const ThreadID& rhs ) const;
+        LUNCHBOX_API bool operator != ( const ThreadID& rhs ) const;
         
-        COBASE_API static const ThreadID ZERO; //!< a 'NULL' thread identifier
+        LUNCHBOX_API static const ThreadID ZERO; //!< a 'NULL' thread identifier
 
     private:
         detail::ThreadID* const _impl;
         friend class Thread;
 
-        friend COBASE_API 
+        friend LUNCHBOX_API 
         std::ostream& operator << ( std::ostream& os, const ThreadID& );
     };
 
     /** Print the thread to the given output stream. */
-    COBASE_API std::ostream& operator << ( std::ostream&, const ThreadID& );
+    LUNCHBOX_API std::ostream& operator << ( std::ostream&, const ThreadID& );
 }
 }
 

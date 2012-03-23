@@ -41,13 +41,13 @@ namespace detail { class RNG; }
     {
     public:
         /** Construct a new random number generator. @version 1.0 */
-        COBASE_API RNG();
+        LUNCHBOX_API RNG();
 
         /** Destruct the random number generator. @version 1.0 */
-        COBASE_API ~RNG();
+        LUNCHBOX_API ~RNG();
 
         /** Re-initialize the seed value for pseudo RNG's. @version 1.0 */
-        COBASE_API void reseed();
+        LUNCHBOX_API void reseed();
 
         /**
           * Generate a random number.
@@ -68,10 +68,10 @@ namespace detail { class RNG; }
     private:
         detail::RNG* const _impl;
 
-        static COBASE_API bool _init();
+        static LUNCHBOX_API bool _init();
         static void _exit();
-        friend COBASE_API bool init( const int argc, char** argv );
-        COBASE_API bool _get( void* data, size_t size );
+        friend LUNCHBOX_API bool init( const int argc, char** argv );
+        LUNCHBOX_API bool _get( void* data, size_t size );
     };
 
     template<> inline float RNG::get()

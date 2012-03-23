@@ -36,28 +36,28 @@ namespace detail { class Condition; }
     {
     public:
         /** Construct a new condition variable. @version 1.0 */
-        COBASE_API Condition();
+        LUNCHBOX_API Condition();
 
         /** Destruct this condition variable. @version 1.0 */
-        COBASE_API ~Condition();
+        LUNCHBOX_API ~Condition();
 
         /** Lock the mutex. @version 1.0 */
-        COBASE_API void lock();
+        LUNCHBOX_API void lock();
 
         /** Unlock the mutex. @version 1.0 */
-        COBASE_API void unlock();
+        LUNCHBOX_API void unlock();
 
         /** Signal the condition. @version 1.0 */
-        COBASE_API void signal();
+        LUNCHBOX_API void signal();
 
         /** Broadcast the condition. @version 1.0 */
-        COBASE_API void broadcast();
+        LUNCHBOX_API void broadcast();
 
         /**
          * Atomically unlock the mutex, wait for a signal and relock the mutex.
          * @version 1.0
          */
-        COBASE_API void wait();
+        LUNCHBOX_API void wait();
 
         /**
          * Atomically unlock the mutex, wait for a signal and relock the mutex.
@@ -69,7 +69,7 @@ namespace detail { class Condition; }
          * @return true on success, false on timeout.
          * @version 1.0
          */
-        COBASE_API bool timedWait( const uint32_t timeout );
+        LUNCHBOX_API bool timedWait( const uint32_t timeout );
 
     private:
         detail::Condition* const _impl;

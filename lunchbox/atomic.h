@@ -58,10 +58,10 @@ template< class T > class Atomic
 {
 public:
     /** @return the old value, then add the given increment. */
-    COBASE_API static T getAndAdd( T& value, const T increment );
+    LUNCHBOX_API static T getAndAdd( T& value, const T increment );
 
     /** @return the old value, then substract the increment. */
-    COBASE_API static T getAndSub( T& value, const T increment );
+    LUNCHBOX_API static T getAndSub( T& value, const T increment );
 
     /** @return the new value after adding the given increment. */
     static T addAndGet( T& value, const T increment );
@@ -70,13 +70,13 @@ public:
     static T subAndGet( T& value, const T increment );
 
     /** @return the new value after incrementing the value. */
-    COBASE_API static T incAndGet( T& value );
+    LUNCHBOX_API static T incAndGet( T& value );
 
     /** @return the new value after decrementing the value. */
-    COBASE_API static T decAndGet( T& value );
+    LUNCHBOX_API static T decAndGet( T& value );
 
     /** Perform a compare-and-swap atomic operation. */
-    COBASE_API static bool compareAndSwap( T* value, const T expected,
+    LUNCHBOX_API static bool compareAndSwap( T* value, const T expected,
                                            const T newValue );
 
     /** Construct a new atomic variable with an initial value. @version 1.0 */

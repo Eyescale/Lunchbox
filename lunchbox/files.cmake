@@ -76,6 +76,7 @@ set(LUNCHBOX_SOURCES
   timedLock.cpp
   uint128_t.cpp
   uuid.cpp
+  version.cpp
   )
 
 set(LUNCHBOX_ALL ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_HEADERS}

@@ -24,7 +24,6 @@
 #include "Change.h"
 #include "Node.h"
 
-#include <dash/Context.h>
 #include <dash/Node.h>
 
 namespace dash
@@ -75,6 +74,7 @@ void Commit::add( const Change& change )
         dash::Context::getCurrent().map( change.attribute, *context_ );
 
     changes_->push_back( change );
+    const_cast<Change&>(change).commit = this;
 }
 
 void Commit::apply() const

@@ -124,12 +124,7 @@ public:
         }
 
 private:
-    friend class boost::serialization::access;
-    template< class Archive >
-    void serialize( Archive& ar, const unsigned int version )
-    {
-        ar & get();
-    }
+    SERIALIZABLE()
 
     typedef Vector< Value > Values;
     Values values_;
@@ -138,6 +133,21 @@ private:
     ContextPtr( const ContextPtr& from );
     ContextPtr& operator = ( const ContextPtr& from );
 };
+
+template< class T >
+template< class Archive >
+inline void ContextPtr< T >::save( Archive& ar, const unsigned int version ) const
+{
+    ar << get();
+}
+
+template< class T >
+template< class Archive >
+inline void ContextPtr< T >::load( Archive& ar, const unsigned int version )
+{
+    setup();
+    ar >> get();
+}
 
 }
 }

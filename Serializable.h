@@ -38,13 +38,13 @@
     template<> DASH_API                                                 \
     void class::save( oarchive& ar, const unsigned int version ) const  \
     {                                                                   \
-        ar << *getImpl();                                               \
+        ar << *impl_;                                               \
     }                                                                   \
                                                                         \
     template<> DASH_API                                                 \
     void class::load( iarchive& ar, const unsigned int version )        \
     {                                                                   \
-        ar >> *getImpl();                                               \
+        ar >> *impl_;                                               \
     }
 
 //! Provides serialization implementation with boost.textArchive for classes

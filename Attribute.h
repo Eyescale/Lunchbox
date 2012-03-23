@@ -71,13 +71,13 @@ private:
 template< class Archive >
 inline void Attribute::save( Archive& ar, const unsigned int version ) const
 {
-    ar << *value_;
+    ar << value_;
 }
 
 template< class Archive >
 inline void Attribute::load( Archive& ar, const unsigned int version )
 {
-    ar >> *value_;
+    ar >> value_;
 }
 
 }

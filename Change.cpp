@@ -49,6 +49,30 @@ Change::Change( dash::AttributePtr a, boost::shared_ptr< detail::Any > v )
         , value( v )
 {}
 
+bool Change::operator == ( const Change& rhs ) const
+{
+    if( this == &rhs )
+        return true;
+
+    if( type != rhs.type )
+        return false;
+
+    if( node && rhs.node && *node != *rhs.node )
+        return false;
+
+    if( child && rhs.child && *child != *rhs.child )
+        return false;
+
+    if( attribute && rhs.attribute && *attribute != *rhs.attribute )
+        return false;
+
+    if( value && rhs.value && *value != *rhs.value )
+        return false;
+
+    return true;
+}
+
+
 std::ostream& operator << ( std::ostream& os, const Change& change )
 {
     return os << "Change " << change.type;

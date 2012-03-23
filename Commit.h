@@ -38,6 +38,9 @@ public:
     Commit();
     ~Commit();
 
+    bool operator == ( const Commit& rhs ) const;
+    bool operator != ( const Commit& rhs ) const { return !(*this == rhs); }
+
     bool empty() const { return changes_->empty(); }
 
     void add( const Change& change );

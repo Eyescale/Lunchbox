@@ -48,6 +48,9 @@ struct Change
     Change( const Type t, NodePtr n, dash::AttributePtr a );
     Change( dash::AttributePtr a, boost::shared_ptr<detail::Any> value );
 
+    bool operator == ( const Change& rhs ) const;
+    bool operator != ( const Change& rhs ) const { return !(*this == rhs); }
+
     Type type;
     NodePtr node;
     dash::NodePtr child;

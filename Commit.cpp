@@ -42,6 +42,26 @@ Commit::~Commit()
 {
 }
 
+bool Commit::operator == ( const Commit& rhs ) const
+{
+    if( this == &rhs )
+        return true;
+
+    if( changes_->size() != rhs.changes_->size( ))
+        return false;
+
+    ChangesCIter it = changes_->begin();
+    ChangesCIter rhsIt = rhs.changes_->begin();
+    for( ; it != changes_->end() && rhsIt != rhs.changes_->end();
+         ++it, ++rhsIt )
+    {
+        if( *it != *rhsIt )
+            return false;
+    }
+
+    return true;
+}
+
 void Commit::add( const Change& change )
 {
     EQASSERT( Context::getNumSlots() > 1 );

@@ -20,9 +20,7 @@
 
 #include <cstdlib>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace
 {
@@ -31,7 +29,7 @@ unsigned _nThreads = _setupNThreads();
 
 static unsigned _setupNThreads()
 {
-#ifdef CO_USE_OPENMP
+#ifdef LUNCHBOX_USE_OPENMP
     const char* nThreadsEnv = getenv( "OMP_NUM_THREADS" );
     unsigned    nThreads    = 0;
 
@@ -55,5 +53,4 @@ unsigned OMP::getNThreads()
     return _nThreads;
 }
 
-}
 }

@@ -26,19 +26,17 @@
 // assertions
 // #define EQ_RELEASE_ASSERT
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 /**
- * Used to trap into an infinite loop to allow debugging of assertions
  * @internal
+ * Used to trap into an infinite loop to allow debugging of assertions
  */
 LUNCHBOX_API void abort();
 
 /**
- * Check the consistency of the heap and abort on error (Win32 only).
  * @internal
+ * Check the consistency of the heap and abort on error (Win32 only).
  */
 LUNCHBOX_API void checkHeap();
 
@@ -65,7 +63,6 @@ template< class T > inline std::string className( T* object )
     { return demangleTypeID( typeid( *object ).name( )); }
 
 }
-}
 
 #ifdef NDEBUG
 
@@ -74,15 +71,15 @@ template< class T > inline std::string className( T* object )
     {                                                                   \
         if( !(x) )                                                      \
             EQERROR << "##### Assert: " << #x << " #####" << std::endl  \
-                    << co::base::forceFlush;                            \
-        co::base::checkHeap();                                          \
+                    << lunchbox::forceFlush;                            \
+        lunchbox::checkHeap();                                          \
     }
 #    define EQASSERTINFO(x, info)                                       \
     {                                                                   \
         if( !(x) )                                                      \
             EQERROR << "##### Assert: " << #x << " [" << info << "] #####" \
-                    << std::endl << co::base::forceFlush;               \
-        co::base::checkHeap();                                          \
+                    << std::endl << lunchbox::forceFlush;               \
+        lunchbox::checkHeap();                                          \
     }
 #    define EQCHECK(x) { const bool eqOk = x; EQASSERTINFO( eqOk, #x ) }
 #  else
@@ -92,15 +89,15 @@ template< class T > inline std::string className( T* object )
 #  endif
 
 #  define EQUNIMPLEMENTED { EQERROR << "Unimplemented code" << std::endl \
-                                    << co::base::forceFlush; }
+                                    << lunchbox::forceFlush; }
 #  define EQUNREACHABLE   { EQERROR << "Unreachable code" << std::endl  \
-                                    << co::base::forceFlush; }
+                                    << lunchbox::forceFlush; }
 #  define EQDONTCALL                                                    \
     { EQERROR << "Code is not supposed to be called in this context"    \
-              << std::endl << co::base::forceFlush; }
+              << std::endl << lunchbox::forceFlush; }
 #  define EQABORT( info ) {                                         \
         EQERROR << "##### Abort: " << info << " #####" << std::endl \
-                << co::base::forceFlush; }
+                << lunchbox::forceFlush; }
 
 #else // NDEBUG
 
@@ -109,37 +106,37 @@ template< class T > inline std::string className( T* object )
         if( !(x) )                                                      \
         {                                                               \
             EQERROR << "Assert: " << #x << " ";                         \
-            co::base::abort();                                          \
+            lunchbox::abort();                                          \
         }                                                               \
-        co::base::checkHeap();                                          \
+        lunchbox::checkHeap();                                          \
     } 
 #  define EQASSERTINFO(x, info)                                         \
     {                                                                   \
         if( !(x) )                                                      \
         {                                                               \
             EQERROR << "Assert: " << #x << " [" << info << "] ";        \
-            co::base::abort();                                          \
+            lunchbox::abort();                                          \
         }                                                               \
-        co::base::checkHeap();                                          \
+        lunchbox::checkHeap();                                          \
     }
 
 #  define EQUNIMPLEMENTED                                               \
-    { EQERROR << "Unimplemented code in " << co::base::className( this ) \
+    { EQERROR << "Unimplemented code in " << lunchbox::className( this ) \
               << " ";                                                   \
-        co::base::abort(); }
+        lunchbox::abort(); }
 #  define EQUNREACHABLE                                                 \
-    { EQERROR << "Unreachable code in " << co::base::className( this )  \
+    { EQERROR << "Unreachable code in " << lunchbox::className( this )  \
               << " ";                                                   \
-        co::base::abort(); }
+        lunchbox::abort(); }
 #  define EQDONTCALL                                                    \
     { EQERROR << "Code is not supposed to be called in this context, type " \
-              << co::base::className( this ) << " " ;                   \
-        co::base::abort(); }
+              << lunchbox::className( this ) << " " ;                   \
+        lunchbox::abort(); }
 
 #  define EQCHECK(x) { const bool eqOk = x; EQASSERTINFO( eqOk, #x ) }
 #  define EQABORT( info ) {                                             \
         EQERROR << "Abort: " << info;                                   \
-        co::base::abort(); }
+        lunchbox::abort(); }
 
 #endif // NDEBUG
 

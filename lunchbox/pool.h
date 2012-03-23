@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010, Stefan Eilemann <eile@eyescale.ch> 
+/* Copyright (c) 2010-2012, Stefan Eilemann <eile@eyescale.ch> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,9 +23,7 @@
 #include <lunchbox/spinLock.h>     // member
 #include <lunchbox/thread.h>       // thread-safety checks
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /** An object allocation pool. */
     template< typename T, bool locked = false > class Pool : public NonCopyable
@@ -75,6 +73,5 @@ namespace base
         std::vector< T* > _cache;
         EQ_TS_VAR( _thread );
     };
-}
 }
 #endif // COBASE_POOL_H

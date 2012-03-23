@@ -25,9 +25,7 @@
 
 #include <limits>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class RNG; }
 
@@ -92,6 +90,5 @@ namespace detail { class RNG; }
     {
         return ( get< uint32_t >() & 1 );
     }
-}
 }
 #endif  // COBASE_RNG_H

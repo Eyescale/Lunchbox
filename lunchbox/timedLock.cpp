@@ -20,9 +20,7 @@
 #include "condition.h"
 #include "debug.h"
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail
 {
@@ -30,7 +28,7 @@ class TimedLock
 {
 public:
     TimedLock() : locked( false ) {}
-    base::Condition condition;
+    lunchbox::Condition condition;
     bool locked;
 };
 }
@@ -97,5 +95,4 @@ bool TimedLock::isSet()
     return _impl->locked;
 }
 
-}
 }

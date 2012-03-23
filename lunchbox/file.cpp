@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com> 
- *               2009-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+ *               2009-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -27,9 +27,7 @@
 
 #include <sys/stat.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 
 Strings searchDirectory( const std::string& directory,
@@ -123,5 +121,4 @@ std::string getDirname( const std::string& filename )
     return filename.substr( 0, lastSeparator );
 }
 
-}
 }

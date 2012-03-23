@@ -27,9 +27,7 @@
 #  include <sys/timeb.h>
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail
 {
@@ -138,5 +136,4 @@ bool Condition::timedWait( const uint32_t timeout )
     return true;
 }
 
-}
 }

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,9 +20,7 @@
 
 #include <lunchbox/api.h> // for LUNCHBOX_API
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /** Base class to make objects non-copyable. */
     class NonCopyable 
@@ -37,7 +35,5 @@ namespace base
         /** Disable assignment operator. */
         const NonCopyable& operator = ( const NonCopyable& ); 
     };
-}
-
 }
 #endif //COBASE_NONCOPYABLE_H

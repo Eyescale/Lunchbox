@@ -22,9 +22,7 @@
 #include <lunchbox/debug.h>
 #include <lunchbox/types.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class Condition; }
 
@@ -74,7 +72,6 @@ namespace detail { class Condition; }
     private:
         detail::Condition* const _impl;
     };
-}
 }
 
 #endif //COBASE_CONDITION_H

@@ -22,9 +22,7 @@
 #include <pthread.h>
 #include <cstring>   // for memset
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail
 {
@@ -80,5 +78,4 @@ std::ostream& operator << ( std::ostream& os, const ThreadID& threadID )
     return os;
 }
 
-}
 }

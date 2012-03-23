@@ -21,9 +21,7 @@
 #include <lunchbox/refPtr.h>
 #include <lunchbox/stdExt.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /** A hash for pointer keys. @version 1.0 */
     template<class K, class T> class PtrHash 
@@ -73,8 +71,6 @@ namespace base
 
 /** A hash for UUID keys. @version 1.0 */
 template<class T> class UUIDHash : public stde::hash_map<co::base::UUID, T> {};
-
-}
 
 }
 #endif // COBASE_HASH_H

@@ -24,9 +24,7 @@
 #include <lunchbox/spinLock.h>
 #include <lunchbox/timedLock.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 //! @cond IGNORE
 namespace
@@ -97,7 +95,7 @@ public:
             freeRequests.push_front( request );
         }
 
-    mutable base::SpinLock lock;
+    mutable lunchbox::SpinLock lock;
     uint32_t requestID;
     RequestHash requests;
     std::list<Request*> freeRequests;
@@ -311,5 +309,4 @@ std::ostream& operator << ( std::ostream& os, const RequestHandler& rh )
     return os << *rh._impl;
 }
 
-}
 }

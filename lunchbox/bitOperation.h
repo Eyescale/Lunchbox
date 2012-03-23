@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2011, Stefan Eilemann <eile@eyescale.ch>
+ *               2011-2012, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -27,9 +27,7 @@
 #  pragma warning (pop)
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /** @return the position of the last (most significant) set bit, or -1. */
     template< class T > int32_t getIndexOfLastBit( T value );
@@ -88,6 +86,5 @@ namespace base
         { return getIndexOfLastBit( static_cast< uint32_t >( value )); }
 #  endif
 #endif
-}
 }
 #endif //COBASE_BITOPERATION_H

@@ -18,9 +18,7 @@
 #include "atomic.h"
 #include "os.h"
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 
 #ifdef _MSC_VER
@@ -127,5 +125,4 @@ bool Atomic< ssize_t >::compareAndSwap( ssize_t* value, const ssize_t expected,
 #  endif // else _WIN64
 #endif // _MSC_VER
 
-}
 }

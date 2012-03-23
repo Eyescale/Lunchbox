@@ -22,9 +22,7 @@
 #include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/types.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class TimedLock; }
 
@@ -70,6 +68,5 @@ namespace detail { class TimedLock; }
     private:
         detail::TimedLock* const _impl;
     };
-}
 }
 #endif //COBASE_TIMEDLOCK_H

@@ -36,9 +36,7 @@
 #  define getpid _getpid
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 static int      getLogLevel();
 static unsigned getLogTopics();
@@ -270,5 +268,4 @@ std::ostream& enableHeader( std::ostream& os )
     return os;
 }
 
-}
 }

@@ -19,9 +19,7 @@
 #include <lunchbox/atomic.h>
 #include <lunchbox/thread.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace
 {
@@ -42,7 +40,7 @@ public:
             {
                 if( trySet( ))
                     return;
-                base::Thread::yield();
+                lunchbox::Thread::yield();
             }
         }
 
@@ -66,7 +64,7 @@ public:
             {
                 if( trySetRead( ))
                     return;
-                base::Thread::yield();
+                lunchbox::Thread::yield();
             }
         }
 
@@ -159,5 +157,4 @@ bool SpinLock::isSetRead()
     return _impl->isSetRead();
 }
 
-}
 }

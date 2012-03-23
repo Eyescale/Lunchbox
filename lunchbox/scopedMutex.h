@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,9 +23,7 @@
 #include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/types.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     class WriteOp;
     class ReadOp;
@@ -102,6 +100,5 @@ namespace base
 
     /** A scoped mutex for a write operation. @version 1.1.5 */
     typedef ScopedMutex< Lock, WriteOp > ScopedWrite;
-}
 }
 #endif //COBASE_SCOPEDMUTEX_H

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,13 +20,11 @@
 
 #include <lunchbox/api.h>
 
-#ifdef CO_USE_OPENMP
+#ifdef LUNCHBOX_USE_OPENMP
 #  include <omp.h>
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /** Base class for OpenMP functionality */
     class OMP 
@@ -40,5 +38,4 @@ namespace base
     };
 }
 
-}
 #endif //COBASE_OMP_H

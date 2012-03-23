@@ -47,9 +47,7 @@
 #  include <hwloc.h>
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace
 {
@@ -75,7 +73,7 @@ class Thread
 public:
     Thread() : state( STATE_STOPPED ) {}
 
-    base::ThreadID id;
+    lunchbox::ThreadID id;
     Monitor< ThreadState > state;
 };
 }
@@ -440,6 +438,4 @@ std::ostream& operator << ( std::ostream& os, const Thread* thread )
     return os;
 }
 #endif
-
-}
 }

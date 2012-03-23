@@ -22,9 +22,7 @@
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class Clock; }
 
@@ -86,6 +84,5 @@ namespace detail { class Clock; }
     private:
         detail::Clock* const _impl;
     };
-}
 }
 #endif  // COBASE_CLOCK_H

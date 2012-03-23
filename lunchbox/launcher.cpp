@@ -32,9 +32,7 @@
 #  include <unistd.h>
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 
 #ifndef _WIN32
@@ -192,5 +190,4 @@ void Launcher::_buildCommandLine( const std::string& command,
 }
 #endif
 
-}
 }

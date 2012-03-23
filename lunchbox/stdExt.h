@@ -160,22 +160,22 @@ CO_STDEXT_NAMESPACE_OPEN
 
 #  endif
 
-    template<> inline size_t hash_compare< co::base::uint128_t >::operator() 
-        ( const co::base::uint128_t& key ) const
+    template<> inline size_t hash_compare< lunchbox::uint128_t >::operator() 
+        ( const lunchbox::uint128_t& key ) const
     {
         return static_cast< size_t >( key.high() ^ key.low() );
     }
 
-    template<> inline size_t hash_value( const co::base::uint128_t& key )
+    template<> inline size_t hash_value( const lunchbox::uint128_t& key )
     {
         return static_cast< size_t >( key.high() ^ key.low() );
     }
 
 #else // MSVC
 
-    template<> struct hash< co::base::uint128_t >
+    template<> struct hash< lunchbox::uint128_t >
     {
-        size_t operator()( const co::base::uint128_t& key ) const
+        size_t operator()( const lunchbox::uint128_t& key ) const
             {
                 return key.high() ^ key.low();
             }

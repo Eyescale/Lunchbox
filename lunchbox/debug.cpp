@@ -30,9 +30,7 @@
 #  define EQ_BACKTRACE_DEPTH 256
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 
 void abort()
@@ -145,5 +143,4 @@ std::ostream& sysError( std::ostream& os )
     return os;
 }
 
-}
 }

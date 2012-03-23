@@ -20,9 +20,7 @@
 
 #include <lunchbox/uint128_t.h> // base class
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /**
      * Provides a universally unique identifier.
@@ -62,7 +60,6 @@ namespace base
         /** @return true if the UUID was generated. */
         bool isGenerated() const { return high() != 0; }
     };
-}
 }
 
 #endif // COBASE_UUID_H

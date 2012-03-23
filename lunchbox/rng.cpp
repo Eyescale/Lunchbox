@@ -38,9 +38,7 @@
 #pragma warning (pop)
 
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace
 {
@@ -152,5 +150,4 @@ bool RNG::_get( void* data, const size_t size )
     return true;
 }
 
-}
 }

@@ -24,9 +24,7 @@
 
 #include <string>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class DSO; }
 
@@ -60,7 +58,7 @@ namespace detail { class DSO; }
          *         exported by the DSO.
          * @version 1.0
          */
-        LUNCHBOX_API void* getFunctionPointer( const std::string& functionName );
+        LUNCHBOX_API void* getFunctionPointer( const std::string& functionName);
 
         /** @return true if the DSO is loaded. @version 1.0 */
         LUNCHBOX_API bool isOpen() const;
@@ -69,7 +67,6 @@ namespace detail { class DSO; }
         detail::DSO* const _impl;
     };
 
-}
 }
 
 #endif //COBASE_DSO_H

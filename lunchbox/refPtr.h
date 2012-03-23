@@ -32,9 +32,7 @@
 #  define CO_REFERENCED_PARAM
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /**
      * A smart reference pointer, aka boost::intrusive_ptr.
@@ -208,8 +206,6 @@ namespace base
         { return className( rp.get( )); }
 }
 
-}
-
 #ifdef LUNCHBOX_USE_BOOST_SERIALIZATION
 #  include <boost/serialization/split_free.hpp>
 
@@ -219,7 +215,7 @@ namespace serialization
 {
 
 template< class Archive, class T >
-inline void save( Archive& ar, const co::base::RefPtr< T >& t,
+inline void save( Archive& ar, const lunchbox::RefPtr< T >& t,
                   const unsigned int /*version*/ )
 {
     const T* ptr = t.get();
@@ -227,7 +223,7 @@ inline void save( Archive& ar, const co::base::RefPtr< T >& t,
 }
 
 template< class Archive, class T >
-inline void load( Archive& ar, co::base::RefPtr< T >& t,
+inline void load( Archive& ar, lunchbox::RefPtr< T >& t,
                   const unsigned int /*version*/ )
 {
     T* obj;
@@ -236,7 +232,7 @@ inline void load( Archive& ar, co::base::RefPtr< T >& t,
 }
 
 template< class Archive, class T >
-inline void serialize( Archive& ar, co::base::RefPtr< T >& t,
+inline void serialize( Archive& ar, lunchbox::RefPtr< T >& t,
                        const unsigned int version )
 {
     boost::serialization::split_free( ar, t, version );
@@ -245,5 +241,5 @@ inline void serialize( Archive& ar, co::base::RefPtr< T >& t,
 }
 }
 
-#endif // CO_USE_BOOST_SERIALIZATION
+#endif // LUNCHBOX_USE_BOOST_SERIALIZATION
 #endif //COBASE_REFPTR_H

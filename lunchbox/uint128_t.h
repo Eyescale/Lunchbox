@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010-2011, Stefan Eilemann <eile@eyescale.ch>
+ *               2010-2012, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -31,9 +31,7 @@ typedef UINT64     uint64_t;
 #  include <stdint.h>
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /** A base type for 128 bit unsigned integer values. */
     class uint128_t
@@ -244,6 +242,4 @@ namespace base
     }
 
 }
-}
-
 #endif // COBASE_UINT128_H

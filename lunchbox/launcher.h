@@ -21,9 +21,7 @@
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /** The launcher executes a command from a separate process. */
     class Launcher
@@ -41,5 +39,4 @@ namespace base
     };
 }
 
-}
 #endif // COBASE_LAUNCHER_H

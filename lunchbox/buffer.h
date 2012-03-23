@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,9 +23,7 @@
 
 #include <cstdlib>      // for malloc
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /**
      * A simple memory buffer with some helper functions.
@@ -249,7 +247,5 @@ namespace base
     };
 
     typedef Buffer< uint8_t > Bufferb;
-}
-
 }
 #endif //COBASE_BUFFER_H

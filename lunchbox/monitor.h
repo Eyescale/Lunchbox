@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *                    2011, Cedric Stalder <cedric.stalder@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -28,9 +28,7 @@
 #include <iostream>
 #include <typeinfo>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /**
      * A monitor primitive.
@@ -346,6 +344,5 @@ namespace base
             _value = value;
         return *this;
     }
-}
 }
 #endif //COBASE_MONITOR_H

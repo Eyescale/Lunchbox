@@ -20,7 +20,7 @@
  * 
  * This file contains the logging classes for Equalizer. The macros EQERROR,
  * EQWARN, EQINFO and EQVERB output messages at their respective logging level,
- * if the level is active. They use a per-thread co::base::Log instance, which
+ * if the level is active. They use a per-thread lunchbox::Log instance, which
  * is a std::ostream. EQVERB is always inactive in release builds.
  */
 
@@ -35,9 +35,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /** The logging levels. @version 1.0 */
     enum LogLevel
@@ -218,32 +216,31 @@ namespace base
     /** Re-enable printing of the Log header. @version 1.0 */
     LUNCHBOX_API std::ostream& enableHeader( std::ostream& os );
 }
-}
 
 /** Output an error message to the per-thread Log stream. @version 1.0 */
-#define EQERROR (co::base::Log::level >= co::base::LOG_ERROR) &&    \
-    co::base::Log::instance( __FILE__, __LINE__ )
+#define EQERROR (lunchbox::Log::level >= lunchbox::LOG_ERROR) &&    \
+    lunchbox::Log::instance( __FILE__, __LINE__ )
 /** Output a warning message to the per-thread Log stream. @version 1.0 */
-#define EQWARN  (co::base::Log::level >= co::base::LOG_WARN)  &&    \
-    co::base::Log::instance( __FILE__, __LINE__ )
+#define EQWARN  (lunchbox::Log::level >= lunchbox::LOG_WARN)  &&    \
+    lunchbox::Log::instance( __FILE__, __LINE__ )
 /** Output an informational message to the per-thread Log. @version 1.0 */
-#define EQINFO  (co::base::Log::level >= co::base::LOG_INFO)  &&    \
-    co::base::Log::instance( __FILE__, __LINE__ )
+#define EQINFO  (lunchbox::Log::level >= lunchbox::LOG_INFO)  &&    \
+    lunchbox::Log::instance( __FILE__, __LINE__ )
 
 #ifdef NDEBUG
 #  define EQVERB if( false )                                    \
-        co::base::Log::instance( __FILE__, __LINE__ )
+        lunchbox::Log::instance( __FILE__, __LINE__ )
 #else
 /** Output a verbatim message to the per-thread Log stream. @version 1.0 */
-#  define EQVERB (co::base::Log::level >= co::base::LOG_VERB)  &&    \
-    co::base::Log::instance( __FILE__, __LINE__ )
+#  define EQVERB (lunchbox::Log::level >= lunchbox::LOG_VERB)  &&    \
+    lunchbox::Log::instance( __FILE__, __LINE__ )
 #endif
 
 /**
  * Output a message pertaining to a topic to the per-thread Log stream.
  * @version 1.0
  */
-#define EQLOG(topic)  (co::base::Log::topics & (topic))  &&  \
-    co::base::Log::instance( __FILE__, __LINE__ )
+#define EQLOG(topic)  (lunchbox::Log::topics & (topic))  &&  \
+    lunchbox::Log::instance( __FILE__, __LINE__ )
 
 #endif //COBASE_LOG_H

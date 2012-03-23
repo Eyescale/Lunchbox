@@ -24,13 +24,11 @@
 
 #include <time.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace
 {
-    static co::base::a_int32_t _initialized;
+    static a_int32_t _initialized;
 }
 
 bool init( const int argc, char** argv )
@@ -82,5 +80,3 @@ bool exit()
 }
 
 }
-}
-

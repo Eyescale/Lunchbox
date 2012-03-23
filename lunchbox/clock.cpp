@@ -29,9 +29,7 @@
 #  include <time.h>
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail
 {
@@ -196,5 +194,4 @@ float Clock::getMilliSecondsf() const
 #endif
 }
 
-}
 }

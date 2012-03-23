@@ -21,9 +21,7 @@
 #include <lunchbox/debug.h>
 #include <lunchbox/refPtr.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class PerThreadRef; }
 
@@ -225,6 +223,5 @@ bool PerThreadRef<T>::isValid() const
 }
 #endif // HAVE_PTHREAD_H
 
-}
 }
 #endif //COBASE_PERTHREADREF_H

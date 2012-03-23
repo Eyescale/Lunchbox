@@ -124,9 +124,7 @@ typedef SSIZE_T    ssize_t;
 #define EQ_48MB  (50331648)
 #define EQ_64MB  (67108864)
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 /** A vector of std::strings @version 1.0 */
 typedef std::vector< std::string > Strings;
@@ -138,7 +136,6 @@ class SpinLock;
 class UUID;
 class uint128_t;
 
-}
 }
 
 #endif //COBASE_TYPES_H

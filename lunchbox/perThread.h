@@ -23,9 +23,7 @@
 #include <cstdio>
 #include <string.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class PerThread; }
 
@@ -113,7 +111,6 @@ namespace detail { class PerThread; }
         detail::PerThread* const _impl;
     };
 }
-}
 
 //----------------------------------------------------------------------
 // implementation
@@ -131,9 +128,7 @@ namespace detail { class PerThread; }
 #include <lunchbox/debug.h>
 #include <lunchbox/thread.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail
 {
@@ -217,8 +212,6 @@ bool PerThread<T, D>::isValid() const
     return pthread_getspecific( _impl->key ) != 0;
 }
 
-
-}
 }
 #endif // HAVE_PTHREAD_H
 #endif //COBASE_PERTHREAD_H

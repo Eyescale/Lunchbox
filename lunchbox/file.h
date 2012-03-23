@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com> 
- *               2009-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+ *               2009-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -22,9 +22,7 @@
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 
 /**
@@ -44,6 +42,5 @@ LUNCHBOX_API std::string getFilename( const std::string& filename );
 /** @return the directory name part of a path. @version 1.0 */
 LUNCHBOX_API std::string getDirname( const std::string& filename );
 
-}
 }
 #endif //COBASE_FILE_H

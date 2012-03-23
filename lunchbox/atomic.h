@@ -28,9 +28,7 @@
 #  pragma intrinsic(_ReadWriteBarrier)
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 
 /** Perform a full memory barrier. */
@@ -261,6 +259,5 @@ bool Atomic< T >::compareAndSwap( const T expected, const T newValue )
     return compareAndSwap( &_value, expected, newValue );
 }
 
-}
 }
 #endif  // COBASE_ATOMIC_H

@@ -18,9 +18,7 @@
 #include "uuid.h"
 #include "rng.h"
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 UUID::UUID( const bool generate )
         : uint128_t()
@@ -31,7 +29,5 @@ UUID::UUID( const bool generate )
         high() = rng.get< uint64_t >();
         low() = rng.get< uint64_t >();
     }
-}
-
 }
 }

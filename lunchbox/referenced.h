@@ -30,9 +30,7 @@
 #  include <lunchbox/scopedMutex.h>
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /**
      * Base class for referenced objects.
@@ -151,7 +149,6 @@ namespace base
 #endif
     };
 }
-}
 
 namespace boost
 {
@@ -164,13 +161,13 @@ namespace boost
 #endif
 
     /** Allow creation of boost::intrusive_ptr from RefPtr or Referenced. */
-    inline void intrusive_ptr_add_ref( co::base::Referenced* referenced )
+    inline void intrusive_ptr_add_ref( lunchbox::Referenced* referenced )
     {
         referenced->ref( CO_BOOSTREF_PARAM );
     }
 
     /** Allow creation of boost::intrusive_ptr from RefPtr or Referenced. */
-    inline void intrusive_ptr_release( co::base::Referenced* referenced )
+    inline void intrusive_ptr_release( lunchbox::Referenced* referenced )
     {
         referenced->unref( CO_BOOSTREF_PARAM );
     }

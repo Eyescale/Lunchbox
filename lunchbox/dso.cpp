@@ -29,9 +29,7 @@
 #  define EQ_DL_ERROR dlerror()
 #endif
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail
 {
@@ -123,5 +121,4 @@ bool DSO::isOpen() const
     return _impl->dso != 0;
 }
 
-}
 }

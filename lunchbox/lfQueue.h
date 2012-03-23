@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2010-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -25,9 +25,7 @@
 
 #include <vector>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
     /**
      * A thread-safe, lock-free queue with non-blocking access.
@@ -148,7 +146,5 @@ namespace base
         EQ_TS_VAR( _reader );
         EQ_TS_VAR( _writer );
     };
-
-}
 }
 #endif // COBASE_LFQUEUE_H

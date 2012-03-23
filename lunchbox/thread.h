@@ -27,9 +27,7 @@
 
 #include <ostream>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class Thread; }
 
@@ -197,7 +195,7 @@ public:                                                     \
         NAME ## Struct ()                                   \
             : extMutex( false ), inRegion( false )          \
             {}                                              \
-        mutable co::base::ThreadID id;                      \
+        mutable lunchbox::ThreadID id;                      \
         mutable std::string name;                           \
         bool extMutex;                                      \
         mutable bool inRegion;                              \
@@ -205,24 +203,24 @@ public:                                                     \
 private:
 
 #ifdef EQ_CHECK_THREADSAFETY
-#  define EQ_TS_RESET( NAME ) NAME.id = co::base::ThreadID::ZERO; 
+#  define EQ_TS_RESET( NAME ) NAME.id = lunchbox::ThreadID::ZERO; 
 
 #  define EQ_TS_THREAD( NAME )                                          \
     {                                                                   \
-        if( NAME.id == co::base::ThreadID::ZERO )                       \
+        if( NAME.id == lunchbox::ThreadID::ZERO )                       \
         {                                                               \
-            NAME.id = co::base::Thread::getSelfThreadID();              \
-            NAME.name = co::base::Log::instance().getThreadName();      \
+            NAME.id = lunchbox::Thread::getSelfThreadID();              \
+            NAME.name = lunchbox::Log::instance().getThreadName();      \
             EQVERB << "Functions for " << #NAME                         \
                    << " locked to this thread" << std::endl;            \
         }                                                               \
-        if( !NAME.extMutex && NAME.id != co::base::Thread::getSelfThreadID( )) \
+        if( !NAME.extMutex && NAME.id != lunchbox::Thread::getSelfThreadID( )) \
         {                                                               \
             EQERROR << "Threadsafety check for " << #NAME               \
                     << " failed on object of type "                     \
-                    << co::base::className( this ) << ", thread "       \
-                    << co::base::Thread::getSelfThreadID() << " ("      \
-                    << co::base::Log::instance().getThreadName() << ") != " \
+                    << lunchbox::className( this ) << ", thread "       \
+                    << lunchbox::Thread::getSelfThreadID() << " ("      \
+                    << lunchbox::Log::instance().getThreadName() << ") != " \
                     << NAME.id << " (" << NAME.name << ")" << std::endl; \
             EQABORT( "Non-threadsave code called from two threads" );   \
         }                                                               \
@@ -230,13 +228,13 @@ private:
 
 #  define EQ_TS_NOT_THREAD( NAME )                                      \
     {                                                                   \
-        if( !NAME.extMutex && NAME.id != co::base::ThreadID::ZERO )     \
+        if( !NAME.extMutex && NAME.id != lunchbox::ThreadID::ZERO )     \
         {                                                               \
-            if( NAME.id == co::base::Thread::getSelfThreadID( ))        \
+            if( NAME.id == lunchbox::Thread::getSelfThreadID( ))        \
             {                                                           \
                 EQERROR << "Threadsafety check for not " << #NAME       \
                         << " failed on object of type "                 \
-                        << co::base::className( this ) << std::endl;    \
+                        << lunchbox::className( this ) << std::endl;    \
                 EQABORT( "Code called from wrong thread" );             \
             }                                                           \
         }                                                               \
@@ -265,7 +263,7 @@ private:
     /** @endcond */
 
 # define EQ_TS_SCOPED( NAME ) \
-    co::base::ScopedThreadCheck< NAME ## Struct > scoped ## NAME ## Check(NAME);
+    lunchbox::ScopedThreadCheck< NAME ## Struct > scoped ## NAME ## Check(NAME);
 
 #else
 #  define EQ_TS_RESET( NAME ) {}
@@ -274,6 +272,5 @@ private:
 #  define EQ_TS_SCOPED( NAME ) {}
 #endif
 
-}
 }
 #endif //COBASE_THREAD_H

@@ -24,9 +24,7 @@
 
 #include <list>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class RequestHandler; }
 
@@ -139,7 +137,7 @@ namespace detail { class RequestHandler; }
         LUNCHBOX_API void serveRequest( const uint32_t requestID, bool result );
         /** Serve a request with an uint128_t result. @version 1.0 */
         LUNCHBOX_API void serveRequest( const uint32_t requestID,
-                                      const uint128_t& result );
+                                        const uint128_t& result );
         /**
          * @return true if this request handler has pending requests.
          * @version 1.0
@@ -149,13 +147,11 @@ namespace detail { class RequestHandler; }
     private:
         detail::RequestHandler* const _impl;
         friend LUNCHBOX_API std::ostream& operator << ( std::ostream&,
-                                                     const RequestHandler& );
+                                                        const RequestHandler& );
         EQ_TS_VAR( _thread );
     };
 
     LUNCHBOX_API std::ostream& operator << ( std::ostream&,
-                                           const RequestHandler& );
-}
-
+                                             const RequestHandler& );
 }
 #endif //COBASE_REQUESTHANDLER_H

@@ -22,9 +22,7 @@
 
 #include <ostream>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class ThreadID; }
 
@@ -66,6 +64,4 @@ namespace detail { class ThreadID; }
     /** Print the thread to the given output stream. */
     LUNCHBOX_API std::ostream& operator << ( std::ostream&, const ThreadID& );
 }
-}
-
 #endif // COBASE_THREADID_H

@@ -21,9 +21,7 @@
 #include <lunchbox/api.h>
 #include <lunchbox/nonCopyable.h>
 
-namespace co
-{
-namespace base
+namespace lunchbox
 {
 namespace detail { class Lock; }
 
@@ -69,7 +67,5 @@ namespace detail { class Lock; }
     private:
         detail::Lock* const _impl;
     };
-}
-
 }
 #endif //COBASE_LOCK_H

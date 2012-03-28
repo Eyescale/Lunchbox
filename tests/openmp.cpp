@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2008-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2008-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -27,7 +27,7 @@
 #include "test.h"
 #include <pthread.h>
 
-#ifdef CO_USE_OPENMP
+#ifdef LUNCHBOX_USE_OPENMP
 #  include <omp.h>
 #endif
 
@@ -35,7 +35,7 @@ void* runChild( void* arg )
 {
     unsigned char data[ LOOPSIZE ];
 
-#ifdef CO_USE_OPENMP
+#ifdef LUNCHBOX_USE_OPENMP
 #  pragma omp parallel for
 #endif
     for( int i = 0; i < LOOPSIZE; ++i )

@@ -173,6 +173,7 @@ CO_STDEXT_NAMESPACE_OPEN
 
 #else // MSVC
 
+    /** std::string hash function. @version 1.0 */
     template<> struct hash< lunchbox::uint128_t >
     {
         size_t operator()( const lunchbox::uint128_t& key ) const

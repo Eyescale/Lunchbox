@@ -16,7 +16,7 @@
  */
 
 /**
- * @file base/types.h
+ * @file types.h
  *
  * Basic type definitions not provided by the operating system.
  */

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file base/api.h
+ * @file api.h
  *
  * Defines export visibility macros for co::base.
  */

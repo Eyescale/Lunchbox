@@ -16,7 +16,7 @@
  */
 
 /**
- * @file base/log.h
+ * @file log.h
  * 
  * This file contains the logging classes for Equalizer. The macros EQERROR,
  * EQWARN, EQINFO and EQVERB output messages at their respective logging level,

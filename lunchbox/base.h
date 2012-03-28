@@ -19,11 +19,11 @@
 #define LUNCHBOX_H
 
 /**
- * @namespace co::base
- * @brief Base abstraction layer and common utility classes.
+ * @namespace lunchbox
+ * @brief Abstraction layer and common utilities for multi-threaded programming.
  *
- * The co::base namespace provides C++ classes to abstract the underlying
- * operating system and implements common helper functionality. Classes with
+ * Lunchbox provides C++ classes to abstract the underlying operating system and
+ * to implement common utilities for multi-threaded C++ programs. Classes with
  * non-virtual destructors are not intended to be subclassed.
  */
 

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file lunchbox/os.h
+ * @file os.h
  *
  * Includes key system header files and defines essential base macros.
  */

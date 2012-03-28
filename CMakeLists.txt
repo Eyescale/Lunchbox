@@ -167,7 +167,7 @@ add_subdirectory(lunchbox)
 add_subdirectory(tests)
 add_subdirectory(doc) # must be after all targets
 
-install(FILES CMake/FindLunchBox.cmake CMake/FindHWLOC.cmake
+install(FILES CMake/FindLunchbox.cmake CMake/FindHWLOC.cmake
   DESTINATION share/LunchBox/CMake COMPONENT dev)
 
 message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${LUNCHBOX_FEATURES}")

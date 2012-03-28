@@ -18,7 +18,7 @@
 /**
  * @file api.h
  *
- * Defines export visibility macros for co::base.
+ * Defines export visibility macros for lunchbox.
  */
 #ifndef LUNCHBOX_API_H
 #define LUNCHBOX_API_H

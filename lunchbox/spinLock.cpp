@@ -85,7 +85,7 @@ public:
             memoryBarrier();
             const int32_t state = _state;
             // Note: 0 used here since using _unlocked unexplicably gives
-            //       'undefined reference to co::base::SpinLock::_unlocked'
+            //       'undefined reference to lunchbox::SpinLock::_unlocked'
             const int32_t expected = (state==_writelocked) ? 0 : state;
 
             if( !_state.compareAndSwap( expected, expected+1 ))

@@ -38,7 +38,7 @@ install(TARGETS ${LIBRARY}
         ARCHIVE DESTINATION lib COMPONENT dev
         RUNTIME DESTINATION bin COMPONENT lib
         LIBRARY DESTINATION lib COMPONENT lib)
-install_symlink(${LIB_INCLUDE} ${LIBRARY} include)
+install_symlink("include/${LIB_INCLUDE}" "include/${LIBRARY}" dev)
 
 configure_file(lunchbox.in.pc ${CMAKE_CURRENT_BINARY_DIR}/lunchbox.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lunchbox.pc

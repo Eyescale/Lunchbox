@@ -23,15 +23,6 @@
 #include <iostream>
 #include <stdlib.h>
 
-//#define CO_REFERENCED_DEBUG
-#ifdef CO_REFERENCED_DEBUG
-#  define CO_REFERENCED_ARGS const void* holder
-#  define CO_REFERENCED_PARAM (const void*)(this)
-#else
-#  define CO_REFERENCED_ARGS
-#  define CO_REFERENCED_PARAM
-#endif
-
 namespace lunchbox
 {
     /**
@@ -72,7 +63,7 @@ namespace lunchbox
                 T* tmp = _ptr;
                 _ptr = rhs._ptr;
                 _ref();
-                if( tmp ) tmp->unref( CO_REFERENCED_PARAM );
+                if( tmp ) tmp->unref( this );
                 return *this;
             }
 
@@ -85,7 +76,7 @@ namespace lunchbox
                 T* tmp = _ptr;
                 _ptr = ptr;
                 _ref();
-                if( tmp ) tmp->unref( CO_REFERENCED_PARAM );
+                if( tmp ) tmp->unref( this );
                 return *this;
             }
 
@@ -163,7 +154,7 @@ namespace lunchbox
         T* _ptr;
 
         /** Artificially reference the held object. */
-        void _ref()   { if(_ptr) _ptr->ref( CO_REFERENCED_PARAM ); }
+        void _ref()   { if(_ptr) _ptr->ref( this ); }
 
         /** Artificially dereference the held object. */
         void _unref() 
@@ -172,11 +163,11 @@ namespace lunchbox
             {
 #ifndef NDEBUG
                 const bool abondon = (_ptr->getRefCount() == 1);
-                _ptr->unref( CO_REFERENCED_PARAM );
+                _ptr->unref( this );
                 if( abondon ) 
                     _ptr = 0;
 #else
-                _ptr->unref( CO_REFERENCED_PARAM );
+                _ptr->unref( this );
 #endif
             }
         }

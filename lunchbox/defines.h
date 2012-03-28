@@ -44,11 +44,11 @@
 #define EQ_TIMEOUT_DEFAULT 0xfffffffeu
 
 #ifdef __GNUC__
-#  define CO_LIKELY(x)       __builtin_expect( (x), 1 )
-#  define CO_UNLIKELY(x)     __builtin_expect( (x), 0 )
+#  define LB_LIKELY(x)       __builtin_expect( (x), 1 )
+#  define LB_UNLIKELY(x)     __builtin_expect( (x), 0 )
 #else
-#  define CO_LIKELY(x)       x
-#  define CO_UNLIKELY(x)     x
+#  define LB_LIKELY(x)       x
+#  define LB_UNLIKELY(x)     x
 #endif
 
 #endif // LUNCHBOX_DEFINES_H

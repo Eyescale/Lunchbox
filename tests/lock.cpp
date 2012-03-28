@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2011, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -46,7 +46,7 @@ public:
     virtual void run()
         {
             ops = 0;
-            while( CO_LIKELY( _running ))
+            while( LB_LIKELY( _running ))
             {
                 lock->set();
 #ifndef _MSC_VER
@@ -63,7 +63,7 @@ template< class T > void _test()
     T* lock = new T;
     lock->set();
 
-#ifdef CO_USE_OPENMP
+#ifdef LUNCHBOX_USE_OPENMP
     const size_t nThreads = EQ_MIN( lunchbox::OMP::getNThreads()*3, MAXTHREADS );
 #else
     const size_t nThreads = 16;

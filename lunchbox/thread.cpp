@@ -43,7 +43,7 @@
 #  include <sys/prctl.h>
 #endif
 
-#ifdef CO_USE_HWLOC
+#ifdef LUNCHBOX_USE_HWLOC
 #  include <hwloc.h>
 #endif
 
@@ -338,7 +338,7 @@ void Thread::setName( const std::string& name )
 #endif
 }
 
-#ifdef CO_USE_HWLOC
+#ifdef LUNCHBOX_USE_HWLOC
 static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
                                   hwloc_topology_t topology )
 {
@@ -390,7 +390,7 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
 
 void Thread::setAffinity(const int32_t affinity)
 {
-#ifdef CO_USE_HWLOC
+#ifdef LUNCHBOX_USE_HWLOC
     hwloc_topology_t topology;
     hwloc_topology_init( &topology ); // Allocate & initialize the topology
     hwloc_topology_load( topology );  // Perform HW topology detection

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2011, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -34,62 +34,62 @@
 //----- Common extensions of the STL
 #ifdef __GNUC__
 #  if defined EQ_GCC_4_3_OR_LATER && !defined __INTEL_COMPILER
-#    define CO_STDEXT_TR1
+#    define LB_STDEXT_TR1
 #  else
-#    define CO_STDEXT_EXT
+#    define LB_STDEXT_EXT
 #    ifndef EQ_HAVE_LONG_HASH
 #      define EQ_HAVE_LONG_HASH
 #    endif
 #  endif
 #else
 #  ifdef _MSC_VER
-#    define CO_STDEXT_MSVC
+#    define LB_STDEXT_MSVC
 #  else
-#    define CO_STDEXT_STD
+#    define LB_STDEXT_STD
 #  endif
 #endif
 
-#ifdef CO_STDEXT_TR1
+#ifdef LB_STDEXT_TR1
 #  include <tr1/unordered_map>
 #  include <tr1/unordered_set>
 /* Alias stde namespace to uniformly access stl extensions. */
 namespace stde = std::tr1;
-#  define CO_STDEXT_NAMESPACE_OPEN namespace std { namespace tr1 {
-#  define CO_STDEXT_NAMESPACE_CLOSE }}
+#  define LB_STDEXT_NAMESPACE_OPEN namespace std { namespace tr1 {
+#  define LB_STDEXT_NAMESPACE_CLOSE }}
 #endif
 
-#ifdef CO_STDEXT_EXT
+#ifdef LB_STDEXT_EXT
 #  include <ext/hash_map>
 #  include <ext/hash_set>
 /* Alias stde namespace to uniformly access stl extensions. */
 namespace stde = __gnu_cxx; 
-#  define CO_STDEXT_NAMESPACE_OPEN namespace __gnu_cxx {
-#  define CO_STDEXT_NAMESPACE_CLOSE }
+#  define LB_STDEXT_NAMESPACE_OPEN namespace __gnu_cxx {
+#  define LB_STDEXT_NAMESPACE_CLOSE }
 #endif
 
-#ifdef CO_STDEXT_MSVC
+#ifdef LB_STDEXT_MSVC
 #  include <hash_map>
 #  include <hash_set>
 /* Alias stde namespace to uniformly access stl extensions. */
 namespace stde = stdext;
-#  define CO_STDEXT_NAMESPACE_OPEN namespace stdext {
-#  define CO_STDEXT_NAMESPACE_CLOSE }
+#  define LB_STDEXT_NAMESPACE_OPEN namespace stdext {
+#  define LB_STDEXT_NAMESPACE_CLOSE }
 #endif
 
-#ifdef CO_STDEXT_STD
+#ifdef LB_STDEXT_STD
 #  include <hash_map>
 #  include <hash_set>
 /* Alias stde namespace to uniformly access stl extensions. */
 namespace stde = std;
-#  define CO_STDEXT_NAMESPACE_OPEN namespace std {
-#  define CO_STDEXT_NAMESPACE_CLOSE }
+#  define LB_STDEXT_NAMESPACE_OPEN namespace std {
+#  define LB_STDEXT_NAMESPACE_CLOSE }
 #endif
 
 
-CO_STDEXT_NAMESPACE_OPEN
+LB_STDEXT_NAMESPACE_OPEN
 
 //----- Our extensions of the STL 
-#ifdef CO_STDEXT_TR1
+#ifdef LB_STDEXT_TR1
 #   ifndef EQ_HAVE_HASH_MAP
     template<class K, class T, class H = hash< K >, 
              class P = std::equal_to< K >, class A = std::allocator< K > >
@@ -99,7 +99,7 @@ CO_STDEXT_NAMESPACE_OPEN
 #  endif // EQ_HAVE_HASH_MAP
 #endif
 
-#ifdef CO_STDEXT_EXT
+#ifdef LB_STDEXT_EXT
 #  ifndef EQ_HAVE_STRING_HASH
     /** std::string hash function. @version 1.0 */
     template<> struct hash< std::string >
@@ -146,9 +146,9 @@ CO_STDEXT_NAMESPACE_OPEN
         }
     };
 #  endif // EQ_HAVE_VOID_PTR_HASH
-#endif // CO_STDEXT_EXT
+#endif // LB_STDEXT_EXT
 
-#ifdef CO_STDEXT_MSVC
+#ifdef LB_STDEXT_MSVC
 #  ifndef EQ_HAVE_STRING_HASH
 
     /** std::string hash function. @version 1.0 */
@@ -214,6 +214,6 @@ CO_STDEXT_NAMESPACE_OPEN
     find_if( std::vector< const T >& container, const P& predicate )
         { return std::find_if( container.begin(), container.end(), predicate );}
 
-CO_STDEXT_NAMESPACE_CLOSE
+LB_STDEXT_NAMESPACE_CLOSE
 
 #endif // LUNCHBOX_STDEXT_H

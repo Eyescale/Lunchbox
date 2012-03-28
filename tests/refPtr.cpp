@@ -22,10 +22,8 @@
 #include <lunchbox/thread.h>
 #include <iostream>
 
-#ifdef CO_USE_BOOST
-#  include <boost/intrusive_ptr.hpp>
-#  include <boost/shared_ptr.hpp>
-#endif
+#include <boost/intrusive_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 #ifdef LUNCHBOX_USE_BOOST_SERIALIZATION
 #  include <boost/serialization/access.hpp>
@@ -70,7 +68,6 @@ public:
         }
 };
 
-#ifdef CO_USE_BOOST
 typedef boost::intrusive_ptr<Foo> BoostPtr;
 BoostPtr bFoo;
 
@@ -113,7 +110,6 @@ public:
             }
         }
 };
-#endif
 
 int main( int argc, char **argv )
 {
@@ -134,7 +130,6 @@ int main( int argc, char **argv )
 
     TEST( foo->getRefCount() == 1 );
 
-#ifdef CO_USE_BOOST
     bFoo = new Foo;
     BThread bThreads[NTHREADS];
     clock.reset();
@@ -170,7 +165,6 @@ int main( int argc, char **argv )
     std::cout << barTime << " ms for " << 3*NREFS <<" boost::shared_ptr ops in "
               << NTHREADS << " threads (" << barTime/(3*NREFS*NTHREADS)*1000000
               << "ns/op)" << std::endl;
-#endif
 
     foo = 0;
 

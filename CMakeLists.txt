@@ -158,10 +158,7 @@ set(LUNCHBOX_DEFINITIONS ${LUNCHBOX_DEFINITIONS}
     -DLUNCHBOX_BUILD_DIR="${CMAKE_BINARY_DIR}/")
 add_definitions(${LUNCHBOX_DEFINITIONS})
 
-function(INSTALL_SYMLINK FROM TO WHERE)
-  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${FROM} ${TO} WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${WHERE})" )
-endfunction()
-
+include(InstallSymlink)
 include(pthreads/CMakeLists.txt)
 add_subdirectory(lunchbox)
 add_subdirectory(tests)

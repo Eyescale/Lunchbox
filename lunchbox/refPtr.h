@@ -181,7 +181,7 @@ namespace lunchbox
         if( p )
         {
             os << disableFlush << "RP[" << p->getRefCount() << ":" << *p << "]";
-#ifdef CO_REFERENCED_DEBUG
+#ifdef LUNCHBOX_REFERENCED_DEBUG
             os << std::endl;
             p->printHolders( os );
 #endif

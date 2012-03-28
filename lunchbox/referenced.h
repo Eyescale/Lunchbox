@@ -22,8 +22,8 @@
 #include <lunchbox/atomic.h>   // member
 #include <lunchbox/debug.h>    // for EQERROR
 
-//#define LB_REFERENCED_DEBUG
-#ifdef LB_REFERENCED_DEBUG
+//#define LUNCHBOX_REFERENCED_DEBUG
+#ifdef LUNCHBOX_REFERENCED_DEBUG
 #  include <lunchbox/hash.h>
 #  include <lunchbox/lock.h>
 #  include <lunchbox/lockable.h>
@@ -52,7 +52,7 @@ namespace lunchbox
 #endif
             ++_refCount;
 
-#ifdef LB_REFERENCED_DEBUG
+#ifdef LUNCHBOX_REFERENCED_DEBUG
             if( holder )
             {
                 std::stringstream cs;
@@ -80,7 +80,7 @@ namespace lunchbox
                 const bool deleteMe = (--_refCount==0);
                 if( deleteMe )
                     deleteReferenced( this );
-#ifdef LB_REFERENCED_DEBUG
+#ifdef LUNCHBOX_REFERENCED_DEBUG
                 else if( holder )
                 {
                     ScopedMutex<> referencedMutex( _holders );
@@ -97,7 +97,7 @@ namespace lunchbox
         /** @internal print holders of this if debugging is enabled. */
         void printHolders( std::ostream& os ) const
             {
-#ifdef LB_REFERENCED_DEBUG
+#ifdef LUNCHBOX_REFERENCED_DEBUG
                 os << disableFlush << disableHeader;
                 ScopedMutex<> referencedMutex( _holders );
                 for( HolderHash::const_iterator i = _holders->begin();
@@ -143,7 +143,7 @@ namespace lunchbox
         mutable a_int32_t _refCount;
         bool _hasBeenDeleted;
 
-#ifdef LB_REFERENCED_DEBUG
+#ifdef LUNCHBOX_REFERENCED_DEBUG
         typedef PtrHash< const void*, std::string > HolderHash;
         mutable Lockable< HolderHash, Lock > _holders;
 #endif

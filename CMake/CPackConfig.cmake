@@ -1,6 +1,6 @@
 # Copyright (c) 2012 Stefan Eilemann <eile@eyescale.ch>
 
-#info: http://www.itk.org/Wiki/CMake:Component_Install_With_CPack
+# Info: http://www.itk.org/Wiki/CMake:Component_Install_With_CPack
 
 set(LUNCHBOX_PACKAGE_VERSION "" CACHE STRING "Additional build version for packages")
 mark_as_advanced(LUNCHBOX_PACKAGE_VERSION)
@@ -20,10 +20,12 @@ endif()
 set(CPACK_PACKAGE_CONTACT "Stefan Eilemann <eile@eyescale.ch>")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Multi-threaded toolbox library")
 #set(CPACK_PACKAGE_DESCRIPTION_FILE ${LunchBox_SOURCE_DIR}/RELNOTES.txt)
+set(CPACK_PACKAGE_VERSION ${VERSION})
 set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
 set(CPACK_RESOURCE_FILE_LICENSE ${LunchBox_SOURCE_DIR}/LICENSE.txt)
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}.${CMAKE_SYSTEM_PROCESSOR}")
 #set(CPACK_RESOURCE_FILE_README ${LunchBox_SOURCE_DIR}/RELNOTES.txt)
 
 if(LUNCHBOX_PACKAGE_VERSION)

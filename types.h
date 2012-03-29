@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -22,8 +22,8 @@
 #define DASH_DETAIL_TYPES_H
 
 #include <dash/types.h>
-#include <dash/Vector.h>
 #include <dash/detail/Any.h>
+#include <lunchbox/lfVector.h>
 #include <vector>
 
 
@@ -40,7 +40,7 @@ namespace detail
 template< class T > class ContextPtr;
 
 struct Change;
-typedef Vector< Change, 32 > Changes;
+typedef LFVector< Change, 32 > Changes;
 typedef boost::shared_ptr< Changes > ChangesPtr;
 typedef Changes::iterator ChangesIter;
 typedef Changes::const_iterator ChangesCIter;

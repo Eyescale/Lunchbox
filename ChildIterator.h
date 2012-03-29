@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -21,7 +21,7 @@
 #ifndef DASH_DETAIL_CHILD_ITERATOR_H
 #define DASH_DETAIL_CHILD_ITERATOR_H
 
-#include <dash/detail/Iterator.h>
+#include <lunchbox/indexIterator.h>
 
 namespace dash
 {
@@ -29,9 +29,9 @@ namespace detail
 {
 
 template< class T > 
-class ChildIterator : public Iterator< ChildIterator< T >, T, T >
+class ChildIterator : public lunchbox::IndexIterator< ChildIterator< T >, T, T >
 {
-    typedef Iterator< ChildIterator< T >, T, T > Super;
+    typedef lunchbox::IndexIterator< ChildIterator< T >, T, T > Super;
     typedef lunchbox::RefPtr< T > TPtr;
 
 public:

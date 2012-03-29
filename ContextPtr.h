@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -22,7 +22,7 @@
 #define DASH_DETAIL_CONTEXTPTR_H
 
 #include "Context.h" // used inline
-#include <dash/Vector.h> // member
+#include <lunchbox/lfVector.h> // member
 #include <boost/function.hpp> // used inline
 
 namespace dash
@@ -131,7 +131,7 @@ private:
         ar & get();
     }
 
-    typedef Vector< Value > Values;
+    typedef LFVector< Value > Values;
     Values values_;
     changed_t cb_;
 

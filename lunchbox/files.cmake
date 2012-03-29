@@ -17,9 +17,12 @@ set(LUNCHBOX_PUBLIC_HEADERS
   dso.h
   file.h
   hash.h
+  indexIterator.h
   init.h
   launcher.h
   lfQueue.h
+  lfVector.h
+  lfVectorIterator.h
   lock.h
   lockable.h
   log.h
@@ -37,6 +40,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   requestHandler.h
   rng.h
   scopedMutex.h
+  serializable.h
   sleep.h
   spinLock.h
   stdExt.h

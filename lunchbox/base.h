@@ -32,6 +32,7 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/debug.h>
 #include <lunchbox/file.h>
+#include <lunchbox/lfVector.h>
 #include <lunchbox/monitor.h>
 #include <lunchbox/perThread.h>
 #include <lunchbox/rng.h>

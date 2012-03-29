@@ -144,6 +144,8 @@ template< class > class Atomic;
 template< class > class Buffer;
 template< class > class Monitor;
 template< class, class> class Lockable;
+template< class T, int32_t > class LFVector;
+template< class T, class V > class LFVectorIterator;
 
 typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable
 typedef Atomic< ssize_t > a_ssize_t; //!< An atomic signed size variable

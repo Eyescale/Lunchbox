@@ -491,8 +491,8 @@ LFVector< T, nSlots >::iterator LFVector< T, nSlots >::end()
     return iterator( this, size_ );
 }
 
-template< class T, int32_t nSlots >
-template< class Archive >
+#ifdef LUNCHBOX_USE_BOOST_SERIALIZATION
+template< class T, int32_t nSlots > template< class Archive >
 inline void LFVector< T, nSlots >::save( Archive& ar,
                                          const unsigned int version ) const
 {
@@ -501,8 +501,7 @@ inline void LFVector< T, nSlots >::save( Archive& ar,
         ar << operator[](i);
 }
 
-template< class T, int32_t nSlots >
-template< class Archive >
+template< class T, int32_t nSlots > template< class Archive >
 inline void LFVector< T, nSlots >::load( Archive& ar,
                                          const unsigned int version )
 {
@@ -514,6 +513,7 @@ inline void LFVector< T, nSlots >::load( Archive& ar,
     for( size_t i = 0; i < size_; ++i )
         ar >> operator[](i);
 }
+#endif
 
 }
 

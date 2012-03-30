@@ -24,9 +24,9 @@ int main( int argc, char **argv )
               lunchbox::getIndexOfLastBit( 0u ));
     TESTINFO( lunchbox::getIndexOfLastBit( 42u ) == 5,
               lunchbox::getIndexOfLastBit( 42u ));
-    TESTINFO( lunchbox::getIndexOfLastBit( EQ_BIT12 ) == 11,
-              lunchbox::getIndexOfLastBit( EQ_BIT12 ));
-    TESTINFO( lunchbox::getIndexOfLastBit( EQ_BIT48 ) == 47,
-              lunchbox::getIndexOfLastBit( EQ_BIT48 ));
+    TESTINFO( lunchbox::getIndexOfLastBit( LB_BIT12 ) == 11,
+              lunchbox::getIndexOfLastBit( LB_BIT12 ));
+    TESTINFO( lunchbox::getIndexOfLastBit( LB_BIT48 ) == 47,
+              lunchbox::getIndexOfLastBit( LB_BIT48 ));
     return EXIT_SUCCESS;
 }

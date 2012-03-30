@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define EQ_TEST_RUNTIME 600 // seconds, needed for NighlyMemoryCheck
+#define TEST_RUNTIME 600 // seconds, needed for NighlyMemoryCheck
 #include "test.h"
 
 #include <lunchbox/atomic.h>
@@ -64,7 +64,7 @@ template< class T > void _test()
     lock->set();
 
 #ifdef LUNCHBOX_USE_OPENMP
-    const size_t nThreads = EQ_MIN( lunchbox::OMP::getNThreads()*3, MAXTHREADS );
+    const size_t nThreads = LB_MIN( lunchbox::OMP::getNThreads()*3, MAXTHREADS );
 #else
     const size_t nThreads = 16;
 #endif

@@ -259,7 +259,7 @@ int main( int argc, char **argv )
 {
     //lunchbox::sleep( 5000 );
 
-#ifdef CO_USE_OPENMP
+#ifdef LUNCHBOX_USE_OPENMP
     const size_t nThreads = lunchbox::OMP::getNThreads() * 3;
 #else
     const size_t nThreads = 16;

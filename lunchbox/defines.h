@@ -35,6 +35,7 @@
 
 /** A 'NULL' value for an uint32.*/
 #define LB_UNDEFINED_UINT32   (0xffffffffu)
+
 /** The biggest usable value when using special uint32 values.*/
 #define LB_MAX_UINT32         (0xfffffff0u)
 

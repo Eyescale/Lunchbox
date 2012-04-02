@@ -40,7 +40,7 @@
 #include <lunchbox/sleep.h>
 #include <lunchbox/spinLock.h>
 
-#ifdef EQ_SYSTEM_INCLUDES
+#ifdef LB_SYSTEM_INCLUDES
 #  include <lunchbox/os.h>
 #endif
 

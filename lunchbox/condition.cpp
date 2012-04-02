@@ -109,7 +109,7 @@ bool Condition::timedWait( const uint32_t timeout )
         return true;
     }
 
-    const uint32_t time = timeout == EQ_TIMEOUT_DEFAULT ?
+    const uint32_t time = timeout == LB_TIMEOUT_DEFAULT ?
         300000 /* 5 min */ : timeout;
 
 #ifdef _WIN32

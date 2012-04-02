@@ -40,8 +40,9 @@
 
 /** Constant defining 'wait forever' in methods with wait parameters. */
 #define LB_TIMEOUT_INDEFINITE 0xffffffffu // Attn: identical to Win32 INFINITE!
+
 /** Constant defining use global default in methods with wait parameters. */
-#define EQ_TIMEOUT_DEFAULT 0xfffffffeu
+#define LB_TIMEOUT_DEFAULT 0xfffffffeu
 
 #ifdef __GNUC__
 #  define LB_LIKELY(x)       __builtin_expect( (x), 1 )

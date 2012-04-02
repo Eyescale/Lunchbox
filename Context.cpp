@@ -176,7 +176,7 @@ void Context::addChange( const Change& change )
 
 dash::Commit Context::commit()
 {
-    EQ_TS_SCOPED( thread_ );
+    LB_TS_SCOPED( thread_ );
 
     dash::Commit current = *commit_;
     delete commit_;
@@ -186,7 +186,7 @@ dash::Commit Context::commit()
 
 void Context::apply( CommitConstPtr cmt )
 {
-    EQ_TS_SCOPED( thread_ );
+    LB_TS_SCOPED( thread_ );
     cmt->apply();
 }
 

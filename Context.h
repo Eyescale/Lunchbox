@@ -66,7 +66,7 @@ private:
     Context( const Context& from ); // disable copy
     Context& operator = ( const Context& from ); // disable assignment
 
-    EQ_TS_VAR( thread_ );
+    LB_TS_VAR( thread_ )
 };
 
 }

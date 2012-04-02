@@ -35,7 +35,7 @@
 
 // Experimental Win32 thread pinning
 #ifdef _WIN32
-//#  define EQ_WIN32_THREAD_AFFINITY
+//#  define LB_WIN32_THREAD_AFFINITY
 #  pragma message ("Thread affinity not supported on WIN32")
 #endif
 
@@ -236,7 +236,7 @@ void Thread::yield()
 
 void Thread::pinCurrentThread()
 {
-#ifdef EQ_WIN32_THREAD_AFFINITY
+#ifdef LB_WIN32_THREAD_AFFINITY
     static Lock lock;
     ScopedMutex<> mutex( lock );
 

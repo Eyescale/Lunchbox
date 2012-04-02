@@ -184,7 +184,7 @@ namespace detail { class Thread; }
 // outside of the objects by the application.
 
 #ifndef NDEBUG
-#  define EQ_CHECK_THREADSAFETY
+#  define LB_CHECK_THREADSAFETY
 #endif
 
 /** Declare a thread id variable to be used for thread-safety checks. */
@@ -202,7 +202,7 @@ public:                                                     \
     } NAME;                                                 \
 private:
 
-#ifdef EQ_CHECK_THREADSAFETY
+#ifdef LB_CHECK_THREADSAFETY
 #  define LB_TS_RESET( NAME ) NAME.id = lunchbox::ThreadID::ZERO; 
 
 #  define LB_TS_THREAD( NAME )                                          \

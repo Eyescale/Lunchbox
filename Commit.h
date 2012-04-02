@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-#include <dash/Vector.h> // member
+#include <lunchbox/lfVector.h> // member
 #include <lunchbox/types.h>
 
 #include <dash/Context.h>

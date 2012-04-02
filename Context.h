@@ -24,7 +24,7 @@
 #include "types.h"
 
 #include <dash/api.h>
-#include <dash/Vector.h> // member
+#include <lunchbox/lfVector.h> // member
 #include <lunchbox/types.h>
 
 namespace dash

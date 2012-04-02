@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -21,7 +21,7 @@
 #ifndef DASH_DETAIL_ATTRIBUTE_ITERATOR_H
 #define DASH_DETAIL_ATTRIBUTE_ITERATOR_H
 
-#include <dash/detail/Iterator.h>
+#include <lunchbox/indexIterator.h>
 
 namespace dash
 {
@@ -29,9 +29,10 @@ namespace detail
 {
 
 template< class N, class A > 
-class AttributeIterator : public Iterator< AttributeIterator< N, A >, N, A >
+class AttributeIterator
+    : public lunchbox::IndexIterator< AttributeIterator< N, A >, N, A >
 {
-    typedef Iterator< AttributeIterator< N, A >, N, A > Super;
+    typedef lunchbox::IndexIterator< AttributeIterator< N, A >, N, A > Super;
     typedef lunchbox::RefPtr< A > APtr;
 
 public:

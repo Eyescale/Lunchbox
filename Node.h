@@ -86,7 +86,7 @@ public:
     const dash::Node* getNode() const { return node_; }
 
 private:
-    SERIALIZABLE()
+    LB_SERIALIZABLE
 
     friend int test::main( int argc, char **argv );
     dash::Node* node_;

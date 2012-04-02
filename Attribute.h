@@ -58,7 +58,7 @@ public:
     void apply( const Change& change );
 
 private:
-    SERIALIZABLE()
+    LB_SERIALIZABLE
 
     dash::Attribute* attribute_;
     AnyCtxPtr value_;

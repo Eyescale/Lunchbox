@@ -37,7 +37,7 @@ namespace detail
 namespace
 {
 lunchbox::a_int32_t numSlots_;
-Vector< int32_t > freeSlots_;
+LFVector< int32_t > freeSlots_;
 
 static int32_t allocSlot_()
 {

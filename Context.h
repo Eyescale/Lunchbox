@@ -24,6 +24,7 @@
 #include "types.h"
 
 #include <dash/api.h>
+#include <dash/Serializable.h>
 #include <lunchbox/lfVector.h> // member
 #include <lunchbox/types.h>
 

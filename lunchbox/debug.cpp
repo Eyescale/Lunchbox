@@ -22,12 +22,17 @@
 
 #include <errno.h>
 
-#ifndef _WIN32
+#define LB_BACKTRACE_DEPTH 256
+#ifdef _WIN32
+#  include "scopedMutex.h"
+#  define LB_SYMBOL_LENGTH 256
+#  include <DbgHelp.h>
+#  pragma comment(lib, "DbgHelp.lib")
+#else
 #  include <cxxabi.h>
 #  include <execinfo.h>
 #  include <stdlib.h>
 #  include <string.h>
-#  define LB_BACKTRACE_DEPTH 256
 #endif
 
 namespace lunchbox
@@ -62,7 +67,51 @@ void checkHeap()
 std::ostream& backtrace( std::ostream& os )
 {
 #ifdef _WIN32
-    os << "backtrace not implemented";
+    // Sym* functions from DbgHelp are not thread-safe...
+    static Lock lock;
+    ScopedMutex<> mutex( lock );
+    
+    typedef USHORT (WINAPI *CaptureStackBackTraceType)( __in ULONG, __in ULONG,
+                                                        __out PVOID*,
+                                                        __out_opt PULONG );
+    CaptureStackBackTraceType backtraceFunc = (CaptureStackBackTraceType)
+       GetProcAddress(LoadLibrary("kernel32.dll"), "RtlCaptureStackBackTrace");
+    if( !backtraceFunc )
+        return os;
+
+    SymSetOptions( SYMOPT_UNDNAME | SYMOPT_LOAD_LINES );
+    HANDLE hProcess = GetCurrentProcess();
+    if( !SymInitialize( hProcess, 0, TRUE ))
+        return os;  
+    
+    void* stack[ LB_BACKTRACE_DEPTH ];
+    unsigned short frames = (backtraceFunc)( 0, LB_BACKTRACE_DEPTH, stack, 0 );
+  
+    SYMBOL_INFO* symbol = (SYMBOL_INFO*)calloc( sizeof(SYMBOL_INFO) +
+                                         (LB_SYMBOL_LENGTH+-1)*sizeof(char), 1 );
+    symbol->MaxNameLen   = LB_SYMBOL_LENGTH;
+    symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
+    
+    os << disableFlush << disableHeader << indent << std::endl;
+    for( unsigned short i = 0; i < frames; ++i )
+    {
+        os << frames-i-1 << ": ";
+        if ( !SymFromAddr( hProcess, (DWORD64)stack[i], 0, symbol ))
+            os << "Unknown symbol";
+        else
+        {
+            os << symbol->Name << " - ";            
+            IMAGEHLP_LINE64 line = { sizeof(IMAGEHLP_LINE64) };
+            if( !SymGetLineFromAddr64( hProcess, (DWORD64)stack[i], 0, &line ))
+                os << std::hex << "0x" << symbol->Address << std::dec;
+            else
+                os << line.FileName << ":" << line.LineNumber;
+        }
+        os << std::endl;                
+    }
+    os << exdent << enableHeader << enableFlush;
+    free( symbol );
+    SymCleanup( hProcess );
 #else
     void* callstack[ LB_BACKTRACE_DEPTH ];
     const int frames = ::backtrace( callstack, LB_BACKTRACE_DEPTH );

@@ -110,19 +110,19 @@ typedef SSIZE_T    ssize_t;
 #define LB_BIT_ALL_64  (0xffffffffffffffffull)
 #define LB_BIT_NONE (0)
 
-#define EQ_1KB   (1024)
-#define EQ_10KB  (10240)
-#define EQ_100KB (102400)
-#define EQ_1MB   (1048576)
-#define EQ_10MB  (10485760)
-#define EQ_100MB (104857600)
+#define LB_1KB   (1024)
+#define LB_10KB  (10240)
+#define LB_100KB (102400)
+#define LB_1MB   (1048576)
+#define LB_10MB  (10485760)
+#define LB_100MB (104857600)
 
-#define EQ_16KB  (16384)
-#define EQ_32KB  (32768)
-#define EQ_64KB  (65536)
-#define EQ_128KB (131072)
-#define EQ_48MB  (50331648)
-#define EQ_64MB  (67108864)
+#define LB_16KB  (16384)
+#define LB_32KB  (32768)
+#define LB_64KB  (65536)
+#define LB_128KB (131072)
+#define LB_48MB  (50331648)
+#define LB_64MB  (67108864)
 
 namespace lunchbox
 {

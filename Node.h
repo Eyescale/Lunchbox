@@ -101,18 +101,25 @@ template< class Archive >
 inline void Node::save( Archive& ar, const unsigned int version ) const
 {
     ar << node_;
-    ar << parents_;
-    ar << children_;
-    ar << attributes_;
+    ar << parents_.get();
+    ar << children_.get();
+    ar << attributes_.get();
 }
 
 template< class Archive >
 inline void Node::load( Archive& ar, const unsigned int version )
 {
     ar >> node_;
-    ar >> parents_;
-    ar >> children_;
-    ar >> attributes_;
+    boost::shared_ptr< Parents > parents( new Parents );
+    ar >> *parents;
+    boost::shared_ptr< Children > children( new Children );
+    ar >> *children;
+    boost::shared_ptr< dash::Attributes > attributes( new dash::Attributes );
+    ar >> *attributes;
+
+    parents_.set( parents );
+    children_.set( children );
+    attributes_.set( attributes );
 }
 
 }

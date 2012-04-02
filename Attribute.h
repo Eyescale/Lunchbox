@@ -71,13 +71,15 @@ private:
 template< class Archive >
 inline void Attribute::save( Archive& ar, const unsigned int version ) const
 {
-    ar << value_;
+    ar << value_.get();
 }
 
 template< class Archive >
 inline void Attribute::load( Archive& ar, const unsigned int version )
 {
-    ar >> value_;
+    boost::shared_ptr< detail::Any > anyValue( new detail::Any );
+    ar >> *anyValue;
+    value_.set( anyValue );
 }
 
 }

@@ -21,12 +21,15 @@
 #ifndef DASH_DETAIL_CHANGE_H
 #define DASH_DETAIL_CHANGE_H
 
-#include "types.h"
-#include "Node.h"
-#include <dash/api.h>
-#include <dash/Serializable.h>
-#include <dash/Context.h>
 #include "Commit.h"
+#include "Node.h"
+#include "types.h"
+
+#include <dash/api.h>
+#include <dash/Context.h>
+
+#include <lunchbox/serializable.h>
+
 #include <iostream>
 
 namespace dash
@@ -64,7 +67,7 @@ struct Change
     Commit* commit;
 
 private:
-    SERIALIZABLE()
+    LB_SERIALIZABLE
 };
 
 DASH_API std::ostream& operator << ( std::ostream& os, const Change& change );
@@ -75,20 +78,8 @@ inline void Change::save( Archive& ar, const unsigned int version ) const
 {
     ar << type;
     ar << node;
-    if( type == Change::NODE_INSERT )
-    {
-        //dash::Context& current = dash::Context::getCurrent();
-        //commit->context_->setCurrent();
-        ar << child;
-        //current.setCurrent();
-    }
-    else if( type == Change::ATTRIBUTE_INSERT )
-    {
-        //dash::Context& current = dash::Context::getCurrent();
-        //commit->context_->setCurrent();
-        ar << attribute;
-        //current.setCurrent();
-    }
+    ar << child;
+    ar << attribute;
     ar << value;
 }
 
@@ -97,20 +88,8 @@ inline void Change::load( Archive& ar, const unsigned int version )
 {
     ar >> type;
     ar >> node;
-    if( type == Change::NODE_INSERT )
-    {
-        //dash::Context& current = dash::Context::getCurrent();
-        //commit->context_->setCurrent();
-        ar >> child;
-        //current.setCurrent();
-    }
-    else if( type == Change::ATTRIBUTE_INSERT )
-    {
-        //dash::Context& current = dash::Context::getCurrent();
-        //commit->context_->setCurrent();
-        ar >> attribute;
-        //current.setCurrent();
-    }
+    ar >> child;
+    ar >> attribute;
     ar >> value;
 }
 

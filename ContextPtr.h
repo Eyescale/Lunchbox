@@ -123,9 +123,15 @@ public:
                 cb_( context, value );
         }
 
-private:
-    SERIALIZABLE()
+    /** @internal */
+    void set( Value value, Context& context = Context::getCurrent( ))
+        {
+            const int32_t slot = context.getSlot();
+            values_.expand( slot + 1 );
+            values_[ slot ] = value;
+        }
 
+private:
     typedef LFVector< Value > Values;
     Values values_;
     changed_t cb_;
@@ -133,21 +139,6 @@ private:
     ContextPtr( const ContextPtr& from );
     ContextPtr& operator = ( const ContextPtr& from );
 };
-
-template< class T >
-template< class Archive >
-inline void ContextPtr< T >::save( Archive& ar, const unsigned int version ) const
-{
-    ar << get();
-}
-
-template< class T >
-template< class Archive >
-inline void ContextPtr< T >::load( Archive& ar, const unsigned int version )
-{
-    setup();
-    ar >> get();
-}
 
 }
 }

@@ -24,7 +24,6 @@
 #include "types.h"
 
 #include <dash/api.h>
-#include <dash/Serializable.h>
 #include <lunchbox/lfVector.h> // member
 #include <lunchbox/types.h>
 
@@ -59,8 +58,6 @@ public:
     void apply( CommitConstPtr commit );
 
 private:
-    SERIALIZABLE()
-
     friend int test::main( int argc, char **argv );
 
     size_t slot_; //!< lookup index for data of this Context
@@ -71,18 +68,6 @@ private:
 
     EQ_TS_VAR( thread_ );
 };
-
-template< class Archive >
-inline void Context::save( Archive& ar, const unsigned int version ) const
-{
-    ar << slot_;
-}
-
-template< class Archive >
-inline void Context::load( Archive& ar, const unsigned int version )
-{
-    ar >> slot_;
-}
 
 }
 }

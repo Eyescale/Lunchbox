@@ -26,19 +26,19 @@
 #include <lunchbox/defines.h>
 
 #if defined(_MSC_VER) || defined(__declspec)
-#  define EQ_DLLEXPORT __declspec(dllexport)
-#  define EQ_DLLIMPORT __declspec(dllimport)
+#  define LB_DLLEXPORT __declspec(dllexport)
+#  define LB_DLLIMPORT __declspec(dllimport)
 #else // _MSC_VER
-#  define EQ_DLLEXPORT
-#  define EQ_DLLIMPORT
+#  define LB_DLLEXPORT
+#  define LB_DLLIMPORT
 #endif // _MSC_VER
 
 #if defined(LUNCHBOX_STATIC)
 #  define LUNCHBOX_API
 #elif defined(LUNCHBOX_SHARED)
-#  define LUNCHBOX_API EQ_DLLEXPORT
+#  define LUNCHBOX_API LB_DLLEXPORT
 #else
-#  define LUNCHBOX_API EQ_DLLIMPORT
+#  define LUNCHBOX_API LB_DLLIMPORT
 #endif
 
 #endif //LUNCHBOX_API_H

@@ -37,8 +37,8 @@
 #    define LB_STDEXT_TR1
 #  else
 #    define LB_STDEXT_EXT
-#    ifndef EQ_HAVE_LONG_HASH
-#      define EQ_HAVE_LONG_HASH
+#    ifndef LB_HAVE_LONG_HASH
+#      define LB_HAVE_LONG_HASH
 #    endif
 #  endif
 #else
@@ -90,17 +90,17 @@ LB_STDEXT_NAMESPACE_OPEN
 
 //----- Our extensions of the STL 
 #ifdef LB_STDEXT_TR1
-#   ifndef EQ_HAVE_HASH_MAP
+#   ifndef LB_HAVE_HASH_MAP
     template<class K, class T, class H = hash< K >, 
              class P = std::equal_to< K >, class A = std::allocator< K > >
     class hash_map : public unordered_map< K, T, H, P, A >
     {
     };
-#  endif // EQ_HAVE_HASH_MAP
+#  endif // LB_HAVE_HASH_MAP
 #endif
 
 #ifdef LB_STDEXT_EXT
-#  ifndef EQ_HAVE_STRING_HASH
+#  ifndef LB_HAVE_STRING_HASH
     /** std::string hash function. @version 1.0 */
     template<> struct hash< std::string >
     {
@@ -109,10 +109,10 @@ LB_STDEXT_NAMESPACE_OPEN
             return hash< const char* >()( str.c_str() );
         }
     };
-#  endif // EQ_HAVE_STRING_HASH
+#  endif // LB_HAVE_STRING_HASH
 
 #  if !defined __INTEL_COMPILER
-#    ifndef EQ_HAVE_LONG_HASH
+#    ifndef LB_HAVE_LONG_HASH
     /** uint64_t hash function. @version 1.0 */
     template<> struct hash< uint64_t >
     {
@@ -126,7 +126,7 @@ LB_STDEXT_NAMESPACE_OPEN
 #    endif
 #  endif // !__INTEL_COMPILER
 
-#  ifndef EQ_HAVE_VOID_PTR_HASH
+#  ifndef LB_HAVE_VOID_PTR_HASH
     /** void* hash functions. @version 1.0 */
     template<> struct hash< void* >
     {
@@ -145,11 +145,11 @@ LB_STDEXT_NAMESPACE_OPEN
             return reinterpret_cast<size_t>(key);
         }
     };
-#  endif // EQ_HAVE_VOID_PTR_HASH
+#  endif // LB_HAVE_VOID_PTR_HASH
 #endif // LB_STDEXT_EXT
 
 #ifdef LB_STDEXT_MSVC
-#  ifndef EQ_HAVE_STRING_HASH
+#  ifndef LB_HAVE_STRING_HASH
 
     /** std::string hash function. @version 1.0 */
     template<> inline size_t hash_compare< std::string >::operator()

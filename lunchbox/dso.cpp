@@ -23,10 +23,10 @@
 #include "os.h"
 
 #ifdef _WIN32 //_MSC_VER
-#  define EQ_DL_ERROR sysError
+#  define LB_DL_ERROR sysError
 #else
 #  include <dlfcn.h>
-#  define EQ_DL_ERROR dlerror()
+#  define LB_DL_ERROR dlerror()
 #endif
 
 namespace lunchbox
@@ -83,7 +83,7 @@ bool DSO::open( const std::string& fileName )
 #endif
         if( !_impl->dso )
         {
-            EQINFO << "Can't open library: " << EQ_DL_ERROR << std::endl;
+            EQINFO << "Can't open library: " << LB_DL_ERROR << std::endl;
             return false;
         }
     }

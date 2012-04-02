@@ -58,7 +58,7 @@ Node::Node( dash::Node* node, NodePtr from )
 
 Node::~Node()
 {
-    //EQASSERT( node_ == 0 );
+    EQASSERT( node_ == 0 );
     while( !children_->empty( ))
     {
         // Don't use erase, generates Change

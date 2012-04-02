@@ -27,7 +27,6 @@
 #include <lunchbox/serializable.h>
 #include <lunchbox/types.h>
 
-#include <dash/Context.h>
 
 namespace dash
 {

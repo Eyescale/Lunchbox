@@ -39,7 +39,7 @@ namespace lunchbox
         T* alloc()
             {
                 ScopedMutex< SpinLock > mutex( _lock );
-                EQ_TS_SCOPED( _thread );
+                LB_TS_SCOPED( _thread );
                 if( _cache.empty( ))
                     return new T;
 
@@ -52,7 +52,7 @@ namespace lunchbox
         void release( T* item )
             {
                 ScopedMutex< SpinLock > mutex( _lock );
-                EQ_TS_SCOPED( _thread );
+                LB_TS_SCOPED( _thread );
                 _cache.push_back( item );
             }
 
@@ -60,7 +60,7 @@ namespace lunchbox
         void flush()
             {
                 ScopedMutex< SpinLock > mutex( _lock );
-                EQ_TS_SCOPED( _thread );
+                LB_TS_SCOPED( _thread );
                 while( !_cache.empty( ))
                 {
                     delete _cache.back();
@@ -71,7 +71,7 @@ namespace lunchbox
     private:
         SpinLock* const _lock;
         std::vector< T* > _cache;
-        EQ_TS_VAR( _thread );
+        LB_TS_VAR( _thread );
     };
 }
 #endif // LUNCHBOX_POOL_H

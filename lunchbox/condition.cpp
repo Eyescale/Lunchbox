@@ -103,7 +103,7 @@ void Condition::wait()
 
 bool Condition::timedWait( const uint32_t timeout )
 {
-    if( timeout == EQ_TIMEOUT_INDEFINITE )
+    if( timeout == LB_TIMEOUT_INDEFINITE )
     {
         wait();
         return true;

@@ -39,7 +39,7 @@
 #define LB_MAX_UINT32         (0xfffffff0u)
 
 /** Constant defining 'wait forever' in methods with wait parameters. */
-#define EQ_TIMEOUT_INDEFINITE 0xffffffffu // Attn: identical to Win32 INFINITE!
+#define LB_TIMEOUT_INDEFINITE 0xffffffffu // Attn: identical to Win32 INFINITE!
 /** Constant defining use global default in methods with wait parameters. */
 #define EQ_TIMEOUT_DEFAULT 0xfffffffeu
 

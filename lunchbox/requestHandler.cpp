@@ -188,7 +188,7 @@ bool RequestHandler::waitRequest( const uint32_t requestID, bool& rBool,
 bool RequestHandler::waitRequest( const uint32_t requestID )
 {
     Request::Result result;
-    return _impl->waitRequest( requestID, result, EQ_TIMEOUT_INDEFINITE );
+    return _impl->waitRequest( requestID, result, LB_TIMEOUT_INDEFINITE );
 }
 
 void* RequestHandler::getRequestData( const uint32_t requestID )

@@ -57,7 +57,7 @@ namespace lunchbox
         /** Reset (empty) the queue. @version 1.0 */
         void clear()
             {
-                EQ_TS_SCOPED( _reader );
+                LB_TS_SCOPED( _reader );
                 _readPos = 0;
                 _writePos = 0;
             }
@@ -86,7 +86,7 @@ namespace lunchbox
          */
         bool pop( T& result )
             {
-                EQ_TS_SCOPED( _reader );
+                LB_TS_SCOPED( _reader );
                 if( _readPos == _writePos )
                     return false;
                 
@@ -105,7 +105,7 @@ namespace lunchbox
          */
         bool getFront( T& result )
             {
-                EQ_TS_SCOPED( _reader );
+                LB_TS_SCOPED( _reader );
                 if( _readPos == _writePos )
                     return false;
                 
@@ -122,7 +122,7 @@ namespace lunchbox
          */
         bool push( const T& element )
             {
-                EQ_TS_SCOPED( _writer );
+                LB_TS_SCOPED( _writer );
                 int32_t nextPos = (_writePos + 1) % _data.size();
                 if( nextPos == _readPos )
                     return false;
@@ -143,8 +143,8 @@ namespace lunchbox
         a_int32_t _readPos;
         a_int32_t _writePos;
 
-        EQ_TS_VAR( _reader );
-        EQ_TS_VAR( _writer );
+        LB_TS_VAR( _reader );
+        LB_TS_VAR( _writer );
     };
 }
 #endif // LUNCHBOX_LFQUEUE_H

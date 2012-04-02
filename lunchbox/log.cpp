@@ -38,7 +38,6 @@
 
 namespace lunchbox
 {
-static int      getLogLevel();
 static unsigned getLogTopics();
 
 namespace
@@ -66,7 +65,7 @@ static LogTable _logTable[ LOG_TABLE_SIZE ] =
 };
 }
 
-int      Log::level  = getLogLevel();
+int      Log::level  = LOG_ERROR; // init in getLogTopics()
 unsigned Log::topics = getLogTopics();
 Clock    _defaultClock;
 Clock*   _clock = &_defaultClock;
@@ -80,18 +79,16 @@ static std::ostream* _logStream = &std::cout;
 static std::ostream* _logStream = &std::cerr;
 #endif
 
-int getLogLevel()
+int Log::getLogLevel( const std::string& text )
 {
-    const char *env = getenv("EQ_LOG_LEVEL");
-    if( env )
+    if( !text.empty( ))
     {
-        const int level = atoi( env );
-        if( level )
-            return level;
+        const int num = atoi( text.c_str( ));
+        if( num > 0 && num <= LOG_ALL )
+            return num;
 
-        const std::string envString( env );
-        for( uint32_t i=0; i<LOG_TABLE_SIZE; ++i )
-            if( _logTable[i].name == envString )
+        for( uint32_t i = 0; i < LOG_TABLE_SIZE; ++i )
+            if( _logTable[i].name == text )
                 return _logTable[i].level;
     }
 
@@ -113,11 +110,13 @@ std::string& Log::getLogLevelString()
 
 unsigned getLogTopics()
 {
-    const char *env = getenv("EQ_LOG_TOPICS");
+    Log::level = Log::getLogLevel( getenv( "LB_LOG_LEVEL" ));
+    const char *env = getenv( "LB_LOG_TOPICS" );
+
     if( env )
         return atoll(env);
 
-    if( getLogLevel() == LOG_ALL )
+    if( Log::level == LOG_ALL )
         return 0xffffffffu;
 
     return 0;

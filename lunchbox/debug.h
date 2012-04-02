@@ -24,7 +24,7 @@
 #include <typeinfo>
 
 // assertions
-// #define EQ_RELEASE_ASSERT
+// #define LB_RELEASE_ASSERT
 
 namespace lunchbox
 {
@@ -65,8 +65,7 @@ template< class T > inline std::string className( T* object )
 }
 
 #ifdef NDEBUG
-
-#  ifdef EQ_RELEASE_ASSERT
+#  ifdef LB_RELEASE_ASSERT
 #    define EQASSERT(x)                                                 \
     {                                                                   \
         if( !(x) )                                                      \
@@ -137,11 +136,9 @@ template< class T > inline std::string className( T* object )
 #  define EQABORT( info ) {                                             \
         EQERROR << "Abort: " << info;                                   \
         lunchbox::abort(); }
-
 #endif // NDEBUG
 
 #define EQSAFECAST( to, in ) static_cast< to >( in );   \
     EQASSERT( in == 0 || dynamic_cast< to >( static_cast< to >( in )))
-
 
 #endif //LUNCHBOX_DEBUG_H

@@ -40,11 +40,11 @@ namespace detail { class TimedLock; }
          * Set the lock. 
          * 
          * @param timeout the timeout in milliseconds to wait for the lock,
-         *                or EQ_TIMEOUT_INDEFINITE to wait indefinitely.
+         *                or LB_TIMEOUT_INDEFINITE to wait indefinitely.
          * @return true if the lock was acquired, false if not.
          * @version 1.0
          */
-        LUNCHBOX_API bool set( const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
+        LUNCHBOX_API bool set( const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
 
         /** Release the lock. @version 1.0 */
         LUNCHBOX_API void unset();

@@ -81,23 +81,23 @@ namespace detail { class RequestHandler; }
          * @param requestID the request identifier.
          * @param result  the result code of the operation.
          * @param timeout the timeout in milliseconds to wait for the request,
-         *                or <code>EQ_TIMEOUT_INDEFINITE</code> to wait
+         *                or <code>LB_TIMEOUT_INDEFINITE</code> to wait
          *                indefinitely.
          * @return true if the request was served, false if not.
          * @version 1.0
          */
         LUNCHBOX_API bool waitRequest( const uint32_t requestID, void*& result,
-                               const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
+                               const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
 
         /** Wait for a request with an uint32_t result. @version 1.0 */
         LUNCHBOX_API bool waitRequest( const uint32_t requestID, uint32_t& result,
-                               const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
+                               const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
         /** Wait for a request with a bool result. @version 1.0 */
         LUNCHBOX_API bool waitRequest( const uint32_t requestID, bool& result,
-                               const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
+                               const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
         /** Wait for a request with an uint128_t result. @version 1.0 */
         LUNCHBOX_API bool waitRequest(const uint32_t requestID, uint128_t& result,
-                               const uint32_t timeout = EQ_TIMEOUT_INDEFINITE );
+                               const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
         /** Wait for a request without a result. @version 1.0 */
         LUNCHBOX_API bool waitRequest( const uint32_t requestID );
 
@@ -148,7 +148,7 @@ namespace detail { class RequestHandler; }
         detail::RequestHandler* const _impl;
         friend LUNCHBOX_API std::ostream& operator << ( std::ostream&,
                                                         const RequestHandler& );
-        EQ_TS_VAR( _thread );
+        LB_TS_VAR( _thread );
     };
 
     LUNCHBOX_API std::ostream& operator << ( std::ostream&,

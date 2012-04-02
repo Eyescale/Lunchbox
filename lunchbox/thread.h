@@ -188,7 +188,7 @@ namespace detail { class Thread; }
 #endif
 
 /** Declare a thread id variable to be used for thread-safety checks. */
-#define EQ_TS_VAR( NAME )                                   \
+#define LB_TS_VAR( NAME )                                   \
 public:                                                     \
     struct NAME ## Struct                                   \
     {                                                       \
@@ -203,9 +203,9 @@ public:                                                     \
 private:
 
 #ifdef EQ_CHECK_THREADSAFETY
-#  define EQ_TS_RESET( NAME ) NAME.id = lunchbox::ThreadID::ZERO; 
+#  define LB_TS_RESET( NAME ) NAME.id = lunchbox::ThreadID::ZERO; 
 
-#  define EQ_TS_THREAD( NAME )                                          \
+#  define LB_TS_THREAD( NAME )                                          \
     {                                                                   \
         if( NAME.id == lunchbox::ThreadID::ZERO )                       \
         {                                                               \
@@ -226,7 +226,7 @@ private:
         }                                                               \
     }
 
-#  define EQ_TS_NOT_THREAD( NAME )                                      \
+#  define LB_TS_NOT_THREAD( NAME )                                      \
     {                                                                   \
         if( !NAME.extMutex && NAME.id != lunchbox::ThreadID::ZERO )     \
         {                                                               \
@@ -262,14 +262,14 @@ private:
     };
     /** @endcond */
 
-# define EQ_TS_SCOPED( NAME ) \
+# define LB_TS_SCOPED( NAME ) \
     lunchbox::ScopedThreadCheck< NAME ## Struct > scoped ## NAME ## Check(NAME);
 
 #else
-#  define EQ_TS_RESET( NAME ) {}
-#  define EQ_TS_THREAD( NAME ) {}
-#  define EQ_TS_NOT_THREAD( NAME ) {}
-#  define EQ_TS_SCOPED( NAME ) {}
+#  define LB_TS_RESET( NAME ) {}
+#  define LB_TS_THREAD( NAME ) {}
+#  define LB_TS_NOT_THREAD( NAME ) {}
+#  define LB_TS_SCOPED( NAME ) {}
 #endif
 
 }

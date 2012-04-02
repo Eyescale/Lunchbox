@@ -162,6 +162,9 @@ namespace lunchbox
         /** The string representation of the current log level. */
         static std::string& getLogLevelString();
 
+        /** @return the log level of a string representation. @version 1.3.2 */
+        static LUNCHBOX_API int getLogLevel( const std::string& level );
+
         /** Change the output stream. */
         static LUNCHBOX_API void setOutput( std::ostream& stream );
 

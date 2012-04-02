@@ -27,7 +27,7 @@
 #  include <execinfo.h>
 #  include <stdlib.h>
 #  include <string.h>
-#  define EQ_BACKTRACE_DEPTH 256
+#  define LB_BACKTRACE_DEPTH 256
 #endif
 
 namespace lunchbox
@@ -37,9 +37,9 @@ void abort()
 {
     EQERROR << ", in: " << backtrace << std::endl;
 
-    // if EQ_ABORT_WAIT is set, spin forever to allow identifying and debugging
+    // if LB_ABORT_WAIT is set, spin forever to allow identifying and debugging
     // crashed nodes.
-    if( getenv( "EQ_ABORT_WAIT" ))
+    if( getenv( "LB_ABORT_WAIT" ))
         while( true ) ;
 
     ::abort();
@@ -64,8 +64,8 @@ std::ostream& backtrace( std::ostream& os )
 #ifdef _WIN32
     os << "backtrace not implemented";
 #else
-    void* callstack[ EQ_BACKTRACE_DEPTH ];
-    const int frames = ::backtrace( callstack, EQ_BACKTRACE_DEPTH );
+    void* callstack[ LB_BACKTRACE_DEPTH ];
+    const int frames = ::backtrace( callstack, LB_BACKTRACE_DEPTH );
     char** names = ::backtrace_symbols( callstack, frames );
     os << disableFlush << disableHeader << indent << std::endl;
     for( int i = 1; i < frames; ++i )

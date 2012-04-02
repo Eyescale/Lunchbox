@@ -110,14 +110,17 @@ std::string& Log::getLogLevelString()
 
 unsigned getLogTopics()
 {
-    Log::level = Log::getLogLevel( getenv( "LB_LOG_LEVEL" ));
     const char *env = getenv( "LB_LOG_TOPICS" );
-
     if( env )
         return atoll(env);
 
-    if( Log::level == LOG_ALL )
-        return 0xffffffffu;
+    env = getenv( "LB_LOG_LEVEL" );
+    if( env )
+    {
+        Log::level = Log::getLogLevel( env );
+        if( Log::level == LOG_ALL )
+            return 0xffffffffu;
+    }
 
     return 0;
 }

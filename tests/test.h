@@ -60,11 +60,11 @@ public:
     virtual void run()
         {
             lunchbox::Thread::setName( "Watchdog" );
-#ifdef EQ_TEST_RUNTIME
-            lunchbox::sleep( EQ_TEST_RUNTIME * 1000 );
+#ifdef TEST_RUNTIME
+            lunchbox::sleep( TEST_RUNTIME * 1000 );
             TESTINFO( false, 
                       "Watchdog triggered - " << _name <<
-                      " did not terminate within " << EQ_TEST_RUNTIME << "s" );
+                      " did not terminate within " << TEST_RUNTIME << "s" );
 #else
             lunchbox::sleep( 60000 );
             TESTINFO( false, 
@@ -80,7 +80,7 @@ private:
 
 int main( int argc, char **argv )
 {
-#ifndef EQ_TEST_NO_WATCHDOG
+#ifndef TEST_NO_WATCHDOG
     Watchdog watchdog( argv[0] );
     watchdog.start();
 #endif
@@ -89,7 +89,7 @@ int main( int argc, char **argv )
     if( result != EXIT_SUCCESS )
         return result;
 
-#ifndef EQ_TEST_NO_WATCHDOG
+#ifndef TEST_NO_WATCHDOG
     watchdog.cancel();
     lunchbox::sleep( 10 ); // give watchdog time to terminate
 #endif

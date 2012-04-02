@@ -132,7 +132,7 @@ uint32_t RequestHandler::registerRequest( void* data )
     }
 
     request->data = data;
-    _impl->requestID = ( _impl->requestID + 1 ) % EQ_MAX_UINT32;
+    _impl->requestID = ( _impl->requestID + 1 ) % LB_MAX_UINT32;
     _impl->requests[ _impl->requestID ] = request;
     return _impl->requestID;
 }

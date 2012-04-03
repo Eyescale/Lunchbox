@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -74,7 +74,6 @@ void Commit::add( const Change& change )
         dash::Context::getCurrent().map( change.attribute, *context_ );
 
     changes_->push_back( change );
-    const_cast<Change&>(change).commit = this;
 }
 
 void Commit::apply() const

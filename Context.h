@@ -60,7 +60,7 @@ public:
 private:
     friend int test::main( int argc, char **argv );
 
-    size_t slot_; //!< lookup index for data of this Context
+    const size_t slot_; //!< lookup index for data of this Context
     dash::Commit* commit_; //!< pending changes
 
     Context( const Context& from ); // disable copy

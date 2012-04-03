@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -54,21 +54,14 @@ bool Change::operator == ( const Change& rhs ) const
     if( this == &rhs )
         return true;
 
-    if( type != rhs.type )
+    if( type != rhs.type || 
+        ( node && rhs.node && *node != *rhs.node ) ||
+        ( child && rhs.child && *child != *rhs.child ) ||
+        ( attribute && rhs.attribute && *attribute != *rhs.attribute ) ||
+        ( value && rhs.value && *value != *rhs.value ))
+    {
         return false;
-
-    if( node && rhs.node && *node != *rhs.node )
-        return false;
-
-    if( child && rhs.child && *child != *rhs.child )
-        return false;
-
-    if( attribute && rhs.attribute && *attribute != *rhs.attribute )
-        return false;
-
-    if( value && rhs.value && *value != *rhs.value )
-        return false;
-
+    }
     return true;
 }
 

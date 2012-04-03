@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
@@ -21,7 +21,6 @@
 #ifndef DASH_DETAIL_CHANGE_H
 #define DASH_DETAIL_CHANGE_H
 
-#include "Commit.h"
 #include "Node.h"
 #include "types.h"
 
@@ -64,7 +63,6 @@ struct Change
 
     dash::AttributePtr attribute;
     boost::shared_ptr< detail::Any > value;
-    Commit* commit;
 
 private:
     LB_SERIALIZABLE

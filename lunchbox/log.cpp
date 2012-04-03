@@ -79,11 +79,11 @@ static std::ostream* _logStream = &std::cout;
 static std::ostream* _logStream = &std::cerr;
 #endif
 
-int Log::getLogLevel( const std::string& text )
+int Log::getLogLevel( const char* text )
 {
-    if( !text.empty( ))
+    if( text )
     {
-        const int num = atoi( text.c_str( ));
+        const int num = atoi( text );
         if( num > 0 && num <= LOG_ALL )
             return num;
 
@@ -110,17 +110,14 @@ std::string& Log::getLogLevelString()
 
 unsigned getLogTopics()
 {
+    Log::level = Log::getLogLevel( getenv( "LB_LOG_LEVEL" ));
     const char *env = getenv( "LB_LOG_TOPICS" );
+
     if( env )
         return atoll(env);
 
-    env = getenv( "LB_LOG_LEVEL" );
-    if( env )
-    {
-        Log::level = Log::getLogLevel( env );
-        if( Log::level == LOG_ALL )
-            return 0xffffffffu;
-    }
+    if( Log::level == LOG_ALL )
+        return 0xffffffffu;
 
     return 0;
 }

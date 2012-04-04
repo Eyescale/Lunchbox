@@ -65,7 +65,7 @@ static LogTable _logTable[ LOG_TABLE_SIZE ] =
 };
 }
 
-int      Log::level  = LOG_ERROR; // init in getLogTopics()
+int      Log::level  = Log::getLogLevel( getenv( "LB_LOG_LEVEL" ));
 unsigned Log::topics = getLogTopics();
 Clock    _defaultClock;
 Clock*   _clock = &_defaultClock;

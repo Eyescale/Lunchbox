@@ -50,7 +50,7 @@ const void* MemoryMap::map( const std::string& filename )
 {
     if( _ptr )
     {
-        EQWARN << "File already mapped" << std::endl;
+        LBWARN << "File already mapped" << std::endl;
         return 0;
     }
 
@@ -60,7 +60,7 @@ const void* MemoryMap::map( const std::string& filename )
                               0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0 );
     if( file == INVALID_HANDLE_VALUE )
     {
-        EQWARN << "Can't open " << filename << ": " << sysError
+        LBWARN << "Can't open " << filename << ": " << sysError
                << std::endl;
         return 0;
     }
@@ -69,7 +69,7 @@ const void* MemoryMap::map( const std::string& filename )
     _map = CreateFileMapping( file, 0, PAGE_READONLY, 0, 0, 0 );
     if( !_map )
     {
-        EQWARN << "File mapping failed: " << sysError << std::endl;
+        LBWARN << "File mapping failed: " << sysError << std::endl;
         return 0;
     }
     
@@ -88,7 +88,7 @@ const void* MemoryMap::map( const std::string& filename )
     _fd = open( filename.c_str(), O_RDONLY );
     if( _fd < 0 )
     {
-        EQINFO << "Can't open " << filename << std::endl;
+        LBINFO << "Can't open " << filename << std::endl;
         return 0;
     }
     
@@ -116,7 +116,7 @@ void MemoryMap::unmap()
 {
     if( !_ptr )
     {
-        EQWARN << "File not mapped" << std::endl;
+        LBWARN << "File not mapped" << std::endl;
         return;
     }
 

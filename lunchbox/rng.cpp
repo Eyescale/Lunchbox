@@ -72,7 +72,7 @@ bool RNG::_init()
         ::atexit( RNG::_exit );
     else
     {
-        EQERROR << "Failed to open /dev/urandom: " << sysError << std::endl;
+        LBERROR << "Failed to open /dev/urandom: " << sysError << std::endl;
         return false;
     }
     _fd = fd;
@@ -90,7 +90,7 @@ bool RNG::_init()
     }
     else
     {
-        EQERROR << "Failed to acquire crypto context: " << sysError <<std::endl;
+        LBERROR << "Failed to acquire crypto context: " << sysError <<std::endl;
         return false;
     }
 
@@ -109,7 +109,7 @@ void RNG::_exit()
     }
 #elif defined (_WIN32)
     if( _provider && !CryptReleaseContext( _provider, 0 ))
-        EQERROR << "Failed to release crypto context: " << sysError
+        LBERROR << "Failed to release crypto context: " << sysError
                 << std::endl;
     _provider = 0;
 #endif
@@ -131,7 +131,7 @@ bool RNG::_get( void* data, const size_t size )
                   read << " != " << size << ": " << sysError );
     if( read != ssize_t( size ))
     {
-        EQERROR << "random number generator not working" << std::endl;
+        LBERROR << "random number generator not working" << std::endl;
         return false;
     }
 
@@ -139,7 +139,7 @@ bool RNG::_get( void* data, const size_t size )
     LBASSERTINFO( _provider, "init() not called?" );
     if( !CryptGenRandom( _provider, size, (BYTE*)data ))
     {
-        EQERROR << "random number generator not working" << std::endl;
+        LBERROR << "random number generator not working" << std::endl;
         return false;
     }
 #else // __APPLE__

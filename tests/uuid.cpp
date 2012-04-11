@@ -100,7 +100,7 @@ int main( int argc, char **argv )
     for( size_t i = 0; i < N_THREADS; ++i )
         threads[ i ].join();
     
-    EQINFO << N_UUIDS * N_THREADS /clock.getTimef() 
+    LBINFO << N_UUIDS * N_THREADS /clock.getTimef() 
            << " UUID generations and hash ops / ms" << std::endl;
 
     TestHash& first = threads[0].hash;

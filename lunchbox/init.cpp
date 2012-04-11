@@ -34,10 +34,10 @@ namespace
 bool init( const int argc, char** argv )
 {
 #ifndef NDEBUG
-    EQVERB << "Options: ";
+    LBVERB << "Options: ";
     for( int i = 1; i < argc; ++i )
-        EQVERB << argv[i] << ", ";
-    EQVERB << std::endl;
+        LBVERB << argv[i] << ", ";
+    LBVERB << std::endl;
 #endif
 
     if( ++_initialized > 1 ) // not first
@@ -56,12 +56,12 @@ bool init( const int argc, char** argv )
     ::asctime_r( &gmt, gmtString );
 #endif
 
-    EQINFO << "Log level " << Log::getLogLevelString() << " topics " 
+    LBINFO << "Log level " << Log::getLogLevelString() << " topics " 
            << Log::topics << " date " << gmtString << std::endl;
 
     if( !RNG::_init( ))
     {
-        EQERROR << "Failed to initialize random number generator" << std::endl;
+        LBERROR << "Failed to initialize random number generator" << std::endl;
         return false;
     }
 

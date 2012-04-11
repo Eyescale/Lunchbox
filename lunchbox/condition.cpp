@@ -46,7 +46,7 @@ Condition::Condition()
     int error = pthread_mutex_init( &_impl->mutex, 0 );
     if( error )
     {
-        EQERROR << "Error creating pthread mutex: " << strerror( error )
+        LBERROR << "Error creating pthread mutex: " << strerror( error )
                 << std::endl;
         return;
     }
@@ -55,7 +55,7 @@ Condition::Condition()
     error = pthread_cond_init( &_impl->cond, 0 );
     if( error )
     {
-        EQERROR << "Error creating pthread condition: " << strerror( error )
+        LBERROR << "Error creating pthread condition: " << strerror( error )
                 << std::endl;
         return;
     }
@@ -65,12 +65,12 @@ Condition::~Condition()
 {
     int error = pthread_mutex_destroy( &_impl->mutex );
     if( error )
-        EQERROR << "Error destroying pthread mutex: " << strerror( error )
+        LBERROR << "Error destroying pthread mutex: " << strerror( error )
                 << std::endl;
 
     error = pthread_cond_destroy( &_impl->cond );
     if( error )
-        EQERROR << "Error destroying pthread condition: " << strerror( error )
+        LBERROR << "Error destroying pthread condition: " << strerror( error )
                 << std::endl;
 
     delete _impl;
@@ -131,7 +131,7 @@ bool Condition::timedWait( const uint32_t timeout )
         return false;
 
     if( error )
-        EQERROR << "pthread_cond_timedwait failed: " << strerror( error )
+        LBERROR << "pthread_cond_timedwait failed: " << strerror( error )
                 << std::endl;
     return true;
 }

@@ -211,12 +211,12 @@ private:
         {                                                               \
             NAME.id = lunchbox::Thread::getSelfThreadID();              \
             NAME.name = lunchbox::Log::instance().getThreadName();      \
-            EQVERB << "Functions for " << #NAME                         \
+            LBVERB << "Functions for " << #NAME                         \
                    << " locked to this thread" << std::endl;            \
         }                                                               \
         if( !NAME.extMutex && NAME.id != lunchbox::Thread::getSelfThreadID( )) \
         {                                                               \
-            EQERROR << "Threadsafety check for " << #NAME               \
+            LBERROR << "Threadsafety check for " << #NAME               \
                     << " failed on object of type "                     \
                     << lunchbox::className( this ) << ", thread "       \
                     << lunchbox::Thread::getSelfThreadID() << " ("      \
@@ -232,7 +232,7 @@ private:
         {                                                               \
             if( NAME.id == lunchbox::Thread::getSelfThreadID( ))        \
             {                                                           \
-                EQERROR << "Threadsafety check for not " << #NAME       \
+                LBERROR << "Threadsafety check for not " << #NAME       \
                         << " failed on object of type "                 \
                         << lunchbox::className( this ) << std::endl;    \
                 EQABORT( "Code called from wrong thread" );             \

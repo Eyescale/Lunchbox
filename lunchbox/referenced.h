@@ -20,7 +20,7 @@
 
 #include <lunchbox/api.h>      // for LUNCHBOX_API
 #include <lunchbox/atomic.h>   // member
-#include <lunchbox/debug.h>    // for EQERROR
+#include <lunchbox/debug.h>    // for LBERROR
 
 //#define LUNCHBOX_REFERENCED_DEBUG
 #ifdef LUNCHBOX_REFERENCED_DEBUG

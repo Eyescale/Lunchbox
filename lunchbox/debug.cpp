@@ -40,7 +40,7 @@ namespace lunchbox
 
 void abort()
 {
-    EQERROR << ", in: " << backtrace << std::endl;
+    LBERROR << ", in: " << backtrace << std::endl;
 
     // if LB_ABORT_WAIT is set, spin forever to allow identifying and debugging
     // crashed nodes.
@@ -56,7 +56,7 @@ void checkHeap()
     static a_int32_t count( 0 );
     if( ( ++count % 10000 ) == 0 && _heapchk() != _HEAPOK )
     {
-        EQERROR << disableFlush << "Abort: heap corruption detected"<< std::endl
+        LBERROR << disableFlush << "Abort: heap corruption detected"<< std::endl
                 << "    Set breakpoint in " << __FILE__ << ':' << __LINE__ + 1 
                 << " to debug" << std::endl << enableFlush;
     }

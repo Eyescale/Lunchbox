@@ -48,7 +48,7 @@ Lock::Lock()
     const int error = pthread_mutex_init( &_impl->mutex, 0 );
     if( error )
     {
-        EQERROR << "Error creating pthread mutex: "
+        LBERROR << "Error creating pthread mutex: "
                 << strerror(error) << std::endl;
         return;
     }

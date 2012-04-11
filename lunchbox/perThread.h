@@ -147,7 +147,7 @@ PerThread<T, D>::PerThread()
     const int error = pthread_key_create( &_impl->key, (PThreadDtor_t)( D ));
     if( error )
     {
-        EQERROR << "Can't create thread-specific key: " 
+        LBERROR << "Can't create thread-specific key: " 
                 << strerror( error ) << std::endl;
         LBASSERT( !error );
     }

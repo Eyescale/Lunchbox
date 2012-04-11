@@ -43,7 +43,7 @@ Strings searchDirectory( const std::string& directory,
     
     if( hSearch == INVALID_HANDLE_VALUE )
     {
-        EQVERB << "Error finding the first file to match " << pattern << " in "
+        LBVERB << "Error finding the first file to match " << pattern << " in "
                << directory << std::endl;
         FindClose( hSearch );
         return files;
@@ -70,7 +70,7 @@ Strings searchDirectory( const std::string& directory,
     DIR* dir = opendir( directory.c_str() );
     if( dir == 0 )
     {
-        EQVERB << "Can't open directory " << directory << std::endl;
+        LBVERB << "Can't open directory " << directory << std::endl;
         return files;
     }
 

@@ -59,7 +59,7 @@ bool DSO::open( const std::string& fileName )
 {
     if( _impl->dso )
     {
-        EQWARN << "DSO already open, close it first" << std::endl;
+        LBWARN << "DSO already open, close it first" << std::endl;
         return false;
     }
 
@@ -83,7 +83,7 @@ bool DSO::open( const std::string& fileName )
 #endif
         if( !_impl->dso )
         {
-            EQINFO << "Can't open library: " << LB_DL_ERROR << std::endl;
+            LBINFO << "Can't open library: " << LB_DL_ERROR << std::endl;
             return false;
         }
     }

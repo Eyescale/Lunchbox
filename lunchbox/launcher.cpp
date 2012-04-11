@@ -46,7 +46,7 @@ static void sigChildHandler( int /*signal*/ )
     // DO NOT USE cout/cerr: signal handler might be called while another cout
     //            is in progress, which will cause a deadlock due to a double
     //            flockfile() 
-    // EQINFO << "Received SIGCHILD" << endl;
+    // LBINFO << "Received SIGCHILD" << endl;
     
     // Re-install signal handler
     signal( SIGCHLD, sigChildHandler );
@@ -81,7 +81,7 @@ bool Launcher::run( const std::string& command )
 
     if( !success )
     {
-        EQERROR << "CreateProcess failed: " << sysError << std::endl;
+        LBERROR << "CreateProcess failed: " << sysError << std::endl;
         return false;
     }
 
@@ -101,7 +101,7 @@ bool Launcher::run( const std::string& command )
             break;
 
         case -1: // error
-            EQWARN << "Could not fork child process:" << sysError << std::endl;
+            LBWARN << "Could not fork child process:" << sysError << std::endl;
             return false;
 
         default: // parent
@@ -121,13 +121,13 @@ bool Launcher::run( const std::string& command )
 
     argv[argc] = 0;
 
-    EQINFO << "Executing: " << stringStream.str() << std::endl;
+    LBINFO << "Executing: " << stringStream.str() << std::endl;
     //::exit( EXIT_SUCCESS );
     int nTries = 10;
     while( nTries-- )
     {
         execvp( argv[0], argv );
-        EQWARN << "Error executing '" << argv[0] << "': " << sysError
+        LBWARN << "Error executing '" << argv[0] << "': " << sysError
                << std::endl;
         if( errno != ETXTBSY )
             break;

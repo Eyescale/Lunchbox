@@ -69,14 +69,14 @@ template< class T > inline std::string className( T* object )
 #    define LBASSERT(x)                                                 \
     {                                                                   \
         if( !(x) )                                                      \
-            EQERROR << "##### Assert: " << #x << " #####" << std::endl  \
+            LBERROR << "##### Assert: " << #x << " #####" << std::endl  \
                     << lunchbox::forceFlush;                            \
         lunchbox::checkHeap();                                          \
     }
 #    define LBASSERTINFO(x, info)                                       \
     {                                                                   \
         if( !(x) )                                                      \
-            EQERROR << "##### Assert: " << #x << " [" << info << "] #####" \
+            LBERROR << "##### Assert: " << #x << " [" << info << "] #####" \
                     << std::endl << lunchbox::forceFlush;               \
         lunchbox::checkHeap();                                          \
     }
@@ -87,15 +87,15 @@ template< class T > inline std::string className( T* object )
 #    define EQCHECK(x) { x; }
 #  endif
 
-#  define EQUNIMPLEMENTED { EQERROR << "Unimplemented code" << std::endl \
+#  define EQUNIMPLEMENTED { LBERROR << "Unimplemented code" << std::endl \
                                     << lunchbox::forceFlush; }
-#  define EQUNREACHABLE   { EQERROR << "Unreachable code" << std::endl  \
+#  define EQUNREACHABLE   { LBERROR << "Unreachable code" << std::endl  \
                                     << lunchbox::forceFlush; }
 #  define EQDONTCALL                                                    \
-    { EQERROR << "Code is not supposed to be called in this context"    \
+    { LBERROR << "Code is not supposed to be called in this context"    \
               << std::endl << lunchbox::forceFlush; }
 #  define EQABORT( info ) {                                         \
-        EQERROR << "##### Abort: " << info << " #####" << std::endl \
+        LBERROR << "##### Abort: " << info << " #####" << std::endl \
                 << lunchbox::forceFlush; }
 
 #else // NDEBUG
@@ -104,7 +104,7 @@ template< class T > inline std::string className( T* object )
     {                                                                   \
         if( !(x) )                                                      \
         {                                                               \
-            EQERROR << "Assert: " << #x << " ";                         \
+            LBERROR << "Assert: " << #x << " ";                         \
             lunchbox::abort();                                          \
         }                                                               \
         lunchbox::checkHeap();                                          \
@@ -113,28 +113,28 @@ template< class T > inline std::string className( T* object )
     {                                                                   \
         if( !(x) )                                                      \
         {                                                               \
-            EQERROR << "Assert: " << #x << " [" << info << "] ";        \
+            LBERROR << "Assert: " << #x << " [" << info << "] ";        \
             lunchbox::abort();                                          \
         }                                                               \
         lunchbox::checkHeap();                                          \
     }
 
 #  define EQUNIMPLEMENTED                                               \
-    { EQERROR << "Unimplemented code in " << lunchbox::className( this ) \
+    { LBERROR << "Unimplemented code in " << lunchbox::className( this ) \
               << " ";                                                   \
         lunchbox::abort(); }
 #  define EQUNREACHABLE                                                 \
-    { EQERROR << "Unreachable code in " << lunchbox::className( this )  \
+    { LBERROR << "Unreachable code in " << lunchbox::className( this )  \
               << " ";                                                   \
         lunchbox::abort(); }
 #  define EQDONTCALL                                                    \
-    { EQERROR << "Code is not supposed to be called in this context, type " \
+    { LBERROR << "Code is not supposed to be called in this context, type " \
               << lunchbox::className( this ) << " " ;                   \
         lunchbox::abort(); }
 
 #  define EQCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }
 #  define EQABORT( info ) {                                             \
-        EQERROR << "Abort: " << info;                                   \
+        LBERROR << "Abort: " << info;                                   \
         lunchbox::abort(); }
 #endif // NDEBUG
 

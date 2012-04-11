@@ -18,10 +18,10 @@
 /**
  * @file log.h
  * 
- * This file contains the logging classes for Equalizer. The macros EQERROR,
- * EQWARN, EQINFO and EQVERB output messages at their respective logging level,
+ * This file contains the logging classes for Equalizer. The macros LBERROR,
+ * LBWARN, LBINFO and LBVERB output messages at their respective logging level,
  * if the level is active. They use a per-thread lunchbox::Log instance, which
- * is a std::ostream. EQVERB is always inactive in release builds.
+ * is a std::ostream. LBVERB is always inactive in release builds.
  */
 
 #ifndef LUNCHBOX_LOG_H
@@ -221,21 +221,21 @@ namespace lunchbox
 }
 
 /** Output an error message to the per-thread Log stream. @version 1.0 */
-#define EQERROR (lunchbox::Log::level >= lunchbox::LOG_ERROR) &&    \
+#define LBERROR (lunchbox::Log::level >= lunchbox::LOG_ERROR) &&    \
     lunchbox::Log::instance( __FILE__, __LINE__ )
 /** Output a warning message to the per-thread Log stream. @version 1.0 */
-#define EQWARN  (lunchbox::Log::level >= lunchbox::LOG_WARN)  &&    \
+#define LBWARN  (lunchbox::Log::level >= lunchbox::LOG_WARN)  &&    \
     lunchbox::Log::instance( __FILE__, __LINE__ )
 /** Output an informational message to the per-thread Log. @version 1.0 */
-#define EQINFO  (lunchbox::Log::level >= lunchbox::LOG_INFO)  &&    \
+#define LBINFO  (lunchbox::Log::level >= lunchbox::LOG_INFO)  &&    \
     lunchbox::Log::instance( __FILE__, __LINE__ )
 
 #ifdef NDEBUG
-#  define EQVERB if( false )                                    \
+#  define LBVERB if( false )                                    \
         lunchbox::Log::instance( __FILE__, __LINE__ )
 #else
 /** Output a verbatim message to the per-thread Log stream. @version 1.0 */
-#  define EQVERB (lunchbox::Log::level >= lunchbox::LOG_VERB)  &&    \
+#  define LBVERB (lunchbox::Log::level >= lunchbox::LOG_VERB)  &&    \
     lunchbox::Log::instance( __FILE__, __LINE__ )
 #endif
 

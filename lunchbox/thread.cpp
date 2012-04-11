@@ -120,7 +120,7 @@ void Thread::_runChild()
 
     if( !init( ))
     {
-        EQWARN << "Thread " << className( this ) << " failed to initialize"
+        LBWARN << "Thread " << className( this ) << " failed to initialize"
                << std::endl;
         _impl->state = STATE_STOPPED;
         pthread_exit( 0 );
@@ -128,11 +128,11 @@ void Thread::_runChild()
     }
 
     _impl->state = STATE_RUNNING;
-    EQINFO << "Thread " << className( this ) << " successfully initialized"
+    LBINFO << "Thread " << className( this ) << " successfully initialized"
            << std::endl;
 
     run();
-    EQINFO << "Thread " << className( this ) << " finished" << std::endl;
+    LBINFO << "Thread " << className( this ) << " finished" << std::endl;
     this->exit();
 
     EQUNREACHABLE;
@@ -156,12 +156,12 @@ bool Thread::start()
                                           &attributes, runChild, this );
         if( error == 0 ) // succeeded
         {
-            EQVERB << "Created pthread " << this << std::endl;
+            LBVERB << "Created pthread " << this << std::endl;
             break;
         }
         if( error != EAGAIN || nTries == 0 )
         {
-            EQWARN << "Could not create thread: " << strerror( error )
+            LBWARN << "Could not create thread: " << strerror( error )
                    << std::endl;
             return false;
         }
@@ -177,7 +177,7 @@ bool Thread::start()
 void Thread::exit()
 {
     LBASSERTINFO( isCurrent(), "Thread::exit not called from child thread" );
-    EQINFO << "Exiting thread " << className( this ) << std::endl;
+    LBINFO << "Exiting thread " << className( this ) << std::endl;
     Log::instance().forceFlush();
     Log::instance().exit();
 
@@ -190,7 +190,7 @@ void Thread::cancel()
 {
     LBASSERTINFO( !isCurrent(), "Thread::cancel called from child thread" );
 
-    EQINFO << "Canceling thread " << className( this ) << std::endl;
+    LBINFO << "Canceling thread " << className( this ) << std::endl;
     _impl->state = STATE_STOPPING;
 
     pthread_cancel( _impl->id._impl->pthread );
@@ -206,7 +206,7 @@ bool Thread::join()
     _impl->state.waitNE( STATE_RUNNING );
     _impl->state = STATE_STOPPED;
 
-    EQINFO << "Joined thread " << className( this ) << std::endl;
+    LBINFO << "Joined thread " << className( this ) << std::endl;
     return true;
 }
 
@@ -249,10 +249,10 @@ void Thread::pinCurrentThread()
         if( GetProcessAffinityMask( GetCurrentProcess(), &processMask, 
             &systemMask ) == 0 )
         {
-            EQWARN << "Can't get usable processor mask" << std::endl;
+            LBWARN << "Can't get usable processor mask" << std::endl;
             return;
         }
-        EQINFO << "Available processors 0x" << hex << processMask << dec <<endl;
+        LBINFO << "Available processors 0x" << hex << processMask << dec <<endl;
 
         // Choose random starting processor: Multiple Eq apps on the same node
         // would otherwise use the same processor for the same thread
@@ -262,11 +262,11 @@ void Thread::pinCurrentThread()
             if( processMask & i )
                 ++nProcessors;
         }
-        EQINFO << nProcessors << " available processors" << std::endl;
+        LBINFO << nProcessors << " available processors" << std::endl;
 
         unsigned chance = RNG().get< unsigned >();
         processor = 1 << (chance % nProcessors);
-        EQINFO << "Starting with processor " << processor << std::endl;
+        LBINFO << "Starting with processor " << processor << std::endl;
     }
     LBASSERT( processMask != 0 );
 
@@ -279,8 +279,8 @@ void Thread::pinCurrentThread()
         if( processor & processMask ) // processor is available
         {
             if( SetThreadAffinityMask( GetCurrentThread(), processor ) == 0 )
-                EQWARN << "Can't set thread processor" << std::endl;
-            EQINFO << "Pinned thread to processor 0x" << hex << processor << dec
+                LBWARN << "Can't set thread processor" << std::endl;
+            LBINFO << "Pinned thread to processor 0x" << hex << processor << dec
                    << std::endl;
             return;
         }
@@ -334,7 +334,7 @@ void Thread::setName( const std::string& name )
     prctl( PR_SET_NAME, name.c_str(), 0, 0, 0 );
 #else
     // Not implemented
-    EQVERB << "Thread::setName( " << name << " ) not implemented" << std::endl;
+    LBVERB << "Thread::setName( " << name << " ) not implemented" << std::endl;
 #endif
 }
 
@@ -350,7 +350,7 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
         const int32_t coreIndex = affinity - Thread::CORE;
         if( hwloc_get_obj_by_type( topology, HWLOC_OBJ_CORE, coreIndex ) == 0 )
         {
-            EQWARN << "Core " << coreIndex << " does not exist in the topology"
+            LBWARN << "Core " << coreIndex << " does not exist in the topology"
                    << std::endl;
             return cpuSet;
         }
@@ -373,7 +373,7 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
 
     if( hwloc_get_obj_by_type( topology, HWLOC_OBJ_SOCKET, socketIndex ) == 0 )
     {
-        EQWARN << "Socket " << socketIndex << " does not exist in the topology"
+        LBWARN << "Socket " << socketIndex << " does not exist in the topology"
                << std::endl;
         return cpuSet;
     }
@@ -402,11 +402,11 @@ void Thread::setAffinity(const int32_t affinity)
 
     if( result == 0 )
     {
-        EQINFO << "Bound thread to cpu set "  << cpuSetString << std::endl;
+        LBINFO << "Bound thread to cpu set "  << cpuSetString << std::endl;
     }
     else
     {
-        EQWARN << "Error binding thread to cpu set " << cpuSetString
+        LBWARN << "Error binding thread to cpu set " << cpuSetString
                << std::endl;
     }
     ::free( cpuSetString );
@@ -414,7 +414,7 @@ void Thread::setAffinity(const int32_t affinity)
     hwloc_topology_destroy(topology);
 
 #else
-    EQWARN << "Thread::setAffinity not implemented, hwloc library missing"
+    LBWARN << "Thread::setAffinity not implemented, hwloc library missing"
            << std::endl;
 #endif
 }

@@ -80,11 +80,11 @@ template< class T > inline std::string className( T* object )
                     << std::endl << lunchbox::forceFlush;               \
         lunchbox::checkHeap();                                          \
     }
-#    define EQCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }
+#    define LBCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }
 #  else
 #    define LBASSERT(x)
 #    define LBASSERTINFO(x, info)
-#    define EQCHECK(x) { x; }
+#    define LBCHECK(x) { x; }
 #  endif
 
 #  define EQUNIMPLEMENTED { LBERROR << "Unimplemented code" << std::endl \
@@ -132,7 +132,7 @@ template< class T > inline std::string className( T* object )
               << lunchbox::className( this ) << " " ;                   \
         lunchbox::abort(); }
 
-#  define EQCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }
+#  define LBCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }
 #  define EQABORT( info ) {                                             \
         LBERROR << "Abort: " << info;                                   \
         lunchbox::abort(); }

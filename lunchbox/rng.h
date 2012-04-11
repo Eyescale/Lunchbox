@@ -18,7 +18,7 @@
 #ifndef LUNCHBOX_RNG_H
 #define LUNCHBOX_RNG_H
 
-#include <lunchbox/debug.h> // for EQASSERT
+#include <lunchbox/debug.h> // for LBASSERT
 #include <lunchbox/init.h>  // friend function
 #include <lunchbox/nonCopyable.h>
 #include <lunchbox/types.h>

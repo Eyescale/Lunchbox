@@ -46,7 +46,7 @@ public:
 
     inline void unset()
         {
-            EQASSERT( _state == _writelocked );
+            LBASSERT( _state == _writelocked );
             _state = _unlocked;
         }
 
@@ -54,7 +54,7 @@ public:
         {
             if( !_state.compareAndSwap( _unlocked, _writelocked ))
                 return false;
-            EQASSERTINFO( isSetWrite(), _state );
+            LBASSERTINFO( isSetWrite(), _state );
             return true;
         }
 
@@ -72,7 +72,7 @@ public:
         {
             while( true )
             {
-                EQASSERT( _state > _unlocked );
+                LBASSERT( _state > _unlocked );
                 memoryBarrier();
                 const int32_t expected = _state;
                 if( _state.compareAndSwap( expected, expected-1 ))
@@ -91,7 +91,7 @@ public:
             if( !_state.compareAndSwap( expected, expected+1 ))
                 return false;
 
-            EQASSERTINFO( isSetRead(), _state << ", " << expected );
+            LBASSERTINFO( isSetRead(), _state << ", " << expected );
             return true;
         }
 

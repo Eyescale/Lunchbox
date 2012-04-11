@@ -66,24 +66,24 @@ template< class T > inline std::string className( T* object )
 
 #ifdef NDEBUG
 #  ifdef LB_RELEASE_ASSERT
-#    define EQASSERT(x)                                                 \
+#    define LBASSERT(x)                                                 \
     {                                                                   \
         if( !(x) )                                                      \
             EQERROR << "##### Assert: " << #x << " #####" << std::endl  \
                     << lunchbox::forceFlush;                            \
         lunchbox::checkHeap();                                          \
     }
-#    define EQASSERTINFO(x, info)                                       \
+#    define LBASSERTINFO(x, info)                                       \
     {                                                                   \
         if( !(x) )                                                      \
             EQERROR << "##### Assert: " << #x << " [" << info << "] #####" \
                     << std::endl << lunchbox::forceFlush;               \
         lunchbox::checkHeap();                                          \
     }
-#    define EQCHECK(x) { const bool eqOk = x; EQASSERTINFO( eqOk, #x ) }
+#    define EQCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }
 #  else
-#    define EQASSERT(x)
-#    define EQASSERTINFO(x, info)
+#    define LBASSERT(x)
+#    define LBASSERTINFO(x, info)
 #    define EQCHECK(x) { x; }
 #  endif
 
@@ -100,7 +100,7 @@ template< class T > inline std::string className( T* object )
 
 #else // NDEBUG
 
-#  define EQASSERT(x)                                                   \
+#  define LBASSERT(x)                                                   \
     {                                                                   \
         if( !(x) )                                                      \
         {                                                               \
@@ -109,7 +109,7 @@ template< class T > inline std::string className( T* object )
         }                                                               \
         lunchbox::checkHeap();                                          \
     } 
-#  define EQASSERTINFO(x, info)                                         \
+#  define LBASSERTINFO(x, info)                                         \
     {                                                                   \
         if( !(x) )                                                      \
         {                                                               \
@@ -132,13 +132,13 @@ template< class T > inline std::string className( T* object )
               << lunchbox::className( this ) << " " ;                   \
         lunchbox::abort(); }
 
-#  define EQCHECK(x) { const bool eqOk = x; EQASSERTINFO( eqOk, #x ) }
+#  define EQCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }
 #  define EQABORT( info ) {                                             \
         EQERROR << "Abort: " << info;                                   \
         lunchbox::abort(); }
 #endif // NDEBUG
 
 #define EQSAFECAST( to, in ) static_cast< to >( in );   \
-    EQASSERT( in == 0 || dynamic_cast< to >( static_cast< to >( in )))
+    LBASSERT( in == 0 || dynamic_cast< to >( static_cast< to >( in )))
 
 #endif //LUNCHBOX_DEBUG_H

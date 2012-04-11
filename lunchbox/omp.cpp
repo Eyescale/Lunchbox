@@ -39,7 +39,7 @@ static unsigned _setupNThreads()
     if( nThreads < 1 )
         nThreads = omp_get_num_procs();
 
-    EQASSERT( nThreads > 0 );
+    LBASSERT( nThreads > 0 );
     omp_set_num_threads( nThreads );
     return nThreads;
 #else

@@ -170,7 +170,7 @@ std::ostream& Log::getOutput()
 
 void LogBuffer::setThreadName( const std::string& name )
 {
-    EQASSERT( !name.empty( ));
+    LBASSERT( !name.empty( ));
     snprintf( _thread, 12, "%s", name.c_str( ));
     _thread[11] = 0;
 }

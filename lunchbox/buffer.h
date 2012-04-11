@@ -18,7 +18,7 @@
 #ifndef LUNCHBOX_BUFFER_H
 #define LUNCHBOX_BUFFER_H
 
-#include <lunchbox/debug.h>       // EQASSERT macro
+#include <lunchbox/debug.h>       // LBASSERT macro
 #include <lunchbox/types.h>
 
 #include <cstdlib>      // for malloc
@@ -84,11 +84,11 @@ namespace lunchbox
 
         /** Direct access to the element at the given index. @version 1.0 */
         T&       operator[]( const uint64_t position )
-            { EQASSERT( _size > position ); return _data[ position ]; }
+            { LBASSERT( _size > position ); return _data[ position ]; }
 
         /** Direct const access to an element. @version 1.0 */
         const T& operator[]( const uint64_t position ) const
-            { EQASSERT( _size > position ); return _data[ position ]; }
+            { LBASSERT( _size > position ); return _data[ position ]; }
 
         /** 
          * Ensure that the buffer contains at least newSize elements.
@@ -160,8 +160,8 @@ namespace lunchbox
         /** Append elements to the buffer, increasing the size. @version 1.0 */
         void append( const T* data, const uint64_t size )
             {
-                EQASSERT( data );
-                EQASSERT( size );
+                LBASSERT( data );
+                LBASSERT( size );
 
                 const uint64_t oldSize = _size;
                 resize( oldSize + size );
@@ -178,8 +178,8 @@ namespace lunchbox
         /** Replace the existing data with new data. @version 1.0 */
         void replace( const void* data, const uint64_t size )
             {
-                EQASSERT( data );
-                EQASSERT( size );
+                LBASSERT( data );
+                LBASSERT( size );
 
                 reserve( size );
                 memcpy( _data, data, size * sizeof( T ));
@@ -218,7 +218,7 @@ namespace lunchbox
          */
         bool setSize( const uint64_t size )
             {
-                EQASSERT( size <= _maxSize );
+                LBASSERT( size <= _maxSize );
                 if( size > _maxSize )
                     return false;
 

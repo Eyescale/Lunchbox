@@ -67,7 +67,7 @@ bool DSO::open( const std::string& fileName )
     {
 #ifdef _WIN32 //_MSC_VER
         _impl->dso = GetModuleHandle( 0 );
-        EQASSERT( _impl->dso );
+        LBASSERT( _impl->dso );
 #else
         _impl->dso = RTLD_DEFAULT;
 #endif

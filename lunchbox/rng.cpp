@@ -125,9 +125,9 @@ void RNG::reseed()
 bool RNG::_get( void* data, const size_t size )
 {
 #ifdef __linux__
-    EQASSERTINFO( _fd >= 0, "init() not called?" );
+    LBASSERTINFO( _fd >= 0, "init() not called?" );
     int read = ::read( _fd, data, size );
-    EQASSERTINFO( read == ssize_t( size ),
+    LBASSERTINFO( read == ssize_t( size ),
                   read << " != " << size << ": " << sysError );
     if( read != ssize_t( size ))
     {
@@ -136,7 +136,7 @@ bool RNG::_get( void* data, const size_t size )
     }
 
 #elif defined (_WIN32)
-    EQASSERTINFO( _provider, "init() not called?" );
+    LBASSERTINFO( _provider, "init() not called?" );
     if( !CryptGenRandom( _provider, size, (BYTE*)data ))
     {
         EQERROR << "random number generator not working" << std::endl;

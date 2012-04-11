@@ -247,13 +247,13 @@ private:
         explicit ScopedThreadCheck( const T& data )
                 : _data( data )
             {
-                EQASSERTINFO( !data.inRegion,
+                LBASSERTINFO( !data.inRegion,
                               "Another thread already in critical region" );
                 data.inRegion = true;
             }
         ~ScopedThreadCheck() 
             {
-                EQASSERTINFO( _data.inRegion,
+                LBASSERTINFO( _data.inRegion,
                               "Another thread was in critical region" );
                 _data.inRegion = false;
             }

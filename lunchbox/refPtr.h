@@ -131,16 +131,16 @@ namespace lunchbox
 
         /** Access the held object. @version 1.0 */
         T*       operator->()       
-            { EQASSERTINFO( _ptr, className( this )); return _ptr; }
+            { LBASSERTINFO( _ptr, className( this )); return _ptr; }
         /** Access the held object. @version 1.0 */
         const T* operator->() const
-            { EQASSERTINFO( _ptr, className( this )); return _ptr; }
+            { LBASSERTINFO( _ptr, className( this )); return _ptr; }
         /** Access the held object. @version 1.0 */
         T&       operator*()        
-            { EQASSERTINFO( _ptr, className( this )); return *_ptr; }
+            { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
         /** Access the held object. @version 1.0 */
         const T& operator*() const  
-            { EQASSERTINFO( _ptr, className( this )); return *_ptr; }
+            { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
 
         /** @return the C pointer. @version 1.0 */
         T*       get()                { return _ptr; }

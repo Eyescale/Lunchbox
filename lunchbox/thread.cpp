@@ -176,7 +176,7 @@ bool Thread::start()
 
 void Thread::exit()
 {
-    EQASSERTINFO( isCurrent(), "Thread::exit not called from child thread" );
+    LBASSERTINFO( isCurrent(), "Thread::exit not called from child thread" );
     EQINFO << "Exiting thread " << className( this ) << std::endl;
     Log::instance().forceFlush();
     Log::instance().exit();
@@ -188,7 +188,7 @@ void Thread::exit()
 
 void Thread::cancel()
 {
-    EQASSERTINFO( !isCurrent(), "Thread::cancel called from child thread" );
+    LBASSERTINFO( !isCurrent(), "Thread::cancel called from child thread" );
 
     EQINFO << "Canceling thread " << className( this ) << std::endl;
     _impl->state = STATE_STOPPING;
@@ -268,7 +268,7 @@ void Thread::pinCurrentThread()
         processor = 1 << (chance % nProcessors);
         EQINFO << "Starting with processor " << processor << std::endl;
     }
-    EQASSERT( processMask != 0 );
+    LBASSERT( processMask != 0 );
 
     while( true )
     {
@@ -368,7 +368,7 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
         return cpuSet;
 
     // Sets the affinity to a specific CPU or "socket"
-    EQASSERT( affinity >= Thread::SOCKET && affinity < Thread::SOCKET_MAX );
+    LBASSERT( affinity >= Thread::SOCKET && affinity < Thread::SOCKET_MAX );
     const int32_t socketIndex = affinity - Thread::SOCKET;
 
     if( hwloc_get_obj_by_type( topology, HWLOC_OBJ_SOCKET, socketIndex ) == 0 )

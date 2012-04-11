@@ -48,7 +48,7 @@ namespace lunchbox
         void ref( const void* holder = 0 ) const
         {
 #ifndef NDEBUG
-            EQASSERT( !_hasBeenDeleted );
+            LBASSERT( !_hasBeenDeleted );
 #endif
             ++_refCount;
 
@@ -59,7 +59,7 @@ namespace lunchbox
                 cs << backtrace;
                 ScopedMutex<> referencedMutex( _holders );
                 HolderHash::iterator i = _holders->find( holder );
-                EQASSERTINFO( i == _holders->end(), i->second );
+                LBASSERTINFO( i == _holders->end(), i->second );
                 _holders.data[ holder ] = cs.str();
             }
 #endif
@@ -74,9 +74,9 @@ namespace lunchbox
         void unref( const void* holder = 0 ) const
             { 
 #ifndef NDEBUG
-                EQASSERT( !_hasBeenDeleted );
+                LBASSERT( !_hasBeenDeleted );
 #endif
-                EQASSERT( _refCount > 0 ); 
+                LBASSERT( _refCount > 0 ); 
                 const bool deleteMe = (--_refCount==0);
                 if( deleteMe )
                     deleteReferenced( this );
@@ -85,7 +85,7 @@ namespace lunchbox
                 {
                     ScopedMutex<> referencedMutex( _holders );
                     HolderHash::iterator i = _holders->find( holder );
-                    EQASSERT( i != _holders->end( ));
+                    LBASSERT( i != _holders->end( ));
                     _holders->erase( i );
                 }
 #endif
@@ -127,10 +127,10 @@ namespace lunchbox
         virtual ~Referenced() 
             {
 #ifndef NDEBUG
-                EQASSERT( !_hasBeenDeleted );
+                LBASSERT( !_hasBeenDeleted );
                 _hasBeenDeleted = true;
 #endif
-                EQASSERTINFO( _refCount == 0,
+                LBASSERTINFO( _refCount == 0,
                               "Deleting object with ref count " << _refCount );
             }
 

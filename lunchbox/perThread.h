@@ -71,10 +71,10 @@ namespace detail { class PerThread; }
 
         /** @return the held object reference. @version 1.0 */
         T& operator*()
-            { EQASSERTINFO( get(), className( this )); return *get(); }
+            { LBASSERTINFO( get(), className( this )); return *get(); }
         /** @return the held object reference. @version 1.0 */
         const T& operator*() const
-            { EQASSERTINFO( get(), className( this )); return *get(); }
+            { LBASSERTINFO( get(), className( this )); return *get(); }
 
         /**
          * @return true if the thread-local variables hold the same object.
@@ -149,7 +149,7 @@ PerThread<T, D>::PerThread()
     {
         EQERROR << "Can't create thread-specific key: " 
                 << strerror( error ) << std::endl;
-        EQASSERT( !error );
+        LBASSERT( !error );
     }
 }
 

@@ -58,7 +58,7 @@ bool TimedLock::set( const uint32_t timeout )
 
     if( acquired )
     {
-        EQASSERT( !_impl->locked );
+        LBASSERT( !_impl->locked );
         _impl->locked = true;
     }
 

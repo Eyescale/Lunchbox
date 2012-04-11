@@ -33,7 +33,7 @@ uint128_t& uint128_t::operator = ( const std::string& from )
 #else
     _high = ::strtoull( from.c_str(), &next, 16 );
 #endif
-    EQASSERT( next != from.c_str( ));
+    LBASSERT( next != from.c_str( ));
     if( *next == '\0' ) // short representation, high was 0
     {
         _low = _high;
@@ -41,7 +41,7 @@ uint128_t& uint128_t::operator = ( const std::string& from )
     }
     else
     {
-        EQASSERTINFO( *next == ':', from << ", " << next );
+        LBASSERTINFO( *next == ':', from << ", " << next );
         ++next;
 #ifdef _MSC_VER
         _low = ::_strtoui64( next, 0, 16 );

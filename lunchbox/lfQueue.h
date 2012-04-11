@@ -70,7 +70,7 @@ namespace lunchbox
          */
         void resize( const int32_t size )
             {
-                EQASSERT( isEmpty( ));
+                LBASSERT( isEmpty( ));
                 _readPos = 0;
                 _writePos = 0;
                 _data.resize( size + 1 );

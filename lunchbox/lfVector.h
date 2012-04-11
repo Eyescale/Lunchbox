@@ -64,7 +64,7 @@ public:
     /** @version 1.3.2 */
     explicit LFVector( const size_t n ) : size_( n )
         {
-            EQASSERT( n != 0 );
+            LBASSERT( n != 0 );
             bzero( slots_, nSlots * sizeof( T* ));
             const int32_t slots = getIndexOfLastBit( uint64_t( n ));
             for( int32_t i = 0; i <= slots; ++i )
@@ -74,7 +74,7 @@ public:
     /** @version 1.3.2 */
     explicit LFVector( const size_t n, const T& t ) : size_( 0 )
         {
-            EQASSERT( n != 0 );
+            LBASSERT( n != 0 );
             bzero( slots_, nSlots * sizeof( T* ));
             const int32_t slots = getIndexOfLastBit( uint64_t( n ));
             for( int32_t i = 0; i <= slots; ++i )
@@ -87,7 +87,7 @@ public:
                     ++size_;
                 }
             }
-            EQASSERTINFO( size_ == n, size_ << " != " << n );
+            LBASSERTINFO( size_ == n, size_ << " != " << n );
         }
 
     /** @version 1.3.2 */
@@ -138,7 +138,7 @@ public:
                 }
             }
 
-            EQASSERTINFO( size_ == from.size_, size_ << " != " << from.size_ );
+            LBASSERTINFO( size_ == from.size_, size_ << " != " << from.size_ );
             return *this;
         }
 
@@ -172,38 +172,38 @@ public:
     T& operator[]( size_t i )
         {
             // one beyond end is possible when called by erase
-            EQASSERTINFO( size_ >= i, size_ << " < " << i );
+            LBASSERTINFO( size_ >= i, size_ << " < " << i );
             ++i;
             const int32_t slot = getIndexOfLastBit( i );
             const size_t index = i ^ ( size_t( 1 )<<slot );
 
-            EQASSERT( slots_[ slot ] );
+            LBASSERT( slots_[ slot ] );
             return slots_[ slot ][ index ];
         }
 
     /** @version 1.3.2 */
     const T& operator[]( size_t i ) const
         {
-            EQASSERTINFO( size_ > i, size_ << " <= " << i );
+            LBASSERTINFO( size_ > i, size_ << " <= " << i );
             ++i;
             const int32_t slot = getIndexOfLastBit( i );
             const size_t index = i ^ ( size_t( 1 )<<slot );
 
-            EQASSERT( slots_[ slot ] );
+            LBASSERT( slots_[ slot ] );
             return slots_[ slot ][ index ];
         }
 
     /** @version 1.3.2 */
     T& front()
         {
-            EQASSERT( !empty( ));
+            LBASSERT( !empty( ));
             return slots_[ 0 ][ 0 ];
         }
 
     /** @version 1.3.2 */
     T& back()
         {
-            EQASSERT( !empty( ));
+            LBASSERT( !empty( ));
             return (*this)[ size_ - 1 ];
         }
 
@@ -316,7 +316,7 @@ public:
      */
     iterator erase( iterator pos )
         {
-            EQASSERT( pos.container_ == this );
+            LBASSERT( pos.container_ == this );
             if( pos.container_ != this || pos.i_ >= size_ )
                 return end();
 
@@ -404,7 +404,7 @@ private:
             {
                 if( i >= fromSlots || !from.slots_[i] ) // done copying
                 {
-                    EQASSERTINFO( size_ == from.size_,
+                    LBASSERTINFO( size_ == from.size_,
                                   size_ << " != " << from.size_ );
                     return;
                 }
@@ -508,7 +508,7 @@ inline void LFVector< T, nSlots >::load( Archive& ar,
     size_t newSize;
     ar >> newSize;
     expand( newSize );
-    EQASSERT( size_ == newSize );
+    LBASSERT( size_ == newSize );
 
     for( size_t i = 0; i < size_; ++i )
         ar >> operator[](i);

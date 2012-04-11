@@ -50,7 +50,7 @@ typedef CRITICAL_SECTION pthread_mutex_t;
 
 int pthread_mutex_init( pthread_mutex_t* mutex, const pthread_mutexattr_t* attr)
 {
-    EQASSERT( !attr );
+    LBASSERT( !attr );
     InitializeCriticalSection( mutex );
     return 0;
 }

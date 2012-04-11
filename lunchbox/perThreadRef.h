@@ -138,7 +138,7 @@ PerThreadRef<T>::PerThreadRef()
     {
         EQERROR << "Can't create thread-specific key: " 
                 << strerror( error ) << std::endl;
-        EQASSERT( !error );
+        LBASSERT( !error );
     }
 }
 
@@ -199,14 +199,14 @@ T* PerThreadRef<T>::getPointer()
 template< typename T >
 T* PerThreadRef<T>::operator->() 
 {
-    EQASSERT( pthread_getspecific( _impl->key ));
+    LBASSERT( pthread_getspecific( _impl->key ));
     return static_cast< T* >( pthread_getspecific( _impl->key )); 
 }
 
 template< typename T >
 const T* PerThreadRef<T>::operator->() const 
 { 
-    EQASSERT( pthread_getspecific( _impl->key ));
+    LBASSERT( pthread_getspecific( _impl->key ));
     return static_cast< const T* >( pthread_getspecific( _impl->key )); 
 }
 

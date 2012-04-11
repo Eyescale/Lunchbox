@@ -60,7 +60,7 @@ Strings searchDirectory( const std::string& directory,
     const size_t findPos = pattern.find( '*' );
     if( findPos == std::string::npos )
     {
-        EQASSERTINFO( 0, "Unimplemented" );
+        LBASSERTINFO( 0, "Unimplemented" );
         return files;
     }
 

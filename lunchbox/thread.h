@@ -222,7 +222,7 @@ private:
                     << lunchbox::Thread::getSelfThreadID() << " ("      \
                     << lunchbox::Log::instance().getThreadName() << ") != " \
                     << NAME.id << " (" << NAME.name << ")" << std::endl; \
-            EQABORT( "Non-threadsave code called from two threads" );   \
+            LBABORT( "Non-threadsave code called from two threads" );   \
         }                                                               \
     }
 
@@ -235,7 +235,7 @@ private:
                 LBERROR << "Threadsafety check for not " << #NAME       \
                         << " failed on object of type "                 \
                         << lunchbox::className( this ) << std::endl;    \
-                EQABORT( "Code called from wrong thread" );             \
+                LBABORT( "Code called from wrong thread" );             \
             }                                                           \
         }                                                               \
     }

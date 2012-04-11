@@ -124,7 +124,7 @@ void Thread::_runChild()
                << std::endl;
         _impl->state = STATE_STOPPED;
         pthread_exit( 0 );
-        EQUNREACHABLE;
+        LBUNREACHABLE;
     }
 
     _impl->state = STATE_RUNNING;
@@ -135,7 +135,7 @@ void Thread::_runChild()
     LBINFO << "Thread " << className( this ) << " finished" << std::endl;
     this->exit();
 
-    EQUNREACHABLE;
+    LBUNREACHABLE;
 }
 
 bool Thread::start()
@@ -183,7 +183,7 @@ void Thread::exit()
 
     _impl->state = STATE_STOPPING;
     pthread_exit( 0 );
-    EQUNREACHABLE;
+    LBUNREACHABLE;
 }
 
 void Thread::cancel()

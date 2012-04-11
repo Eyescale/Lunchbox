@@ -87,14 +87,14 @@ template< class T > inline std::string className( T* object )
 #    define LBCHECK(x) { x; }
 #  endif
 
-#  define EQUNIMPLEMENTED { LBERROR << "Unimplemented code" << std::endl \
+#  define LBUNIMPLEMENTED { LBERROR << "Unimplemented code" << std::endl \
                                     << lunchbox::forceFlush; }
-#  define EQUNREACHABLE   { LBERROR << "Unreachable code" << std::endl  \
+#  define LBUNREACHABLE   { LBERROR << "Unreachable code" << std::endl  \
                                     << lunchbox::forceFlush; }
-#  define EQDONTCALL                                                    \
+#  define LBDONTCALL                                                    \
     { LBERROR << "Code is not supposed to be called in this context"    \
               << std::endl << lunchbox::forceFlush; }
-#  define EQABORT( info ) {                                         \
+#  define LBABORT( info ) {                                         \
         LBERROR << "##### Abort: " << info << " #####" << std::endl \
                 << lunchbox::forceFlush; }
 
@@ -119,21 +119,21 @@ template< class T > inline std::string className( T* object )
         lunchbox::checkHeap();                                          \
     }
 
-#  define EQUNIMPLEMENTED                                               \
+#  define LBUNIMPLEMENTED                                               \
     { LBERROR << "Unimplemented code in " << lunchbox::className( this ) \
               << " ";                                                   \
         lunchbox::abort(); }
-#  define EQUNREACHABLE                                                 \
+#  define LBUNREACHABLE                                                 \
     { LBERROR << "Unreachable code in " << lunchbox::className( this )  \
               << " ";                                                   \
         lunchbox::abort(); }
-#  define EQDONTCALL                                                    \
+#  define LBDONTCALL                                                    \
     { LBERROR << "Code is not supposed to be called in this context, type " \
               << lunchbox::className( this ) << " " ;                   \
         lunchbox::abort(); }
 
 #  define LBCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }
-#  define EQABORT( info ) {                                             \
+#  define LBABORT( info ) {                                             \
         LBERROR << "Abort: " << info;                                   \
         lunchbox::abort(); }
 #endif // NDEBUG

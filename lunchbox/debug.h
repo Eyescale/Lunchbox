@@ -138,7 +138,7 @@ template< class T > inline std::string className( T* object )
         lunchbox::abort(); }
 #endif // NDEBUG
 
-#define EQSAFECAST( to, in ) static_cast< to >( in );   \
+#define LBSAFECAST( to, in ) static_cast< to >( in );   \
     LBASSERT( in == 0 || dynamic_cast< to >( static_cast< to >( in )))
 
 #endif //LUNCHBOX_DEBUG_H

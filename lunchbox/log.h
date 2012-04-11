@@ -243,7 +243,7 @@ namespace lunchbox
  * Output a message pertaining to a topic to the per-thread Log stream.
  * @version 1.0
  */
-#define EQLOG(topic)  (lunchbox::Log::topics & (topic))  &&  \
+#define LBLOG(topic)  (lunchbox::Log::topics & (topic))  &&  \
     lunchbox::Log::instance( __FILE__, __LINE__ )
 
 #endif //LUNCHBOX_LOG_H

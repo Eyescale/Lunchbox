@@ -30,9 +30,10 @@
 
 
 #ifdef _WIN32
-#  define bzero( ptr, size ) memset( ptr, 0, size );
+#  define lb_bzero( ptr, size ) memset( ptr, 0, size )
 #else
 #  include <strings.h>
+#  define lb_bzero bzero
 #endif
 
 namespace lunchbox
@@ -59,13 +60,13 @@ template< class T, int32_t nSlots = 32 > class LFVector
 
 public:
     /** @version 1.3.2 */
-    LFVector() : size_( 0 ) { bzero( slots_, nSlots * sizeof( T* )); }
+    LFVector() : size_( 0 ) { lb_bzero( slots_, nSlots * sizeof( T* )); }
 
     /** @version 1.3.2 */
     explicit LFVector( const size_t n ) : size_( n )
         {
             LBASSERT( n != 0 );
-            bzero( slots_, nSlots * sizeof( T* ));
+            lb_bzero( slots_, nSlots * sizeof( T* ));
             const int32_t slots = getIndexOfLastBit( uint64_t( n ));
             for( int32_t i = 0; i <= slots; ++i )
                 slots_[ i ] = new T[ 1<<i ];
@@ -75,7 +76,7 @@ public:
     explicit LFVector( const size_t n, const T& t ) : size_( 0 )
         {
             LBASSERT( n != 0 );
-            bzero( slots_, nSlots * sizeof( T* ));
+            lb_bzero( slots_, nSlots * sizeof( T* ));
             const int32_t slots = getIndexOfLastBit( uint64_t( n ));
             for( int32_t i = 0; i <= slots; ++i )
             {
@@ -397,7 +398,7 @@ private:
     template< int32_t fromSlots >
     void assign_( const LFVector< T, fromSlots >& from )
         {
-            bzero( slots_, nSlots * sizeof( T* ));
+            lb_bzero( slots_, nSlots * sizeof( T* ));
 
             ScopedWrite mutex( from.lock_ );
             for( int32_t i = 0; i < nSlots; ++i )

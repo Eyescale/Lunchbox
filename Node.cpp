@@ -58,7 +58,7 @@ Node::Node( dash::Node* node, NodePtr from )
 
 Node::~Node()
 {
-    EQASSERT( node_ == 0 );
+    LBASSERT( node_ == 0 );
     while( !children_->empty( ))
     {
         // Don't use erase, generates Change
@@ -66,7 +66,7 @@ Node::~Node()
         NodePtr childImpl = child->getImpl();
         ParentsCtxPtr& parents = childImpl->parents_;
         ParentsIter j = std::find( parents->begin(), parents->end(), this );
-        EQASSERT( j != parents->end( ));
+        LBASSERT( j != parents->end( ));
 
         parents->erase( j );
         children_->pop_back();
@@ -80,7 +80,7 @@ Node& Node::operator = ( const Node& from )
     if( this == &from )
         return *this;
 
-    EQUNIMPLEMENTED;
+    LBUNIMPLEMENTED;
     return *this;
 }
 
@@ -149,7 +149,7 @@ bool Node::erase( dash::NodePtr child )
 
     ParentsCtxPtr& parents = childImpl->parents_;
     ParentsIter j = std::find( parents->begin(), parents->end(), this );
-    EQASSERT( j != parents->end( ));
+    LBASSERT( j != parents->end( ));
 
     parents->erase( j );
     children_->erase( i );

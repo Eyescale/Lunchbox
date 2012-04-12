@@ -55,7 +55,7 @@ public:
 
     const T& get( const Context& context = Context::getCurrent( )) const
         {
-            EQASSERTINFO( values_.size() > context.getSlot() &&
+            LBASSERTINFO( values_.size() > context.getSlot() &&
                           values_[ context.getSlot() ].get(),
                           "Access of unmapped object in context " <<
                           context.getSlot( ));
@@ -64,7 +64,7 @@ public:
 
     T& get( Context& context = Context::getCurrent( ))
         {
-            EQASSERTINFO( values_.size() > context.getSlot() &&
+            LBASSERTINFO( values_.size() > context.getSlot() &&
                           values_[ context.getSlot() ].get(),
                           "Access to unmapped object in context " <<
                           context.getSlot( ));

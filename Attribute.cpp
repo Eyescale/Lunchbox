@@ -49,7 +49,7 @@ Attribute::Attribute( dash::Attribute* attribute, AttributePtr from )
 
 Attribute::~Attribute()
 {
-    EQASSERT( attribute_ == 0 );
+    LBASSERT( attribute_ == 0 );
 }
 
 Attribute& Attribute::operator = ( const Attribute& from )
@@ -57,7 +57,7 @@ Attribute& Attribute::operator = ( const Attribute& from )
     if( this == &from )
         return *this;
 
-    EQUNIMPLEMENTED;
+    LBUNIMPLEMENTED;
     return *this;
 }
 
@@ -87,7 +87,7 @@ void Attribute::unmap( Context& context )
 
 void Attribute::apply( const Change& change )
 {
-    EQASSERT( change.type == Change::ATTRIBUTE_CHANGED );
+    LBASSERT( change.type == Change::ATTRIBUTE_CHANGED );
     value_.apply( change.value );
 }
 

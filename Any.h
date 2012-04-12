@@ -122,7 +122,7 @@ namespace detail
 
             // for unit tests, current "implementation" is sufficient, but don't let
             // them fail...
-            //EQUNIMPLEMENTED;
+            //LBUNIMPLEMENTED;
             return true;
         }
 

@@ -44,6 +44,12 @@ namespace detail { class Lock; }
         /** Release the lock. @version 1.0 */
         LUNCHBOX_API void unset();
 
+        /** Acquire the lock shared with other readers. @version 1.3.2 */
+        void setRead() { set(); }
+
+        /** Release a shared read lock. @version 1.3.2 */
+        void unsetRead() { unset(); }
+
         /** 
          * Attempt to acquire the lock.
          *

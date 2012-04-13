@@ -23,6 +23,8 @@
 
 #include "Any.h"
 
+#include <lunchbox/uint128_t.h>
+
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/for_each.hpp>
 
@@ -56,7 +58,8 @@ namespace detail
 typedef boost::mpl::list< short, unsigned short,
                           int, unsigned int,
                           long, unsigned long,
-                          bool, float, double, std::string > podTypes;
+                          bool, float, double,
+                          std::string, lunchbox::uint128_t > podTypes;
 
 /**
  * Registers the given type for serializing it inside a dash::detail::Any

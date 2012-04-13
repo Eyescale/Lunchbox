@@ -63,7 +63,7 @@ bool Commit::operator == ( const Commit& rhs ) const
 
 void Commit::add( const Change& change )
 {
-    EQASSERT( Context::getNumSlots() > 1 );
+    LBASSERT( Context::getNumSlots() > 1 );
 
     if( !context_ )
         context_.reset( new dash::Context );
@@ -90,7 +90,7 @@ void Commit::apply() const
                   change.node->insert( change.child );
               }
               else
-                  EQINFO << "Ignoring Node::insert change, parent not mapped"
+                  LBINFO << "Ignoring Node::insert change, parent not mapped"
                          << std::endl;
               break;
           case Change::NODE_ERASE:
@@ -107,7 +107,7 @@ void Commit::apply() const
                   change.node->insert( change.attribute );
               }
               else
-                  EQINFO << "Ignoring Node::insert change, parent not mapped"
+                  LBINFO << "Ignoring Node::insert change, parent not mapped"
                          << std::endl;
               break;
 
@@ -122,8 +122,8 @@ void Commit::apply() const
               break;
 
           default:
-              EQINFO << change << std::endl;
-              EQUNIMPLEMENTED;
+              LBINFO << change << std::endl;
+              LBUNIMPLEMENTED;
         }
     }
 }

@@ -103,14 +103,14 @@ Context::Context()
 
 Context::~Context()
 {
-    EQASSERTINFO( getCommit()->empty(), "Destroyed context has active changes");
+    LBASSERTINFO( getCommit()->empty(), "Destroyed context has active changes");
     delete commit_;
     commit_ = 0;
 
     freeSlots_.push_back( slot_ );
     if( slot_ == 0 ) // main context dtor
     {
-        EQASSERTINFO( int32_t( freeSlots_.size( )) == numSlots_,
+        LBASSERTINFO( int32_t( freeSlots_.size( )) == numSlots_,
                       "Active context during main context destruction? : " <<
                       freeSlots_.size() << " != " << numSlots_ );
         freeSlots_.clear();

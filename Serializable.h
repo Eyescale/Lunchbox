@@ -33,30 +33,45 @@
 #pragma warning( pop )
 
 
-//! Provides generic serialization implementation for classes using a pimpl.
-#define SERIALIZABLEIMPL( class, oarchive, iarchive )                   \
+/** Provides generic serialization implementation for classes using a pimpl
+    which is a lunchbox::Referenced. */
+#define SERIALIZABLEREF( class, oarchive, iarchive )                    \
     template<> DASH_API                                                 \
     void class::save( oarchive& ar, const unsigned int version ) const  \
     {                                                                   \
-        ar << *impl_;                                                   \
+        ar << impl_;                                                    \
     }                                                                   \
-                                                                        \
     template<> DASH_API                                                 \
     void class::load( iarchive& ar, const unsigned int version )        \
     {                                                                   \
-        ar >> *impl_;                                                   \
+        impl_->orphan();                                                \
+        impl_->unref( this );                                           \
+        ar >> impl_;                                                    \
+        impl_->ref( this );                                             \
     }
 
-//! Provides serialization implementation with boost.textArchive for classes
-//! using a pimpl.
-#define SERIALIZABLETEXTARCHIVE( class )                        \
-    SERIALIZABLEIMPL( class, boost::archive::text_oarchive,     \
-                             boost::archive::text_iarchive )    \
+/** Provides generic serialization implementation for classes using a pimpl. */
+#define SERIALIZABLEPLAIN( class, oarchive, iarchive )                  \
+    template<> DASH_API                                                 \
+    void class::save( oarchive& ar, const unsigned int version ) const  \
+    {                                                                   \
+        ar << impl_;                                                    \
+    }                                                                   \
+    template<> DASH_API                                                 \
+    void class::load( iarchive& ar, const unsigned int version )        \
+    {                                                                   \
+        ar >> impl_;                                                    \
+    }
 
-//! Provides serialization implementation with boost.binaryArchive for classes
-//! using a pimpl.
-#define SERIALIZABLEBINARYARCHIVE( class )                        \
-    SERIALIZABLEIMPL( class, boost::archive::binary_oarchive,     \
-                             boost::archive::binary_iarchive )    \
+/** Provides serialization implementation with boost.textArchive using the
+    given impl macro. */
+#define SERIALIZABLETEXTARCHIVE( class, impl )  \
+    impl( class, boost::archive::text_oarchive, boost::archive::text_iarchive )
+
+/** Provides serialization implementation with boost.binaryArchive using the
+    given impl macro. */
+#define SERIALIZABLEBINARYARCHIVE( class, impl )    \
+    impl( class, boost::archive::binary_oarchive,   \
+                 boost::archive::binary_iarchive )
 
 #endif // DASH_DETAIL_SERIALIZABLE_H

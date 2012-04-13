@@ -63,7 +63,7 @@ private:
     dash::Attribute* attribute_;
     AnyCtxPtr value_;
 
-    Attribute();
+    Attribute() {}
     void notifyValueChanged_( Context& context, AnyCtxPtr::Value value );
 };
 

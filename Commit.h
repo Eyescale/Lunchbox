@@ -23,6 +23,7 @@
 
 #include "types.h"
 
+#include <dash/api.h>
 #include <lunchbox/lfVector.h> // member
 #include <lunchbox/serializable.h>
 #include <lunchbox/types.h>
@@ -37,8 +38,8 @@ namespace detail
 class Commit
 {
 public:
-    Commit();
-    ~Commit();
+    DASH_API Commit();
+    DASH_API ~Commit();
 
     bool operator == ( const Commit& rhs ) const;
     bool operator != ( const Commit& rhs ) const { return !(*this == rhs); }

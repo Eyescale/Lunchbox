@@ -41,7 +41,7 @@ public:
 
     DASH_API static Context& getCurrent();
 
-    static size_t getNumSlots();
+    DASH_API static size_t getNumSlots();
     size_t getSlot() const { return slot_; }
 
     void map( dash::NodePtr node, const Context& to );

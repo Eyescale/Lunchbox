@@ -36,7 +36,7 @@ class Attribute : public lunchbox::Referenced, public lunchbox::NonCopyable
 public:
     explicit Attribute( dash::Attribute* attribute );
     explicit Attribute( dash::Attribute* attribute, AttributePtr from );
-    ~Attribute();
+    DASH_API ~Attribute();
 
     Attribute& operator = ( const Attribute& from );
 

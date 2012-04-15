@@ -39,7 +39,7 @@ class Node : public lunchbox::Referenced, public lunchbox::NonCopyable
 public:
     explicit Node( dash::Node* node );
     Node( dash::Node* node, NodePtr from );
-    ~Node();
+    DASH_API ~Node();
 
     Node& operator = ( const Node& from );
 

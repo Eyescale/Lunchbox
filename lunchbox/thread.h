@@ -164,6 +164,12 @@ namespace detail { class Thread; }
          */
         LUNCHBOX_API static void setAffinity( const int32_t affinity );
 
+        /** @internal
+         * Set the affinity of the calling pipe thread automatically to the
+         * the socket connected to the GPU defined by its port and device..
+         */
+        LUNCHBOX_API static void setAutoAffinity( const int port, const int device );
+
     private:
         detail::Thread* const _impl;
 

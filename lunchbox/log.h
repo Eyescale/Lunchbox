@@ -16,12 +16,10 @@
  */
 
 /**
- * @file log.h
- * 
- * This file contains the logging classes for Equalizer. The macros LBERROR,
- * LBWARN, LBINFO and LBVERB output messages at their respective logging level,
- * if the level is active. They use a per-thread lunchbox::Log instance, which
- * is a std::ostream. LBVERB is always inactive in release builds.
+ * This file contains logging classes. The macros LBERROR, LBWARN, LBINFO and
+ * LBVERB output messages at their respective logging level, if the level is
+ * active. They use a per-thread lunchbox::Log instance, which is a
+ * std::ostream. LBVERB is always inactive in release builds.
  */
 
 #ifndef LUNCHBOX_LOG_H

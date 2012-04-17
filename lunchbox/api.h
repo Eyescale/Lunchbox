@@ -15,11 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * @file api.h
- *
- * Defines export visibility macros for lunchbox.
- */
+/** Defines export visibility macros for lunchbox. */
 #ifndef LUNCHBOX_API_H
 #define LUNCHBOX_API_H
 

@@ -15,11 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * @file os.h
- *
- * Includes key system header files and defines essential base macros.
- */
+/** Includes key system header files and defines essential base macros. */
 #ifndef LUNCHBOX_OS_H
 #define LUNCHBOX_OS_H
 

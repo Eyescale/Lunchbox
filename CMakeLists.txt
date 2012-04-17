@@ -45,10 +45,6 @@ include(UpdateFile)
 
 set(LUNCHBOX_FEATURES)
 
-if(MSVC)
-  include(UseGnuWin32)
-endif(MSVC)
-
 find_package(Boost 1.36 REQUIRED system regex date_time serialization)
 if(Boost_VERSION GREATER 103999)
   set(LUNCHBOX_USE_BOOST_SERIALIZATION 1)

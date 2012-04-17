@@ -780,7 +780,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = @CMAKE_CURRENT_BINARY_DIR@/html
+HTML_OUTPUT            = @CMAKE_BINARY_DIR@/doc/html
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank
@@ -1219,7 +1219,7 @@ GENERATE_MAN           = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `man' will be used as the default path.
 
-MAN_OUTPUT             = @CMAKE_CURRENT_BINARY_DIR@/man
+MAN_OUTPUT             = @CMAKE_BINARY_DIR@/doc/man
 
 # The MAN_EXTENSION tag determines the extension that is added to
 # the generated man pages (default is the subroutine's section .3)

@@ -40,18 +40,10 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 include(Common)
+include(DoxygenSetup)
 include(UpdateFile)
 
 set(LUNCHBOX_FEATURES)
-
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  set (ALL_TARGETS "")
-  macro(add_executable _target)
-    _add_executable (${_target} ${ARGN})
-    set_property (GLOBAL APPEND PROPERTY ALL_TARGETS ${_target})
-  endmacro()
-endif()
 
 if(MSVC)
   include(UseGnuWin32)
@@ -96,7 +88,7 @@ include(pthreads/CMakeLists.txt)
 
 add_subdirectory(lunchbox)
 add_subdirectory(tests)
-add_subdirectory(doc) # must be after all targets
+include(DoxygenRule) # must be after all targets
 
 install(FILES CMake/FindLunchbox.cmake CMake/FindHWLOC.cmake
   DESTINATION share/LunchBox/CMake COMPONENT dev)

@@ -86,8 +86,8 @@ add_subdirectory(lunchbox)
 add_subdirectory(tests)
 include(DoxygenRule) # must be after all targets
 
-install(FILES CMake/FindLunchbox.cmake CMake/FindHWLOC.cmake
-  DESTINATION share/LunchBox/CMake COMPONENT dev)
+install(FILES CMake/FindLunchbox.cmake DESTINATION ${CMAKE_MODULE_INSTALL_PATH}
+  COMPONENT dev)
 
 message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${LUNCHBOX_FEATURES}")
 

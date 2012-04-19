@@ -45,9 +45,7 @@
 
 #ifdef LUNCHBOX_USE_HWLOC
 #  include <hwloc.h>
-#  include <hwloc/gl.h>
 #endif
-
 namespace lunchbox
 {
 namespace
@@ -420,60 +418,6 @@ void Thread::setAffinity(const int32_t affinity)
            << std::endl;
 #endif
 }
-
-void Thread::setAutoAffinity( const int port, const int device )
-{
-#ifdef LUNCHBOX_USE_HWLOC
-    hwloc_topology_t topology;
-    hwloc_topology_init( &topology ); // Allocate & initialize the topology
-
-
-    /* Flags used for loading the I/O devices, bridges and their relevant info */
-    const unsigned long loading_flags =
-        0x0000000000000000 ^ HWLOC_TOPOLOGY_FLAG_IO_BRIDGES ^ HWLOC_TOPOLOGY_FLAG_IO_DEVICES;
-
-    /* Set discovery flags */
-    const int sucess = hwloc_topology_set_flags(topology, loading_flags);
-
-    hwloc_bitmap_t cpuSet;
-
-    /* Flags not set */
-    if ( sucess < 0 )
-    {
-          LBINFO << "hwloc_topology_set_flags() failed," <<
-                " PCI devices will not be loaded in the topology" << std::endl;
-          LBINFO << "Automatic pipe thread placement failed" << std::endl;
-
-          return;
-    }
-
-    hwloc_topology_load( topology );  // Perform HW topology detection
-
-    cpuSet = get_display_cpuset( topology, port, device );
-
-    const int result = hwloc_set_cpubind( topology, cpuSet,
-                                                HWLOC_CPUBIND_THREAD );
-    char* cpuSetString;
-    hwloc_bitmap_asprintf( &cpuSetString, cpuSet );
-
-    if( result == 0 )
-    {
-        LBINFO << "Automatically binding thread to cpu set "  << cpuSetString << std::endl;
-    }
-    else
-    {
-        LBWARN << "Error binding thread to cpu set " << cpuSetString
-              << std::endl;
-    }
-    ::free( cpuSetString );
-
-    hwloc_topology_destroy(topology);
-#else
-    LBWARN << "Thread::setAffinity not implemented, hwloc library missing"
-           << std::endl;
-#endif
-}
-
 
 #if 0
 std::ostream& operator << ( std::ostream& os, const Thread* thread )

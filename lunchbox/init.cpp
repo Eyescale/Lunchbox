@@ -47,17 +47,14 @@ bool init( const int argc, char** argv )
 
     const time_t now = ::time(0);
 #ifdef _WIN32
-    struct tm* gmt = ::gmtime( &now );
-    char* gmtString = ::asctime( gmt );
+    char* gmtString = ::ctime( &now );
 #else
-    struct tm gmt;
     char gmtString[32];
-    ::gmtime_r( &now, &gmt );
-    ::asctime_r( &gmt, gmtString );
+    ::ctime_r( &now, gmtString );
 #endif
 
     LBINFO << "Log level " << Log::getLogLevelString() << " topics " 
-           << Log::topics << " date " << gmtString << std::endl;
+           << Log::topics << " date " << gmtString << std::flush;
 
     if( !RNG::_init( ))
     {

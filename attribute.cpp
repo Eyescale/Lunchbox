@@ -18,14 +18,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "Attribute.h"
+#include "attribute.h"
 
 #include "types.h"
-#include "Change.h"
-#include "Node.h"
+#include "change.h"
+#include "node.h"
 
-#include <dash/Attribute.h>
-#include <dash/Node.h>
+#include <dash/attribute.h>
+#include <dash/node.h>
 
 #include <boost/bind.hpp>
 

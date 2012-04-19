@@ -21,7 +21,7 @@
 #ifndef DASH_DETAIL_ANYSERIALIZATION_H
 #define DASH_DETAIL_ANYSERIALIZATION_H
 
-#include "Any.h"
+#include "any.h"
 
 #include <lunchbox/uint128_t.h>
 

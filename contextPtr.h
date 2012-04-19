@@ -21,7 +21,7 @@
 #ifndef DASH_DETAIL_CONTEXTPTR_H
 #define DASH_DETAIL_CONTEXTPTR_H
 
-#include "Context.h" // used inline
+#include "context.h" // used inline
 #include <lunchbox/lfVector.h> // member
 #include <boost/function.hpp> // used inline
 

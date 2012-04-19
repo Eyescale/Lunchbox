@@ -21,9 +21,9 @@
 #ifndef DASH_DETAIL_NODE_H
 #define DASH_DETAIL_NODE_H
 
-#include "ContextPtr.h" // member (Nodes)
-#include "ContextPtr.h" // member (Nodes)
-#include <dash/Attribute.h> // AttributePtr return value
+#include "contextPtr.h" // member (Nodes)
+#include "contextPtr.h" // member (Nodes)
+#include <dash/attribute.h> // AttributePtr return value
 #include <lunchbox/referenced.h> // base class
 
 #include <boost/serialization/vector.hpp>

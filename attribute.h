@@ -21,7 +21,7 @@
 #ifndef DASH_DETAIL_ATTRIBUTE_H
 #define DASH_DETAIL_ATTRIBUTE_H
 
-#include "ContextPtr.h" // member (Attributes)
+#include "contextPtr.h" // member (Attributes)
 #include "types.h"
 #include <lunchbox/referenced.h> // base class
 

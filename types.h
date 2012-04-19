@@ -22,7 +22,7 @@
 #define DASH_DETAIL_TYPES_H
 
 #include <dash/types.h>
-#include <dash/detail/Any.h>
+#include <dash/detail/any.h>
 #include <lunchbox/lfVector.h>
 #include <vector>
 

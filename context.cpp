@@ -18,15 +18,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "Context.h"
+#include "context.h"
 
-#include "Attribute.h"
-#include "Change.h"
-#include "Commit.h"
-#include "Node.h"
+#include "attribute.h"
+#include "change.h"
+#include "commit.h"
+#include "node.h"
 
-#include <dash/Context.h>
-#include <dash/Node.h>
+#include <dash/context.h>
+#include <dash/node.h>
 #include <lunchbox/atomic.h>
 
 namespace dash
@@ -133,7 +133,7 @@ void Context::map( dash::NodePtr node, const Context& to )
     if( !getCommit()->empty( ))
     {
         std::stringstream out;
-        out << "Source dash::Context has pending changes: " << getCommit()
+        out << "Source dash::context.has pending changes: " << getCommit()
             << ", called from " << lunchbox::backtrace;
         throw std::runtime_error( out.str( ));
     }

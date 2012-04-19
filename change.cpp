@@ -18,11 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "Change.h"
+#include "change.h"
 
-#include "Node.h"
+#include "node.h"
 
-#include <dash/Node.h>
+#include <dash/node.h>
 
 namespace dash
 {

@@ -18,13 +18,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "Node.h"
+#include "node.h"
 
-#include "Attribute.h"
-#include "Change.h"
-#include "Context.h"
+#include "attribute.h"
+#include "change.h"
+#include "context.h"
 #include "types.h"
-#include "../Node.h"
+#include "../node.h"
 
 #include <algorithm>
 

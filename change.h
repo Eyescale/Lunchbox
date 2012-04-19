@@ -21,11 +21,11 @@
 #ifndef DASH_DETAIL_CHANGE_H
 #define DASH_DETAIL_CHANGE_H
 
-#include "Node.h"
+#include "node.h"
 #include "types.h"
 
 #include <dash/api.h>
-#include <dash/Context.h>
+#include <dash/context.h>
 
 #include <lunchbox/serializable.h>
 

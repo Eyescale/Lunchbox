@@ -18,13 +18,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "Commit.h"
+#include "commit.h"
 
-#include "Attribute.h"
-#include "Change.h"
-#include "Node.h"
+#include "attribute.h"
+#include "change.h"
+#include "node.h"
 
-#include <dash/Node.h>
+#include <dash/node.h>
 
 namespace dash
 {

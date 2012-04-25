@@ -256,6 +256,9 @@ private:
 
         ~ScopedThreadCheck()
         {
+            LBASSERTINFO( _data.inRegion == lunchbox::ThreadID::ZERO ||
+                          _data.inRegion == lunchbox::Thread::getSelfThreadID(),
+                          "Another thread entered critical region" );
             _data.inRegion = lunchbox::ThreadID::ZERO;
         }
     private:

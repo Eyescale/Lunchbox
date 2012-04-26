@@ -47,6 +47,7 @@ class Reader : public lunchbox::Thread
 public:
     Reader() {}
     virtual ~Reader() {}
+    Reader& operator=( const Reader& ) { return *this; }
 
     virtual void run()
         {
@@ -82,6 +83,7 @@ class Writer : public lunchbox::Thread
 public:
     Writer() {}
     virtual ~Writer() {}
+    Writer& operator=( const Writer& ) { return *this; }
 
     virtual void run()
         {
@@ -113,6 +115,7 @@ class Pusher : public lunchbox::Thread
 public:
     Pusher() {}
     virtual ~Pusher() {}
+    Pusher& operator=( const Pusher& ) { return *this; }
 
     virtual void run()
         {
@@ -141,6 +144,7 @@ class Copier : public lunchbox::Thread
 public:
     Copier() {}
     virtual ~Copier() {}
+    Copier& operator=( const Copier& ) { return *this; }
 
     virtual void run()
         {
@@ -158,6 +162,7 @@ class Eraser : public lunchbox::Thread
 public:
     Eraser() {}
     virtual ~Eraser() {}
+    Eraser& operator=( const Eraser& ) { return *this; }
 
     virtual void run()
         {
@@ -176,6 +181,7 @@ class Flusher : public lunchbox::Thread
 public:
     Flusher() {}
     virtual ~Flusher() {}
+    Flusher& operator=( const Flusher& ) { return *this; }
 
     virtual void run()
         {

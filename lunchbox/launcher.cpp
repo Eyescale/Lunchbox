@@ -29,7 +29,7 @@
 #ifndef _WIN32
 #  include <sys/wait.h>
 #else
-#  include <unistd.h>
+#  include <io.h>
 #endif
 
 namespace lunchbox

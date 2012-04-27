@@ -164,7 +164,6 @@ namespace detail { class Thread; }
          */
         LUNCHBOX_API static void setAffinity( const int32_t affinity );
 
-
     private:
         detail::Thread* const _impl;
 

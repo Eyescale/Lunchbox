@@ -46,6 +46,7 @@
 #ifdef LUNCHBOX_USE_HWLOC
 #  include <hwloc.h>
 #endif
+
 namespace lunchbox
 {
 namespace
@@ -393,7 +394,6 @@ void Thread::setAffinity(const int32_t affinity)
     hwloc_topology_t topology;
     hwloc_topology_init( &topology ); // Allocate & initialize the topology
     hwloc_topology_load( topology );  // Perform HW topology detection
-    
     const hwloc_bitmap_t cpuSet = _getCpuSet( affinity, topology );
     const int result = hwloc_set_cpubind( topology, cpuSet,
                                                 HWLOC_CPUBIND_THREAD );

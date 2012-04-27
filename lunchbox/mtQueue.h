@@ -60,6 +60,22 @@ namespace lunchbox
                 return *this;
             }
 
+        /**
+         * Retrieve the requested element from the queue, may block.
+         * @version 1.0
+         */
+        const T& operator[]( const size_t index ) const
+            {
+                _cond.lock();
+                while( _queue.size() < index )
+                    _cond.wait();
+
+                LBASSERT( _queue.size() >= index );
+                const T& element = _queue[index];
+                _cond.unlock();
+                return element;
+            }
+
         /** @return true if the queue is empty, false otherwise. @version 1.0 */
         bool isEmpty() const { return _queue.empty(); }
 

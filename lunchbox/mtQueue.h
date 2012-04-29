@@ -62,7 +62,7 @@ namespace lunchbox
 
         /**
          * Retrieve the requested element from the queue, may block.
-         * @version 1.0
+         * @version 1.3.2
          */
         const T& operator[]( const size_t index ) const
             {

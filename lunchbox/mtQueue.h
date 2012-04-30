@@ -33,25 +33,23 @@ namespace lunchbox
      *
      * Typically used to communicate between two execution threads.
      *
-     * S defines the maximum capacity of the Queue<T>. When the capacity is
-     * reached, pushing new values blocks until items have been consumed.
+     * maxSize defines the maximum capacity of the Queue<T>. When the capacity
+     * is reached, pushing new values blocks until items have been consumed.
      */
-    template< typename T, size_t S = ULONG_MAX > class MTQueue
-    // S = std::numeric_limits< size_t >::max() does not work:
-    //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=6424
+    template< typename T > class MTQueue
     {
     public:
         /** Construct a new queue. @version 1.0 */
-        MTQueue() {}
+        MTQueue( size_t maxSize = ULONG_MAX ) : _maxSize( maxSize ) {}
 
         /** Construct a copy of a queue. @version 1.0 */
-        MTQueue( const MTQueue< T, S >& from ) : _queue( from._queue ) {}
+        MTQueue( const MTQueue< T >& from ) : _queue( from._queue ) {}
 
         /** Destruct this Queue. @version 1.0 */
         ~MTQueue() {}
 
         /** Assign the values of another queue. @version 1.0 */
-        MTQueue< T, S >& operator = ( const MTQueue< T, S >& from )
+        MTQueue< T >& operator = ( const MTQueue< T >& from )
             {
                 _cond.lock();
                 _queue = from._queue;
@@ -90,7 +88,7 @@ namespace lunchbox
          */
         size_t waitSize( const size_t minSize ) const
             {
-                LBASSERT( minSize <= S );
+                LBASSERT( minSize <= _maxSize );
                 _cond.lock();
                 while( _queue.size() < minSize )
                     _cond.wait();
@@ -250,7 +248,7 @@ namespace lunchbox
         void push( const T& element )
             {
                 _cond.lock();
-                while( _queue.size() >= S )
+                while( _queue.size() >= _maxSize )
                     _cond.wait();
                 _queue.push_back( element );
                 _cond.signal();
@@ -261,8 +259,8 @@ namespace lunchbox
         void push( const std::vector< T >& elements )
             {
                 _cond.lock();
-                LBASSERT( elements.size() <= S );
-                while( (S - _queue.size( )) < elements.size( ))
+                LBASSERT( elements.size() <= _maxSize );
+                while( (_maxSize - _queue.size( )) < elements.size( ))
                     _cond.wait();
                 _queue.insert( _queue.end(), elements.begin(), elements.end( ));
                 _cond.signal();
@@ -273,7 +271,7 @@ namespace lunchbox
         void pushFront( const T& element )
             {
                 _cond.lock();
-                while(_queue.size() >= S)
+                while( _queue.size() >= _maxSize )
                     _cond.wait();
                 _queue.push_front( element );
                 _cond.signal();
@@ -284,8 +282,8 @@ namespace lunchbox
         void pushFront( const std::vector< T >& elements )
             {
                 _cond.lock();
-                LBASSERT( elements.size() <= S );
-                while( (S - _queue.size( )) < elements.size( ))
+                LBASSERT( elements.size() <= _maxSize );
+                while( (_maxSize - _queue.size( )) < elements.size( ))
                     _cond.wait();
                 _queue.insert(_queue.begin(), elements.begin(), elements.end());
                 _cond.signal();
@@ -296,6 +294,7 @@ namespace lunchbox
     private:
         std::deque< T > _queue;
         mutable Condition _cond;
+        size_t _maxSize;
     };
 }
 #endif //LUNCHBOX_MTQUEUE_H

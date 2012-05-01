@@ -51,23 +51,19 @@ namespace lunchbox
         /** Destruct this Queue. @version 1.0 */
         ~MTQueue() {}
 
-        /**
-         * Assign the values of another queue.
-         *
-         * Concurrent, circular assignments are unsupported and will lead to
-         * deadlocks, e.g., Thread 1: q1 = q2; Thread 2: q2 = q1; is not legal.
-         * @version 1.0 */
+        /** Assign the values of another queue. @version 1.0 */
         MTQueue< T, S >& operator = ( const MTQueue< T, S >& from )
             {
                 if( this != &from )
                 {
-                    _cond.lock();
-
                     from._cond.lock();
-                    _maxSize = from._maxSize;
-                    _queue = from._queue;
+                    std::deque< T > copy = from._queue;
+                    const size_t maxSize = from._maxSize;
                     from._cond.unlock();
 
+                    _cond.lock();
+                    _maxSize = maxSize;
+                    _queue.swap( copy );
                     _cond.signal();
                     _cond.unlock();
                 }

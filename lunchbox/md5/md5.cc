@@ -45,6 +45,7 @@ documentation and/or software.
 #include <lunchbox/debug.h>
 
 #include <assert.h>
+#include <string.h>
 #include <strings.h>
 #include <iostream>
 

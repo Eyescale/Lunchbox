@@ -84,6 +84,27 @@ namespace lunchbox
         size_t getSize() const { return _queue.size(); }
 
         /**
+         * Set the new maximum size of the queue.
+         *
+         * If the new maximum size is less the current size of the queue, this
+         * call will block until the queue reaches the new maximum size.
+         *
+         * @version 1.3.2
+         */
+        void setMaxSize( const size_t maxSize )
+            {
+                _cond.lock();
+                while( _queue.size() > maxSize )
+                    _cond.wait();
+                _maxSize = maxSize;
+                _cond.signal();
+                _cond.unlock();
+            }
+
+        /** @return the current maximum size of the queue. @version 1.3.2 */
+        size_t getMaxSize() const { return _maxSize; }
+
+        /**
          * Wait for the size to be at least the number of given elements.
          *
          * @return the current size when the condition was fulfilled.

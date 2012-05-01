@@ -46,7 +46,7 @@ namespace lunchbox
         MTQueue( size_t maxSize = S ) : _maxSize( maxSize ) {}
 
         /** Construct a copy of a queue. @version 1.0 */
-        MTQueue( const MTQueue< T, S >& from ) : _queue( from._queue ) {}
+        MTQueue( const MTQueue< T, S >& from )  { *this = from; }
 
         /** Destruct this Queue. @version 1.0 */
         ~MTQueue() {}
@@ -54,10 +54,14 @@ namespace lunchbox
         /** Assign the values of another queue. @version 1.0 */
         MTQueue< T, S >& operator = ( const MTQueue< T, S >& from )
             {
-                _cond.lock();
-                _queue = from._queue;
-                _cond.signal();
-                _cond.unlock();
+                if( this != &from )
+                {
+                    _cond.lock();
+                    _maxSize = from._maxSize;
+                    _queue = from._queue;
+                    _cond.signal();
+                    _cond.unlock();
+                }
                 return *this;
             }
 

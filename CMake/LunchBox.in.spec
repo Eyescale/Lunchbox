@@ -15,21 +15,15 @@ BuildRequires:	OpenSceneGraph-devel OpenThreads-devel
 
 
 %description
-Equalizer is the standard middleware to create and deploy parallel
-OpenGL-based applications. It enables applications to benefit from
-multiple graphics cards, processors and computers to scale the rendering
-performance, visual quality and display size. An Equalizer application
-runs unmodified on any visualization system, from a simple workstation
-to large scale graphics clusters, multi-GPU workstations and Virtual
-Reality installations.
+Lunchbox is a C++ toolkit library for multi-threaded programming.
 
 %package devel
-Summary:	Development files for Equalizer
+Summary:	Development files for Lunchbox
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
-Development files for the Equalizer.
+Development files for the Lunchbox.
 
 %prep
 %setup -q

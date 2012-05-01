@@ -33,23 +33,26 @@ namespace lunchbox
      *
      * Typically used to communicate between two execution threads.
      *
-     * maxSize defines the maximum capacity of the Queue<T>. When the capacity
-     * is reached, pushing new values blocks until items have been consumed.
+     * S is deprecated, and defines the initial maximum capacity of the
+     * Queue<T>. When the capacity is reached, pushing new values blocks until
+     * items have been consumed.
      */
-    template< typename T > class MTQueue
+    template< typename T, size_t S = ULONG_MAX > class MTQueue
+    // S = std::numeric_limits< size_t >::max() does not work:
+    //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=6424
     {
     public:
         /** Construct a new queue. @version 1.0 */
-        MTQueue( size_t maxSize = ULONG_MAX ) : _maxSize( maxSize ) {}
+        MTQueue( size_t maxSize = S ) : _maxSize( maxSize ) {}
 
         /** Construct a copy of a queue. @version 1.0 */
-        MTQueue( const MTQueue< T >& from ) : _queue( from._queue ) {}
+        MTQueue( const MTQueue< T, S >& from ) : _queue( from._queue ) {}
 
         /** Destruct this Queue. @version 1.0 */
         ~MTQueue() {}
 
         /** Assign the values of another queue. @version 1.0 */
-        MTQueue< T >& operator = ( const MTQueue< T >& from )
+        MTQueue< T, S >& operator = ( const MTQueue< T, S >& from )
             {
                 _cond.lock();
                 _queue = from._queue;

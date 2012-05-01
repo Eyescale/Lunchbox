@@ -1,5 +1,5 @@
 # Copyright (c) 2010 Daniel Pfeifer <daniel@pfeifer-mail.de>
-#               2011 Stefan Eilemann <eile@eyescale.ch>
+#               2011-2012 Stefan Eilemann <eile@eyescale.ch>
 
 find_package(Threads REQUIRED)
 
@@ -10,10 +10,10 @@ if(CMAKE_USE_PTHREADS_INIT)
 endif(CMAKE_USE_PTHREADS_INIT)
 
 IF(NOT WIN32)
-  message(FATAL_ERROR "Equalizer requires Pthreads.")
+  message(FATAL_ERROR "Lunchbox requires pthreads.")
 ENDIF(NOT WIN32)
 
-message(STATUS "Pthreads-win32 will be built by Equalizer.")
+message(STATUS "Pthreads-win32 will be built by Lunchbox.")
 
 set(PTHREADS_NAME pthreads-w32-2011-03-16)
 set(PTHREADS_TGZ ${CMAKE_CURRENT_SOURCE_DIR}/pthreads/${PTHREADS_NAME}.tar.gz)

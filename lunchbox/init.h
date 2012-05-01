@@ -23,7 +23,7 @@
 namespace lunchbox
 {
     /** 
-     * Initialize the Equalizer base classes.
+     * Initialize the Lunchbox base classes.
      *
      * @param argc the command line argument count.
      * @param argv the command line argument values.
@@ -33,7 +33,7 @@ namespace lunchbox
     LUNCHBOX_API bool init( const int argc, char** argv );
 
     /**
-     * De-initialize the Equalizer base classes.
+     * De-initialize the Lunchbox base classes.
      *
      * @return <code>true</code> if the library was successfully de-initialised,
      *         <code>false</code> otherwise.

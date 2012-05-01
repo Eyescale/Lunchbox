@@ -83,7 +83,17 @@ int main( int argc, char **argv )
     lunchbox::UUID id5, id6;
     TEST( id5 == lunchbox::UUID::ZERO );
     TEST( id5 == id6 );
-    
+
+    const lunchbox::uint128_t& empty = lunchbox::make_uint128( "" );
+    const lunchbox::uint128_t& fox = lunchbox::make_uint128(
+                               "The quick brown fox jumps over the lazy dog." );
+    // Values from http://en.wikipedia.org/wiki/MD5#MD5_hashes
+    TEST( empty != fox );
+    TESTINFO( empty == uint128_t(0xD41D8CD98F00B204ull, 0xE9800998ECF8427Eull),
+              empty );
+    TESTINFO( fox == uint128_t(0xE4D909C290D0FB1Cull, 0xA068FFADDF22CBD0ull),
+              fox );
+
     lunchbox::RNG rng;
     uint16_t high = rng.get< uint16_t >();
     int32_t low = rng.get< int32_t >();

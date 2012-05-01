@@ -241,5 +241,14 @@ namespace lunchbox
         return result;
     }
 
+    /** 
+     * Create a 128 bit integer based on a string.
+     *
+     * The MD5 hash of the given text is used to form the uint128_t.
+     * 
+     * @param text the string to form the uint128_t from.
+     * @version 1.3.2
+     */
+     LUNCHBOX_API uint128_t make_uint128( const char* string );
 }
 #endif // LUNCHBOX_UINT128_H

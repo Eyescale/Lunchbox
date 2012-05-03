@@ -135,6 +135,7 @@ namespace lunchbox
             {
                 _cond.lock();
                 _queue.clear();
+                _cond.signal();
                 _cond.unlock();
             }
 

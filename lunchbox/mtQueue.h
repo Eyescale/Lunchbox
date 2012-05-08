@@ -77,10 +77,10 @@ namespace lunchbox
         const T& operator[]( const size_t index ) const
             {
                 _cond.lock();
-                while( _queue.size() < index )
+                while( _queue.size() <= index )
                     _cond.wait();
 
-                LBASSERT( _queue.size() >= index );
+                LBASSERT( _queue.size() > index );
                 const T& element = _queue[index];
                 _cond.unlock();
                 return element;

@@ -388,7 +388,7 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
 }
 #endif
 
-void Thread::setAffinity(const int32_t affinity)
+void Thread::setAffinity( const int32_t affinity )
 {
 #ifdef LUNCHBOX_USE_HWLOC
     hwloc_topology_t topology;

@@ -246,7 +246,7 @@ namespace lunchbox
      *
      * The MD5 hash of the given text is used to form the uint128_t.
      * 
-     * @param text the string to form the uint128_t from.
+     * @param string the string to form the uint128_t from.
      * @version 1.3.2
      */
      LUNCHBOX_API uint128_t make_uint128( const char* string );

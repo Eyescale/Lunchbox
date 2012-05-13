@@ -38,6 +38,7 @@ namespace detail { class Thread; }
         /** Enumeration values for thread affinity. */
         enum Affinity
         {
+            NONE = 0, //!< Don't set any affinity
             CORE = 1, //!< Bind to a specific CPU core
             SOCKET = -65536, //!< Bind to all cores of a specific socket (CPU)
             SOCKET_MAX = -1024 //!< Highest bindable CPU

@@ -38,6 +38,9 @@ namespace lunchbox
         /** Construct and initialize a new data structure. @version 1.0 */
         explicit Lockable( const D& value ) : data( value ) {}
 
+        /** Construct and initialize a new data structure. @version 1.3.2 */
+        template< class P1 > Lockable( const P1& p1 ) : data( p1 ) {}
+
         /** Access the held data. @version 1.0 */
         D* operator->() { return &data; }
 

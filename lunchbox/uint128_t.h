@@ -54,6 +54,13 @@ namespace lunchbox
         explicit uint128_t( const uint64_t high_, const uint64_t low_ ) 
             : _high( high_ ), _low( low_ ) {}
 
+        /**
+         * Construct a new 128 bit integer from a string representation.
+         * @version 1.3.2
+         **/
+        explicit uint128_t( const std::string& string ) 
+            : _high( 0 ), _low( 0 ) { *this = string; }
+
         /** Assign another 128 bit value. @version 1.0 */
         uint128_t& operator = ( const uint128_t& rhs )
             {

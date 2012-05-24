@@ -33,6 +33,9 @@ typedef UINT64     uint64_t;
 
 namespace lunchbox
 {
+    class uint128_t;
+    std::ostream& operator << ( std::ostream& os, const uint128_t& id );
+
     /** A base type for 128 bit unsigned integer values. */
     class uint128_t
     {
@@ -175,6 +178,14 @@ namespace lunchbox
                 const std::string str = stream.str();
                 return str.substr( 0, 3 ) + ".." +
                     str.substr( str.length() - 3, std::string::npos );
+            }
+
+        /** @return the full string representation of the value. */
+        std::string getString() const
+            {
+                std::stringstream stream;
+                stream << *this;
+                return stream.str();
             }
 
         /** Serialize this object to a boost archive. @version 1.3.1 */

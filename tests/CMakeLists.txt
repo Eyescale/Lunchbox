@@ -22,7 +22,7 @@ foreach(FILE ${TEST_FILES})
 
   add_executable(${NAME} ${FILE})
   set_target_properties(${NAME} PROPERTIES FOLDER "Tests")
-  target_link_libraries(${NAME} lunchbox ${Boost_LIBRARIES})
+  target_link_libraries(${NAME} Lunchbox ${Boost_LIBRARIES})
 
   get_target_property(EXECUTABLE ${NAME} LOCATION)
   STRING(REGEX REPLACE "\\$\\(.*\\)" "\${CTEST_CONFIGURATION_TYPE}"

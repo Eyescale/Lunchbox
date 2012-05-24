@@ -17,6 +17,7 @@
 
 #include "uint128_t.h"
 #include "debug.h" 
+#include "md5/md5.hh"
 
 #include <cstdlib>      // for strtoull
 
@@ -50,6 +51,24 @@ uint128_t& uint128_t::operator = ( const std::string& from )
 #endif
     }
     return *this;
+}
+
+uint128_t make_uint128( const char* string )
+{
+    MD5 md5( (unsigned char*)string );
+    uint8_t* data = md5.raw_digest();
+
+    const uint128_t 
+        value( (uint64_t( data[7] )<<0) | (uint64_t( data[6] )<<8) |
+               (uint64_t( data[5] )<<16) | (uint64_t( data[4] )<<24) |
+               (uint64_t( data[3] )<<32) | (uint64_t( data[2] )<<40) |
+               (uint64_t( data[1] )<<48) | (uint64_t( data[0] )<<56),
+               (uint64_t( data[15] )<<0) | (uint64_t( data[14] )<<8) |
+               (uint64_t( data[13] )<<16) | (uint64_t( data[12] )<<24) |
+               (uint64_t( data[11] )<<32) | (uint64_t( data[10] )<<40) |
+               (uint64_t( data[9] )<<48) | (uint64_t( data[8] )<<56) );
+    delete [] data;
+    return value;
 }
 
 }

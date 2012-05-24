@@ -77,6 +77,7 @@ set(LUNCHBOX_SOURCES
   uint128_t.cpp
   uuid.cpp
   version.cpp
+  md5/md5.cc
   )
 
 set(LUNCHBOX_ALL ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_SOURCES})

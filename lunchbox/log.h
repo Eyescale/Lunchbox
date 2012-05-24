@@ -54,7 +54,7 @@ namespace lunchbox
     enum LogTopic
     {
         LOG_CUSTOM = 0x10,       //!< Log topics for other namespaces start here
-        LOG_ANY    = 0xffffu     //!< Log all Equalizer topics
+        LOG_ANY    = 0xffffu     //!< Log all Lunchbox topics
     };
 
     /** @internal The string buffer used for logging. */

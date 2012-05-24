@@ -1,16 +1,16 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *               2012, Marwan Abdellah <marwan.abdellah@epfl.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -32,12 +32,13 @@ namespace lunchbox
 namespace detail { class Thread; }
 
     /** An utility class to execute code in a separate execution thread. */
-    class Thread 
+    class Thread
     {
     public:
         /** Enumeration values for thread affinity. */
         enum Affinity
         {
+            NONE = 0, //!< Don't set any affinity
             CORE = 1, //!< Bind to a specific CPU core
             SOCKET = -65536, //!< Bind to all cores of a specific socket (CPU)
             SOCKET_MAX = -1024 //!< Highest bindable CPU
@@ -52,7 +53,7 @@ namespace detail { class Thread; }
         /** Destruct the thread. @version 1.0 */
         LUNCHBOX_API virtual ~Thread();
 
-        /** 
+        /**
          * Start the thread.
          *
          * @return <code>true</code> if the thread was launched and initialized
@@ -62,32 +63,32 @@ namespace detail { class Thread; }
          */
         LUNCHBOX_API virtual bool start();
 
-        /** 
+        /**
          * The init function for the child thread.
          *
          * The parent thread will not be unlocked before this function has been
          * executed. If the thread initialization fails, that is, this method
          * does return false, the thread will be stopped and the start() method
          * will return false.
-         * 
+         *
          * @return the success value of the thread initialization.
          * @version 1.0
          */
         virtual bool init(){ return true; }
 
-        /** 
+        /**
          * The entry function for the child thread.
          *
          * This method should contain the main execution routine for the thread
          * and is called after a successful init().
-         * 
+         *
          * @version 1.0
          */
         virtual void run() = 0;
 
-        /** 
+        /**
          * Exit the child thread immediately.
-         * 
+         *
          * This function does not return. It is only to be called from the child
          * thread.
          *
@@ -95,7 +96,7 @@ namespace detail { class Thread; }
          */
         LUNCHBOX_API virtual void exit();
 
-        /** 
+        /**
          * Cancel (stop) the child thread.
          *
          * This function is not to be called from the child thread.
@@ -103,7 +104,7 @@ namespace detail { class Thread; }
          */
         LUNCHBOX_API void cancel();
 
-        /** 
+        /**
          * Wait for the exit of the child thread.
          *
          * @return true if the thread was joined, false otherwise.
@@ -111,9 +112,9 @@ namespace detail { class Thread; }
          */
         LUNCHBOX_API bool join();
 
-        /** 
+        /**
          * Return if the thread is stopped.
-         * 
+         *
          * Note that the thread may be neither running nor stopped if it is
          * currently starting or stopping.
          *
@@ -122,9 +123,9 @@ namespace detail { class Thread; }
          */
         LUNCHBOX_API bool isStopped() const;
 
-        /** 
+        /**
          * Return if the thread is running.
-         * 
+         *
          * Note that the thread may be neither running nor stopped if it is
          * currently starting or stopping.
          *
@@ -133,7 +134,7 @@ namespace detail { class Thread; }
          */
         LUNCHBOX_API bool isRunning() const;
 
-        /** 
+        /**
          * @return true if the calling thread is the same thread as this
          *         thread, false otherwise.
          * @version 1.0
@@ -193,17 +194,18 @@ public:                                                     \
     struct NAME ## Struct                                   \
     {                                                       \
         NAME ## Struct ()                                   \
-            : extMutex( false ), inRegion( false )          \
+            : extMutex( false )                             \
+            , inRegion( lunchbox::ThreadID::ZERO )          \
             {}                                              \
         mutable lunchbox::ThreadID id;                      \
         mutable std::string name;                           \
         bool extMutex;                                      \
-        mutable bool inRegion;                              \
+        mutable lunchbox::ThreadID inRegion;                \
     } NAME;                                                 \
 private:
 
 #ifdef LB_CHECK_THREADSAFETY
-#  define LB_TS_RESET( NAME ) NAME.id = lunchbox::ThreadID::ZERO; 
+#  define LB_TS_RESET( NAME ) NAME.id = lunchbox::ThreadID::ZERO;
 
 #  define LB_TS_THREAD( NAME )                                          \
     {                                                                   \
@@ -246,17 +248,20 @@ private:
     public:
         explicit ScopedThreadCheck( const T& data )
                 : _data( data )
-            {
-                LBASSERTINFO( !data.inRegion,
-                              "Another thread already in critical region" );
-                data.inRegion = true;
-            }
-        ~ScopedThreadCheck() 
-            {
-                LBASSERTINFO( _data.inRegion,
-                              "Another thread was in critical region" );
-                _data.inRegion = false;
-            }
+        {
+            LBASSERTINFO( data.inRegion == lunchbox::ThreadID::ZERO ||
+                          data.inRegion == lunchbox::Thread::getSelfThreadID(),
+                          "Another thread already in critical region" );
+            data.inRegion = lunchbox::Thread::getSelfThreadID();
+        }
+
+        ~ScopedThreadCheck()
+        {
+            LBASSERTINFO( _data.inRegion == lunchbox::ThreadID::ZERO ||
+                          _data.inRegion == lunchbox::Thread::getSelfThreadID(),
+                          "Another thread entered critical region" );
+            _data.inRegion = lunchbox::ThreadID::ZERO;
+        }
     private:
         const T& _data;
     };

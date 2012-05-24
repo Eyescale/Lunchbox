@@ -37,9 +37,6 @@
 #    define LB_STDEXT_TR1
 #  else
 #    define LB_STDEXT_EXT
-#    ifndef LB_HAVE_LONG_HASH
-#      define LB_HAVE_LONG_HASH
-#    endif
 #  endif
 #else
 #  ifdef _MSC_VER

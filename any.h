@@ -29,9 +29,6 @@
 #ifndef DASH_DETAIL_ANY_H
 #define DASH_DETAIL_ANY_H
 
-#include <algorithm>
-#include <typeinfo>
-
 #include <boost/config.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/is_reference.hpp>
@@ -43,6 +40,10 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
+#include <algorithm>
+#include <typeinfo>
+#include <cstdio>
+
 // See boost/python/type_id.hpp
 // TODO: add BOOST_TYPEID_COMPARE_BY_NAME to config.hpp
 # if (defined(__GNUC__) && __GNUC__ >= 3) \
@@ -51,7 +52,7 @@
  || (defined(__hpux) && defined(__HP_aCC)) \
  || (defined(linux) && defined(__INTEL_COMPILER) && defined(__ICC))
 #  define BOOST_AUX_ANY_TYPE_ID_NAME
-#include <cstring>
+#  include <cstring>
 # endif 
 
 namespace dash
@@ -217,11 +218,18 @@ namespace detail
     class bad_any_cast : public std::bad_cast
     {
     public:
-        virtual const char * what() const throw()
+        bad_any_cast( const std::string& from, const std::string& to )
         {
-            return "boost::bad_any_cast: "
-                   "failed conversion using detail::Any_cast";
+            snprintf( data, 256, 
+                      "boost::bad_any_cast: failed conversion from %s to %s\n",
+                      from.c_str(), to.c_str( ));
+            data[255] = 0;
         }
+
+        virtual const char * what() const throw() { return data; }
+
+    private:
+        char data[256];
     };
 
     template<typename ValueType>
@@ -260,7 +268,8 @@ namespace detail
 
         nonref * result = any_cast<nonref>(&operand);
         if(!result)
-            boost::throw_exception(bad_any_cast());
+            boost::throw_exception( bad_any_cast( operand.type().name(),
+                                                  typeid( nonref ).name( )));
         return *result;
     }
 

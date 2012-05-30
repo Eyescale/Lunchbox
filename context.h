@@ -51,11 +51,11 @@ public:
     void unmap( AttributePtr attribute );
 
     CommitPtr getCommit();
-    CommitConstPtr getCommit() const;
+    ConstCommitPtr getCommit() const;
 
     void addChange( const Change& change );
     dash::Commit commit();
-    void apply( CommitConstPtr commit );
+    void apply( ConstCommitPtr commit );
 
 private:
     friend int test::main( int argc, char **argv );

@@ -163,7 +163,7 @@ CommitPtr Context::getCommit()
     return commit_->getImpl();
 }
 
-CommitConstPtr Context::getCommit() const
+ConstCommitPtr Context::getCommit() const
 {
     return commit_->getImpl();
 }
@@ -184,7 +184,7 @@ dash::Commit Context::commit()
     return current;
 }
 
-void Context::apply( CommitConstPtr cmt )
+void Context::apply( ConstCommitPtr cmt )
 {
     LB_TS_SCOPED( thread_ );
     cmt->apply();

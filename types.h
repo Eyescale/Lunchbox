@@ -47,7 +47,7 @@ typedef Changes::const_iterator ChangesCIter;
 
 class Node;
 typedef lunchbox::RefPtr< Node > NodePtr;
-typedef lunchbox::RefPtr< const Node > NodeConstPtr;
+typedef lunchbox::RefPtr< const Node > ConstNodePtr;
 
 typedef std::vector< Node* > Parents;
 typedef Parents::iterator ParentsIter;
@@ -61,7 +61,7 @@ typedef ContextPtr< Children > ChildrenCtxPtr;
 
 class Attribute;
 typedef lunchbox::RefPtr< Attribute > AttributePtr;
-typedef lunchbox::RefPtr< const Attribute > AttributeConstPtr;
+typedef lunchbox::RefPtr< const Attribute > ConstAttributePtr;
 typedef Attributes::iterator AttributesIter;
 typedef Attributes::const_iterator AttributesCIter;
 typedef ContextPtr< dash::Attributes > AttributesCtxPtr;

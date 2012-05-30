@@ -63,7 +63,7 @@ public:
     size_t getNChildren() const { return children_->size(); }
     dash::NodePtr getChild( const size_t i )
         { return (*static_cast< const Node * >( this )->children_)[ i ]; }
-    dash::NodeConstPtr getChild( const size_t i ) const
+    dash::ConstNodePtr getChild( const size_t i ) const
         { return (*children_)[ i ]; }
 
     void insert( dash::NodePtr child );
@@ -75,7 +75,7 @@ public:
     size_t getNAttributes() const { return attributes_->size(); }
     dash::AttributePtr getAttribute( const size_t i )
         { return (*static_cast< const Node * >( this )->attributes_)[ i ]; }
-    dash::AttributeConstPtr getAttribute( const size_t i ) const
+    dash::ConstAttributePtr getAttribute( const size_t i ) const
         { return (*attributes_)[ i ]; }
 
     void insert( dash::AttributePtr attribute );

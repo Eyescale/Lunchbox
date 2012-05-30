@@ -255,6 +255,31 @@ namespace lunchbox
                 _cond.unlock();
                 return true;
             }
+
+       /**
+        * Block until the monitor has not the given value.
+        * @param value the exact value to monitor.
+        * @param timeout the timeout in milliseconds to wait for not the value.
+        * @return true on success, false on timeout.
+        * @version 1.1
+        */
+       bool timedWaitNE( const T& value, const uint32_t timeout ) const
+           {
+               if( _value != value )
+                   return true;
+
+               _cond.lock();
+               while( _value == value )
+               {
+                   if( !_cond.timedWait( timeout ) )
+                   {
+                       _cond.unlock();
+                       return false;
+                   }
+               }
+               _cond.unlock();
+               return true;
+           }
         //@}
 
         /** @name Comparison Operators. @version 1.0 */

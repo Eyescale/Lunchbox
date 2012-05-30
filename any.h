@@ -53,7 +53,11 @@
  || (defined(linux) && defined(__INTEL_COMPILER) && defined(__ICC))
 #  define BOOST_AUX_ANY_TYPE_ID_NAME
 #  include <cstring>
-# endif 
+# endif
+
+#ifdef WIN32
+#  define snprintf _snprintf_s
+#endif
 
 namespace dash
 {

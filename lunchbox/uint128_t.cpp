@@ -21,6 +21,10 @@
 
 #include <cstdlib>      // for strtoull
 
+#ifdef _MSC_VER
+#  define strtoull _strtoui64
+#endif
+
 namespace lunchbox
 {
 /** Special identifier values */
@@ -28,13 +32,17 @@ const uint128_t uint128_t::ZERO;
 
 uint128_t& uint128_t::operator = ( const std::string& from )
 {
+    if( from.empty( ))
+    {
+        _high = 0;
+        _low = 0;
+        return *this;
+    }
+
     char* next = 0;
-#ifdef _MSC_VER
-    _high = ::_strtoui64( from.c_str(), &next, 16 );
-#else
     _high = ::strtoull( from.c_str(), &next, 16 );
-#endif
     LBASSERT( next != from.c_str( ));
+
     if( *next == '\0' ) // short representation, high was 0
     {
         _low = _high;
@@ -44,11 +52,7 @@ uint128_t& uint128_t::operator = ( const std::string& from )
     {
         LBASSERTINFO( *next == ':', from << ", " << next );
         ++next;
-#ifdef _MSC_VER
-        _low = ::_strtoui64( next, 0, 16 );
-#else
         _low = ::strtoull( next, 0, 16 );
-#endif
     }
     return *this;
 }

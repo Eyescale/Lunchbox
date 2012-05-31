@@ -19,7 +19,8 @@
 #include "debug.h" 
 #include "md5/md5.hh"
 
-#include <cstdlib>      // for strtoull
+#include <cstdlib> // for strtoull
+#include <cstring> // for strcmp
 
 #ifdef _MSC_VER
 #  define strtoull _strtoui64
@@ -50,8 +51,13 @@ uint128_t& uint128_t::operator = ( const std::string& from )
     }
     else
     {
-        LBASSERTINFO( *next == ':', from << ", " << next );
-        ++next;
+        if( strncmp( next, "\\058" /* utf-8 ':' */, 4 ) == 0 )
+            next += 4;
+        else
+        {
+            LBASSERTINFO( *next == ':', from << ", " << next );
+            ++next;
+        }
         _low = ::strtoull( next, 0, 16 );
     }
     return *this;

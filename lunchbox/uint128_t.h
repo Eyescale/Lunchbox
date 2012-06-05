@@ -33,6 +33,9 @@ typedef UINT64     uint64_t;
 
 namespace lunchbox
 {
+    class uint128_t;
+    std::ostream& operator << ( std::ostream& os, const uint128_t& id );
+
     /** A base type for 128 bit unsigned integer values. */
     class uint128_t
     {
@@ -50,6 +53,13 @@ namespace lunchbox
          **/
         explicit uint128_t( const uint64_t high_, const uint64_t low_ ) 
             : _high( high_ ), _low( low_ ) {}
+
+        /**
+         * Construct a new 128 bit integer from a string representation.
+         * @version 1.3.2
+         **/
+        explicit uint128_t( const std::string& string ) 
+            : _high( 0 ), _low( 0 ) { *this = string; }
 
         /** Assign another 128 bit value. @version 1.0 */
         uint128_t& operator = ( const uint128_t& rhs )
@@ -175,6 +185,14 @@ namespace lunchbox
                 const std::string str = stream.str();
                 return str.substr( 0, 3 ) + ".." +
                     str.substr( str.length() - 3, std::string::npos );
+            }
+
+        /** @return the full string representation of the value. */
+        std::string getString() const
+            {
+                std::stringstream stream;
+                stream << *this;
+                return stream.str();
             }
 
         /** Serialize this object to a boost archive. @version 1.3.1 */

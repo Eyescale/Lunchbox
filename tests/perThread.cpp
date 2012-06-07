@@ -18,8 +18,10 @@
 #include <pthread.h>
 #include <test.h>
 
-#include <lunchbox/base.h>
+#include <lunchbox/atomic.h>
+#include <lunchbox/perThread.h>
 #include <lunchbox/sleep.h>
+#include <lunchbox/rng.h>
 
 #define NTHREADS 1024
 

@@ -1,5 +1,5 @@
 #!gmake
-.PHONY: debug release clean clobber package install debuginst releaseinst tests
+.PHONY: debug release clean clobber install debuginst releaseinst tests
 
 
 ifeq ($(wildcard Makefile), Makefile)

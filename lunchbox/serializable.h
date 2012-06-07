@@ -22,7 +22,7 @@
 #define LUNCHBOX_SERIALIZABLE_H
 
 #include <lunchbox/defines.h>
-#ifdef LUNCHBOX_USE_BOOST_SERIALIZATION
+#ifdef LUNCHBOX_USE_BOOST
 
 #  include <boost/serialization/access.hpp>
 #  include <boost/serialization/split_member.hpp>

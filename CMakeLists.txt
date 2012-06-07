@@ -31,12 +31,12 @@ include(UpdateFile)
 
 set(LUNCHBOX_FEATURES)
 
-find_package(Boost 1.36 REQUIRED system regex date_time serialization)
-if(Boost_VERSION GREATER 103999)
-  set(LUNCHBOX_USE_BOOST_SERIALIZATION 1)
+find_package(Boost 1.40 COMPONENTS serialization)
+if(Boost_FOUND)
+  set(LUNCHBOX_USE_BOOST 1)
+  link_directories(${Boost_LIBRARY_DIRS})
+  include_directories(AFTER SYSTEM ${Boost_INCLUDE_DIRS})
 endif()
-link_directories(${Boost_LIBRARY_DIRS})
-include_directories(AFTER SYSTEM ${Boost_INCLUDE_DIRS})
 
 if(LUNCHBOX_USE_OPENMP)
   find_package(OpenMP)

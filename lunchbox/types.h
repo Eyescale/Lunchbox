@@ -15,7 +15,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/** Basic type definitions not provided by the operating system. */
+/**
+ * @file lunchbox/types.h
+ * Basic type definitions not provided by the operating system.
+ */
 
 #ifndef LUNCHBOX_TYPES_H
 #define LUNCHBOX_TYPES_H

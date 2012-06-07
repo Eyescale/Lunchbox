@@ -25,7 +25,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = LunchBox
+PROJECT_NAME           = Lunchbox
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -581,7 +581,8 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @CMAKE_INSTALL_PREFIX@/include/lunchbox
+INPUT                  = @CMAKE_INSTALL_PREFIX@/include/lunchbox \
+                         @CMAKE_SOURCE_DIR@/doc
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -638,7 +639,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/lunchbox
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -872,20 +873,20 @@ GENERATE_DOCSET        = YES
 # documentation sets from a single provider (such as a company or product suite)
 # can be grouped.
 
-DOCSET_FEEDNAME        = "LunchBox Documentation"
+DOCSET_FEEDNAME        = "Lunchbox Documentation"
 
 # When GENERATE_DOCSET tag is set to YES, this tag specifies a string that
 # should uniquely identify the documentation set bundle. This should be a
 # reverse domain-name style string, e.g. com.mycompany.MyDocSet. Doxygen
 # will append .docset to the name.
 
-DOCSET_BUNDLE_ID       = ch.eyescale.LunchBox
+DOCSET_BUNDLE_ID       = ch.eyescale.Lunchbox
 
 # When GENERATE_PUBLISHER_ID tag specifies a string that should uniquely identify
 # the documentation publisher. This should be a reverse domain-name style
 # string, e.g. com.mycompany.MyDocSet.documentation.
 
-DOCSET_PUBLISHER_ID    = ch.eyescale.LunchBox.documentation
+DOCSET_PUBLISHER_ID    = ch.eyescale.Lunchbox.documentation
 
 # The GENERATE_PUBLISHER_NAME tag identifies the documentation publisher.
 
@@ -1516,7 +1517,7 @@ GROUP_GRAPHS           = YES
 # collaboration diagrams in a style similar to the OMG's Unified Modeling
 # Language.
 
-UML_LOOK               = NO
+UML_LOOK               = YES
 
 # If set to YES, the inheritance and collaboration graphs will show the
 # relations between templates and their instances.

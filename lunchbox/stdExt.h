@@ -16,7 +16,7 @@
  */
 
 /**
- * @file stdExt.h
+ * @file lunchbox/stdExt.h
  *
  * Include extensions to the STL and define a uniform interface to them.
  */

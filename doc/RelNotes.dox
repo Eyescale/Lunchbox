@@ -1,0 +1,165 @@
+
+<ul>
+  <li><a href="#introduction">1. Introduction</a></li>
+  <ul>
+    <li><a href="#features">1.1. Features</a></li>
+  </ul>
+  <li><a href="#new">2. New in this release</a></li>
+  <ul>
+    <li><a href="#newFeatures">2.1. New Features</a></li>
+    <li><a href="#enhancements">2.2. Enhancements</a></li>
+    <li><a href="#optimizations">2.3. Optimizations</a></li>
+    <li><a href="#documentation">2.4. Documentation</a></li>
+    <li><a href="#bugfixes">2.5. Bug Fixes</a></li>
+    <li><a href="#knownbugs">2.6. Known Bugs</a></li>
+  </ul>
+  <li><a href="#about">3. About</a></li>
+  <ul>
+    <li><a href="#os">3.1. Operating System Support</a></li>
+    <li><a href="#documentation">3.2. Documentation</a></li>
+    <li><a href="#support">3.3. Support</a></li>
+  </ul>
+  <li><a href="#errata">4. Errata</a></li>
+</ul>
+
+<a name="introduction"></a>
+<h2>1. Introduction</h2>
+<p>
+  Welcome to Lunchbox, a C++ library for multi-threaded programming. This is the
+  initial release of Lunchbox, formerly part of the Collage network library.
+</p>
+<p>
+  Lunchbox 1.4 beta is a feature release based on the 1.0 co::base API. It is
+  intended for all application developers creating high-preformance
+  multi-threaded programs. Lunchbox 1.4 beta can be retrieved by downloading the
+  <a href="http://www.equalizergraphics.com/downloads/Lunchbox-1.3.5.tar.gz">source
+    code</a> or one of the
+  <a href="http://www.equalizergraphics.com/downloads/developer.html">precompiled
+    packages</a>.
+</p>
+
+<a name="features"></a>
+<h3>1.1. Features</h3>
+<p>
+  Lunchbox provides the following major features to facilitate the development
+  and deployment of multi-threaded applications:
+</p>
+<ul>
+  <li><b>OS Abstraction:</b> Utility classes abstracting common operating
+    systems features, e.g., threads, locks, memory maps, shared library loading
+    and condition variables.</li>
+  <li><b>High-Performance Primitives:</b> Thread-safe utilities tuned for
+    performance, e.g., atomic variables, spin locks and lock-free
+    containers.</li>
+  <li><b>Utility classes:</b> Helper primitives which are not in the standard
+    library, e.g., logging, pools and random number generation.</li>
+</ul>
+
+<a name="new"></a>
+<h2>2. New in this release</h2>
+<p>
+  Lunchbox 1.4 beta contains the following features, enhancements, bug fixes
+  and documentation changes over the co::base functionality found in Equalizer
+  1.2.1:
+</p>
+
+<a name="newFeatures"></a>
+<h3>2.1. New Features</h3>
+<ul>
+  <li>LFVector, a thread-safe, lock-free vector.</li>
+  <li>Configurable maximum size for MTQueue.</li>
+</ul>
+
+<a name="enhancements"></a>
+<h3>2.2. Enhancements</h3>
+<ul>
+  <li>Monitor::timedWaitNE() method.</li>
+  <li>Random access to TMQueue elements.</li>
+  <li>Implement backtrace() for Win32.</li>
+  <li>Create uint128_t using the MD5 hash of a given string.</li>
+</ul>
+
+<a name="optimizations"></a>
+<h3>2.3. Optimizations</h3>
+<ul>
+</ul>
+
+<a name="documentation"></a>
+<h3>2.4. Documentation</h3>
+<p>
+  The following documentation has been added or substantially improved since the
+  last release:
+</p>
+<ul>
+  <li>Standalone <a href="">API documentation</a> for the public Lunchbox
+    API.</li>
+</ul>
+
+<a name="bugfixes"></a>
+<h3>2.5. Bug Fixes</h3>
+<p>
+  Lunchbox 1.4 beta includes various bugfixes over the Equalizer 1.2.1 release,
+  including the following:
+</p>
+<ul>
+  <li>MTQueue thread-safety fixes</li>
+</ul>
+
+<a name="knownbugs"></a>
+<h3>2.6. Known Bugs</h3>
+<p>The following bugs were known at release time. Please file a
+  <a href="https://github.com/Eyescale/Equalizer/issues">Bug Report</a> if you
+  find any other issue with this release.
+</p>
+<ul>
+  <li><a href="https://github.com/Eyescale/Equalizer/issues/1"></a>1:
+    Monitor: race for non-atomic reads</li>
+</ul>
+
+<a name="about"></a>
+<h2>3. About</h2>
+<p>
+  Lunchbox is a cross-platform library, designed to run on any modern operating
+  system, including all Unix variants and the Windows operating system. Version
+  1.4 beta has been tested on:
+</p>
+
+<a name="os"></a>
+<h3>3.1. Operating System Support</h3>
+<p>
+  Lunchbox uses CMake to create a platform-specific build environment. The
+  following platforms and build environments are tested:
+</p>
+<ul>
+  <li><b>Linux:</b> Ubuntu 11.10, 12.04, RHEL 6.1 (Makefile, i386, x64)</li>
+  <li><b>Windows:</b> 7 (Visual Studio 2008, i386, x64)</li>
+  <li><b>Mac OS X:</b> 10.7 (Makefile, XCode, i386, x64)</li>
+</ul>
+
+<a name="documentation"></a>
+<h3>3.2. Documentation</h3>
+<p>
+  The <a href="">API documentation</a> can be found on ???. As with any open
+  source project, the available source code, in particular the
+  <a href="https://github.com/Eyescale/Lunchbox/tree/1.3.5/tests">unit tests</a>
+  provide a reference for developing applications.
+</p>
+
+<a name="support"></a>
+<h3>3.3. Support</h3>
+<p>
+  Technical questions can be posted to the Equalizer
+  <a href="http://www.equalizergraphics.com/cgi-bin/mailman/listinfo/eq-dev">
+    Developer Mailing List</a>, or directly to
+  <a href="mailto:info@equalizergraphics.com?subject=Equalizer%20question">
+    info@equalizergraphics.com</a>.
+</p>
+<p>
+  Commercial support, custom software development and porting services are
+  available from <a href="http://www.eyescale.ch">Eyescale</a>. Please contact
+  <a href="mailto:info@eyescale.ch?subject=Equalizer%20support">info@eyescale.ch</a>
+  for further information.
+</p>
+
+<a name="errata"></a>
+<h2>4. Errata</h2>

@@ -12,10 +12,10 @@ mark_as_advanced(LUNCHBOX_FORCE_OPENMP)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 
-set(RELEASE_VERSION OFF) # OFF or 'Mm0' ABI version
-set(VERSION_MAJOR "0")
-set(VERSION_MINOR "9")
-set(VERSION_PATCH "0")
+set(RELEASE_VERSION 140) # OFF or 'Mm0' ABI version
+set(VERSION_MAJOR "1")
+set(VERSION_MINOR "3")
+set(VERSION_PATCH "5")
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 set(LUNCHBOX_OSX_VERSION 10.6)
@@ -70,6 +70,7 @@ include(pthreads/CMakeLists.txt)
 
 add_subdirectory(lunchbox)
 add_subdirectory(tests)
+add_subdirectory(doc)
 include(DoxygenRule) # must be after all targets
 
 install(FILES CMake/FindLunchbox.cmake

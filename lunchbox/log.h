@@ -16,6 +16,7 @@
  */
 
 /**
+ * @file lunchbox/log.h
  * This file contains logging classes. The macros LBERROR, LBWARN, LBINFO and
  * LBVERB output messages at their respective logging level, if the level is
  * active. They use a per-thread lunchbox::Log instance, which is a

@@ -92,8 +92,7 @@ public:
         }
 
     /** @version 1.3.2 */
-    explicit LFVector( const LFVector& from )
-            : size_( 0 ), lock_()
+    explicit LFVector( const LFVector& from ) : size_( 0 ), lock_()
         { assign_( from ); }
 
     /** @version 1.3.2 */
@@ -281,9 +280,9 @@ public:
      *
      * A concurrent read on the removed item produces undefined results, in
      * particular end() and back(). The last element is assigned to the given
-     * element if the vector is not empty. If the vector is empty, element is
-     * not touched and false is returned. The whole operation is atomic with
-     * other operations changing the size of the vector.
+     * output element if the vector is not empty. If the vector is empty,
+     * element is not touched and false is returned. The whole operation is
+     * atomic with other operations changing the size of the vector.
      *
      * @param element the item receiving the value which was stored at the end.
      * @return true if the vector was not empty, false if no item was popped.

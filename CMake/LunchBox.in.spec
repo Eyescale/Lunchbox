@@ -1,7 +1,7 @@
 Name:		LunchBox
 Version:	@VERSION@
 Release:	1%{?dist}
-Summary:	Base library for multi-threaded programming
+Summary:	Library for multi-threaded programming
 
 Group:		Development/Libraries
 License:	LGPLv2

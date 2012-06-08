@@ -197,7 +197,7 @@ namespace lunchbox
         { return className( rp.get( )); }
 }
 
-#ifdef LUNCHBOX_USE_BOOST_SERIALIZATION
+#ifdef LUNCHBOX_USE_BOOST
 #  include <boost/serialization/split_free.hpp>
 
 namespace boost
@@ -232,5 +232,5 @@ inline void serialize( Archive& ar, lunchbox::RefPtr< T >& t,
 }
 }
 
-#endif // LUNCHBOX_USE_BOOST_SERIALIZATION
+#endif // LUNCHBOX_USE_BOOST
 #endif //LUNCHBOX_REFPTR_H

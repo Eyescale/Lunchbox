@@ -1,21 +1,22 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 /**
+ * @file lunchbox/log.h
  * This file contains logging classes. The macros LBERROR, LBWARN, LBINFO and
  * LBVERB output messages at their respective logging level, if the level is
  * active. They use a per-thread lunchbox::Log instance, which is a
@@ -45,9 +46,9 @@ namespace lunchbox
         LOG_ALL
     };
 
-    /** 
+    /**
      * The logging topics.
-     * 
+     *
      * @sa net/log.h, client/log.h
      * @version 1.0
      */
@@ -70,9 +71,9 @@ namespace lunchbox
         void indent() { ++_indent; }
         void exdent() { --_indent; }
 
-        void disableFlush() { ++_blocked; } // use counted variable to allow
-        void enableFlush()                  //   nested enable/disable calls
-            { 
+        void disableFlush() { ++_blocked; assert( _blocked < 100 ); }
+        void enableFlush()
+            {
                 assert( _blocked );// Too many enableFlush on log stream
                 --_blocked;
             }
@@ -88,7 +89,7 @@ namespace lunchbox
 
     protected:
         virtual int_type overflow( LogBuffer::int_type c );
-        
+
         virtual int sync();
 
     private:
@@ -187,7 +188,7 @@ namespace lunchbox
         const char* getThreadName() const { return _logBuffer.getThreadName(); }
 
     private:
-        LogBuffer _logBuffer; 
+        LogBuffer _logBuffer;
 
         Log( const Log& );
         Log& operator = ( const Log& );
@@ -196,7 +197,7 @@ namespace lunchbox
             { _logBuffer.setLogInfo( file, line ); }
     };
 
-    /** 
+    /**
      * Increases the indentation level of the Log stream, causing subsequent
      * lines to be intended by four characters.
      * @version 1.0

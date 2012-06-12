@@ -18,6 +18,11 @@
 #ifndef LUNCHBOX_H
 #define LUNCHBOX_H
 
+
+/** @mainpage Lunchbox API Documentation
+    @htmlinclude "doc/RelNotes.dox"
+*/
+
 /**
  * @namespace lunchbox
  * @brief Abstraction layer and common utilities for multi-threaded programming.

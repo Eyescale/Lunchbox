@@ -6,7 +6,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   ${DEFINES_FILE}
   api.h
   atomic.h
-  base.h
   bitOperation.h
   buffer.h
   clock.h
@@ -26,6 +25,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   lock.h
   lockable.h
   log.h
+  lunchbox.h
   memoryMap.h
   monitor.h
   mtQueue.h

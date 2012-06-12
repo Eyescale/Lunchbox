@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2011, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -25,7 +25,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
-#ifdef LUNCHBOX_USE_BOOST_SERIALIZATION
+#ifdef LUNCHBOX_USE_BOOST
 #  include <boost/serialization/access.hpp>
 #  include <boost/archive/text_oarchive.hpp>
 #  include <boost/archive/text_iarchive.hpp>
@@ -40,7 +40,7 @@ public:
     Foo() {}
 
 private:
-#ifdef LUNCHBOX_USE_BOOST_SERIALIZATION
+#ifdef LUNCHBOX_USE_BOOST
     friend class boost::serialization::access;
     template< class Archive >
     void serialize( Archive& ar, unsigned int version )
@@ -168,7 +168,7 @@ int main( int argc, char **argv )
 
     foo = 0;
 
-#ifdef LUNCHBOX_USE_BOOST_SERIALIZATION
+#ifdef LUNCHBOX_USE_BOOST
     FooPtr inFoo1 = new Foo;
     TEST( inFoo1->getRefCount() == 1 );
     FooPtr inFoo2 = inFoo1;

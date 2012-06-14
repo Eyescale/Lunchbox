@@ -5,10 +5,10 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/@LIBRARY_DIR@
 includedir=${prefix}/include
 
-Name: lunchbox
+Name: Lunchbox
 Description: Multi-threaded toolbox library
 Version: @VERSION@
 Requires:
 Conflicts:
-Libs: -L${libdir} -llunchbox
+Libs: -L${libdir} -lLunchbox
 Cflags: -I${includedir}

@@ -22,10 +22,9 @@
 #include <lunchbox/thread.h>
 #include <iostream>
 
-#include <boost/intrusive_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-
 #ifdef LUNCHBOX_USE_BOOST
+#  include <boost/intrusive_ptr.hpp>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/serialization/access.hpp>
 #  include <boost/archive/text_oarchive.hpp>
 #  include <boost/archive/text_iarchive.hpp>
@@ -68,6 +67,7 @@ public:
         }
 };
 
+#ifdef LUNCHBOX_USE_BOOST
 typedef boost::intrusive_ptr<Foo> BoostPtr;
 BoostPtr bFoo;
 
@@ -85,6 +85,7 @@ public:
             }
         }
 };
+#endif
 
 class Bar : public lunchbox::Referenced
 {
@@ -93,6 +94,7 @@ public:
     virtual ~Bar() {}
 };
 
+#ifdef LUNCHBOX_USE_BOOST
 typedef boost::shared_ptr<Bar> BarPtr;
 BarPtr bBar;
 
@@ -110,6 +112,7 @@ public:
             }
         }
 };
+#endif
 
 int main( int argc, char **argv )
 {
@@ -130,6 +133,7 @@ int main( int argc, char **argv )
 
     TEST( foo->getRefCount() == 1 );
 
+#ifdef LUNCHBOX_USE_BOOST
     bFoo = new Foo;
     BThread bThreads[NTHREADS];
     clock.reset();
@@ -168,7 +172,6 @@ int main( int argc, char **argv )
 
     foo = 0;
 
-#ifdef LUNCHBOX_USE_BOOST
     FooPtr inFoo1 = new Foo;
     TEST( inFoo1->getRefCount() == 1 );
     FooPtr inFoo2 = inFoo1;

@@ -181,10 +181,7 @@ namespace lunchbox
         if( p )
         {
             os << disableFlush << "RP[" << p->getRefCount() << ":" << *p << "]";
-#ifdef LUNCHBOX_REFERENCED_DEBUG
-            os << std::endl;
             p->printHolders( os );
-#endif
             os << enableFlush;
         }
         else

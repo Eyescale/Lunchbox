@@ -98,7 +98,7 @@ namespace lunchbox
         void printHolders( std::ostream& os ) const
             {
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-                os << disableFlush << disableHeader;
+                os << disableFlush << disableHeader << std::endl;
                 ScopedMutex<> referencedMutex( _holders );
                 for( HolderHash::const_iterator i = _holders->begin();
                      i != _holders->end(); ++i )

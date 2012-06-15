@@ -67,6 +67,8 @@
 <a name="newFeatures"></a>
 <h3>2.1. New Features</h3>
 <ul>
+  <li>Servus, A simple C++ interface to announce, discover and iterate over
+    key-value pairs stored in a zeroconf service description.</li>
   <li>LFVector, a thread-safe, lock-free vector.</li>
   <li>Configurable maximum size for MTQueue.</li>
 </ul>

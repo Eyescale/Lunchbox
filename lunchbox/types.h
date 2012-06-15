@@ -129,7 +129,6 @@ namespace lunchbox
 typedef std::vector< std::string > Strings;
 typedef Strings::const_iterator StringsCIter;
 
-
 class Clock;
 class Lock;
 class NonCopyable;

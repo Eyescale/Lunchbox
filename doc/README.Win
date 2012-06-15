@@ -1,0 +1,3 @@
+
+The supported zeroconf implementation on Windows is the Bonjour SDK 3.0
+downloadable from http://developer.apple.com/opensource.

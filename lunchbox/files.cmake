@@ -41,6 +41,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   rng.h
   scopedMutex.h
   serializable.h
+  servus.h
   sleep.h
   spinLock.h
   stdExt.h
@@ -69,6 +70,7 @@ set(LUNCHBOX_SOURCES
   referenced.cpp
   requestHandler.cpp
   rng.cpp
+  servus.cpp
   spinLock.cpp
   sleep.cpp
   thread.cpp

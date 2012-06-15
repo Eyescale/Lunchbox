@@ -150,7 +150,7 @@ public:
         const lunchbox::Servus::Interface addr = interface_;
 #   endif
 #   ifdef SERVUS_AVAHI // no kDNSServiceInterfaceIndexLocalOnly support in avahi
-        const lunchbox::Servus::Interface addr = IF_ALL;
+        const lunchbox::Servus::Interface addr = lunchbox::Servus::IF_ALL;
 #   endif
         DNSServiceRef service;
         const DNSServiceErrorType error = DNSServiceBrowse( &service, 0,
@@ -169,7 +169,7 @@ public:
         DNSServiceRefDeallocate( service );
 
 #   ifdef SERVUS_AVAHI // let's implement InterfaceIndexLocalOnly for avahi
-        if( interface_ == IF_LOCAL )
+        if( interface_ == lunchbox::Servus::IF_LOCAL )
         {
             Strings hosts;
             char hostname[256] = {0};

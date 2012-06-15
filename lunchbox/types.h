@@ -134,6 +134,7 @@ class Lock;
 class NonCopyable;
 class Referenced;
 class RequestHandler;
+class Servus;
 class SpinLock;
 class UUID;
 class uint128_t;

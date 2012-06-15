@@ -67,8 +67,8 @@ public:
         {
             LBASSERT( n != 0 );
             lb_bzero( slots_, nSlots * sizeof( T* ));
-            const int32_t slots = getIndexOfLastBit( uint64_t( n ));
-            for( int32_t i = 0; i <= slots; ++i )
+            const int32_t s = getIndexOfLastBit( uint64_t( n ));
+            for( int32_t i = 0; i <= s; ++i )
                 slots_[ i ] = new T[ 1<<i ];
         }
 
@@ -77,8 +77,8 @@ public:
         {
             LBASSERT( n != 0 );
             lb_bzero( slots_, nSlots * sizeof( T* ));
-            const int32_t slots = getIndexOfLastBit( uint64_t( n ));
-            for( int32_t i = 0; i <= slots; ++i )
+            const int32_t s = getIndexOfLastBit( uint64_t( n ));
+            for( int32_t i = 0; i <= s; ++i )
             {
                 const size_t sz = 1<<i;
                 slots_[ i ] = new T[ sz ];

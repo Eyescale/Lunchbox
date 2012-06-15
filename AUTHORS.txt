@@ -6,6 +6,10 @@
 Daniel Nachbaur
 Stefan Eilemann
 
+------- git master -------
+
+Martin Lambers
+
 -------- Contributions pre-LunchBox -------
 
 Ahmet Bilgili

@@ -39,11 +39,13 @@ endif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 set(DEFINES_FILE ${OUTPUT_INCLUDE_DIR}/lunchbox/defines${ARCH}.h)
 set(DEFINES_FILE_IN ${CMAKE_CURRENT_BINARY_DIR}/defines${ARCH}.h.in)
+set(OPTIONS_CMAKE ${CMAKE_BINARY_DIR}/options.cmake)
 
 file(WRITE ${DEFINES_FILE_IN}
   "#ifndef LUNCHBOX_DEFINES_${ARCH}_H\n"
   "#define LUNCHBOX_DEFINES_${ARCH}_H\n\n"
   )
+file(WRITE ${OPTIONS_CMAKE} "# Optional modules enabled during build\n")
 
 foreach(DEF ${LUNCHBOX_DEFINES})
   file(APPEND ${DEFINES_FILE_IN}
@@ -51,6 +53,9 @@ foreach(DEF ${LUNCHBOX_DEFINES})
     "#  define ${DEF}\n"
     "#endif\n"
     )
+  if(DEF MATCHES "LUNCHBOX")
+    file(APPEND ${OPTIONS_CMAKE} "set(${DEF} ON)\n")
+  endif()
 endforeach(DEF ${LUNCHBOX_DEFINES})
 
 file(APPEND ${DEFINES_FILE_IN}

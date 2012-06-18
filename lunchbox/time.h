@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2012, Stefan Eilemann <eile@eyescale.ch> 
+/* Copyright (c) 2012, Stefan Eilemann <eile@eyescale.ch> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -15,23 +15,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "sleep.h"
-
-#include "os.h"
-#include "time.h"
+#ifndef LUNCHBOX_TIME_H
+#define LUNCHBOX_TIME_H
 
 namespace lunchbox
 {
-void sleep( const uint32_t milliSeconds )
-{
-#ifdef _WIN32 //_MSC_VER
-    ::Sleep( milliSeconds );
-#else
-    timespec ts = convertToTimespec( milliSeconds );
-    while( ::nanosleep( &ts, &ts ) != 0 ) // -1 on signal (#4)
-        if( ts.tv_sec <= 0 && ts.tv_nsec <= 0 )
-            return;
+#ifndef _MSC_VER
+    /** @internal @return a millisecond time as a unix timespec. */
+    inline timespec convertToTimespec( const uint32_t milliSeconds )
+    {
+        timespec ts = { 0, 0 };
+        ts.tv_sec  = static_cast<int>( milliSeconds / 1000 );
+        ts.tv_nsec = ( milliSeconds - ts.tv_sec * 1000 ) * 1000000;
+        return ts;
+    }
 #endif
 }
-
-}
+#endif  // LUNCHBOX_TIME_H

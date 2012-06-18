@@ -16,6 +16,8 @@
  */
 
 #include "condition.h"
+#include "debug.h"
+#include "time.h"
 
 #include <cstring>
 #include <errno.h>
@@ -116,12 +118,10 @@ bool Condition::timedWait( const uint32_t timeout )
     int error = pthread_cond_timedwait_w32_np( &_impl->cond, &_impl->mutex,
                                                time );
 #else
-    timespec ts = { 0, 0 };
-    ts.tv_sec  = static_cast<int>( time / 1000 );
-    ts.tv_nsec = ( time - ts.tv_sec * 1000 ) * 1000000;
-
+    timespec ts = convertToTimespec( time );
     timeb tb;
     ftime( &tb );
+
     ts.tv_sec  += tb.time;
     ts.tv_nsec += tb.millitm * 1000000;
 

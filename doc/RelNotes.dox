@@ -105,6 +105,8 @@
   including the following:
 </p>
 <ul>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/4">4:</a>
+    sleep is not signal-safe</li>
   <li>MTQueue thread-safety fixes</li>
 </ul>
 

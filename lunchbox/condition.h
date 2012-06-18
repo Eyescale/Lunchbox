@@ -19,7 +19,6 @@
 #define LUNCHBOX_CONDITION_H
 
 #include <lunchbox/api.h>
-#include <lunchbox/debug.h>
 #include <lunchbox/types.h>
 
 namespace lunchbox

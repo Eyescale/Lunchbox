@@ -62,7 +62,7 @@ endif()
 
 find_package(DNSSD)
 if(DNSSD_FOUND)
-  include_directories(SYSTEM ${DNSSD_INCLUDE_DIR})
+  include_directories(SYSTEM ${DNSSD_INCLUDE_DIRS})
   set(LUNCHBOX_FEATURES "${LUNCHBOX_FEATURES} zeroconf")
 endif()
 

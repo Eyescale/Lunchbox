@@ -24,6 +24,7 @@
 #ifdef LUNCHBOX_USE_DNSSD
 #  ifdef _MSC_VER
 #    define SERVUS_BONJOUR
+#    include "os.h"
 #  else
 #    include <arpa/inet.h>
 #    include <sys/time.h>

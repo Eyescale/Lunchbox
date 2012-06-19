@@ -33,6 +33,8 @@ if(HWLOC_FOUND)
     set(HWLOC_GL_FOUND 1)
   endif()
 
+  INCLUDE_DIRECTORIES(${HWLOC_INCLUDE_DIRS})
+  
   if(HWLOC_FOUND AND _hwloc_output)
     message(STATUS
       "Found HWLOC ${HWLOC_VERSION} in ${HWLOC_INCLUDE_DIRS};${HWLOC_LIBRARIES}")

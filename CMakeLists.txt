@@ -56,7 +56,7 @@ if(LUNCHBOX_USE_HWLOC)
   find_package(HWLOC)
 endif()
 if(HWLOC_FOUND)
-  include_directories(SYSTEM ${HWLOC_INCLUDE_DIR})
+  include_directories(SYSTEM ${HWLOC_INCLUDE_DIRS})
   set(LUNCHBOX_FEATURES "${LUNCHBOX_FEATURES} HWLOC")
 endif()
 

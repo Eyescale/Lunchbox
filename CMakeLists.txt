@@ -25,6 +25,7 @@ if(RELEASE_VERSION)
 endif()
 
 include(Common)
+include(GitTargets)
 include(DoxygenSetup)
 include(UpdateFile)
 

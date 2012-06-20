@@ -21,6 +21,7 @@
 
 #include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/condition.h>   // member
+#include <lunchbox/scopedMutex.h> // used inline
 #include <lunchbox/types.h>
 
 #include <errno.h>
@@ -57,20 +58,18 @@ namespace lunchbox
         /** Increment the monitored value, prefix only. @version 1.0 */
         Monitor& operator++ ()
             {
-                _cond.lock();
+                ScopedCondition mutex( _cond );
                 ++_value;
                 _cond.broadcast();
-                _cond.unlock();
                 return *this;
             }
 
         /** Decrement the monitored value, prefix only. @version 1.0 */
         Monitor& operator-- ()
             {
-                _cond.lock();
+                ScopedCondition mutex( _cond );
                 --_value;
                 _cond.broadcast();
-                _cond.unlock();
                 return *this;
             }
 
@@ -91,20 +90,18 @@ namespace lunchbox
         /** Perform an or operation on the value. @version 1.0 */
         Monitor& operator |= ( const T& value )
             {
-                _cond.lock();
+                ScopedCondition mutex( _cond );
                 _value |= value;
                 _cond.broadcast();
-                _cond.unlock();
                 return *this;
             }
 
         /** Set a new value. @version 1.0 */
         void set( const T& value )
             {
-                _cond.lock();
+                ScopedCondition mutex( _cond );
                 _value = value;
                 _cond.broadcast();
-                _cond.unlock();
             }
         //@}
 
@@ -117,12 +114,11 @@ namespace lunchbox
          */
         const T& waitEQ( const T& value ) const
             {
-                if( _value == value )
+                if( sizeof( T ) <= 8 && _value == value )
                     return value;
-                _cond.lock();
+                ScopedCondition mutex( _cond );
                 while( _value != value )
                     _cond.wait();
-                _cond.unlock();
                 return value;
             }
 
@@ -133,16 +129,16 @@ namespace lunchbox
          */
         const T waitNE( const T& value ) const
             {
-                const T current = _value;
-                if( current != value )
-                    return current;
-
-                _cond.lock();
+                if( sizeof( T ) <= 8 ) // issue #1
+                {
+                    const T current = _value;
+                    if( current != value )
+                        return current;
+                }
+                ScopedCondition mutex( _cond );
                 while( _value == value )
                     _cond.wait();
-                const T newValue = _value;
-                _cond.unlock();
-                return newValue;
+                return _value;
             }
 
         /**
@@ -152,16 +148,16 @@ namespace lunchbox
          */
         const T waitNE( const T& v1, const T& v2 ) const
             {
-                const T current = _value;
-                if( current != v1 && current != v2 )
-                    return current;
-
-                _cond.lock();
+                if( sizeof( T ) <= 8 ) // issue #1
+                {
+                    const T current = _value;
+                    if( current != v1 && current != v2 )
+                        return current;
+                }
+                ScopedCondition mutex( _cond );
                 while( _value == v1 || _value == v2 )
                     _cond.wait();
-                const T newValue = _value;
-                _cond.unlock();
-                return newValue;
+                return _value;
             }
 
         /**
@@ -172,16 +168,16 @@ namespace lunchbox
          */
         const T waitGE( const T& value ) const
             {
-                const T current = _value;
-                if( current >= value )
-                    return current;
-
-                _cond.lock();
+                if( sizeof( T ) <= 8 ) // issue #1
+                {
+                    const T current = _value;
+                    if( current >= value )
+                        return current;
+                }
+                ScopedCondition mutex( _cond );
                 while( _value < value )
                     _cond.wait();
-                const T newValue = _value;
-                _cond.unlock();
-                return newValue;
+                return _value;
             }
         /**
          * Block until the monitor has a value less or equal to the given
@@ -191,16 +187,16 @@ namespace lunchbox
          */
         const T waitLE( const T& value ) const
             {
-                const T current = _value;
-                if( current <= value )
-                    return current;
-
-                _cond.lock();
+                if( sizeof( T ) <= 8 ) // issue #1
+                {
+                    const T current = _value;
+                    if( current <= value )
+                        return current;
+                }
+                ScopedCondition mutex( _cond );
                 while( _value > value )
                     _cond.wait();
-                const T newValue = _value;
-                _cond.unlock();
-                return newValue;
+                return _value;
             }
 
         /** @name Monitor the value with a timeout. */
@@ -214,19 +210,17 @@ namespace lunchbox
          */
         bool timedWaitEQ( const T& value, const uint32_t timeout ) const
             {
-                if( _value == value )
+                if( sizeof( T ) <= 8 && _value == value )
                     return true;
 
-                _cond.lock();
+                ScopedCondition mutex( _cond );
                 while( _value != value )
                 {
                     if( !_cond.timedWait( timeout ) )
                     {
-                        _cond.unlock();
                         return false;
                     }
                 }
-                _cond.unlock();
                 return true;
             }
 
@@ -240,19 +234,17 @@ namespace lunchbox
          */
         bool timedWaitGE( const T& value, const uint32_t timeout ) const
             {
-                if( _value >= value )
+                if( sizeof( T ) <= 8 && _value >= value )
                     return true;
 
-                _cond.lock();
+                ScopedCondition mutex( _cond );
                 while( _value < value )
                 {
                     if ( !_cond.timedWait( timeout ) )
                     {
-                        _cond.unlock();
                         return false;
                     }
                 }
-                _cond.unlock();
                 return true;
             }
 
@@ -265,44 +257,84 @@ namespace lunchbox
          */
         bool timedWaitNE( const T& value, const uint32_t timeout ) const
             {
-                if( _value != value )
+                if( sizeof( T ) <= 8 && _value != value )
                     return true;
 
-                _cond.lock();
+                ScopedCondition mutex( _cond );
                 while( _value == value )
                 {
                     if( !_cond.timedWait( timeout ) )
                     {
-                        _cond.unlock();
                         return false;
                     }
                 }
-                _cond.unlock();
                 return true;
             }
         //@}
 
         /** @name Comparison Operators. @version 1.0 */
         //@{
-        bool operator == ( const T& value ) const { return _value == value; }
-        bool operator != ( const T& value ) const { return _value != value; }
-        bool operator < ( const T& value ) const { return _value < value; }
-        bool operator > ( const T& value ) const { return _value > value; }
-        bool operator <= ( const T& value ) const { return _value <= value; }
-        bool operator >= ( const T& value ) const { return _value >= value; }
+        bool operator == ( const T& value ) const
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value == value;
+            }
+        bool operator != ( const T& value ) const
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value != value;
+            }
+        bool operator < ( const T& value ) const
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value < value;
+            }
+        bool operator > ( const T& value ) const
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value > value;
+            }
+        bool operator <= ( const T& value ) const
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value <= value;
+            }
+        bool operator >= ( const T& value ) const
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value >= value;
+            }
 
         bool operator == ( const Monitor<T>& rhs ) const
-            { return _value == rhs._value; }
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value == rhs._value;
+            }
         bool operator != ( const Monitor<T>& rhs ) const
-            { return _value != rhs._value; }
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value != rhs._value;
+            }
         bool operator < ( const Monitor<T>& rhs ) const
-            { return _value < rhs._value; }
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value < rhs._value;
+            }
         bool operator > ( const Monitor<T>& rhs ) const
-            { return _value > rhs._value; }
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value > rhs._value;
+            }
         bool operator <= ( const Monitor<T>& rhs ) const
-            { return _value <= rhs._value; }
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value <= rhs._value;
+            }
         bool operator >= ( const Monitor<T>& rhs ) const
-            { return _value >= rhs._value; }
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value >= rhs._value;
+            }
         //@}
 
         /** @name Data Access. */
@@ -314,15 +346,25 @@ namespace lunchbox
         const T& get() const { return _value; }
 
         /** @return the current plus the given value. @version 1.0 */
-        T operator + ( const T& value ) const { return _value + value; }
+        T operator + ( const T& value ) const
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return _value + value;
+            }
 
         /** @return the current or'ed with the given value. @version 1.0 */
         T operator | ( const T& value ) const
-            { return static_cast< T >( _value | value ); }
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return static_cast< T >( _value | value );
+            }
 
         /** @return the current and the given value. @version 1.0 */
         T operator & ( const T& value ) const
-            { return static_cast< T >( _value & value ); }
+            {
+                ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+                return static_cast< T >( _value & value );
+            }
         //@}
 
     private:
@@ -344,21 +386,19 @@ namespace lunchbox
 
     template<> inline Monitor< bool >& Monitor< bool >::operator++ ()
     {
-        _cond.lock();
+        ScopedCondition mutex( _cond );
         assert( !_value );
         _value = !_value;
         _cond.broadcast();
-        _cond.unlock();
         return *this;
     }
 
     template<> inline Monitor< bool >& Monitor< bool >::operator-- ()
     {
-        _cond.lock();
+        ScopedCondition mutex( _cond );
         assert( !_value );
         _value = !_value;
         _cond.broadcast();
-        _cond.unlock();
         return *this;
     }
 
@@ -366,7 +406,11 @@ namespace lunchbox
     inline Monitor< bool >& Monitor< bool >::operator |= ( const bool& value )
     {
         if( value )
+        {
+            ScopedCondition mutex( _cond );
             _value = value;
+            _cond.broadcast();
+        }
         return *this;
     }
 }

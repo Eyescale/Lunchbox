@@ -18,6 +18,7 @@
 #ifndef LUNCHBOX_SCOPEDMUTEX_H
 #define LUNCHBOX_SCOPEDMUTEX_H
 
+#include <lunchbox/condition.h>   // used in inline method
 #include <lunchbox/lock.h>        // used in inline method
 #include <lunchbox/lockable.h>    // used in inline method
 #include <lunchbox/nonCopyable.h> // base class
@@ -39,6 +40,11 @@ namespace lunchbox
     {
         static inline void set( L& lock ) { lock.setRead(); }
         static inline void unset( L& lock ) { lock.unsetRead(); }
+    };
+    template<> struct ScopedMutexLocker< Condition, WriteOp >
+    {
+        static inline void set( Condition& cond ) { cond.lock(); }
+        static inline void unset( Condition& cond ) { cond.unlock(); }
     };
     /** @endcond */
 
@@ -100,5 +106,8 @@ namespace lunchbox
 
     /** A scoped mutex for a write operation. @version 1.1.5 */
     typedef ScopedMutex< Lock, WriteOp > ScopedWrite;
+
+    /** A scoped mutex for a write operation on a condition. @version 1.3.6 */
+    typedef ScopedMutex< Condition, WriteOp > ScopedCondition;
 }
 #endif //LUNCHBOX_SCOPEDMUTEX_H

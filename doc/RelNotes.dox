@@ -112,13 +112,13 @@
 <a name="knownbugs"></a>
 <h3>2.6. Known Bugs</h3>
 <p>The following bugs were known at release time. Please file a
-  <a href="https://github.com/Eyescale/Equalizer/issues">Bug Report</a> if you
+  <a href="https://github.com/Eyescale/Lunchbox/issues">Bug Report</a> if you
   find any other issue with this release.
 </p>
 <ul>
-  <li><a href="https://github.com/Eyescale/Equalizer/issues/1">1:</a>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/1">1:</a>
     Monitor: race for non-atomic reads</li>
-  <li><a href="https://github.com/Eyescale/Equalizer/issues/3">3:</a>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/3">3:</a>
     Servus: add keys after discover fails on Darwin</li>
 </ul>
 
@@ -158,13 +158,13 @@
   Technical questions can be posted to the Equalizer
   <a href="http://www.equalizergraphics.com/cgi-bin/mailman/listinfo/eq-dev">
     Developer Mailing List</a>, or directly to
-  <a href="mailto:info@equalizergraphics.com?subject=Equalizer%20question">
+  <a href="mailto:info@equalizergraphics.com?subject=Lunchbox%20question">
     info@equalizergraphics.com</a>.
 </p>
 <p>
   Commercial support, custom software development and porting services are
   available from <a href="http://www.eyescale.ch">Eyescale</a>. Please contact
-  <a href="mailto:info@eyescale.ch?subject=Equalizer%20support">info@eyescale.ch</a>
+  <a href="mailto:info@eyescale.ch?subject=Lunchbox%20support">info@eyescale.ch</a>
   for further information.
 </p>
 

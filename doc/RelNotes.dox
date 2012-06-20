@@ -16,9 +16,8 @@
   <li><a href="#about">3. About</a></li>
   <ul>
     <li><a href="#os">3.1. Operating System Support</a></li>
-    <li><a href="#ws">3.2. Window System Support</a></li>
-    <li><a href="#documentation">3.3. Documentation</a></li>
-    <li><a href="#support">3.4. Support</a></li>
+    <li><a href="#documentation">3.2. Documentation</a></li>
+    <li><a href="#support">3.3. Support</a></li>
   </ul>
   <li><a href="#errata">4. Errata</a></li>
 </ul>
@@ -127,8 +126,7 @@
 <h2>3. About</h2>
 <p>
   Lunchbox is a cross-platform library, designed to run on any modern operating
-  system, including all Unix variants and the Windows operating system. Version
-  1.4 beta has been tested on:
+  system, including all Unix variants and the Windows operating system.
 </p>
 
 <a name="os"></a>
@@ -143,16 +141,8 @@
   <li><b>Mac OS X:</b> 10.7 (Makefile, XCode, i386, x64)</li>
 </ul>
 
-<a name="ws"></a>
-<h3>3.2. Window System Support</h3>
-<ul>
-  <li><b>GLX:</b> Full support for all documented features.</li>
-  <li><b>WGL:</b> Full support for all documented features.</li>
-  <li><b>CGL:</b> Full support for all documented features.</li>
-</ul>
-
 <a name="documentation"></a>
-<h3>3.3. Documentation</h3>
+<h3>3.2. Documentation</h3>
 <p>
   The <a href="http://eyescale.github.com/Lunchbox-1.3.5/index.html">API
   documentation</a> can be found on
@@ -163,7 +153,7 @@
 </p>
 
 <a name="support"></a>
-<h3>3.4. Support</h3>
+<h3>3.3. Support</h3>
 <p>
   Technical questions can be posted to the Equalizer
   <a href="http://www.equalizergraphics.com/cgi-bin/mailman/listinfo/eq-dev">

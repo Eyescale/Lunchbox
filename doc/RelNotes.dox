@@ -117,8 +117,10 @@
   find any other issue with this release.
 </p>
 <ul>
-  <li><a href="https://github.com/Eyescale/Equalizer/issues/1"></a>1:
+  <li><a href="https://github.com/Eyescale/Equalizer/issues/1">1:</a>
     Monitor: race for non-atomic reads</li>
+  <li><a href="https://github.com/Eyescale/Equalizer/issues/3">3:</a>
+    Servus: add keys after discover fails on Darwin</li>
 </ul>
 
 <a name="about"></a>

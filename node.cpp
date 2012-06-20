@@ -1,18 +1,18 @@
 
-/* Copyright (c) 2011, EFPL/Blue Brain Project
- *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
+/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
+ *                          Stefan.Eilemann@epfl.ch
  *
  * This file is part of DASH <https://github.com/BlueBrain/dash>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -65,14 +65,15 @@ Node::~Node()
         dash::NodePtr child = children_->back();
         NodePtr childImpl = child->getImpl();
         ParentsCtxPtr& parents = childImpl->parents_;
-        ParentsIter j = std::find( parents->begin(), parents->end(), this );
+        ParentsIter j = std::find( parents.getMutable().begin(),
+                                   parents.getMutable().end(), this );
         LBASSERT( j != parents->end( ));
 
-        parents->erase( j );
-        children_->pop_back();
+        parents.getMutable().erase( j );
+        children_.getMutable().pop_back();
     }
 
-    attributes_->clear();
+    attributes_.getMutable().clear();
 }
 
 Node& Node::operator = ( const Node& from )
@@ -132,14 +133,15 @@ void Node::insert( dash::NodePtr child )
 {
     Change change( Change::NODE_INSERT, this, child );
     Context::getCurrent().addChange( change );
-    children_->push_back( child );
-    child->getImpl()->parents_->push_back( this );    
+    children_.getMutable().push_back( child );
+    child->getImpl()->parents_.getMutable().push_back( this );
 }
 
 bool Node::erase( dash::NodePtr child )
 {
-    ChildrenIter i = std::find( children_->begin(), children_->end(), child);
-    if( i == children_->end( ))
+    ChildrenIter i = std::find( children_.getMutable().begin(),
+                                children_.getMutable().end(), child);
+    if( i == children_.getMutable().end( ))
         return false;
 
     Change change( Change::NODE_ERASE, this, child );
@@ -148,11 +150,12 @@ bool Node::erase( dash::NodePtr child )
     NodePtr childImpl = child->getImpl();
 
     ParentsCtxPtr& parents = childImpl->parents_;
-    ParentsIter j = std::find( parents->begin(), parents->end(), this );
-    LBASSERT( j != parents->end( ));
+    ParentsIter j = std::find( parents.getMutable().begin(),
+                               parents.getMutable().end(), this );
+    LBASSERT( j != parents.getMutable().end( ));
 
-    parents->erase( j );
-    children_->erase( i );
+    parents.getMutable().erase( j );
+    children_.getMutable().erase( i );
     return true;
 }
 
@@ -160,20 +163,20 @@ void Node::insert( dash::AttributePtr attribute )
 {
     Change change( Change::ATTRIBUTE_INSERT, this, attribute );
     Context::getCurrent().addChange( change );
-    attributes_->push_back( attribute );    
+    attributes_.getMutable().push_back( attribute );
 }
 
 bool Node::erase( dash::AttributePtr attribute )
 {
-    AttributesIter i = std::find( attributes_->begin(), attributes_->end(),
-                                  attribute );
-    if( i == attributes_->end( ))
+    AttributesIter i = std::find( attributes_.getMutable().begin(),
+                                  attributes_.getMutable().end(), attribute );
+    if( i == attributes_.getMutable().end( ))
         return false;
 
     Change change( Change::ATTRIBUTE_ERASE, this, attribute );
     Context::getCurrent().addChange( change );
 
-    attributes_->erase( i );
+    attributes_.getMutable().erase( i );
     return true;
 }
 

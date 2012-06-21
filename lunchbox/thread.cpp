@@ -396,19 +396,14 @@ void Thread::setAffinity( const int32_t affinity )
     hwloc_topology_load( topology );  // Perform HW topology detection
     const hwloc_bitmap_t cpuSet = _getCpuSet( affinity, topology );
     const int result = hwloc_set_cpubind( topology, cpuSet,
-                                                HWLOC_CPUBIND_THREAD );
+                                          HWLOC_CPUBIND_THREAD );
     char* cpuSetString;
     hwloc_bitmap_asprintf( &cpuSetString, cpuSet );
 
     if( result == 0 )
-    {
-        LBINFO << "Bound thread to cpu set "  << cpuSetString << std::endl;
-    }
+        LBVERB << "Bound to cpu set "  << cpuSetString << std::endl;
     else
-    {
-        LBWARN << "Error binding thread to cpu set " << cpuSetString
-               << std::endl;
-    }
+        LBWARN << "Error binding to cpu set " << cpuSetString << std::endl;
     ::free( cpuSetString );
 
     hwloc_topology_destroy(topology);

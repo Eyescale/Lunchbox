@@ -118,14 +118,20 @@ bool Condition::timedWait( const uint32_t timeout )
     int error = pthread_cond_timedwait_w32_np( &_impl->cond, &_impl->mutex,
                                                time );
 #else
-    timespec ts = convertToTimespec( time );
+    const timespec delta = convertToTimespec( time );
     timeb tb;
     ftime( &tb );
 
-    ts.tv_sec  += tb.time;
-    ts.tv_nsec += tb.millitm * 1000000;
+    timespec then;
+    then.tv_sec  = delta.tv_sec + tb.time;
+    then.tv_nsec = delta.tv_nsec + tb.millitm * 1000000;
+    while( then.tv_nsec > 1000000000 )
+    {
+        ++then.tv_sec;
+        then.tv_nsec -= 1000000000;
+    }
 
-    int error = pthread_cond_timedwait( &_impl->cond, &_impl->mutex, &ts );
+    int error = pthread_cond_timedwait( &_impl->cond, &_impl->mutex, &then );
 #endif
     if( error == ETIMEDOUT )
         return false;

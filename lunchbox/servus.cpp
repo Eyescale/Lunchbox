@@ -290,12 +290,12 @@ private:
             return;
 
         TXTRecordRef record;
-
         createTXTRecord_( record );
+
         const DNSServiceErrorType error =
             DNSServiceUpdateRecord( service_, 0, 0,
                                     TXTRecordGetLength( &record ),
-                                    TXTRecordGetBytesPtr( &record ), -1 );
+                                    TXTRecordGetBytesPtr( &record ), 0 );
         TXTRecordDeallocate( &record );
         if( error != kDNSServiceErr_NoError )
             LBWARN << "DNSServiceUpdateRecord error: " << error << std::endl;

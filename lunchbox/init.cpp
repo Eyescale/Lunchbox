@@ -22,6 +22,7 @@
 #include "rng.h"
 #include "thread.h"
 
+#include <stdlib.h>
 #include <time.h>
 
 namespace lunchbox
@@ -51,6 +52,8 @@ bool init( const int argc, char** argv )
 #else
     char gmtString[32];
     ::ctime_r( &now, gmtString );
+
+    setenv( "AVAHI_COMPAT_NOWARN", "1", 0 ); // get rid of annoying avahi warning
 #endif
 
     LBINFO << "Log level " << Log::getLogLevelString() << " topics " 

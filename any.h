@@ -122,13 +122,13 @@ namespace detail
 
         bool operator == ( const Any& rhs ) const
         {
-            if( this == &rhs )
+            if( (this == &rhs) || (empty() && rhs.empty( )))
                 return true;
 
             if( empty() != rhs.empty() || type() != rhs.type( ))
                 return false;
 
-            return content == rhs.content;
+            return *content == *rhs.content;
         }
 
         bool operator != ( const Any& rhs ) const { return !(*this == rhs); }

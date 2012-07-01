@@ -122,13 +122,13 @@ namespace detail
 
         bool operator == ( const Any& rhs ) const
         {
-            if( type() != rhs.type() )
+            if( this == &rhs )
+                return true;
+
+            if( empty() != rhs.empty() || type() != rhs.type( ))
                 return false;
 
-            // for unit tests, current "implementation" is sufficient, but don't let
-            // them fail...
-            //LBUNIMPLEMENTED;
-            return true;
+            return content == rhs.content;
         }
 
         bool operator != ( const Any& rhs ) const { return !(*this == rhs); }
@@ -145,6 +145,11 @@ namespace detail
 
         public: // queries
 
+            virtual bool operator == ( const placeholder& rhs ) const = 0;
+
+            bool operator != ( const placeholder& rhs ) const
+                { return !(*this == rhs); }
+
             virtual const std::type_info & type() const = 0;
 
             virtual placeholder * clone() const = 0;
@@ -155,7 +160,6 @@ namespace detail
             void serialize(Archive & ar, const unsigned int version)
             {
             }
-
         };
 
         BOOST_SERIALIZATION_ASSUME_ABSTRACT(placeholder)
@@ -180,6 +184,11 @@ namespace detail
             virtual const std::type_info & type() const
             {
                 return typeid(ValueType);
+            }
+
+            virtual bool operator == ( const placeholder& rhs ) const
+            {
+                return held == static_cast< const holder& >( rhs ).held;
             }
 
             virtual placeholder * clone() const

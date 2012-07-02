@@ -19,7 +19,8 @@
 #define LUNCHBOX_ANYSERIALIZATION_H
 
 #include <lunchbox/any.h>
-#include <lunchbox/stdExt.h>
+#include <lunchbox/types.h>
+#include <lunchbox/uint128_t.h>
 
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/for_each.hpp>

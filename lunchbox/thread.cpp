@@ -401,12 +401,16 @@ void Thread::setAffinity( const int32_t affinity )
     hwloc_bitmap_asprintf( &cpuSetString, cpuSet );
 
     if( result == 0 )
+    {
         LBVERB << "Bound to cpu set "  << cpuSetString << std::endl;
+    }
     else
+    {
         LBWARN << "Error binding to cpu set " << cpuSetString << std::endl;
+    }
     ::free( cpuSetString );
 
-    hwloc_topology_destroy(topology);
+    hwloc_topology_destroy( topology );
 
 #else
     LBWARN << "Thread::setAffinity not implemented, hwloc library missing"

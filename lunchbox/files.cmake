@@ -4,6 +4,8 @@
 set(LUNCHBOX_PUBLIC_HEADERS 
   ${OUTPUT_INCLUDE_DIR}/lunchbox/version.h 
   ${DEFINES_FILE}
+  any.h
+  anySerialization.h
   api.h
   atomic.h
   bitOperation.h
@@ -54,6 +56,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   )
 
 set(LUNCHBOX_SOURCES
+  any.cpp
   atomic.cpp
   clock.cpp
   condition.cpp

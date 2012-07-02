@@ -32,6 +32,8 @@
  * non-virtual destructors are not intended to be subclassed.
  */
 
+#include <lunchbox/any.h>
+#include <lunchbox/anySerialization.h>
 #include <lunchbox/api.h>
 #include <lunchbox/atomic.h>
 #include <lunchbox/clock.h>

@@ -175,19 +175,15 @@ namespace lunchbox
 
     /** Print the reference pointer to the given output stream. */
     template< class T >
-    inline std::ostream& operator << ( std::ostream& os, const RefPtr<T>& rp )
+    inline std::ostream& operator << ( std::ostream& os, RefPtr< T > rp )
     {
         const T* p = rp.get();
-        if( p )
-        {
-            os << disableFlush << "RP[" << p->getRefCount() << ":" << *p << "]";
-            p->printHolders( os );
-            os << enableFlush;
-        }
-        else
-            os << "RP[ 0:NULL ]";
+        if( !p )
+            return os << "RP[ 0:NULL ]";
 
-        return os;
+        os << disableFlush << "RP[" << p->getRefCount() << ":" << *p << "]";
+        p->printHolders( os );
+        return os << enableFlush;
     }
 
     template< class T > inline std::string className( const RefPtr<T>& rp )

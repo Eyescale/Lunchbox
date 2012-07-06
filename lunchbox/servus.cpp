@@ -163,6 +163,7 @@ public:
         if( error != kDNSServiceErr_NoError )
         {
             LBWARN << "DNSServiceDiscovery error: " << error << std::endl;
+            DNSServiceRefDeallocate( service );
             return getInstances();
         }
 

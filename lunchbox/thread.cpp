@@ -26,12 +26,14 @@
 #include "rng.h"
 #include "scopedMutex.h"
 #include "sleep.h"
+#include "spinLock.h"
 
 #include <lunchbox/lock.h>
 
 #include <errno.h>
 #include <pthread.h>
 #include <algorithm>
+#include <map>
 
 // Experimental Win32 thread pinning
 #ifdef _WIN32
@@ -51,15 +53,18 @@ namespace lunchbox
 {
 namespace
 {
-/** The current state of a thread. */
-enum ThreadState
+enum ThreadState //!< The current state of a thread.
 {
     STATE_STOPPED,
     STATE_STARTING, // start() in progress
     STATE_RUNNING,
     STATE_STOPPING  // child no longer active, join() not yet called
 };
+
+typedef std::map< std::string, a_int32_t > NameMap;
+static Lockable< NameMap, SpinLock > _names;
 }
+
 namespace detail
 {
 class ThreadID
@@ -307,7 +312,15 @@ typedef struct tagTHREADNAME_INFO
 
 void Thread::setName( const std::string& name )
 {
-    Log::instance().setThreadName( name );
+    std::string uniqueName = name;
+    std::ostringstream stream;
+    {
+        ScopedFastWrite mutex( _names );
+        stream << ++_names.data[ name ];
+    }
+    uniqueName += stream.str(); 
+
+    Log::instance().setThreadName( uniqueName );
 
 #ifdef _MSC_VER
 #  ifndef NDEBUG
@@ -315,7 +328,7 @@ void Thread::setName( const std::string& name )
 
     THREADNAME_INFO info;
     info.dwType = 0x1000;
-    info.szName = name.c_str();
+    info.szName = uniqueName.c_str();
     info.dwThreadID = GetCurrentThreadId();
     info.dwFlags = 0;
 
@@ -329,12 +342,13 @@ void Thread::setName( const std::string& name )
     }
 #  endif
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-    pthread_setname_np( name.c_str( ));
+    pthread_setname_np( uniqueName.c_str( ));
 #elif defined(__linux__)
-    prctl( PR_SET_NAME, name.c_str(), 0, 0, 0 );
+    prctl( PR_SET_NAME, uniqueName.c_str(), 0, 0, 0 );
 #else
     // Not implemented
-    LBVERB << "Thread::setName( " << name << " ) not implemented" << std::endl;
+    LBVERB << "Thread::setName( " << uniqueName << " ) not implemented"
+           << std::endl;
 #endif
 }
 

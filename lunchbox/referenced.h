@@ -137,7 +137,7 @@ namespace lunchbox
         /** Assign another object to this object. @version 1.1.3 */
         Referenced& operator = ( const Referenced& rhs ) { return *this; }
 
-        LUNCHBOX_API void deleteReferenced( const Referenced* object ) const;
+        LUNCHBOX_API virtual void deleteReferenced( const Referenced* ) const;
 
     private:
         mutable a_int32_t _refCount;

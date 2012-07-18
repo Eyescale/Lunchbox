@@ -267,7 +267,7 @@ unsigned char *MD5::raw_digest(){
 
 
 
-char *MD5::hex_digest(){
+const char *MD5::hex_digest(){
 
   int i;
   char *s= new char[33];

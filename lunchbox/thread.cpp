@@ -294,11 +294,11 @@ void Thread::pinCurrentThread()
 }
 
 #ifdef _WIN32
-#ifndef MS_VC_EXCEPTION
-#  define MS_VC_EXCEPTION 0x406D1388
-#endif
+#  ifndef MS_VC_EXCEPTION
+#    define MS_VC_EXCEPTION 0x406D1388
+#  endif
 
-#pragma pack(push,8)
+#  pragma pack(push,8)
 typedef struct tagTHREADNAME_INFO
 {
     DWORD dwType; // Must be 0x1000.
@@ -306,8 +306,26 @@ typedef struct tagTHREADNAME_INFO
     DWORD dwThreadID; // Thread ID (-1=caller thread).
     DWORD dwFlags; // Reserved for future use, must be zero.
 } THREADNAME_INFO;
-#pragma pack(pop)
+#  pragma pack(pop)
+static void _setVCName( const char* name )
+{
+    ::Sleep(10);
 
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = name;
+    info.dwThreadID = GetCurrentThreadId();
+    info.dwFlags = 0;
+
+    __try
+    {
+        RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR),
+                        (ULONG_PTR*)&info );
+    }
+    __except(EXCEPTION_EXECUTE_HANDLER)
+    {
+    }
+}
 #endif
 
 void Thread::setName( const std::string& name )
@@ -324,22 +342,7 @@ void Thread::setName( const std::string& name )
 
 #ifdef _MSC_VER
 #  ifndef NDEBUG
-    ::Sleep(10);
-
-    THREADNAME_INFO info;
-    info.dwType = 0x1000;
-    info.szName = uniqueName.c_str();
-    info.dwThreadID = GetCurrentThreadId();
-    info.dwFlags = 0;
-
-    __try
-    {
-        RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR),
-                        (ULONG_PTR*)&info );
-    }
-    __except(EXCEPTION_EXECUTE_HANDLER)
-    {
-    }
+    _setVCName( uniqueName.c_str( ));
 #  endif
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     pthread_setname_np( uniqueName.c_str( ));

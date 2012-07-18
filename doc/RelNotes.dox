@@ -29,10 +29,10 @@
   initial release of Lunchbox, formerly part of the Collage network library.
 </p>
 <p>
-  Lunchbox 1.6 beta is a feature release based on the 1.4 Lunchbox API. It is
+  Lunchbox 1.4 is a feature release based on the 1.0 co::base API. It is
   intended for all application developers creating high-preformance
-  multi-threaded programs. Lunchbox 1.6 beta can be retrieved by downloading the
-  <a href="http://www.equalizergraphics.com/downloads/Lunchbox-1.5.9.tar.gz">source
+  multi-threaded programs. Lunchbox 1.4 can be retrieved by downloading the
+  <a href="http://www.equalizergraphics.com/downloads/Lunchbox-1.4.0.tar.gz">source
     code</a> or one of the
   <a href="http://www.equalizergraphics.com/downloads/developer.html">precompiled
     packages</a>.
@@ -58,7 +58,7 @@
 <a name="new"></a>
 <h2>2. New in this release</h2>
 <p>
-  Lunchbox 1.6 beta contains the following features, enhancements, bug fixes
+  Lunchbox 1.4 contains the following features, enhancements, bug fixes
   and documentation changes over the co::base functionality found in Equalizer
   1.2.1:
 </p>
@@ -66,12 +66,19 @@
 <a name="newFeatures"></a>
 <h3>2.1. New Features</h3>
 <ul>
-  <li>Any, a serializable derivative of boost::any.</li>
+  <li>Servus, A simple C++ interface to announce, discover and iterate over
+    key-value pairs stored in a zeroconf service description</li>
+  <li>LFVector, a thread-safe, lock-free vector</li>
 </ul>
 
 <a name="enhancements"></a>
 <h3>2.2. Enhancements</h3>
 <ul>
+  <li>Configurable maximum size for MTQueue</li>
+  <li>Random access to MTQueue elements</li>
+  <li>Monitor::timedWaitNE() method</li>
+  <li>Implement backtrace() for Win32</li>
+  <li>Create uint128_t using the MD5 hash of a given string</li>
 </ul>
 
 <a name="optimizations"></a>
@@ -86,19 +93,20 @@
   last release:
 </p>
 <ul>
-  <li>Standalone <a href="http://eyescale.github.com/Lunchbox-1.5.9/index.html">API
+  <li>Standalone <a href="http://eyescale.github.com/Lunchbox-1.4.0/index.html">API
     documentation</a> for the public Lunchbox API</li>
 </ul>
 
 <a name="bugfixes"></a>
 <h3>2.5. Bug Fixes</h3>
 <p>
-  Lunchbox 1.6 beta includes various bugfixes over the 1.4 release, including
-  the following:
+  Lunchbox 1.4 includes various bugfixes over the Equalizer 1.2.1 release,
+  including the following:
 </p>
 <ul>
-  <li><a href="https://github.com/Eyescale/Lunchbox/issues/42">42:</a>
-    Not a bug</li>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/4">4:</a>
+    sleep is not signal-safe</li>
+  <li>MTQueue thread-safety fixes</li>
 </ul>
 
 <a name="knownbugs"></a>
@@ -108,6 +116,10 @@
   find any other issue with this release.
 </p>
 <ul>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/1">1:</a>
+    Monitor: race for non-atomic reads</li>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/3">3:</a>
+    Servus: add keys after discover fails on Darwin</li>
 </ul>
 
 <a name="about"></a>
@@ -132,11 +144,11 @@
 <a name="documentation"></a>
 <h3>3.2. Documentation</h3>
 <p>
-  The <a href="http://eyescale.github.com/Lunchbox-1.3.5/index.html">API
+  The <a href="http://eyescale.github.com/Lunchbox-1.4.0/index.html">API
   documentation</a> can be found on
   <a href="http://eyescale.github.com/">eyescale.github.com</a>. As with any
   open source project, the available source code, in particular the
-  <a href="https://github.com/Eyescale/Lunchbox/tree/1.3.5/tests">unit tests</a>
+  <a href="https://github.com/Eyescale/Lunchbox/tree/1.4.0/tests">unit tests</a>
   provide a reference for developing applications.
 </p>
 

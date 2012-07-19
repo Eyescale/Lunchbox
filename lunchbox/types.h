@@ -47,6 +47,7 @@ typedef UINT8      uint8_t;
 typedef INT8       int8_t;
 #    ifndef HAVE_SSIZE_T
 typedef SSIZE_T    ssize_t;
+#      define HAVE_SSIZE_T
 #    endif
 #  endif // Win32, Visual C++
 #endif // Win32

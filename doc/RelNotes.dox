@@ -66,19 +66,12 @@
 <a name="newFeatures"></a>
 <h3>2.1. New Features</h3>
 <ul>
-  <li>Servus, A simple C++ interface to announce, discover and iterate over
-    key-value pairs stored in a zeroconf service description</li>
-  <li>LFVector, a thread-safe, lock-free vector</li>
+  <li>Any, a serializable derivative of boost::any.</li>
 </ul>
 
 <a name="enhancements"></a>
 <h3>2.2. Enhancements</h3>
 <ul>
-  <li>Configurable maximum size for MTQueue</li>
-  <li>Random access to MTQueue elements</li>
-  <li>Monitor::timedWaitNE() method</li>
-  <li>Implement backtrace() for Win32</li>
-  <li>Create uint128_t using the MD5 hash of a given string</li>
 </ul>
 
 <a name="optimizations"></a>
@@ -104,9 +97,8 @@
   the following:
 </p>
 <ul>
-  <li><a href="https://github.com/Eyescale/Lunchbox/issues/4">4:</a>
-    sleep is not signal-safe</li>
-  <li>MTQueue thread-safety fixes</li>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/42">42:</a>
+    Not a bug</li>
 </ul>
 
 <a name="knownbugs"></a>
@@ -116,10 +108,6 @@
   find any other issue with this release.
 </p>
 <ul>
-  <li><a href="https://github.com/Eyescale/Lunchbox/issues/1">1:</a>
-    Monitor: race for non-atomic reads</li>
-  <li><a href="https://github.com/Eyescale/Lunchbox/issues/3">3:</a>
-    Servus: add keys after discover fails on Darwin</li>
 </ul>
 
 <a name="about"></a>

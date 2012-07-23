@@ -26,7 +26,7 @@
 #  include "condition_w32.ipp"
 #else
 #  include <pthread.h>
-#  include <sys/timeb.h>
+#  include <sys/time.h>
 #endif
 
 namespace lunchbox
@@ -119,12 +119,12 @@ bool Condition::timedWait( const uint32_t timeout )
                                                time );
 #else
     const timespec delta = convertToTimespec( time );
-    timeb tb;
-    ftime( &tb );
+    timeval now;
+    gettimeofday( &now, 0 );
 
     timespec then;
-    then.tv_sec  = delta.tv_sec + tb.time;
-    then.tv_nsec = delta.tv_nsec + tb.millitm * 1000000;
+    then.tv_sec  = delta.tv_sec + now.tv_sec;
+    then.tv_nsec = delta.tv_nsec + now.tv_usec * 1000;
     while( then.tv_nsec > 1000000000 )
     {
         ++then.tv_sec;

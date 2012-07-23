@@ -27,9 +27,13 @@ int main( int argc, char **argv )
 {
     lunchbox::Condition condition;
     lunchbox::Clock clock;
+    {
+        TEST( !condition.timedWait( 2345 ));
+        const float time = clock.getTimef();
+        TESTINFO( time > 2344.f, time );
+    }
     lunchbox::RNG rng;
     unsigned nTests = 30;
-    
     while( nTests-- )
     {
         const uint32_t timeout = rng.get<uint8_t>() + 2;
@@ -38,7 +42,7 @@ int main( int argc, char **argv )
         TEST( !condition.timedWait( timeout ));
         const float time = clock.getTimef();
 
-        TESTINFO( time > timeout - 1, time << " < " << timeout );
+        TESTINFO( time > float( timeout - 1 ), time << " < " << timeout );
     }
 
     return EXIT_SUCCESS;

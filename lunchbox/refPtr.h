@@ -161,13 +161,11 @@ namespace lunchbox
         {
             if(_ptr)
             {
-#ifndef NDEBUG
-                const bool abondon = (_ptr->getRefCount() == 1);
+#ifdef NDEBUG
                 _ptr->unref( this );
-                if( abondon ) 
-                    _ptr = 0;
 #else
-                _ptr->unref( this );
+                if( _ptr->unref( this ))
+                    _ptr = 0;
 #endif
             }
         }

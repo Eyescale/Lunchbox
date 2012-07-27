@@ -180,6 +180,8 @@ namespace lunchbox
          */
         static LUNCHBOX_API void setClock( Clock* clock );
 
+        static const Clock& getClock(); //!< @internal
+
         /** @internal */
         void setThreadName( const std::string& name )
             { _logBuffer.setThreadName( name ); }

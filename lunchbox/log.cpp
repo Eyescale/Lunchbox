@@ -162,6 +162,11 @@ void Log::setClock( Clock* clock )
         _clock = &_defaultClock;
 }
 
+const Clock& Log::getClock()
+{
+    return *_clock;
+}
+
 std::ostream& Log::getOutput()
 {
     return *_logStream;

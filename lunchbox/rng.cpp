@@ -137,7 +137,7 @@ bool RNG::_get( void* data, const size_t size )
 
 #elif defined (_WIN32)
     LBASSERTINFO( _provider, "init() not called?" );
-    if( !CryptGenRandom( _provider, size, (BYTE*)data ))
+    if( !CryptGenRandom( _provider, (DWORD)size, (BYTE*)data ))
     {
         LBERROR << "random number generator not working" << std::endl;
         return false;

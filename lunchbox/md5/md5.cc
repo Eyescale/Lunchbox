@@ -66,10 +66,10 @@ MD5::MD5(){
 // operation, processing another message block, and updating the
 // context.
 
-void MD5::update (uint1 *input, uint4 input_length) {
+void MD5::update (uint1 *input, size_t input_length) {
 
-  uint4 input_index, buffer_index;
-  uint4 buffer_space;                // how much space is left in buffer
+  size_t input_index, buffer_index;
+  size_t buffer_space;                // how much space is left in buffer
 
   if (finalized){  // so we can't update!
     LBERROR << "MD5::update:  Can't update a finalized digest!" << std::endl;
@@ -117,7 +117,7 @@ void MD5::update (uint1 *input, uint4 input_length) {
 void MD5::update(FILE *file){
 
   unsigned char buf[1024];
-  int len;
+  size_t len;
 
   while ( (len=fread(buf, 1, 1024, file)) )
     update(buf, len);
@@ -438,7 +438,7 @@ void MD5::transform (uint1 block[64]){
 
 // Encodes input (UINT4) into output (unsigned char). Assumes len is
 // a multiple of 4.
-void MD5::encode (uint1 *output, uint4 *input, uint4 len) {
+void MD5::encode (uint1 *output, uint4 *input, size_t len) {
 
   unsigned int i, j;
 
@@ -455,7 +455,7 @@ void MD5::encode (uint1 *output, uint4 *input, uint4 len) {
 
 // Decodes input (unsigned char) into output (UINT4). Assumes len is
 // a multiple of 4.
-void MD5::decode (uint4 *output, uint1 *input, uint4 len){
+void MD5::decode (uint4 *output, uint1 *input, size_t len){
 
   unsigned int i, j;
 
@@ -469,7 +469,7 @@ void MD5::decode (uint4 *output, uint1 *input, uint4 len){
 
 
 // Note: Replace "for loop" with standard memcpy if possible.
-void MD5::memcpy (uint1 *output, uint1 *input, uint4 len){
+void MD5::memcpy (uint1 *output, uint1 *input, size_t len){
 
   unsigned int i;
 
@@ -480,7 +480,7 @@ void MD5::memcpy (uint1 *output, uint1 *input, uint4 len){
 
 
 // Note: Replace "for loop" with standard memset if possible.
-void MD5::memset (uint1 *output, uint1 value, uint4 len){
+void MD5::memset (uint1 *output, uint1 value, size_t len){
 
   unsigned int i;
 

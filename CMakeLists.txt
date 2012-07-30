@@ -31,7 +31,7 @@ include(UpdateFile)
 
 set(LUNCHBOX_FEATURES)
 
-find_package(Boost 1.40 COMPONENTS serialization)
+find_package(Boost 1.40 REQUIRED serialization)
 if(Boost_FOUND)
   set(LUNCHBOX_USE_BOOST 1)
   link_directories(${Boost_LIBRARY_DIRS})

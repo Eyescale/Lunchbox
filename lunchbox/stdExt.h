@@ -35,6 +35,8 @@
 #ifdef __GNUC__
 #  if defined LB_GCC_4_3_OR_LATER && !defined __INTEL_COMPILER
 #    define LB_STDEXT_TR1
+#  elif defined __clang__
+#    define LB_STDEXT_TR1
 #  else
 #    define LB_STDEXT_EXT
 #  endif

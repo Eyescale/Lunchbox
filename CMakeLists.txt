@@ -83,8 +83,6 @@ install(FILES CMake/FindLunchbox.cmake
   DESTINATION ${CMAKE_MODULE_INSTALL_PATH} COMPONENT dev)
 install(FILES CMake/FindLibraryPackage.cmake
   DESTINATION ${CMAKE_MODULE_INSTALL_PATH}/FindLunchbox COMPONENT dev)
-install(FILES ${CMAKE_BINARY_DIR}/options.cmake
-  DESTINATION share/Lunchbox/CMake COMPONENT dev)
 
 message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${LUNCHBOX_FEATURES}")
 

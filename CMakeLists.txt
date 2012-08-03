@@ -26,7 +26,6 @@ endif()
 
 include(Common)
 include(GitTargets)
-include(DoxygenSetup)
 include(UpdateFile)
 
 set(LUNCHBOX_FEATURES)
@@ -87,4 +86,5 @@ install(FILES CMake/FindLibraryPackage.cmake
 message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${LUNCHBOX_FEATURES}")
 
 include(CPackConfig)
+include(GNUModules)
 include(CTest)

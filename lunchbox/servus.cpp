@@ -90,6 +90,26 @@ public:
 #endif
         }
 
+    Strings getKeys() const
+        {
+            Strings keys;
+#ifdef LUNCHBOX_USE_DNSSD
+            for( ValueMapCIter i = data_.begin(); i != data_.end(); ++i )
+                keys.push_back( i->first );
+#endif
+            return keys;
+        }
+
+    const std::string& get( const std::string& key ) const
+        {
+#ifdef LUNCHBOX_USE_DNSSD
+            ValueMapCIter i = data_.find( key );
+            if( i != data_.end( ))
+                return i->second;
+#endif
+            return empty_;
+        }
+
     bool announce( const unsigned short port, const std::string& instance )
     {
 #ifdef LUNCHBOX_USE_DNSSD
@@ -486,6 +506,15 @@ void Servus::set( const std::string& key, const std::string& value )
     impl_->set( key, value );
 }
 
+Strings Servus::getKeys() const
+{
+    return impl_->getKeys();
+}
+
+const std::string& Servus::get( const std::string& key ) const
+{
+    return impl_->get( key );
+}
 
 bool Servus::announce( const unsigned short port, const std::string& instance )
 {
@@ -508,8 +537,7 @@ bool Servus::isAnnounced() const
     return impl_->isAnnounced();
 }
 
-Strings Servus::discover( const Interface addr,
-                           const unsigned browseTime )
+Strings Servus::discover( const Interface addr, const unsigned browseTime )
 {
 #ifdef SERVUS_AVAHI
     ScopedWrite mutex( lock_ );
@@ -528,13 +556,13 @@ Strings Servus::getKeys( const std::string& instance ) const
 }
 
 bool Servus::containsKey( const std::string& instance,
-                           const std::string& key ) const
+                          const std::string& key ) const
 {
     return impl_->containsKey( instance, key );
 }
 
 const std::string& Servus::get( const std::string& instance,
-                                 const std::string& key ) const
+                                const std::string& key ) const
 {
     return impl_->get( instance, key );
 }
@@ -542,6 +570,22 @@ const std::string& Servus::get( const std::string& instance,
 void Servus::getData( Data& data )
 {
     impl_->getData( data );
+}
+
+std::ostream& operator << ( std::ostream& os, const Servus& servus )
+{
+#ifdef LUNCHBOX_USE_DNSSD
+    os << disableFlush << disableHeader << "Servus instance"
+       << (servus.isAnnounced() ? " " : " not ") << "announced" << indent;
+
+    const Strings& keys = servus.getKeys();
+    for( StringsCIter i = keys.begin(); i != keys.end(); ++i )
+        os << std::endl << *i << " = " << servus.get( *i );
+
+    return os << exdent << enableHeader << enableFlush;
+#else
+    return os << "No dnssd support, empty Servus implementation";
+#endif
 }
 
 }

@@ -72,6 +72,12 @@ public:
      */
     LUNCHBOX_API void set( const std::string& key, const std::string& value );
 
+    /** @return all (to be) announced keys. @version 1.5.1 */
+    LUNCHBOX_API Strings getKeys() const;
+
+    /** @return the value to the given (to be) announced key. @version 1.5.1 */
+    LUNCHBOX_API const std::string& get( const std::string& key ) const;
+
     /**
      * Start announcing the registered key/value pairs.
      *
@@ -111,7 +117,7 @@ public:
 
     /** @return the value of the given key and instance. @version 0.9 */
     LUNCHBOX_API const std::string& get( const std::string& instance,
-                                       const std::string& key ) const;
+                                         const std::string& key ) const;
 
     /** @internal */
     typedef std::map< std::string, std::map< std::string, std::string > > Data;
@@ -122,6 +128,9 @@ public:
 private:
     detail::Servus* const impl_;
 };
+
+/** Output the servus instance in human-readable format. @version 1.5.1 */
+LUNCHBOX_API std::ostream& operator << ( std::ostream&, const Servus& );
 }
 
 #endif // LUNCHBOX_SERVUS_H

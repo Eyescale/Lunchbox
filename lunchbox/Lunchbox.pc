@@ -6,7 +6,7 @@ libdir=${exec_prefix}/@LIBRARY_DIR@
 includedir=${prefix}/include
 
 Name: Lunchbox
-Description: Multi-threaded toolbox library
+Description: Toolbox library for multi-threadeded applications
 Version: @VERSION@
 Requires:
 Conflicts:

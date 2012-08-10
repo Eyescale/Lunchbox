@@ -245,8 +245,8 @@ namespace lunchbox
     inline uint128_t operator & ( const uint128_t& a, const uint128_t& b )
     {
         uint128_t result = a;
-        result.low() &= b.low();
         result.high() &= b.high();
+        result.low() &= b.low();
         return result;
     }
 
@@ -254,8 +254,8 @@ namespace lunchbox
     inline uint128_t operator | ( const uint128_t& a, const uint128_t& b )
     {
         uint128_t result = a;
-        result.low() |= b.low();
         result.high() |= b.high();
+        result.low() |= b.low();
         return result;
     }
 
@@ -267,6 +267,6 @@ namespace lunchbox
      * @param string the string to form the uint128_t from.
      * @version 1.3.2
      */
-     LUNCHBOX_API uint128_t make_uint128( const char* string );
+    LUNCHBOX_API uint128_t make_uint128( const char* string );
 }
 #endif // LUNCHBOX_UINT128_H

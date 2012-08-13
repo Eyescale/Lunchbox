@@ -93,7 +93,7 @@ namespace lunchbox
 #endif
 
     template<> inline void byteswap( bool& value ) { /*NOP*/ }
-    template<> inline void byteswap( signed char& value ) { /*NOP*/ }
+    template<> inline void byteswap( char& value ) { /*NOP*/ }
     template<> inline void byteswap( unsigned char& value ) { /*NOP*/ }
 
     template<> inline void byteswap( uint32_t& value )

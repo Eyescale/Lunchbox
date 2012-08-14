@@ -34,7 +34,6 @@
 
 int main( int argc, char **argv )
 {
-#ifndef __xlC__ // FIXME: XLC doesn't finish compiling this
     std::list< lunchbox::Any > testValues;
     testValues.push_back( int8_t( -1 ));
     testValues.push_back( uint8_t( 1 ));
@@ -58,6 +57,5 @@ int main( int argc, char **argv )
         binarySerializeAndTest( any );
     }
 
-#endif
     return EXIT_SUCCESS;
 }

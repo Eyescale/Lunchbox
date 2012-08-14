@@ -28,6 +28,7 @@
 #  pragma intrinsic(_ReadWriteBarrier)
 #elif defined(__xlC__)
 #  include <builtins.h>
+#  include <iostream>
 #endif
 
 namespace lunchbox
@@ -155,7 +156,7 @@ public:
     bool compareAndSwap( const T expected, const T newValue );
 
 private:
-    mutable T _value;
+    LB_ALIGN8( mutable T _value );
 };
 
 // Implementation
@@ -214,7 +215,7 @@ template< class T > T Atomic< T >::subAndGet( T& value, const T increment )
 template< class T > 
 bool Atomic< T >::compareAndSwap( T* value, const T expected, const T newValue )
 {
-    return __compare_and_swap( const_cast< T* >( &newValue ), value, expected );
+    return __compare_and_swap( value, const_cast< T* >( &expected ), newValue );
 }
 #  else
 #    error No compare-and-swap implementated for this platform

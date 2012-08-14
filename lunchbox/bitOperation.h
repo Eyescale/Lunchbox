@@ -112,6 +112,12 @@ namespace lunchbox
 #endif
     }
 
+    template<> inline void byteswap( int32_t& value )
+        { byteswap( reinterpret_cast< uint32_t& >( value )); }
+
+    template<> inline void byteswap( float& value )
+        { byteswap( reinterpret_cast< uint32_t& >( value )); }
+
     template<> inline void byteswap( uint16_t& value )
     {
 #ifdef _MSC_VER
@@ -123,11 +129,8 @@ namespace lunchbox
 #endif
     }
 
-    template<> inline void byteswap( int32_t& value )
-        { byteswap( reinterpret_cast< uint32_t& >( value )); }
-
-    template<> inline void byteswap( float& value )
-        { byteswap( reinterpret_cast< uint32_t& >( value )); }
+    template<> inline void byteswap( int16_t& value )
+        { byteswap( reinterpret_cast< uint16_t& >( value )); }
 
     template<> inline void byteswap( uint64_t& value )
     {
@@ -139,6 +142,9 @@ namespace lunchbox
         value = __builtin_bswap64( value );
 #endif
     }
+
+    template<> inline void byteswap( int64_t& value )
+        { byteswap( reinterpret_cast< uint64_t& >( value )); }
 
     template<> inline void byteswap( double& value )
         { byteswap( reinterpret_cast< uint64_t& >( value )); }

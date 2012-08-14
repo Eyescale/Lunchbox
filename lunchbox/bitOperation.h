@@ -106,7 +106,7 @@ namespace lunchbox
 #ifdef _MSC_VER
         value = _byteswap_ulong( value );
 #elif defined __xlC__
-        value = __load4r( &value );
+        __store4r( value, &value );
 #else
         value = __builtin_bswap32( value );
 #endif
@@ -117,7 +117,7 @@ namespace lunchbox
 #ifdef _MSC_VER
         value = _byteswap_ushort( value );
 #elif defined __xlC__
-        value = __load2r( &value );
+         __store2r( value, &value );
 #else
         value = (value>>8) | (value<<8);
 #endif
@@ -134,7 +134,7 @@ namespace lunchbox
 #ifdef _MSC_VER
         value = _byteswap_uint64( value );
 #elif defined __xlC__
-        __bswap_64( value );
+        value = __bswap_constant_64( value );
 #else
         value = __builtin_bswap64( value );
 #endif

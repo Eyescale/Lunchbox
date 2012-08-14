@@ -217,6 +217,13 @@ bool Atomic< T >::compareAndSwap( T* value, const T expected, const T newValue )
 {
     return __compare_and_swap( value, const_cast< T* >( &expected ), newValue );
 }
+template<> inline
+bool Atomic< int64_t >::compareAndSwap( int64_t* value, const int64_t expected,
+                                        const int64_t newValue )
+{
+    return __compare_and_swaplp( value, const_cast< int64_t* >( &expected ),
+                                 newValue );
+}
 #  else
 #    error No compare-and-swap implementated for this platform
 #  endif

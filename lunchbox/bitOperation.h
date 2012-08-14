@@ -26,6 +26,9 @@
 #  pragma warning (disable: 4985) // inconsistent decl of ceil
 #    include <intrin.h>
 #  pragma warning (pop)
+#elif defined __xlC__
+#  include <builtins.h>
+#  include <byteswap.h>
 #endif
 
 namespace lunchbox
@@ -101,6 +104,8 @@ namespace lunchbox
     {
 #ifdef _MSC_VER
         value = _byteswap_ulong( value );
+#elif defined __xlC__
+        value = __load4r( &value );
 #else
         value = __builtin_bswap32( value );
 #endif
@@ -110,6 +115,8 @@ namespace lunchbox
     {
 #ifdef _MSC_VER
         value = _byteswap_ushort( value );
+#elif defined __xlC__
+        value = __load2r( &value );
 #else
         value = (value>>8) | (value<<8);
 #endif
@@ -125,6 +132,8 @@ namespace lunchbox
     {
 #ifdef _MSC_VER
         value = _byteswap_uint64( value );
+#elif defined __xlC__
+        __bswap_64( value );
 #else
         value = __builtin_bswap64( value );
 #endif

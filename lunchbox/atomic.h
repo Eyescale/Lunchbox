@@ -26,6 +26,8 @@
 #    include <intrin.h>
 #  pragma warning (pop)
 #  pragma intrinsic(_ReadWriteBarrier)
+#elif defined(__xlC__)
+#  include <builtins.h>
 #endif
 
 namespace lunchbox
@@ -38,8 +40,34 @@ inline void memoryBarrier()
     __sync_synchronize();
 #elif defined(_MSC_VER)
     _ReadWriteBarrier();
+#elif defined(__xlC__)
+    __fence();
+    __eieio();
+    __fence();
 #else
 #  error "no memory barrier implemented for this platform"
+#endif
+}
+
+/** Perform a load-with-acquire memory barrier. */
+inline void memoryBarrierAcquire()
+{
+#ifdef __xlC__
+    __fence();
+    __eieio();
+#else
+    memoryBarrier();
+#endif
+}
+
+/** Perform a store-with-release memory barrier. */
+inline void memoryBarrierRelease()
+{
+#ifdef __xlC__
+    __isync();
+    __fence();
+#else
+    memoryBarrier();
 #endif
 }
 
@@ -75,7 +103,7 @@ public:
 
     /** Perform a compare-and-swap atomic operation. */
     LUNCHBOX_API static bool compareAndSwap( T* value, const T expected,
-                                           const T newValue );
+                                             const T newValue );
 
     /** Construct a new atomic variable with an initial value. @version 1.0 */
     explicit Atomic( const T v = 0 );
@@ -182,7 +210,85 @@ template< class T > T Atomic< T >::subAndGet( T& value, const T increment )
 }
 
 #else
-#  error No Atomic Support - consider compareAndSwap-based implementation?
+#  ifdef __xlC__
+template< class T > 
+bool Atomic< T >::compareAndSwap( T* value, const T expected, const T newValue )
+{
+    return __compare_and_swap( const_cast< T* >( &newValue ), value, expected );
+}
+#  else
+#    error No compare-and-swap implementated for this platform
+#  endif
+
+template< class T > T Atomic< T >::getAndAdd( T& value, const T increment )
+{
+    for(;;)
+    {
+        memoryBarrierAcquire();
+        const T oldv = value;
+        const T newv = oldv + increment;
+        if( !compareAndSwap( &value, oldv, newv ))
+            continue;
+
+        memoryBarrierRelease();
+        return oldv;
+    }
+}
+
+template< class T > T Atomic< T >::getAndSub( T& value, const T increment )
+{
+    for(;;)
+    {
+        memoryBarrierAcquire();
+        const T oldv = value;
+        const T newv = oldv - increment;
+        if( !compareAndSwap( &value, oldv, newv ))
+            continue;
+
+        memoryBarrierRelease();
+        return oldv;
+    }
+}
+
+template< class T > T Atomic< T >::addAndGet( T& value, const T increment )
+{
+    for(;;)
+    {
+        memoryBarrierAcquire();
+        const T oldv = value;
+        const T newv = oldv + increment;
+        if( !Atomic< T >::compareAndSwap( &value, oldv, newv ))
+            continue;
+
+        memoryBarrierRelease();
+        return newv;
+    }
+}
+
+template< class T > T Atomic< T >::subAndGet( T& value, const T increment )
+{
+    for(;;)
+    {
+        memoryBarrierAcquire();
+        const T oldv = value;
+        const T newv = oldv - increment;
+        if( !Atomic< T >::compareAndSwap( &value, oldv, newv ))
+            continue;
+
+        memoryBarrierRelease();
+        return newv;
+    }
+}
+
+template< class T > T Atomic< T >::incAndGet( T& value )
+{
+    return addAndGet( value, 1 );
+}
+
+template< class T > T Atomic< T >::decAndGet( T& value )
+{
+    return subAndGet( value, 1 );
+}
 #endif
 
 template< class T > Atomic< T >::Atomic ( const T v ) : _value(v) {}
@@ -193,7 +299,8 @@ Atomic< T >::Atomic( const Atomic< T >& v ) : _value( v._value ) {}
 template <class T>
 Atomic< T >::operator T(void) const
 {
-    return getAndAdd( _value, 0 );
+    memoryBarrierAcquire();
+    return _value;
 }
 
 template< class T > void Atomic< T >::operator = ( const T v )

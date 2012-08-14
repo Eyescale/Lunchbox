@@ -40,17 +40,24 @@
 #  else
 #    define LB_STDEXT_EXT
 #  endif
+#elif defined _MSC_VER
+#  define LB_STDEXT_MSVC
+#elif defined __xlC__
+#  define LB_STDEXT_TR1
+#  define LB_STDEXT_TR1_BOOST
 #else
-#  ifdef _MSC_VER
-#    define LB_STDEXT_MSVC
-#  else
-#    define LB_STDEXT_STD
-#  endif
+#  define LB_STDEXT_STD
 #endif
 
 #ifdef LB_STDEXT_TR1
-#  include <tr1/unordered_map>
-#  include <tr1/unordered_set>
+#  ifdef LB_STDEXT_TR1_BOOST
+#    include <boost/tr1/functional.hpp>
+#    include <boost/tr1/unordered_map.hpp>
+#    include <boost/tr1/unordered_set.hpp>
+#  else
+#    include <tr1/unordered_map>
+#    include <tr1/unordered_set>
+#  endif
 /* Alias stde namespace to uniformly access stl extensions. */
 namespace stde = std::tr1;
 #  define LB_STDEXT_NAMESPACE_OPEN namespace std { namespace tr1 {
@@ -89,7 +96,7 @@ LB_STDEXT_NAMESPACE_OPEN
 
 //----- Our extensions of the STL 
 #ifdef LB_STDEXT_TR1
-#   ifndef LB_HAVE_HASH_MAP
+#  ifndef LB_HAVE_HASH_MAP
     template<class K, class T, class H = hash< K >, 
              class P = std::equal_to< K >, class A = std::allocator< K > >
     class hash_map : public unordered_map< K, T, H, P, A >

@@ -24,6 +24,7 @@
 
 #ifdef LUNCHBOX_USE_BOOST
 #  include <boost/intrusive_ptr.hpp>
+#  include <boost/make_shared.hpp>
 #  include <boost/shared_ptr.hpp>
 #  include <boost/serialization/access.hpp>
 #  include <boost/archive/text_oarchive.hpp>
@@ -31,7 +32,7 @@
 #endif
 
 #define NTHREADS 24
-#define NREFS    300000
+#define NREFS    200000
 
 class Foo : public lunchbox::Referenced
 {
@@ -127,9 +128,9 @@ int main( int argc, char **argv )
         TEST( threads[i].join( ));
 
     const float time = clock.getTimef();
-    std::cout << time << " ms for " << 3*NREFS << " reference operations in " 
-              << NTHREADS << " threads (" << time/(3*NREFS*NTHREADS)*1000000
-              << "ns/op)" << std::endl;
+    std::cout << time << " ms for " << 3*NREFS << " lunchbox::RefPtr operations"
+              << " in " << NTHREADS << " threads (" 
+              << time/(3*NREFS*NTHREADS)*1000000 << "ns/op)" << std::endl;
 
     TEST( foo->getRefCount() == 1 );
 
@@ -158,6 +159,7 @@ int main( int argc, char **argv )
 
     bBar = BarPtr( new Bar );
     BarThread barThreads[NTHREADS];
+
     clock.reset();
     for( size_t i=0; i<NTHREADS; ++i )
         TEST( barThreads[i].start( ));
@@ -169,6 +171,19 @@ int main( int argc, char **argv )
     std::cout << barTime << " ms for " << 3*NREFS <<" boost::shared_ptr ops in "
               << NTHREADS << " threads (" << barTime/(3*NREFS*NTHREADS)*1000000
               << "ns/op)" << std::endl;
+
+    bBar = boost::make_shared< Bar >();
+    clock.reset();
+    for( size_t i=0; i<NTHREADS; ++i )
+        TEST( barThreads[i].start( ));
+
+    for( size_t i=0; i<NTHREADS; ++i )
+        TEST( barThreads[i].join( ));
+
+    const float barTime2 = clock.getTimef();
+    std::cout << barTime2 << " ms for " << 3*NREFS<<" boost::shared_ptr ops in "
+              << NTHREADS << " threads (" << barTime2/(3*NREFS*NTHREADS)*1000000
+              << "ns/op) using make_shared" << std::endl;
 
     foo = 0;
 

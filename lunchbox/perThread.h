@@ -46,7 +46,7 @@ namespace detail { class PerThread; }
      * @param T the type of data to store in thread-local storage
      * @param D the destructor callback function.
      */
-    template< class T, void (*D)( T* ) = perThreadDelete< T > >
+    template< class T, void (*D)( T* ) = &perThreadDelete< T > >
     class PerThread : public NonCopyable
     {
     public:

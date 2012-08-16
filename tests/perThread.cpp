@@ -29,9 +29,9 @@ lunchbox::a_int32_t _threads;
 
 void destructor( size_t* data ) { --_threads; }
 
-lunchbox::PerThread< size_t, destructor > _tls1;
+lunchbox::PerThread< size_t, &destructor > _tls1;
 lunchbox::PerThread< size_t > _tls2;
-lunchbox::PerThread< size_t, destructor > _tls3;
+lunchbox::PerThread< size_t, &destructor > _tls3;
 
 
 class Thread : public lunchbox::Thread

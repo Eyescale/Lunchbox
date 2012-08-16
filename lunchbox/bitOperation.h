@@ -26,6 +26,9 @@
 #  pragma warning (disable: 4985) // inconsistent decl of ceil
 #    include <intrin.h>
 #  pragma warning (pop)
+#elif defined __xlC__
+#  include <builtins.h>
+#  include <byteswap.h>
 #endif
 
 namespace lunchbox
@@ -92,6 +95,7 @@ namespace lunchbox
 #  endif
 #endif
 
+    template<> inline void byteswap( void*& value ) { /*NOP*/ }
     template<> inline void byteswap( bool& value ) { /*NOP*/ }
     template<> inline void byteswap( char& value ) { /*NOP*/ }
     template<> inline void byteswap( signed char& value ) { /*NOP*/ }
@@ -101,17 +105,10 @@ namespace lunchbox
     {
 #ifdef _MSC_VER
         value = _byteswap_ulong( value );
+#elif defined __xlC__
+        __store4r( value, &value );
 #else
         value = __builtin_bswap32( value );
-#endif
-    }
-
-    template<> inline void byteswap( uint16_t& value )
-    {
-#ifdef _MSC_VER
-        value = _byteswap_ushort( value );
-#else
-        value = (value>>8) | (value<<8);
 #endif
     }
 
@@ -121,14 +118,33 @@ namespace lunchbox
     template<> inline void byteswap( float& value )
         { byteswap( reinterpret_cast< uint32_t& >( value )); }
 
+    template<> inline void byteswap( uint16_t& value )
+    {
+#ifdef _MSC_VER
+        value = _byteswap_ushort( value );
+#elif defined __xlC__
+         __store2r( value, &value );
+#else
+        value = (value>>8) | (value<<8);
+#endif
+    }
+
+    template<> inline void byteswap( int16_t& value )
+        { byteswap( reinterpret_cast< uint16_t& >( value )); }
+
     template<> inline void byteswap( uint64_t& value )
     {
 #ifdef _MSC_VER
         value = _byteswap_uint64( value );
+#elif defined __xlC__
+        value = __bswap_constant_64( value );
 #else
         value = __builtin_bswap64( value );
 #endif
     }
+
+    template<> inline void byteswap( int64_t& value )
+        { byteswap( reinterpret_cast< uint64_t& >( value )); }
 
     template<> inline void byteswap( double& value )
         { byteswap( reinterpret_cast< uint64_t& >( value )); }

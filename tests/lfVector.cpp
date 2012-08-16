@@ -50,32 +50,34 @@ public:
     Reader& operator=( const Reader& ) { return *this; }
 
     virtual void run()
+    {
+        size_t stage = 0;
+        while( true )
         {
-            size_t stage = 0;
-            while( true )
-            {
-                stage += STAGESIZE;
-                stage_.waitGE( stage );
-                if( stage_ == std::numeric_limits< size_t >::max( ))
-                    return;
+            stage += STAGESIZE;
+            stage_.waitGE( stage );
+            if( stage_ == std::numeric_limits< size_t >::max( ))
+                return;
 
-                if( vector_ )
+            if( vector )
+            {
+                for( size_t i = 0; i < LOOPSIZE; ++i )
                 {
-                    for( size_t i = 0; i < LOOPSIZE; ++i )
+                    if( i < vector->size( ))
                     {
-                        if( i < vector_->size( ))
-                        {
-                            const size_t value = (*vector_)[ i ];
-                            TESTINFO( i == value || value == 0,
-                                      i << ", " << value );
-                        }
+                        const size_t value = (*vector)[ i ];
+                        TESTINFO( i == value || value == 0,
+                                  i << " - " << value << " - " << (*vector)[i]<<
+                                  ": " << *vector );
                     }
-                    rTime_ = _clock.getTimef();
                 }
-                ++stage_;
+                rTime_ = _clock.getTimef();
             }
+            ++stage_;
         }
-    Vector_t* vector_;
+    }
+
+    Vector_t* vector;
 };
 
 class Writer : public lunchbox::Thread
@@ -95,19 +97,19 @@ public:
                 if( stage_ == std::numeric_limits< size_t >::max( ))
                     return;
 
-                if( vector_ )
+                if( vector )
                 {
                     for( size_t i = 0; i < LOOPSIZE; ++i )
                     {
-                        if( i < vector_->size( ))
-                            (*vector_)[ i ] = i;
+                        if( i < vector->size( ))
+                            (*vector)[ i ] = i;
                     }
                     wTime_ = _clock.getTimef();
                 }
                 ++stage_;
             }
         }
-    Vector_t* vector_;
+    Vector_t* vector;
 };
 
 class Pusher : public lunchbox::Thread
@@ -127,16 +129,16 @@ public:
                 if( stage_ == std::numeric_limits< size_t >::max( ))
                     return;
 
-                if( vector_ )
+                if( vector )
                 {
-                    while( vector_->size() < LOOPSIZE )
-                        vector_->push_back( 0 );
+                    while( vector->size() < LOOPSIZE )
+                        vector->push_back( 0 );
                     pTime_ = _clock.getTimef();
                 }
                 ++stage_;
             }
         }
-    Vector_t* vector_;
+    Vector_t* vector;
 };
 
 class Copier : public lunchbox::Thread
@@ -149,12 +151,12 @@ public:
     virtual void run()
         {
             Vector_t copy;
-            copy = *vector_;
-            *vector_ = copy;
-            TEST( copy.size() >= vector_->size( ));
+            copy = *vector;
+            *vector = copy;
+            TEST( copy.size() >= vector->size( ));
             cTime_ = _clock.getTimef();
         }
-    Vector_t* vector_;
+    Vector_t* vector;
 };
 
 class Eraser : public lunchbox::Thread
@@ -166,14 +168,14 @@ public:
 
     virtual void run()
         {
-            const size_t pos = vector_->size() / 2;
-            Vector_t::iterator i = vector_->begin() + pos;
-            Vector_t::iterator j = vector_->erase( i );
-            TEST( j != vector_->end( ));
+            const size_t pos = vector->size() / 2;
+            Vector_t::iterator i = vector->begin() + pos;
+            Vector_t::iterator j = vector->erase( i );
+            TEST( j != vector->end( ));
             TEST( i == j );
             eTime_ = _clock.getTimef();
         }
-    Vector_t* vector_;
+    Vector_t* vector;
 };
 
 class Flusher : public lunchbox::Thread
@@ -186,12 +188,12 @@ public:
     virtual void run()
         {
             size_t i = 0xFFFFFFFFu;
-            while( vector_->pop_back( i ))
+            while( vector->pop_back( i ))
             {
-                TEST( i == 0 || i >= vector_->size( ));
+                TEST( i == 0 || i >= vector->size( ));
             }
         }
-    Vector_t* vector_;
+    Vector_t* vector;
 };
 
 template< class V, class T > void _runSerialTest()
@@ -271,8 +273,8 @@ int main( int argc, char **argv )
     const size_t nThreads = 16;
 #endif
 
-    std::cout << "       read,       write,        push,      copy,     erase,  "
-              << "flush/ms,  rd, other #threads" << std::endl;
+    std::cout << "       read,       write,        push,      copy,     erase, "
+              << " flush/ms,  rd, other #threads" << std::endl;
     _runSerialTest< std::vector< size_t >, size_t >();
     _runSerialTest< Vector_t, size_t >();
 
@@ -298,9 +300,9 @@ int main( int argc, char **argv )
             Vector_t vector;
             for( size_t k = 0; k < nThreads; ++k )
             {
-                readers[k].vector_ = k < i ? &vector : 0;
-                writers[k].vector_ = k < j ? &vector : 0;
-                pushers[k].vector_ = k < j ? &vector : 0;
+                readers[k].vector = k < i ? &vector : 0;
+                writers[k].vector = k < j ? &vector : 0;
+                pushers[k].vector = k < j ? &vector : 0;
             }
 
             const size_t nextStage = ++stage * STAGESIZE;
@@ -316,7 +318,7 @@ int main( int argc, char **argv )
             _clock.reset();
             for( size_t k = 0; k < j; ++k )
             {
-                copiers[k].vector_ = &vector;
+                copiers[k].vector = &vector;
                 copiers[k].start();
             }
             for( size_t k = 0; k < j; ++k )
@@ -331,7 +333,7 @@ int main( int argc, char **argv )
             _clock.reset();
             for( size_t k = 0; k < j; ++k )
             {
-                erasers[k].vector_ = &vector;
+                erasers[k].vector = &vector;
                 erasers[k].start();
             }
             for( size_t k = 0; k < j; ++k )
@@ -357,7 +359,7 @@ int main( int argc, char **argv )
             _clock.reset();
             for( size_t k = 0; k < j; ++k )
             {
-                flushers[k].vector_ = &vector;
+                flushers[k].vector = &vector;
                 flushers[k].start();
             }
             for( size_t k = 0; k < j; ++k )

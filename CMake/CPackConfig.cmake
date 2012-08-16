@@ -12,4 +12,7 @@ set(CPACK_DEBIAN_BUILD_DEPENDS libboost-serialization-dev
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
   "libstdc++6, libboost-serialization-dev, libavahi-compat-libdnssd1")
 
+set(CPACK_MACPORTS_CATEGORY devel)
+set(CPACK_MACPORTS_DEPENDS boost avahi)
+
 include(CommonCPack)

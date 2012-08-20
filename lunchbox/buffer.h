@@ -235,7 +235,7 @@ namespace lunchbox
         /** @return the maximum size of the buffer. @version 1.0 */
         uint64_t getMaxSize() const { return _maxSize; }
 
-    private:
+    protected:
         /** A pointer to the data. */
         T* _data;
 

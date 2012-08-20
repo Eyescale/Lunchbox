@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -49,7 +49,7 @@ namespace lunchbox
         ~Buffer() { clear(); }
 
         /** Flush the buffer, deleting all data. @version 1.0 */
-        void clear() 
+        void clear()
             { if( _data ) free( _data ); _data=0; _size=0; _maxSize=0; }
 
         /**
@@ -90,7 +90,7 @@ namespace lunchbox
         const T& operator[]( const uint64_t position ) const
             { LBASSERT( _size > position ); return _data[ position ]; }
 
-        /** 
+        /**
          * Ensure that the buffer contains at least newSize elements.
          *
          * Existing data is retained. The size is set.
@@ -98,7 +98,7 @@ namespace lunchbox
          * @version 1.0
          */
         T* resize( const uint64_t newSize )
-            { 
+            {
                 _size = newSize;
                 if( newSize <= _maxSize )
                     return _data;
@@ -111,19 +111,19 @@ namespace lunchbox
                 return _data;
             }
 
-        /** 
+        /**
          * Ensure that the buffer contains at least newSize elements.
          *
          * Existing data is retained. The size is increased, if necessary.
          * @version 1.0
          */
         void grow( const uint64_t newSize )
-            { 
+            {
                 if( newSize > _size )
                     resize( newSize );
             }
 
-        /** 
+        /**
          * Ensure that the buffer contains at least newSize elements.
          *
          * Existing data may be deleted.
@@ -137,13 +137,13 @@ namespace lunchbox
 
                 if( _data )
                     free( _data );
-                
+
                 _data = static_cast< T* >( malloc( newSize * sizeof( T )));
                 _maxSize = newSize;
                 return _data;
             }
 
-        /** 
+        /**
          * Set the buffer size and malloc enough memory.
          *
          * Existing data may be deleted.
@@ -225,13 +225,13 @@ namespace lunchbox
                 _size = size;
                 return true;
             }
-                    
+
         /** @return the current size. @version 1.0 */
         uint64_t getSize() const { return _size; }
-        
+
         /** @return true if the buffer is empty, false if not. @version 1.0 */
         bool isEmpty() const { return (_size==0); }
-        
+
         /** @return the maximum size of the buffer. @version 1.0 */
         uint64_t getMaxSize() const { return _maxSize; }
 

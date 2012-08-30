@@ -1,16 +1,16 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *               2012, Marwan Abdellah <marwan.abdellah@epfl.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -251,7 +251,7 @@ void Thread::pinCurrentThread()
     {
         // Get available processors
         DWORD_PTR systemMask;
-        if( GetProcessAffinityMask( GetCurrentProcess(), &processMask, 
+        if( GetProcessAffinityMask( GetCurrentProcess(), &processMask,
             &systemMask ) == 0 )
         {
             LBWARN << "Can't get usable processor mask" << std::endl;
@@ -336,7 +336,7 @@ void Thread::setName( const std::string& name )
         ScopedFastWrite mutex( _names );
         stream << ++_names.data[ name ];
     }
-    uniqueName += stream.str(); 
+    uniqueName += stream.str();
 
     Log::instance().setThreadName( uniqueName );
 
@@ -426,7 +426,7 @@ void Thread::setAffinity( const int32_t affinity )
         LBWARN << "Error binding to cpu set " << cpuSetString << std::endl;
     }
     ::free( cpuSetString );
-
+    hwloc_bitmap_free( cpuSet );
     hwloc_topology_destroy( topology );
 
 #else
@@ -438,7 +438,7 @@ void Thread::setAffinity( const int32_t affinity )
 #if 0
 std::ostream& operator << ( std::ostream& os, const Thread* thread )
 {
-    os << "Thread " << thread->_impl->id << " state " 
+    os << "Thread " << thread->_impl->id << " state "
        << ( thread->_impl->state == Thread::STATE_STOPPED  ? "stopped"  :
             thread->_impl->state == Thread::STATE_STARTING ? "starting" :
             thread->_impl->state == Thread::STATE_RUNNING  ? "running"  :

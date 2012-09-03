@@ -400,7 +400,7 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
                                                          HWLOC_OBJ_SOCKET,
                                                          socketIndex );
     // Get the CPU set associated with the specified socket
-    cpuSet = socketObj->allowed_cpuset;
+    hwloc_bitmap_copy( cpuSet, socketObj->allowed_cpuset );
     return cpuSet;
 }
 #endif

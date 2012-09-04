@@ -1,8 +1,6 @@
 
-/* Copyright (c) 2011-2012, EFPL/Blue Brain Project
- *                     Stefan Eilemann <stefan.eilemann@epfl.ch> 
- *
- * This file is part of Lunchbox <https://github.com/BlueBrain/Lunchbox>
+/* Copyright (c) 2011-2012, Stefan Eilemann <stefan.eilemann@epfl.ch>
+ *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published

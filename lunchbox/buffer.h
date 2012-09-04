@@ -45,6 +45,13 @@ namespace lunchbox
         Buffer( const uint64_t size ) : _data(0), _size(0), _maxSize(0)
             { reset( size ); }
 
+        /** Copy constructor, transfers ownership to new Buffer. @version 1.0 */
+        Buffer( Buffer& from )
+            {
+                _data = from._data; _size = from._size; _maxSize =from._maxSize;
+                from._data = 0; from._size = 0; from._maxSize = 0;
+            }
+
         /** Destruct the buffer. @version 1.0 */
         ~Buffer() { clear(); }
 
@@ -66,13 +73,6 @@ namespace lunchbox
                     _maxSize = _size;
                 }
                 return _data;
-            }
-
-        /** Copy constructor, transfers ownership to new Buffer. @version 1.0 */
-        Buffer( Buffer& from )
-            {
-                _data = from._data; _size = from._size; _maxSize =from._maxSize;
-                from._data = 0; from._size = 0; from._maxSize = 0;
             }
 
         /** Assignment operator, copies data from Buffer. @version 1.0 */

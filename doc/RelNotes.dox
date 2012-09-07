@@ -103,6 +103,15 @@
   Lunchbox 1.4 includes various bugfixes over the Equalizer 1.2.1 release,
   including the following:
 </p>
+<p>
+Version 1.4.1:
+</p>
+<ul>
+  <li>Set install_name on Darwin dylibs</li>
+</ul>
+<p>
+Version 1.4.0:
+</p>
 <ul>
   <li><a href="https://github.com/Eyescale/Lunchbox/issues/4">4:</a>
     sleep is not signal-safe</li>

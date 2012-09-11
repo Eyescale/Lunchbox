@@ -227,8 +227,11 @@ namespace lunchbox
                 return true;
             }
 
-        /** @return the current size. @version 1.0 */
+        /** @return the current number of elements. @version 1.0 */
         uint64_t getSize() const { return _size; }
+
+        /** @return the current storage size. @version 1.5.1 */
+        uint64_t getNumBytes() const { return _size * sizeof( T ); }
 
         /** @return true if the buffer is empty, false if not. @version 1.0 */
         bool isEmpty() const { return (_size==0); }

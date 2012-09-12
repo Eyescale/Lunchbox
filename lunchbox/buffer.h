@@ -84,11 +84,11 @@ namespace lunchbox
             }
 
         /** Direct access to the element at the given index. @version 1.0 */
-        T&       operator[]( const uint64_t position )
+        T& operator [] ( const uint64_t position )
             { LBASSERT( _size > position ); return _data[ position ]; }
 
         /** Direct const access to an element. @version 1.0 */
-        const T& operator[]( const uint64_t position ) const
+        const T& operator [] ( const uint64_t position ) const
             { LBASSERT( _size > position ); return _data[ position ]; }
 
         /**

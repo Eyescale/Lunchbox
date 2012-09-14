@@ -77,9 +77,9 @@ namespace lunchbox
             }
 
         /** Assignment operator, copies data from Buffer. @version 1.0 */
-        const Buffer& operator = ( Buffer& from )
+        const Buffer& operator = ( const Buffer& from )
             {
-                replace( from._data, from._size );
+                replace( from );
                 return *this;
             }
 
@@ -127,7 +127,7 @@ namespace lunchbox
         /**
          * Ensure that the buffer contains at least newSize elements.
          *
-         * Existing data may be deleted.
+         * Existing data is preserved.
          * @return the new pointer to the first element.
          * @version 1.0
          */
@@ -136,10 +136,7 @@ namespace lunchbox
                 if( newSize <= _maxSize )
                     return _data;
 
-                if( _data )
-                    free( _data );
-
-                _data = static_cast< T* >( malloc( newSize * sizeof( T )));
+                _data = static_cast< T* >( realloc( _data, newSize*sizeof(T)));
                 _maxSize = newSize;
                 return _data;
             }
@@ -186,6 +183,10 @@ namespace lunchbox
                 memcpy( _data, data, size * sizeof( T ));
                 _size = size;
             }
+
+        /** Replace the existing data. @version 1.5.1 */
+        void replace( const Buffer& from )
+            { replace( from._data, from._size ); }
 
         /** Swap the buffer contents with another Buffer. @version 1.0 */
         void swap( Buffer& buffer )

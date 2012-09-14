@@ -5,12 +5,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -69,7 +69,7 @@ namespace stde = std::tr1;
 #  include <ext/hash_map>
 #  include <ext/hash_set>
 /* Alias stde namespace to uniformly access stl extensions. */
-namespace stde = __gnu_cxx; 
+namespace stde = __gnu_cxx;
 #  define LB_STDEXT_NAMESPACE_OPEN namespace __gnu_cxx {
 #  define LB_STDEXT_NAMESPACE_CLOSE }
 #endif
@@ -95,15 +95,22 @@ namespace stde = std;
 
 LB_STDEXT_NAMESPACE_OPEN
 
-//----- Our extensions of the STL 
+//----- Our extensions of the STL
 #ifdef LB_STDEXT_TR1
 #  ifndef LB_HAVE_HASH_MAP
-    template<class K, class T, class H = hash< K >, 
+    template<class K, class T, class H = hash< K >,
              class P = std::equal_to< K >, class A = std::allocator< K > >
     class hash_map : public unordered_map< K, T, H, P, A >
     {
     };
 #  endif // LB_HAVE_HASH_MAP
+#  ifndef LB_HAVE_HASH_SET
+    template<class T, class H = hash< T >,
+             class P = std::equal_to< T >, class A = std::allocator< T > >
+    class hash_set : public unordered_set< T, H, P, A >
+    {
+    };
+#  endif // LB_HAVE_HASH_SET
 #endif
 
 #ifdef LB_STDEXT_EXT
@@ -167,7 +174,7 @@ LB_STDEXT_NAMESPACE_OPEN
 
 #  endif
 
-    template<> inline size_t hash_compare< lunchbox::uint128_t >::operator() 
+    template<> inline size_t hash_compare< lunchbox::uint128_t >::operator()
         ( const lunchbox::uint128_t& key ) const
     {
         return static_cast< size_t >( key.high() ^ key.low() );
@@ -202,22 +209,22 @@ LB_STDEXT_NAMESPACE_OPEN
     }
 
     /** Find the element in the given vector. @version 1.0 */
-    template< typename T > typename std::vector< T >::iterator 
+    template< typename T > typename std::vector< T >::iterator
     find( std::vector< T >& container, const T& element )
         { return std::find( container.begin(), container.end(), element ); }
 
     /** Find the element in the given vector. @version 1.0 */
-    template< typename T > typename std::vector< T >::const_iterator 
+    template< typename T > typename std::vector< T >::const_iterator
     find( const std::vector< T >& container, const T& element )
         { return std::find( container.begin(), container.end(), element ); }
 
     /** Find the element matching the predicate @version 1.0 */
-    template< typename T, typename P > typename std::vector< T >::iterator 
+    template< typename T, typename P > typename std::vector< T >::iterator
     find_if( std::vector< T >& container, const P& predicate )
         { return std::find_if( container.begin(), container.end(), predicate );}
 
     /** Find the element matching the predicate @version 1.0 */
-    template< typename T, typename P > typename std::vector<T>::const_iterator 
+    template< typename T, typename P > typename std::vector<T>::const_iterator
     find_if( std::vector< const T >& container, const P& predicate )
         { return std::find_if( container.begin(), container.end(), predicate );}
 

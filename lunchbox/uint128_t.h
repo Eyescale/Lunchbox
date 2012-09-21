@@ -168,6 +168,18 @@ namespace lunchbox
                 return *this;
             }
 
+        /** Add value and return the new value. @version 1.5.1 */
+        uint128_t& operator +=( const uint128_t& rhs )
+            {
+                const uint64_t oldLow = _low;
+                _low += rhs._low;
+                if( _low < oldLow ) // overflow
+                    _high += rhs._high + 1;
+                else
+                    _high += rhs._high;
+                return *this;
+            }
+
         /** @return the reference to the lower 64 bits of this 128 bit value. */
         const uint64_t& low() const { return _low; }
         /** @return the reference to the high 64 bits of this 128 bit value. */
@@ -229,6 +241,14 @@ namespace lunchbox
         result.low() += b;
         if( result.low() < a.low( ))
             ++result.high();
+        return result;
+    };
+
+    /** Add two 128 bit values. @version 1.5.1 */
+    inline uint128_t operator+ ( const uint128_t& a, const uint128_t& b ) 
+    {
+        uint128_t result = a;
+        result += b;
         return result;
     };
 

@@ -23,6 +23,7 @@
 #include <lunchbox/types.h>
 
 #include <cstdlib>      // for malloc
+#include <cstring>      // for memcpy
 
 namespace lunchbox
 {

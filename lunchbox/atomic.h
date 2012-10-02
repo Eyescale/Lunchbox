@@ -156,7 +156,12 @@ public:
     bool compareAndSwap( const T expected, const T newValue );
 
 private:
+    // https://github.com/Eyescale/Lunchbox/issues/8
+#if _MSC_VER < 1700
+    mutable T _value;
+#else
     LB_ALIGN8( mutable T _value );
+#endif
 };
 
 // Implementation

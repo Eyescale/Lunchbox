@@ -37,14 +37,6 @@
 #define SERIALIZABLEANY( CLASS ) \
     BOOST_CLASS_EXPORT( lunchbox::Any::holder< CLASS > )
 
-/**
- * Enables the given archive to serialize all POD types through a
- * lunchbox::Any. Without this registration, user may experience exceptions
- * being thrown complaining about unregistered classes.
- */
-#define ANYARCHIVE( ar )   \
-    lunchbox::registerAnyPodTypes( ar );
-
 
 namespace lunchbox
 {
@@ -58,16 +50,6 @@ typedef boost::mpl::list< int8_t, uint8_t,
                           bool, std::string, uint128_t > podTypes;
 
 /**
- * Registers the given type for serializing it inside a lunchbox::Any
- * through the given archive.
- */
-template< class T, class Archive >
-void registerAnyType( Archive& ar )
-{
-    ar.template register_type< Any::holder< T > >();
-}
-
-/**
  * Utility struct for registering types for lunchbox::Any from a type list.
  * @internal
  */
@@ -77,10 +59,10 @@ struct registerWrapper
     registerWrapper( Archive& ar ) : ar_( ar ) {}
     Archive& ar_;
 
-    template< typename U >
-    void operator()( U )
+    template< typename T >
+    void operator()( T )
     {
-        registerAnyType< U >( ar_ );
+        ar_.template register_type< Any::holder< T > >();
     }
 };
 
@@ -88,32 +70,46 @@ struct registerWrapper
  * Registers the types from the given type list for serializing it inside a
  * lunchbox::Any through the given archive.
  */
-template< class Archive, class TypeList >
-void registerAnyTypes( Archive& ar )
+template< class TypeList, class Archive >
+void registerTypelist( Archive& ar )
 {
     boost::mpl::for_each< TypeList >( registerWrapper< Archive >( ar ) );
 }
 
 /**
- * Registers POD types for serializing them inside a lunchbox::Any through
- * the given archive.
- */
-template< class Archive >
-void registerAnyPodTypes( Archive& ar )
-{
-    registerAnyTypes< Archive, podTypes >( ar );
-}
-
-/**
- * Serializes the given object which can be a lunchbox::Any through the
- * given archive type to/from the given stream.
+ * Serializes the given object which can be a lunchbox::Any through the given
+ * archive type to/from the given stream.
  */
 template< class Archive, class Object, class Stream >
 void serializeAny( Object& object, Stream& stream )
 {
     Archive ar( stream );
-    ANYARCHIVE( ar );
+    registerTypelist< podTypes >( ar );
     ar & object;
+}
+
+/**
+ * Saves the given object which can be a lunchbox::Any through the given archive
+ * type to/from the given stream.
+ */
+template< class Archive, class Object, class Stream >
+void saveAny( Object& object, Stream& stream )
+{
+    Archive ar( stream );
+    registerTypelist< podTypes >( ar );
+    ar << object;
+}
+
+/**
+ * Loads the given object which can be a lunchbox::Any through the given archive
+ * type to/from the given stream.
+ */
+template< class Archive, class Object, class Stream >
+void loadAny( Object& object, Stream& stream )
+{
+    Archive ar( stream );
+    registerTypelist< podTypes >( ar );
+    ar >> object;
 }
 
 }

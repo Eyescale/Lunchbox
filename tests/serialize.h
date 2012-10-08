@@ -37,25 +37,25 @@
 template< class T >
 void textSave( const T& object, std::ostream& os )
 {
-    lunchbox::serializeAny< boost::archive::text_oarchive >( object, os );
+    lunchbox::saveAny< boost::archive::text_oarchive >( object, os );
 }
 
 template< class T >
 void textLoad( T& object, std::istream& is )
 {
-    lunchbox::serializeAny< boost::archive::text_iarchive >( object, is );
+    lunchbox::loadAny< boost::archive::text_iarchive >( object, is );
 }
 
 template< class T >
 void binarySave( const T& object, std::ostream& os )
 {
-    lunchbox::serializeAny< boost::archive::binary_oarchive >( object, os );
+    lunchbox::saveAny< boost::archive::binary_oarchive >( object, os );
 }
 
 template< class T >
 void binaryLoad( T& object, std::istream& is )
 {
-    lunchbox::serializeAny< boost::archive::binary_iarchive >( object, is );
+    lunchbox::loadAny< boost::archive::binary_iarchive >( object, is );
 }
 
 template< class T >
@@ -118,7 +118,7 @@ struct Foo
         ar & f;
         ar & b;
         ar & s;
-    }    
+    }
 };
 
 SERIALIZABLEANY( Foo )

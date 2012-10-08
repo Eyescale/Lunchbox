@@ -18,17 +18,6 @@
 #include "test.h"
 #include "serialize.h"
 
-#include <lunchbox/anySerialization.h>
-
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
-#pragma warning( push )
-#pragma warning( disable: 4996 )
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#pragma warning( pop )
-
 #include <boost/foreach.hpp>
 
 

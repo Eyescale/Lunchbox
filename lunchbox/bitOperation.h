@@ -165,5 +165,12 @@ namespace lunchbox
 
     template<> inline void byteswap( UUID& value )
     { byteswap< uint128_t >( value ); }
+
+    template< typename T >
+    inline void byteswap( typename std::vector< T >& value )
+    {
+        for( size_t i = 0; i < value.size(); ++i )
+            byteswap( value[i] );
+    }
 }
 #endif //LUNCHBOX_BITOPERATION_H

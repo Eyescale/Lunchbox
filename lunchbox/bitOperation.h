@@ -6,12 +6,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -20,6 +20,7 @@
 #ifndef LUNCHBOX_BITOPERATION_H
 #define LUNCHBOX_BITOPERATION_H
 
+#include <lunchbox/compiler.h>       // GCC version
 #include <lunchbox/types.h>
 #include <lunchbox/uuid.h>
 #ifdef _MSC_VER
@@ -29,6 +30,8 @@
 #  pragma warning (pop)
 #elif defined __xlC__
 #  include <builtins.h>
+#  include <byteswap.h>
+#elif defined LB_GCC_4_3_OR_OLDER
 #  include <byteswap.h>
 #endif
 
@@ -52,7 +55,7 @@ namespace lunchbox
         return _BitScanReverse( &i, value ) ? i : -1;
 #else
         int32_t count = -1;
-        while( value ) 
+        while( value )
         {
           ++count;
           value >>= 1;
@@ -70,7 +73,7 @@ namespace lunchbox
         return _BitScanReverse64( &i, value ) ? i : -1;
 #else
         int32_t count = -1;
-        while( value ) 
+        while( value )
         {
           ++count;
           value >>= 1;
@@ -80,7 +83,7 @@ namespace lunchbox
     }
 
 #if defined(__linux__) && defined(_LP64)
-    template<> inline int32_t 
+    template<> inline int32_t
     getIndexOfLastBit< unsigned long long >( unsigned long long value )
         { return getIndexOfLastBit( static_cast< uint64_t >( value )); }
 #endif
@@ -108,6 +111,8 @@ namespace lunchbox
         value = _byteswap_ulong( value );
 #elif defined __xlC__
         __store4r( value, &value );
+#elif defined LB_GCC_4_3_OR_OLDER
+        value = bswap_32( value );
 #else
         value = __builtin_bswap32( value );
 #endif
@@ -139,6 +144,8 @@ namespace lunchbox
         value = _byteswap_uint64( value );
 #elif defined __xlC__
         value = __bswap_constant_64( value );
+#elif defined LB_GCC_4_3_OR_OLDER
+        value = bswap_64( value );
 #else
         value = __builtin_bswap64( value );
 #endif

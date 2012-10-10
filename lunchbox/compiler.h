@@ -61,7 +61,8 @@
 #  if (( __GNUC__ > 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) )
 #    define LB_GCC_4_9_OR_LATER
 #  endif
-#  if (( __GNUC__ > 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ < 3)) )
+
+#  if (( __GNUC__ < 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ < 3)) )
 #    define LB_GCC_4_3_OR_OLDER
 #  endif
 #endif // GCC

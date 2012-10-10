@@ -23,6 +23,7 @@
 #include <lunchbox/compiler.h>       // GCC version
 #include <lunchbox/types.h>
 #include <lunchbox/uuid.h>
+
 #ifdef _MSC_VER
 #  pragma warning (push)
 #  pragma warning (disable: 4985) // inconsistent decl of ceil

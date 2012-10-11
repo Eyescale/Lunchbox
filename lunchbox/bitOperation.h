@@ -32,8 +32,9 @@
 #elif defined __xlC__
 #  include <builtins.h>
 #  include <byteswap.h>
-#elif defined LB_GCC_4_3_OR_OLDER
+#elif defined (LB_GCC_4_3_OR_OLDER) && !defined(__clang__)
 #  include <byteswap.h>
+#  define LB_GCC_BSWAP_FUNCTION
 #endif
 
 namespace lunchbox
@@ -112,7 +113,7 @@ namespace lunchbox
         value = _byteswap_ulong( value );
 #elif defined __xlC__
         __store4r( value, &value );
-#elif defined LB_GCC_4_3_OR_OLDER
+#elif defined LB_GCC_BSWAP_FUNCTION
         value = bswap_32( value );
 #else
         value = __builtin_bswap32( value );
@@ -145,7 +146,7 @@ namespace lunchbox
         value = _byteswap_uint64( value );
 #elif defined __xlC__
         value = __bswap_constant_64( value );
-#elif defined LB_GCC_4_3_OR_OLDER
+#elif defined LB_GCC_BSWAP_FUNCTION
         value = bswap_64( value );
 #else
         value = __builtin_bswap64( value );

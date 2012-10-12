@@ -203,7 +203,6 @@ public:
             if( dotPos != std::string::npos )
                 name = name.substr( 0, dotPos );
 
-            const std::string dot = ".";
             hosts.push_back( name );
             hosts.push_back( name + ".local." );
 

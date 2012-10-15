@@ -35,6 +35,8 @@
 #  define atoll _atoi64
 #  define snprintf _snprintf
 #  define getpid _getpid
+#else
+#  include <unistd.h>
 #endif
 
 namespace lunchbox

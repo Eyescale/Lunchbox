@@ -24,7 +24,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #ifndef _WIN32
-#   include <sys/mman.h>
+#  include <sys/mman.h>
+#  include <unistd.h>
 #endif
 
 namespace lunchbox

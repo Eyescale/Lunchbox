@@ -2,9 +2,9 @@
 
 Welcome to Lunchbox, a C++ library for multi-threaded
 programming. Lunchbox was formerly known as eq::base or co::base, the
-foundation for the Equlizer parallel rendering framework and the Collage
+foundation for the Equalizer parallel rendering framework and the Collage
 network library. It is intended for all application developers creating
-high-preformance multi-threaded programs.
+high-performance multi-threaded programs.
 
 ## Features
 

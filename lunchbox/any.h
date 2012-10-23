@@ -27,6 +27,7 @@
 #define LUNCHBOX_ANY_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/debug.h>
 
 #include <boost/config.hpp>
 #include <boost/type_traits/remove_reference.hpp>
@@ -212,10 +213,11 @@ ValueType any_cast( Any& operand )
 {
     typedef typename boost::remove_reference< ValueType >::type nonref;
 
-    nonref * result = any_cast<nonref>(&operand);
-    if(!result)
-        boost::throw_exception( bad_any_cast( operand.type().name(),
-                                              typeid( nonref ).name( )));
+    nonref* result = any_cast< nonref >( &operand );
+    if( !result )
+        boost::throw_exception(
+                      bad_any_cast( demangleTypeID( operand.type().name( )),
+                                    demangleTypeID( typeid( nonref ).name( ))));
     return *result;
 }
 

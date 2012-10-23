@@ -6,6 +6,7 @@ foundation for the Equlizer parallel rendering framework and the Collage
 network library. It is intended for all application developers creating
 high-preformance multi-threaded programs.
 
+## Features
 
 Lunchbox provides the following major features to facilitate the
 development and deployment of multi-threaded applications:

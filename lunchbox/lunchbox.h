@@ -34,7 +34,6 @@
  */
 
 #include <lunchbox/any.h>
-#include <lunchbox/anySerialization.h>
 #include <lunchbox/api.h>
 #include <lunchbox/atomic.h>
 #include <lunchbox/buffer.h>

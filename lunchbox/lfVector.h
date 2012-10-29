@@ -258,6 +258,23 @@ public:
         }
 
     /**
+     * Add an element to the vector.
+     *
+     * Completely thread-save with read operations. Existing end() iterators
+     * will keep pointing to the old end of the vector. The size is updated
+     * after the element is inserted, so size() followed by a read is
+     * thread-safe.
+     *
+     * @param item the element to insert.
+     * @version 1.3.2
+     */
+    void push_back_unlocked( const T& item )
+        {
+            push_back_unlocked_( item );
+        }
+
+
+    /**
      * Remove the last element (STL version).
      *
      * A concurrent read on the removed item produces undefined results, in

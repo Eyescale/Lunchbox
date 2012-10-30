@@ -237,7 +237,8 @@ inline ValueType any_cast( const Any& operand )
 template< typename ValueType >
 inline ValueType* unsafe_any_cast( Any* operand )
 {
-    return &static_cast< Any::holder< ValueType >* >( operand->content.get() )->held;
+    return &static_cast< Any::holder< ValueType >* >(
+                             operand->content.get( ))->held;
 }
 
 template< typename ValueType >
@@ -250,7 +251,6 @@ template< typename ValueType >
 ValueType unsafe_any_cast( Any& operand )
 {
     typedef typename boost::remove_reference< ValueType >::type nonref;
-
     return *unsafe_any_cast< nonref >( &operand );
 }
 
@@ -258,7 +258,6 @@ template< typename ValueType >
 ValueType unsafe_any_cast( const Any& operand )
 {
    typedef typename boost::remove_reference< ValueType >::type nonref;
-
    return unsafe_any_cast< const nonref& >( const_cast< Any& >( operand ));
 }
 

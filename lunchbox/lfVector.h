@@ -147,9 +147,8 @@ public:
     /**
      * Add an element to the vector.
      *
-     * The same functionality as provided by push_back() but is not thread-safe
-     * with read operations. The thread safety can be guaranteed with
-     * getWriteLock().
+     * The same functionality as provided by push_back(), but not thread-safe.
+     * The thread safety can be guaranteed using getWriteLock().
      *
      * @param item the element to insert.
      * @version 1.5

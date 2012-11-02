@@ -1,8 +1,8 @@
 
 # Copyright (c) 2012 Stefan Eilemann <eile@eyescale.ch>
 
-set(LUNCHBOX_PUBLIC_HEADERS 
-  ${OUTPUT_INCLUDE_DIR}/lunchbox/version.h 
+set(LUNCHBOX_PUBLIC_HEADERS
+  ${OUTPUT_INCLUDE_DIR}/lunchbox/version.h
   ${DEFINES_FILE}
   any.h
   anySerialization.h
@@ -23,6 +23,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   launcher.h
   lfQueue.h
   lfVector.h
+  lfVector.ipp
   lfVectorIterator.h
   lock.h
   lockable.h

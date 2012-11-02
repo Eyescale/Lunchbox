@@ -1,18 +1,18 @@
 
 /* Copyright (c) 2011-2012, EFPL/Blue Brain Project
- *                          Stefan Eilemann <stefan.eilemann@epfl.ch> 
+ *                          Stefan Eilemann <stefan.eilemann@epfl.ch>
  *
- * This file is part of Lunchbox <https://github.com/BlueBrain/Lunchbox>
+ * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -51,7 +51,7 @@ public:
             return *static_cast< S* >( this );
         }
 
-    template< class U, class W > 
+    template< class U, class W >
     S& operator = ( const IndexIterator< S, U, W >& rhs )
         {
             container_ = rhs.container_;
@@ -64,7 +64,7 @@ public:
     S operator ++ (int) { return S( container_, i_++ ); }
     S operator -- (int) { return S( container_, i_-- ); }
 
-    S operator + ( const size_t& n ) const 
+    S operator + ( const size_t& n ) const
         { return S( container_, i_+n ); }
     S& operator += ( const size_t& n )
         { i_ += n; return *static_cast< S* >( this ); }
@@ -76,7 +76,7 @@ public:
 
     ssize_t operator- ( const S& n ) const { return i_ - n.i_; }
 
-    bool operator == ( const S& rhs ) const 
+    bool operator == ( const S& rhs ) const
         { return container_ == rhs.container_ && i_ == rhs.i_; }
     bool operator != ( const S& rhs ) const
         { return container_ != rhs.container_ || i_ != rhs.i_; }

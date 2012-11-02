@@ -1,18 +1,18 @@
 
 /* Copyright (c) 2011-2012, EFPL/Blue Brain Project
- *                          Stefan Eilemann <stefan.eilemann@epfl.ch> 
+ *                          Stefan Eilemann <stefan.eilemann@epfl.ch>
  *
  * This file is part of Lunchbox <https://github.com/BlueBrain/Lunchbox>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -56,9 +56,9 @@ namespace lunchbox
  */
 template< class T, int32_t nSlots = 32 > class LFVector
 {
+public:
     typedef ScopedFastWrite ScopedWrite;
 
-public:
     /** @version 1.3.2 */
     LFVector() : size_( 0 ) { lb_bzero( slots_, nSlots * sizeof( T* )); }
 
@@ -217,7 +217,7 @@ public:
     iterator begin(); //!< @version 1.3.2
     iterator end(); //!< @version 1.3.2
 
-    /** 
+    /**
      * Resize the vector to at least the given size.
      *
      * In contrast to resize(), expand() only increases the size of the vector,
@@ -237,10 +237,10 @@ public:
         {
             ScopedWrite mutex( lock_ );
             while( newSize > size( ))
-                push_back_unlocked_( item );
+                push_back_unlocked( item );
         }
 
-    /** 
+    /**
      * Add an element to the vector.
      *
      * Completely thread-save with read operations. Existing end() iterators
@@ -254,7 +254,30 @@ public:
     void push_back( const T& item )
         {
             ScopedWrite mutex( lock_ );
-            push_back_unlocked_( item );
+            push_back_unlocked( item );
+        }
+
+    /**
+     * Add an element to the vector.
+     *
+     * The same functionality as provided by push_back() but is not thread-safe
+     * with read operations. The thread safety can be guaranteed with
+     * getWriteLock().
+     *
+     * @param item the element to insert.
+     * @version 1.5.0
+     */
+    void push_back_unlocked( const T& item )
+        {
+            const size_t i = size_ + 1;
+            const int32_t slot = getIndexOfLastBit( i );
+            const size_t sz = ( size_t( 1 )<<slot );
+            if( !slots_[ slot ] )
+                slots_[ slot ] = new T[ sz ];
+
+            const ssize_t index = i ^ sz;
+            slots_[ slot ][ index ] = item;
+            ++size_;
         }
 
     /**
@@ -301,7 +324,7 @@ public:
             return true;
         }
 
-    /** 
+    /**
      * Remove an element.
      *
      * A concurrent read on the item or any following item is not thread
@@ -331,7 +354,7 @@ public:
             return pos;
         }
 
-    /** 
+    /**
      * Remove the last occurence of the given element.
      *
      * A concurrent read on the item or any following item is not thread
@@ -387,6 +410,12 @@ public:
             }
         }
 
+    /** @return the locked mutex for unlocked write operations. @version 1.5 */
+    ScopedWrite getWriteLock()
+        {
+            return ScopedWrite( lock_ );
+        }
+
 private:
     LB_SERIALIZABLE
 
@@ -428,19 +457,6 @@ private:
                 slots_[ nextSlot ] = 0;
             }
         }
-
-    void push_back_unlocked_( const T& item )
-        {
-            const size_t i = size_ + 1;
-            const int32_t slot = getIndexOfLastBit( i );
-            const size_t sz = ( size_t( 1 )<<slot );
-            if( !slots_[ slot ] )
-                slots_[ slot ] = new T[ sz ];
-
-            const ssize_t index = i ^ sz;
-            slots_[ slot ][ index ] = item;
-            ++size_;
-        }
 };
 
 /** Output the vector and  up to 256 items to the ostream. @version 0.1 */
@@ -467,27 +483,27 @@ std::ostream& operator << ( std::ostream& os, const LFVector< T >& v )
 namespace lunchbox
 {
 
-template< class T, int32_t nSlots > inline typename 
+template< class T, int32_t nSlots > inline typename
 LFVector< T, nSlots >::const_iterator LFVector< T, nSlots >::begin() const
-{ 
+{
     return const_iterator( this, 0 );
 }
-       
+
 template< class T, int32_t nSlots > inline typename
 LFVector< T, nSlots >::const_iterator LFVector< T, nSlots >::end() const
-{ 
+{
     return const_iterator( this, size_ );
 }
 
 template< class T, int32_t nSlots > inline typename
 LFVector< T, nSlots >::iterator LFVector< T, nSlots >::begin()
-{ 
+{
     return iterator( this, 0 );
 }
-       
+
 template< class T, int32_t nSlots > inline typename
 LFVector< T, nSlots >::iterator LFVector< T, nSlots >::end()
-{ 
+{
     return iterator( this, size_ );
 }
 

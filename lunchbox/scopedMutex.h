@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -21,7 +21,6 @@
 #include <lunchbox/condition.h>   // used in inline method
 #include <lunchbox/lock.h>        // used in inline method
 #include <lunchbox/lockable.h>    // used in inline method
-#include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/types.h>
 
 namespace lunchbox
@@ -50,18 +49,18 @@ namespace lunchbox
 
     /**
      * A scoped mutex.
-     * 
+     *
      * The mutex is automatically set upon creation, and released when the
      * scoped mutex is destroyed, e.g., when the scope is left. The scoped mutex
      * does nothing if a 0 pointer for the lock is passed.
      */
     template< class L = Lock, class T = WriteOp >
-    class ScopedMutex : public NonCopyable
+    class ScopedMutex
     {
         typedef ScopedMutexLocker< L, T > LockTraits;
 
     public:
-        /** 
+        /**
          * Construct a new scoped mutex and set the given lock.
          *
          * Providing no Lock (0) is allowed, in which case the scoped mutex does
@@ -77,11 +76,26 @@ namespace lunchbox
         explicit ScopedMutex( L& lock ) : _lock( &lock )
             { LockTraits::set( lock ); }
 
+        /** Move lock from rhs to new mutex. @version 1.5 */
+        ScopedMutex( const ScopedMutex& rhs ) : _lock( rhs._lock )
+            { const_cast< ScopedMutex& >( rhs )._lock = 0; }
+
+        /** Move lock from rhs to this mutex. @version 1.5 */
+        ScopedMutex& operator = ( ScopedMutex& rhs )
+            {
+                if( this != &rhs )
+                {
+                    _lock = rhs._lock;
+                    rhs._lock = 0;
+                }
+                return *this;
+            }
+
         /**
          * Construct a new scoped mutex for the given Lockable data structure.
          * @version 1.0
          */
-        template< typename LB > ScopedMutex( LB& lockable )
+        template< typename LB > explicit ScopedMutex( const LB& lockable )
                 : _lock( &lockable.lock ) { LockTraits::set( lockable.lock ); }
 
         /** Destruct the scoped mutex and unset the mutex. @version 1.0 */

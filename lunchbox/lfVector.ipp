@@ -233,7 +233,7 @@ bool LFVector< T, nSlots >::pop_back( T& element )
 }
 
 template< class T, int32_t nSlots > typename LFVector< T, nSlots >::iterator
-LFVector< T, nSlots >::erase( LFVector< T, nSlots >::iterator pos )
+LFVector< T, nSlots >::erase( typename LFVector< T, nSlots >::iterator pos )
 {
     LBASSERT( pos.container_ == this );
     if( pos.container_ != this || pos.i_ >= size_ )

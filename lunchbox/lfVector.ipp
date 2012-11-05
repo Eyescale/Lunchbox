@@ -183,28 +183,19 @@ void LFVector< T, nSlots >::expand( const size_t newSize, const T& item )
 {
     ScopedWrite mutex( lock_ );
     while( newSize > size( ))
-        push_back_unlocked( item );
+        push_back_unlocked_( item );
 }
 
 template< class T, int32_t nSlots >
-void LFVector< T, nSlots >::push_back( const T& item )
+void LFVector< T, nSlots >::push_back( const T& item, bool lock )
 {
-    ScopedWrite mutex( lock_ );
-    push_back_unlocked( item );
-}
-
-template< class T, int32_t nSlots >
-void LFVector< T, nSlots >::push_back_unlocked( const T& item )
-{
-    const size_t i = size_ + 1;
-    const int32_t slot = getIndexOfLastBit( i );
-    const size_t sz = ( size_t( 1 )<<slot );
-    if( !slots_[ slot ] )
-        slots_[ slot ] = new T[ sz ];
-
-    const ssize_t index = i ^ sz;
-    slots_[ slot ][ index ] = item;
-    ++size_;
+    if( lock )
+    {
+        ScopedWrite mutex( lock_ );
+        push_back_unlocked_( item );
+        return;
+    }
+    push_back_unlocked_( item );
 }
 
 template< class T, int32_t nSlots >
@@ -318,6 +309,20 @@ void LFVector< T, nSlots >::assign_( const LFVector< T, fromSlots >& from )
             ++size_;
         }
     }
+}
+
+template< class T, int32_t nSlots >
+void LFVector< T, nSlots >::push_back_unlocked_( const T& item )
+{
+    const size_t i = size_ + 1;
+    const int32_t slot = getIndexOfLastBit( i );
+    const size_t sz = ( size_t( 1 )<<slot );
+    if( !slots_[ slot ] )
+        slots_[ slot ] = new T[ sz ];
+
+    const ssize_t index = i ^ sz;
+    slots_[ slot ][ index ] = item;
+    ++size_;
 }
 
 template< class T, int32_t nSlots >

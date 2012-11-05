@@ -140,20 +140,10 @@ public:
      * thread-safe.
      *
      * @param item the element to insert.
+     * @param lock true for internal lock, false if locked with getWriteLock()
      * @version 1.3.2
      */
-    void push_back( const T& item );
-
-    /**
-     * Add an element to the vector.
-     *
-     * The same functionality as provided by push_back(), but not thread-safe.
-     * The thread safety can be guaranteed using getWriteLock().
-     *
-     * @param item the element to insert.
-     * @version 1.5
-     */
-    void push_back_unlocked( const T& item );
+    void push_back( const T& item, bool lock = true );
 
     /**
      * Remove the last element (STL version).
@@ -231,6 +221,8 @@ private:
 
     template< int32_t fromSlots >
     void assign_( const LFVector< T, fromSlots >& from );
+
+    void push_back_unlocked_( const T& item );
 
     void trim_();
 };

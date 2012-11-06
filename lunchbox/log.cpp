@@ -5,12 +5,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -27,6 +27,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
 #ifdef WIN32_API
 #  include <process.h>
 #endif
@@ -81,6 +82,7 @@ static std::ostream* _logStream = &std::cout;
 #else
 static std::ostream* _logStream = &std::cerr;
 #endif
+static std::ostream* _logFile = 0;
 
 int Log::getLogLevel( const char* text )
 {
@@ -149,12 +151,41 @@ void Log::exit()
     Log* log = _logInstance.get();
     _logInstance = 0;
     delete log;
+
+    delete _logFile;
+    _logFile = 0;
+
+#ifdef NDEBUG
+    _logStream = &std::cout;
+#else
+    _logStream = &std::cerr;
+#endif
 }
 
 void Log::setOutput( std::ostream& stream )
 {
     _logStream = &stream;
     exit();
+}
+
+bool Log::setOutput( const std::string& file )
+{
+    std::ostream* oldLog = _logStream;
+    std::ofstream* newLog = new std::ofstream( file.c_str( ));
+
+    if( newLog->is_open( ))
+    {
+        setOutput( *newLog );
+        *oldLog << "Redirected log to " << file << std::endl;
+
+        delete _logFile;
+        _logFile = newLog;
+        return true;
+    }
+
+    LBWARN << "Can't open log file " << file << ": " << sysError << std::endl;
+    delete newLog;
+    return false;
 }
 
 void Log::setClock( Clock* clock )
@@ -212,7 +243,7 @@ int LogBuffer::sync()
     {
         const std::string& string = _stringStream.str();
         {
-            ScopedMutex< Lock > mutex( _lock ); 
+            ScopedMutex< Lock > mutex( _lock );
             _stream.write( string.c_str(), string.length( ));
             _stream.rdbuf()->pubsync();
         }

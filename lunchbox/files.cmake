@@ -13,6 +13,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   clock.h
   compiler.h
   condition.h
+  daemon.h
   debug.h
   defines.h
   dso.h

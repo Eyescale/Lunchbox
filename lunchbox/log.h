@@ -165,8 +165,11 @@ namespace lunchbox
         /** @return the log level of a string representation. @version 1.3.2 */
         static LUNCHBOX_API int getLogLevel( const char* level );
 
-        /** Change the output stream. */
+        /** Change the output stream. @version 1.4*/
         static LUNCHBOX_API void setOutput( std::ostream& stream );
+
+        /** Change the output stream to the given file. @version 1.5.1 */
+        static LUNCHBOX_API bool setOutput( const std::string& file );
 
         /** Get the current output stream. @internal */
         static LUNCHBOX_API std::ostream& getOutput ();

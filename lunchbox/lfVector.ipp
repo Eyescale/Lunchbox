@@ -1,6 +1,7 @@
 
 /* Copyright (c) 2011-2012, EFPL/Blue Brain Project
  *                          Daniel Nachbaur <daniel.nachbaur@epfl.ch>
+ *                          Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -189,12 +190,7 @@ void LFVector< T, nSlots >::expand( const size_t newSize, const T& item )
 template< class T, int32_t nSlots >
 void LFVector< T, nSlots >::push_back( const T& item, bool lock )
 {
-    if( lock )
-    {
-        ScopedWrite mutex( lock_ );
-        push_back_unlocked_( item );
-        return;
-    }
+    ScopedWrite mutex( lock ? &lock_ : 0 );
     push_back_unlocked_( item );
 }
 

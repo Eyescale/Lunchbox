@@ -151,6 +151,11 @@ void Log::exit()
     Log* log = _logInstance.get();
     _logInstance = 0;
     delete log;
+}
+
+void Log::reset()
+{
+    exit();
 
     delete _logFile;
     _logFile = 0;

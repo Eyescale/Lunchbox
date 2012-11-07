@@ -159,6 +159,9 @@ namespace lunchbox
         /** Exit the log instance for the current thread. */
         static LUNCHBOX_API void exit();
 
+        /** @internal */
+        static LUNCHBOX_API void reset();
+
         /** The string representation of the current log level. */
         static std::string& getLogLevelString();
 

@@ -19,7 +19,9 @@
 #define LUNCHBOX_DAEMON_H
 
 #include <lunchbox/debug.h>
-#include <unistd.h>
+#ifndef _MSC_VER
+#  include <unistd.h>
+#endif
 
 namespace lunchbox
 {

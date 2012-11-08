@@ -33,8 +33,12 @@
 #  include <builtins.h>
 #  include <byteswap.h>
 #elif defined (LB_GCC_4_3_OR_OLDER) && !defined(__clang__)
-#  include <byteswap.h>
-#  define LB_GCC_BSWAP_FUNCTION
+#  if defined( __APPLE__ ) && !defined( AVAILABLE_MAC_OS_X_VERSION_10_7_AND_LATER ) && ( __GNUC__ == 4 ) && ( __GNUC_MINOR__ == 2 )
+#    undef LB_GCC_BSWAP_FUNCTION
+#  else
+#    include <byteswap.h>
+#    define LB_GCC_BSWAP_FUNCTION
+#  endif
 #endif
 
 namespace lunchbox

@@ -183,7 +183,7 @@ public:
      *         end() if nothing was erased.
      * @version 1.3.2
      */
-    iterator erase( iterator pos );
+    iterator erase( typename LFVector< T, nSlots >::iterator pos );
 
     /**
      * Remove the last occurence of the given element.

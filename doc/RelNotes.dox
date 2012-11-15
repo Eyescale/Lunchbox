@@ -68,6 +68,9 @@
 <h3>2.1. New Features</h3>
 <ul>
   <li>Any, a serializable derivative of boost::any.</li>
+  <li>daemonize function to create daemon programs</li>
+  <li>byteswap template function to perform little-to-big-endian or
+    big-to-little endian swapping.</li>
 </ul>
 
 <a name="enhancements"></a>
@@ -75,6 +78,8 @@
 <ul>
   <li>New compiler support: XLC 9 on PowerPC, gcc 4.1.</li>
   <li>Copyable (move semantics) ScopedMutex</li>
+  <li>Method to directly redirect Log to a file</li>
+  <li>Improved Buffer, uint128_t and LFVector APIs</li>
   <li><a href="https://github.com/Eyescale/Lunchbox/issues/7">Servus get API</a>
     for announced keys</li>
 </ul>

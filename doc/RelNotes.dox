@@ -67,10 +67,11 @@
 <a name="newFeatures"></a>
 <h3>2.1. New Features</h3>
 <ul>
-  <li>Any, a serializable derivative of boost::any.</li>
-  <li>daemonize function to create daemon programs</li>
+  <li>Any, a serializable derivative of boost::any</li>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/10">daemonize</a>
+    function to create daemon programs</li>
   <li>byteswap template function to perform little-to-big-endian or
-    big-to-little endian swapping.</li>
+    big-to-little endian swapping</li>
 </ul>
 
 <a name="enhancements"></a>
@@ -118,6 +119,8 @@
   find any other issue with this release.
 </p>
 <ul>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/6">6:</a>
+    Condition::timedWait does not wait on early RHEL 6.1 versions</li>
 </ul>
 
 <a name="about"></a>
@@ -134,19 +137,19 @@
   following platforms and build environments are tested:
 </p>
 <ul>
-  <li><b>Linux:</b> Ubuntu 11.10, 12.04, RHEL 6.1 (Makefile, i386, x64)</li>
+  <li><b>Linux:</b> Ubuntu 12.04, 12.10, RHEL 6 (Makefile, i386, x64)</li>
   <li><b>Windows:</b> 7 (Visual Studio 2008, i386, x64)</li>
-  <li><b>Mac OS X:</b> 10.7 (Makefile, XCode, i386, x64)</li>
+  <li><b>Mac OS X:</b> 10.8 (Makefile, XCode, i386, x64)</li>
 </ul>
 
 <a name="documentation"></a>
 <h3>3.2. Documentation</h3>
 <p>
-  The <a href="http://eyescale.github.com/Lunchbox-1.4.0/index.html">API
-  documentation</a> can be found on
+  The <a href="http://eyescale.github.com/Lunchbox-1.6/index.html">API
+    documentation</a> can be found on
   <a href="http://eyescale.github.com/">eyescale.github.com</a>. As with any
   open source project, the available source code, in particular the
-  <a href="https://github.com/Eyescale/Lunchbox/tree/1.4.0/tests">unit tests</a>
+  <a href="https://github.com/Eyescale/Lunchbox/tree/1.6/tests">unit tests</a>
   provide a reference for developing applications.
 </p>
 

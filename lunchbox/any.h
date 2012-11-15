@@ -29,19 +29,12 @@
 #include <lunchbox/api.h>
 #include <lunchbox/debug.h>
 
-#include <boost/config.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/is_reference.hpp>
-#include <boost/throw_exception.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-
-#include <algorithm>
-#include <typeinfo>
 
 // See boost/python/type_id.hpp
 // TODO: add BOOST_TYPEID_COMPARE_BY_NAME to config.hpp

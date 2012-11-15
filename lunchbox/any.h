@@ -50,23 +50,42 @@
 
 namespace lunchbox
 {
+
+/**
+ * A class which can hold instances of any type.
+ *
+ * This class is based on boost.any with the extension to support serialization
+ * through boost.serialization if the the ValueType supports this type of
+ * serialization.
+ */
 class Any
 {
 public:
+    /** @name Construction/Destruction */
+    //@{
+    /** Construct a new, empty Any. @version 1.5.0 */
     LUNCHBOX_API Any();
 
+    /** Construct a new Any with the given value. @version 1.5.0 */
     template< typename ValueType >
     Any( const ValueType& value )
       : content( new holder< ValueType >( value ))
     {
     }
 
+    /** Copy-construct a new Any with copying content of other. @version 1.5.0*/
     LUNCHBOX_API Any( const Any& other );
 
+    /** Destruct this Any. @version 1.5.0 */
     LUNCHBOX_API ~Any();
+    //@}
 
+    /** @name Modifiers */
+    //@{
+    /** Exchange the content of this and rhs. @version 1.5.0 */
     LUNCHBOX_API Any& swap( Any& rhs );
 
+    /** Assign a new value to this Any. @version 1.5.0 */
     template< typename ValueType >
     Any& operator=( const ValueType& rhs )
     {
@@ -74,17 +93,37 @@ public:
         return *this;
     }
 
+    /** Exchange the content of this and rhs. @version 1.5.0 */
     LUNCHBOX_API Any& operator=( Any rhs );
+    //@}
 
+    /** @name Queries */
+    //@{
+    /** @return true if this Any is not holding a value. @version 1.5.0 */
     LUNCHBOX_API bool empty() const;
 
+    /**
+     * @return the typeid of the contained value if non-empty, otherwise
+     * typeid(void).
+     * @version 1.5.0
+     */
     LUNCHBOX_API const std::type_info& type() const;
 
+    /**
+     * @return true if this and rhs are empty or if their values are equal.
+     * @version 1.5.0
+     */
     LUNCHBOX_API bool operator == ( const Any& rhs ) const;
 
+    /**
+     * @return true if the value from this and rhs are not equal.
+     * @version 1.5.0
+     */
     bool operator != ( const Any& rhs ) const { return !(*this == rhs); }
+    //@}
 
 
+    /** @internal */
     class placeholder
     {
     public:
@@ -109,6 +148,7 @@ public:
 
     BOOST_SERIALIZATION_ASSUME_ABSTRACT(placeholder)
 
+    /** @internal */
     template< typename ValueType >
     class holder : public placeholder
     {
@@ -154,7 +194,6 @@ public:
     };
 
 private:
-
     template< typename ValueType >
     friend ValueType* any_cast( Any* );
 
@@ -171,17 +210,24 @@ private:
     boost::shared_ptr< placeholder > content;
 };
 
+/** A specialization for exceptions thrown by an unsuccessful any_cast. */
 class bad_any_cast : public std::bad_cast
 {
 public:
     LUNCHBOX_API bad_any_cast( const std::string& from, const std::string& to );
 
-    virtual const char * what() const throw() { return data; }
+    virtual const char* what() const throw() { return data; }
 
 private:
     char data[256];
 };
 
+/**
+ * Retrieve the value stored in an Any including type checking.
+ *
+ * @return the value stored in the given Any, 0 if types are not matching
+ * @version 1.5.0
+ */
 template< typename ValueType >
 ValueType* any_cast( Any* operand )
 {
@@ -195,12 +241,25 @@ ValueType* any_cast( Any* operand )
         : 0;
 }
 
+/**
+ * Retrieve the value stored in an Any including type checking.
+ *
+ * @return the value stored in the given Any, 0 if types are not matching
+ * @version 1.5.0
+ */
 template< typename ValueType >
 inline const ValueType* any_cast( const Any* operand )
 {
     return any_cast<ValueType>(const_cast<Any *>(operand));
 }
 
+/**
+ * Retrieve the value stored in an Any including type checking.
+ *
+ * @return the value stored in the given Any
+ * @throws bad_any_cast if types are not matching
+ * @version 1.5.0
+ */
 template< typename ValueType >
 ValueType any_cast( Any& operand )
 {
@@ -214,6 +273,13 @@ ValueType any_cast( Any& operand )
     return *result;
 }
 
+/**
+ * Retrieve the value stored in an Any including type checking.
+ *
+ * @return the value stored in the given Any
+ * @throws bad_any_cast if types are not matching
+ * @version 1.5.0
+ */
 template< typename ValueType >
 inline ValueType any_cast( const Any& operand )
 {
@@ -222,11 +288,12 @@ inline ValueType any_cast( const Any& operand )
     return any_cast< const nonref& >( const_cast< Any& >( operand ));
 }
 
-// Note: The "unsafe" versions of any_cast are not part of the
-// public interface and may be removed at any time. They are
-// required where we know what type is stored in the any and can't
-// use typeid() comparison, e.g., when our types may travel across
-// different shared libraries.
+/**
+ * Retrieve the value stored in an Any without type checking.
+ *
+ * @return the value stored in the given Any
+ * @version 1.5.0
+ */
 template< typename ValueType >
 inline ValueType* unsafe_any_cast( Any* operand )
 {
@@ -234,12 +301,24 @@ inline ValueType* unsafe_any_cast( Any* operand )
                              operand->content.get( ))->held;
 }
 
+/**
+ * Retrieve the value stored in an Any without type checking.
+ *
+ * @return the value stored in the given Any
+ * @version 1.5.0
+ */
 template< typename ValueType >
 inline const ValueType* unsafe_any_cast( const Any* operand )
 {
     return unsafe_any_cast< ValueType >( const_cast< Any* > ( operand ));
 }
 
+/**
+ * Retrieve the value stored in an Any without type checking.
+ *
+ * @return the value stored in the given Any
+ * @version 1.5.0
+ */
 template< typename ValueType >
 ValueType unsafe_any_cast( Any& operand )
 {
@@ -247,6 +326,12 @@ ValueType unsafe_any_cast( Any& operand )
     return *unsafe_any_cast< nonref >( &operand );
 }
 
+/**
+ * Retrieve the value stored in an Any without type checking.
+ *
+ * @return the value stored in the given Any
+ * @version 1.5.0
+ */
 template< typename ValueType >
 ValueType unsafe_any_cast( const Any& operand )
 {

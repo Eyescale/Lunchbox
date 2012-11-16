@@ -110,6 +110,8 @@
 <ul>
   <li><a href="https://github.com/Eyescale/Lunchbox/issues/9">9:</a>
     Memory leak in Thread::setAffinity</li>
+  <li><a href="https://github.com/Eyescale/Lunchbox/issues/4">4:</a>
+    sleep is not signal-safe</li>
 </ul>
 
 <a name="knownbugs"></a>

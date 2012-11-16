@@ -149,7 +149,9 @@ T& LFVector< T, nSlots >::operator[]( size_t i )
     const int32_t slot = getIndexOfLastBit( i );
     const size_t index = i ^ ( size_t( 1 )<<slot );
 
+    LBASSERTINFO( slot >=0 && slot < nSlots, slot );
     LBASSERT( slots_[ slot ] );
+    LBASSERT( index < (1u<<slot) );
     return slots_[ slot ][ index ];
 }
 
@@ -161,7 +163,9 @@ const T& LFVector< T, nSlots >::operator[]( size_t i ) const
     const int32_t slot = getIndexOfLastBit( i );
     const size_t index = i ^ ( size_t( 1 )<<slot );
 
+    LBASSERTINFO( slot >=0 && slot < nSlots, slot );
     LBASSERT( slots_[ slot ] );
+    LBASSERT( index < (1u<<slot) );
     return slots_[ slot ][ index ];
 }
 

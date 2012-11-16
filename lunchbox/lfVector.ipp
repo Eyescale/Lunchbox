@@ -140,6 +140,12 @@ bool LFVector< T, nSlots >::operator == ( const LFVector& rhs ) const
     return true;
 }
 
+// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=51721
+#ifdef LB_GCC_4_6_OR_LATER
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
+
 template< class T, int32_t nSlots >
 T& LFVector< T, nSlots >::operator[]( size_t i )
 {
@@ -168,6 +174,10 @@ const T& LFVector< T, nSlots >::operator[]( size_t i ) const
     LBASSERT( index < (1u<<slot) );
     return slots_[ slot ][ index ];
 }
+
+#ifdef LB_GCC_4_6_OR_LATER
+#  pragma GCC diagnostic pop
+#endif
 
 template< class T, int32_t nSlots >
 T& LFVector< T, nSlots >::front()

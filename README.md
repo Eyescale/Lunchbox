@@ -19,3 +19,16 @@ development and deployment of multi-threaded applications:
 * Utility classes: Helper primitives which are not in the standard
   library, e.g., logging, pools and random number generation.
 
+## Downloads
+
+* [Ubuntu Packages Repository](https://launchpad.net/~eilemann/+archive/equalizer/)
+* [API Documentation](http://eyescale.github.com/)
+
+### Version 1.6
+
+* [Source Code](http://www.equalizergraphics.com/downloads/Lunchbox-1.6.0.tar.gz)
+
+### Version 1.4
+
+* [Source Code](http://www.equalizergraphics.com/downloads/Lunchbox-1.4.0.tar.gz)
+

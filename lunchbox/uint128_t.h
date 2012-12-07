@@ -1,17 +1,17 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
  *               2010-2012, Stefan Eilemann <eile@eyescale.ch>
- *                    2010, Daniel Nachbaur <danielnachbaur@gmail.com>
+ *               2010-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -45,21 +45,21 @@ namespace lunchbox
          * Construct a new 128 bit integer with a default value.
          * @version 1.0
          */
-        uint128_t( const uint64_t low_ = 0 ) 
+        uint128_t( const uint64_t low_ = 0 )
             : _high( 0 ), _low( low_ ) {}
 
         /**
          * Construct a new 128 bit integer with default values.
          * @version 1.0
          **/
-        explicit uint128_t( const uint64_t high_, const uint64_t low_ ) 
+        explicit uint128_t( const uint64_t high_, const uint64_t low_ )
             : _high( high_ ), _low( low_ ) {}
 
         /**
          * Construct a new 128 bit integer from a string representation.
          * @version 1.3.2
          **/
-        explicit uint128_t( const std::string& string ) 
+        explicit uint128_t( const std::string& string )
             : _high( 0 ), _low( 0 ) { *this = string; }
 
         /** Assign another 128 bit value. @version 1.0 */
@@ -100,12 +100,12 @@ namespace lunchbox
          * @version 1.0
          **/
         bool operator < ( const uint128_t& rhs ) const
-            { 
+            {
                 if( _high < rhs._high )
                     return true;
                 if( _high > rhs._high )
                     return false;
-                return _low < rhs._low; 
+                return _low < rhs._low;
             }
 
         /**
@@ -113,12 +113,12 @@ namespace lunchbox
          * @version 1.0
          */
         bool operator > ( const uint128_t& rhs ) const
-            { 
+            {
                 if( _high > rhs._high )
                     return true;
                 if( _high < rhs._high )
                     return false;
-                return _low > rhs._low; 
+                return _low > rhs._low;
             }
 
         /**
@@ -127,12 +127,12 @@ namespace lunchbox
          * @version 1.0
          */
         bool operator <= ( const uint128_t& rhs ) const
-            { 
+            {
                 if( _high < rhs._high )
                     return true;
                 if( _high > rhs._high )
                     return false;
-                return _low <= rhs._low; 
+                return _low <= rhs._low;
             }
 
         /**
@@ -141,27 +141,27 @@ namespace lunchbox
          * @version 1.0
          */
         bool operator >= ( const uint128_t& rhs ) const
-            { 
+            {
                 if( _high > rhs._high )
                     return true;
                 if( _high < rhs._high )
                     return false;
-                return _low >= rhs._low; 
+                return _low >= rhs._low;
             }
 
         /** Increment the value. @version 1.0 */
         uint128_t& operator ++()
-            { 
+            {
                 ++_low;
                 if( !_low )
                     ++_high;
-                
+
                 return *this;
             }
-        
+
         /** Decrement the value. @version 1.0 */
         uint128_t& operator --()
-            { 
+            {
                 if( !_low )
                     --_high;
                 --_low;
@@ -234,33 +234,42 @@ namespace lunchbox
         return os;
     }
 
+    /** istream operator for 128 bit unsigned integers. @version 1.6.1 */
+    inline std::istream& operator >> ( std::istream& is, uint128_t& id )
+    {
+        std::string str;
+        is >> str;
+        id = str;
+        return is;
+    }
+
     /** Add a 64 bit value to a 128 bit value. @version 1.0 */
-    inline uint128_t operator+ ( const uint128_t& a, const uint64_t& b ) 
+    inline uint128_t operator+ ( const uint128_t& a, const uint64_t& b )
     {
         uint128_t result = a;
         result.low() += b;
         if( result.low() < a.low( ))
             ++result.high();
         return result;
-    };
+    }
 
     /** Add two 128 bit values. @version 1.5.1 */
-    inline uint128_t operator+ ( const uint128_t& a, const uint128_t& b ) 
+    inline uint128_t operator+ ( const uint128_t& a, const uint128_t& b )
     {
         uint128_t result = a;
         result += b;
         return result;
-    };
+    }
 
     /** Subtract a 64 bit value from a 128 bit value. @version 1.0 */
-    inline uint128_t operator- ( const uint128_t& a, const uint64_t& b ) 
+    inline uint128_t operator- ( const uint128_t& a, const uint64_t& b )
     {
         uint128_t result = a;
         result.low() -= b;
         if( result.low() > a.low( ))
             --result.high();
         return result;
-    };
+    }
 
     /** Bitwise and operation on two 128 bit values. @version 1.1.5 */
     inline uint128_t operator & ( const uint128_t& a, const uint128_t& b )
@@ -280,11 +289,11 @@ namespace lunchbox
         return result;
     }
 
-    /** 
+    /**
      * Create a 128 bit integer based on a string.
      *
      * The MD5 hash of the given text is used to form the uint128_t.
-     * 
+     *
      * @param string the string to form the uint128_t from.
      * @version 1.3.2
      */

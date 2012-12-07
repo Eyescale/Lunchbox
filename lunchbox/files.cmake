@@ -33,6 +33,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   memoryMap.h
   monitor.h
   mtQueue.h
+  mtQueue.ipp
   nonCopyable.h
   omp.h
   os.h

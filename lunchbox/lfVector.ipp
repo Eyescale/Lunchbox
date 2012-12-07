@@ -25,14 +25,14 @@ namespace lunchbox
 {
 
 template< class T, int32_t nSlots >
-LFVector<T, nSlots >::LFVector()
+LFVector< T, nSlots >::LFVector()
     : size_( 0 )
 {
     lb_bzero( slots_, nSlots * sizeof( T* ));
 }
 
 template< class T, int32_t nSlots >
-LFVector<T, nSlots >::LFVector( const size_t n )
+LFVector< T, nSlots >::LFVector( const size_t n )
     : size_( n )
 {
     LBASSERT( n != 0 );
@@ -43,7 +43,7 @@ LFVector<T, nSlots >::LFVector( const size_t n )
 }
 
 template< class T, int32_t nSlots >
-LFVector<T, nSlots >::LFVector( const size_t n, const T& t )
+LFVector< T, nSlots >::LFVector( const size_t n, const T& t )
     : size_( 0 )
 {
     LBASSERT( n != 0 );
@@ -63,7 +63,7 @@ LFVector<T, nSlots >::LFVector( const size_t n, const T& t )
 }
 
 template< class T, int32_t nSlots >
-LFVector<T, nSlots >::LFVector( const LFVector& from )
+LFVector< T, nSlots >::LFVector( const LFVector& from )
     : size_( 0 )
     , lock_()
 {
@@ -72,7 +72,7 @@ LFVector<T, nSlots >::LFVector( const LFVector& from )
 
 template< class T, int32_t nSlots >
 template< int32_t fromSlots >
-LFVector<T, nSlots >::LFVector( const LFVector< T, fromSlots >& from )
+LFVector< T, nSlots >::LFVector( const LFVector< T, fromSlots >& from )
     : size_( 0 )
     , lock_()
 {
@@ -80,7 +80,7 @@ LFVector<T, nSlots >::LFVector( const LFVector< T, fromSlots >& from )
 }
 
 template< class T, int32_t nSlots >
-LFVector<T, nSlots >::~LFVector()
+LFVector< T, nSlots >::~LFVector()
 {
     for( size_t i=0; i < nSlots; ++i )
         delete [] slots_[i];

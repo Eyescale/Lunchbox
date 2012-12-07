@@ -7,12 +7,8 @@ Group:		Development/Libraries
 License:	LGPLv2
 URL:		http://www.equalizergraphics.com/
 Source0:	http://www.equalizergraphics.com/downloads/%{name}-%{version}.tar.gz
-Patch0:		LunchBox-@VERSION@-build-fix.patch
-BuildRequires:	cmake bison flex
-BuildRequires:	boost-devel glew-devel
-BuildRequires:	libX11-devel mesa-libGL-devel
-BuildRequires:	OpenSceneGraph-devel OpenThreads-devel
-
+#Patch0:		LunchBox-@VERSION@-build-fix.patch
+BuildRequires:	cmake boost-devel
 
 %description
 Lunchbox is a C++ toolkit library for multi-threaded programming.

@@ -3,7 +3,7 @@
 include(System)
 set(FIND_PACKAGES_FOUND ${SYSTEM} ${FIND_PACKAGES_FOUND_EXTRA})
 
-find_package(HWLOC 1.4.0)
+find_package(HWLOC 1.3)
 if(HWLOC_FOUND)
   set(HWLOC_name HWLOC)
 elseif(HWLOC_FOUND)

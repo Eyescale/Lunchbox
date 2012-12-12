@@ -103,10 +103,32 @@ namespace lunchbox
          * @param timeout the timeout
          * @param element the element returned
          * @return true if an element was popped
-         * @throws Exception on timeout.
          * @version 1.1
          */
         bool timedPop( const unsigned timeout, T& element );
+
+        /**
+         * Retrieve a number of items from the front of the queue.
+         *
+         * Between minimum and maximum number of items are returned in a
+         * vector. If the queue has less than minimum number of elements on
+         * timeout, the result vector is empty. The method returns as soon as
+         * there are at least minimum elements available, i.e., it does not wait
+         * for the maximum to be reached.
+         *
+         * Note that this method might block up to 'minimum * timeout'
+         * milliseconds, that is, the timeout defines the time to wait for an
+         * update on the queue.
+         *
+         * @param timeout the timeout to wait for an update
+         * @param minimum the minimum number of items to retrieve
+         * @param maximum the maximum number of items to retrieve
+         * @return an empty vector on timeout, otherwise the result vector
+         *         containing between minimum and maximum elements.
+         * @version 1.7.0
+         */
+        std::vector< T > timedPop( const unsigned timeout, const size_t minimum,
+                                   const size_t maximum );
 
         /**
          * Retrieve and pop the front element from the queue if it is not empty.
@@ -119,7 +141,7 @@ namespace lunchbox
         bool tryPop( T& result );
 
         /**
-         * Try to retrieve a number of items for the front of the queue.
+         * Try to retrieve a number of items from the front of the queue.
          *
          * Between zero and the given number of items are appended to the
          * vector.

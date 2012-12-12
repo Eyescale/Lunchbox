@@ -127,8 +127,8 @@ namespace lunchbox
          *         containing between minimum and maximum elements.
          * @version 1.7.0
          */
-        std::vector< T > timedPop( const unsigned timeout, const size_t minimum,
-                                   const size_t maximum );
+        std::vector< T > timedPop( const unsigned timeout, const size_t minimum = 1,
+                                   const size_t maximum = S );
 
         /**
          * Retrieve and pop the front element from the queue if it is not empty.

@@ -234,7 +234,7 @@ namespace lunchbox
         return os;
     }
 
-    /** istream operator for 128 bit unsigned integers. @version 1.6.1 */
+    /** istream operator for 128 bit unsigned integers. @version 1.7.0 */
     inline std::istream& operator >> ( std::istream& is, uint128_t& id )
     {
         std::string str;

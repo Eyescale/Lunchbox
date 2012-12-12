@@ -186,6 +186,17 @@ LB_STDEXT_NAMESPACE_OPEN
         return static_cast< size_t >( key.high() ^ key.low() );
     }
 
+    template<> inline size_t hash_compare< lunchbox::UUID >::operator()
+        ( const lunchbox::UUID& key ) const
+    {
+        return static_cast< size_t >( key.high() ^ key.low() );
+    }
+
+    template<> inline size_t hash_value( const lunchbox::UUID& key )
+    {
+        return static_cast< size_t >( key.high() ^ key.low() );
+    }
+
 #else // MSVC
 
     /** uint128_t hash function. @version 1.0 */
@@ -197,7 +208,7 @@ LB_STDEXT_NAMESPACE_OPEN
             }
     };
 
-    /** UUID hash function. @version 1.6.1 */
+    /** UUID hash function. @version 1.7.0 */
     template<> struct hash< lunchbox::UUID >
     {
         size_t operator()( const lunchbox::UUID& key ) const

@@ -27,6 +27,7 @@
 
 #include <lunchbox/compiler.h>
 #include <lunchbox/uint128_t.h>
+#include <lunchbox/uuid.h>
 
 #include <algorithm>
 #include <string>
@@ -187,10 +188,19 @@ LB_STDEXT_NAMESPACE_OPEN
 
 #else // MSVC
 
-    /** std::string hash function. @version 1.0 */
+    /** uint128_t hash function. @version 1.0 */
     template<> struct hash< lunchbox::uint128_t >
     {
         size_t operator()( const lunchbox::uint128_t& key ) const
+            {
+                return key.high() ^ key.low();
+            }
+    };
+
+    /** UUID hash function. @version 1.6.1 */
+    template<> struct hash< lunchbox::UUID >
+    {
+        size_t operator()( const lunchbox::UUID& key ) const
             {
                 return key.high() ^ key.low();
             }

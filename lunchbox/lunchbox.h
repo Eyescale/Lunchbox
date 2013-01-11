@@ -43,6 +43,7 @@
 #include <lunchbox/file.h>
 #include <lunchbox/lfVector.h>
 #include <lunchbox/monitor.h>
+#include <lunchbox/mtQueue.h>
 #include <lunchbox/perThread.h>
 #include <lunchbox/rng.h>
 #include <lunchbox/scopedMutex.h>

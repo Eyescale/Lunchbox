@@ -116,7 +116,7 @@ if(_eq_Version_file)
       NOT EXISTS "${_eq_Version_file}")
     set(_eq_Version_file "${_eq_INCLUDE_DIR}/Headers/version.h")
   endif()
-    
+
   file(READ "${_eq_Version_file}" _eq_Version_contents)
   string(REGEX REPLACE ".*define EQ_VERSION_MAJOR[ \t]+([0-9]+).*"
     "\\1" EQUALIZER_VERSION_MAJOR ${_eq_Version_contents})
@@ -148,7 +148,7 @@ if(Equalizer_FIND_VERSION AND EQUALIZER_VERSION)
     endif()
   else()
     # version is too low
-    if(NOT EQUALIZER_VERSION VERSION_EQUAL ${Equalizer_FIND_VERSION} AND 
+    if(NOT EQUALIZER_VERSION VERSION_EQUAL ${Equalizer_FIND_VERSION} AND
         NOT EQUALIZER_VERSION VERSION_GREATER ${Equalizer_FIND_VERSION})
       set(_eq_version_not_high_enough TRUE)
     endif()
@@ -205,6 +205,7 @@ else()
   # Matching Collage versions
   set(_eq_coVersion_1.5.1 "0.8.0")
   set(_eq_coVersion_1.5.0 "0.7.0")
+  set(_eq_coVersion_1.4.1 "0.6.1")
   set(_eq_coVersion_1.4.0 "0.6.0")
   set(_eq_coVersion_1.3.7 "0.5.7")
   set(_eq_coVersion_1.3.6 "0.5.6")
@@ -261,25 +262,27 @@ else()
 endif()
 
 if(_eq_EPIC_FAIL OR NOT COLLAGE_FOUND)
-    # Zero out everything, we didn't meet version requirements
-    set(EQUALIZER_FOUND FALSE)
-    set(_eq_LIBRARY)
-    set(_eq_fabric_LIBRARY)
-    set(_eq_INCLUDE_DIR)
+  # Zero out everything, we didn't meet version requirements
+  set(EQUALIZER_FOUND FALSE)
+  set(_eq_LIBRARY)
+  set(_eq_fabric_LIBRARY)
+  set(_eq_INCLUDE_DIR)
+  set(EQUALIZER_INCLUDE_DIRS)
+  set(EQUALIZER_LIBRARIES)
 else()
   if(EQUALIZER_VERSION_ABI LESS 110)
     set(EQUALIZER_DEB_DEPENDENCIES "equalizer (>=${EQUALIZER_VERSION})")
   else()
     set(EQUALIZER_DEB_DEPENDENCIES "equalizer${EQUALIZER_VERSION_ABI}-eqlib")
   endif()
+  set(EQUALIZER_INCLUDE_DIRS ${_eq_INCLUDE_DIR} ${GLEW_MX_INCLUDE_DIRS})
+  set(EQUALIZER_LIBRARIES ${_eq_LIBRARY} ${COLLAGE_LIBRARIES}
+    ${GLEW_MX_LIBRARIES})
+  if(EQUALIZER_VERSION VERSION_GREATER 1.0)
+    set(EQUALIZER_LIBRARIES ${EQUALIZER_LIBRARIES} ${_eq_fabric_LIBRARY})
+  endif()
+  get_filename_component(EQUALIZER_LIBRARY_DIR ${_eq_LIBRARY} PATH)
 endif()
-
-set(EQUALIZER_INCLUDE_DIRS ${_eq_INCLUDE_DIR} ${GLEW_MX_INCLUDE_DIRS})
-set(EQUALIZER_LIBRARIES ${_eq_LIBRARY} ${COLLAGE_LIBRARIES} ${GLEW_MX_LIBRARIES})
-if(EQUALIZER_VERSION VERSION_GREATER 1.0)
-  set(EQUALIZER_LIBRARIES ${EQUALIZER_LIBRARIES} ${_eq_fabric_LIBRARY})
-endif()
-get_filename_component(EQUALIZER_LIBRARY_DIR ${_eq_LIBRARY} PATH)
 
 if(EQUALIZER_FOUND)
   message("-- Found Equalizer ${EQUALIZER_VERSION}/${EQUALIZER_VERSION_ABI} in ${EQUALIZER_INCLUDE_DIRS}"

@@ -74,13 +74,14 @@ add_subdirectory(tests)
 add_subdirectory(doc)
 include(DoxygenRule) # must be after all targets
 
-install(FILES CMake/FindLunchbox.cmake
-  DESTINATION ${CMAKE_MODULE_INSTALL_PATH} COMPONENT dev)
-install(FILES CMake/FindLibraryPackage.cmake
-  DESTINATION ${CMAKE_MODULE_INSTALL_PATH}/FindLunchbox COMPONENT dev)
-
 message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${LUNCHBOX_FEATURES}")
 
 include(CPackConfig)
 include(GNUModules)
+
+set(CTEST_CUSTOM_WARNING_EXCEPTION ${CTEST_CUSTOM_WARNING_EXCEPTION}
+  # http://public.kitware.com/Bug/view.php?id=10179
+  "ld: warning: duplicate dylib")
 include(CTest)
+
+include(PackageConfig)

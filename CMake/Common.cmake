@@ -177,6 +177,7 @@ if(APPLE)
 endif(APPLE)
 
 # hooks to gather all targets (libraries & executables)
+include(CMakeParseArguments)
 set(ALL_DEP_TARGETS "")
 set(ALL_LIB_TARGETS "")
 macro(add_executable _target)
@@ -185,6 +186,28 @@ macro(add_executable _target)
 endmacro()
 macro(add_library _target)
   _add_library(${_target} ${ARGN})
+
+  # ignore IMPORTED add_library from finders (e.g. Qt)
+  cmake_parse_arguments(_arg "IMPORTED" "" "" ${ARGN})
+  if(_arg_IMPORTED)
+    return()
+  endif()
+
+  # add defines TARGET_DSO_NAME and TARGET_SHARED
+  get_target_property(THIS_DEFINITIONS ${_target} COMPILE_DEFINITIONS)
+  if(NOT THIS_DEFINITIONS)
+    set(THIS_DEFINITIONS) # clear THIS_DEFINITIONS-NOTFOUND
+  endif()
+  string(TOUPPER ${_target} _TARGET)
+  get_target_property(_libraryname ${_target} LOCATION)
+  get_filename_component(_libraryname ${_libraryname} NAME)
+
+  list(APPEND THIS_DEFINITIONS
+    ${_TARGET}_SHARED ${_TARGET}_DSO_NAME=\"${_libraryname}\")
+
+  set_target_properties(${_target} PROPERTIES
+    COMPILE_DEFINITIONS "${THIS_DEFINITIONS}")
+
   set_property(GLOBAL APPEND PROPERTY ALL_DEP_TARGETS ${_target})
   set_property(GLOBAL APPEND PROPERTY ALL_LIB_TARGETS ${_target})
 endmacro()

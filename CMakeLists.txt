@@ -1,10 +1,12 @@
 
-# Copyright (c) 2012 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2013 Stefan Eilemann <eile@eyescale.ch>
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
 
 option(LUNCHBOX_USE_OPENMP "Test for OpenMP support" ON)
+option(LUNCHBOX_BUILD_V2_API
+  "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 option(LUNCHBOX_FORCE_OPENMP "Force usage of buggy OpenMP implementation" OFF)
 mark_as_advanced(LUNCHBOX_FORCE_OPENMP)
 
@@ -32,6 +34,14 @@ include(Common)
 include(GitTargets)
 include(UpdateFile)
 
+if(LUNCHBOX_BUILD_V2_API)
+  set(FIND_PACKAGES_FOUND_EXTRA LUNCHBOX_USE_V2_API)
+  set(LUNCHBOX_FEATURES "${LUNCHBOX_FEATURES} APIv2")
+else()
+  set(FIND_PACKAGES_FOUND_EXTRA LUNCHBOX_USE_V1_API)
+  set(LUNCHBOX_FEATURES "${LUNCHBOX_FEATURES} APIv1")
+endif()
+
 if(CMAKE_COMPILER_IS_XLCXX AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(STATUS "Disable OpenMP test for xlC Debug build <http://public.kitware.com/Bug/view.php?id=13469>")
   set(LUNCHBOX_USE_OPENMP OFF)
@@ -44,7 +54,7 @@ if(OPENMP_FOUND)
       NOT LUNCHBOX_FORCE_OPENMP)
     message(STATUS "Disable OpenMP due to bug in gcc ${GCC_COMPILER_VERSION}")
   else()
-    set(FIND_PACKAGES_FOUND_EXTRA LUNCHBOX_USE_OPENMP)
+    list(APPEND FIND_PACKAGES_FOUND_EXTRA LUNCHBOX_USE_OPENMP)
     set(LUNCHBOX_FEATURES "${LUNCHBOX_FEATURES} OpenMP")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")

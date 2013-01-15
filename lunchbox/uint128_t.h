@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010-2012, Stefan Eilemann <eile@eyescale.ch>
+ *               2010-2013, Stefan Eilemann <eile@eyescale.ch>
  *               2010-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -72,6 +72,14 @@ namespace lunchbox
 
         /** Assign another 64 bit value. @version 1.1.1 */
         uint128_t& operator = ( const uint64_t rhs )
+            {
+                _high = 0;
+                _low = rhs;
+                return *this;
+            }
+
+        /** Assign an integer value. @version 1.7.1 */
+        uint128_t& operator = ( const int rhs )
             {
                 _high = 0;
                 _low = rhs;
@@ -216,8 +224,10 @@ namespace lunchbox
             ar & high();
         }
 
-        /** The NULL value. @version 1.1.1 */
+#ifdef LUNCHBOX_USE_V1_API
+        /** @deprecated Do not use, static initializer fiasco. Use '0'. */
         static LUNCHBOX_API const uint128_t ZERO;
+#endif
 
     private:
         uint64_t _high;

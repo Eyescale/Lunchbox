@@ -41,12 +41,6 @@ namespace lunchbox
 
         /**
          * Construct a new universally unique identifier.
-         * @version 1.7.1
-         */
-        UUID( const uint64_t low_ ) : uint128_t( 0, low_ ) {}
-
-        /**
-         * Construct a new universally unique identifier.
          * @version 1.0
          */
         UUID( const uint64_t high_, const uint64_t low_ )

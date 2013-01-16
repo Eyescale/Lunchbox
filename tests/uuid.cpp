@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2010-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2010-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -44,7 +44,7 @@ public:
             while( i-- )
             {
                 lunchbox::UUID uuid( true );
-        
+
                 TESTINFO( hash.find( uuid ) == hash.end(),
                           "Iteration " << N_UUIDS - i );
                 hash[ uuid ] = true;
@@ -62,26 +62,26 @@ int main( int argc, char **argv )
     lunchbox::UUID id1( true );
     lunchbox::UUID id2( true );
 
-    TEST( id1 != lunchbox::UUID::ZERO );
+    TEST( id1 != 0 );
     TEST( id1 != id2 );
 
     id1 = id2;
     TEST( id1 == id2 );
-    
+
     lunchbox::UUID* id3 = new lunchbox::UUID( id1 );
     lunchbox::UUID* id4 = new lunchbox::UUID( true );
 
     TEST( id1 == *id3 );
     TEST( *id4 != *id3 );
-    
+
     *id4 = *id3;
     TEST( *id4 == *id3 );
-    
+
     delete id3;
     delete id4;
 
     lunchbox::UUID id5, id6;
-    TEST( id5 == lunchbox::UUID::ZERO );
+    TEST( id5 == 0 );
     TEST( id5 == id6 );
 
     const lunchbox::uint128_t& empty = lunchbox::make_uint128( "" );
@@ -109,8 +109,8 @@ int main( int argc, char **argv )
         threads[ i ].start();
     for( size_t i = 0; i < N_THREADS; ++i )
         threads[ i ].join();
-    
-    LBINFO << N_UUIDS * N_THREADS /clock.getTimef() 
+
+    LBINFO << N_UUIDS * N_THREADS /clock.getTimef()
            << " UUID generations and hash ops / ms" << std::endl;
 
     TestHash& first = threads[0].hash;
@@ -205,7 +205,7 @@ void testIncrement()
         test128 = test128 + 1;
         TEST( test128.high() == 1 && test128.low() == 0 );
         test128 = test128 - 1;
-        TEST( test128.high() == 0 && 
+        TEST( test128.high() == 0 &&
               test128.low() == std::numeric_limits< uint64_t >::max() );
     }
 }

@@ -1,22 +1,22 @@
 
-/* Copyright (c) 2011-2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2011-2013, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 #include "uint128_t.h"
-#include "debug.h" 
+#include "debug.h"
 #include "md5/md5.hh"
 
 #include <cstdlib> // for strtoull
@@ -28,8 +28,9 @@
 
 namespace lunchbox
 {
-/** Special identifier values */
-const uint128_t uint128_t::ZERO;
+#ifdef LUNCHBOX_USE_V1_API
+const uint128_t uint128_t::ZERO; //!< Special identifier values
+#endif
 
 uint128_t& uint128_t::operator = ( const std::string& from )
 {
@@ -68,7 +69,7 @@ uint128_t make_uint128( const char* string )
     MD5 md5( (unsigned char*)string );
     uint8_t* data = md5.raw_digest();
 
-    const uint128_t 
+    const uint128_t
         value( (uint64_t( data[7] )<<0) | (uint64_t( data[6] )<<8) |
                (uint64_t( data[5] )<<16) | (uint64_t( data[4] )<<24) |
                (uint64_t( data[3] )<<32) | (uint64_t( data[2] )<<40) |

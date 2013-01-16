@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *               2012, Marwan Abdellah <marwan.abdellah@epfl.ch>
  *               2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
@@ -196,7 +196,6 @@ public:                                                     \
     {                                                       \
         NAME ## Struct ()                                   \
             : extMutex( false )                             \
-            , inRegion( lunchbox::ThreadID::ZERO )          \
             {}                                              \
         mutable lunchbox::ThreadID id;                      \
         mutable std::string name;                           \
@@ -206,11 +205,11 @@ public:                                                     \
 private:
 
 #ifdef LB_CHECK_THREADSAFETY
-#  define LB_TS_RESET( NAME ) NAME.id = lunchbox::ThreadID::ZERO;
+#  define LB_TS_RESET( NAME ) NAME.id = lunchbox::ThreadID();
 
 #  define LB_TS_THREAD( NAME )                                          \
     {                                                                   \
-        if( NAME.id == lunchbox::ThreadID::ZERO )                       \
+        if( NAME.id == lunchbox::ThreadID( ))                           \
         {                                                               \
             NAME.id = lunchbox::Thread::getSelfThreadID();              \
             NAME.name = lunchbox::Log::instance().getThreadName();      \
@@ -231,7 +230,7 @@ private:
 
 #  define LB_TS_NOT_THREAD( NAME )                                      \
     {                                                                   \
-        if( !NAME.extMutex && NAME.id != lunchbox::ThreadID::ZERO )     \
+        if( !NAME.extMutex && NAME.id != lunchbox::ThreadID( ))         \
         {                                                               \
             if( NAME.id == lunchbox::Thread::getSelfThreadID( ))        \
             {                                                           \
@@ -250,7 +249,7 @@ private:
         explicit ScopedThreadCheck( const T& data )
                 : _data( data )
         {
-            LBASSERTINFO( data.inRegion == lunchbox::ThreadID::ZERO ||
+            LBASSERTINFO( data.inRegion == lunchbox::ThreadID() ||
                           data.inRegion == lunchbox::Thread::getSelfThreadID(),
                           "Another thread already in critical region" );
             data.inRegion = lunchbox::Thread::getSelfThreadID();
@@ -258,10 +257,10 @@ private:
 
         ~ScopedThreadCheck()
         {
-            LBASSERTINFO( _data.inRegion == lunchbox::ThreadID::ZERO ||
+            LBASSERTINFO( _data.inRegion == lunchbox::ThreadID() ||
                           _data.inRegion == lunchbox::Thread::getSelfThreadID(),
                           "Another thread entered critical region" );
-            _data.inRegion = lunchbox::ThreadID::ZERO;
+            _data.inRegion = lunchbox::ThreadID();
         }
     private:
         const T& _data;

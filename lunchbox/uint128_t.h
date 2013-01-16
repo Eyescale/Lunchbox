@@ -225,7 +225,7 @@ namespace lunchbox
         }
 
 #ifdef LUNCHBOX_USE_V1_API
-        /** @deprecated Do not use, static initializer fiasco. Use '0'. */
+        /** @deprecated Don't use, static initializer fiasco. Use 0/uint128_t()*/
         static LUNCHBOX_API const uint128_t ZERO;
 #endif
 

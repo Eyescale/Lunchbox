@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012, EFPL/Blue Brain Project
+/* Copyright (c) 2012, EPFL/Blue Brain Project
  *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>

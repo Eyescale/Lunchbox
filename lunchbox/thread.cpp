@@ -382,7 +382,7 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
         return cpuSet;
     }
 
-    if( affinity >= 0 )
+    if( affinity == Thread::NONE )
         return cpuSet;
 
     // Sets the affinity to a specific CPU or "socket"
@@ -408,6 +408,9 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
 
 void Thread::setAffinity( const int32_t affinity )
 {
+    if( affinity == Thread::NONE )
+        return;
+
 #ifdef LUNCHBOX_USE_HWLOC
     hwloc_topology_t topology;
     hwloc_topology_init( &topology ); // Allocate & initialize the topology

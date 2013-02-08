@@ -1,16 +1,16 @@
 
 /* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com>
- *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+ *               2012-2013, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -23,14 +23,12 @@
 #include <lunchbox/thread.h>
 #include <iostream>
 
-#ifdef LUNCHBOX_USE_BOOST
-#  include <boost/intrusive_ptr.hpp>
-#  include <boost/make_shared.hpp>
-#  include <boost/shared_ptr.hpp>
-#  include <boost/serialization/access.hpp>
-#  include <boost/archive/text_oarchive.hpp>
-#  include <boost/archive/text_iarchive.hpp>
-#endif
+#include <boost/intrusive_ptr.hpp>
+#include <boost/make_shared.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #define NTHREADS 24
 #define NREFS    200000
@@ -41,13 +39,11 @@ public:
     Foo() {}
 
 private:
-#ifdef LUNCHBOX_USE_BOOST
     friend class boost::serialization::access;
     template< class Archive >
     void serialize( Archive& ar, unsigned int version )
     {
     }
-#endif
     virtual ~Foo() {}
 };
 
@@ -69,7 +65,6 @@ public:
         }
 };
 
-#ifdef LUNCHBOX_USE_BOOST
 typedef boost::intrusive_ptr<Foo> BoostPtr;
 BoostPtr bFoo;
 
@@ -87,7 +82,6 @@ public:
             }
         }
 };
-#endif
 
 class Bar : public lunchbox::Referenced
 {
@@ -96,7 +90,6 @@ public:
     virtual ~Bar() {}
 };
 
-#ifdef LUNCHBOX_USE_BOOST
 typedef boost::shared_ptr<Bar> BarPtr;
 BarPtr bBar;
 
@@ -114,7 +107,6 @@ public:
             }
         }
 };
-#endif
 
 int main( int argc, char **argv )
 {
@@ -130,12 +122,11 @@ int main( int argc, char **argv )
 
     const float time = clock.getTimef();
     std::cout << time << " ms for " << 3*NREFS << " lunchbox::RefPtr operations"
-              << " in " << NTHREADS << " threads (" 
+              << " in " << NTHREADS << " threads ("
               << time/(3*NREFS*NTHREADS)*1000000 << "ns/op)" << std::endl;
 
     TEST( foo->getRefCount() == 1 );
 
-#ifdef LUNCHBOX_USE_BOOST
     bFoo = new Foo;
     BThread bThreads[NTHREADS];
     clock.reset();
@@ -154,7 +145,7 @@ int main( int argc, char **argv )
 
     boost::intrusive_ptr< Foo > boostFoo( foo.get( ));
     TEST( foo->getRefCount() == 2 );
-    
+
     boostFoo = 0;
     TEST( foo->getRefCount() == 1 );
 
@@ -201,7 +192,6 @@ int main( int argc, char **argv )
     TEST( outFoo1->getRefCount() == 1 );
     FooPtr outFoo2 = outFoo1;
     TEST( outFoo2->getRefCount() == 2 );
-#endif
 
     return EXIT_SUCCESS;
 }

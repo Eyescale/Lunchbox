@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2012, EPFL/Blue Brain Project
+/* Copyright (c) 2011-2013, EPFL/Blue Brain Project
  *                          Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -370,7 +370,6 @@ LFVector< T, nSlots >::iterator LFVector< T, nSlots >::end()
     return iterator( this, size_ );
 }
 
-#ifdef LUNCHBOX_USE_BOOST
 template< class T, int32_t nSlots > template< class Archive >
 inline void LFVector< T, nSlots >::save( Archive& ar,
                                          const unsigned int version ) const
@@ -392,7 +391,6 @@ inline void LFVector< T, nSlots >::load( Archive& ar,
     for( size_t i = 0; i < size_; ++i )
         ar >> operator[](i);
 }
-#endif
 
 template< class T >
 std::ostream& operator << ( std::ostream& os, const LFVector< T >& v )

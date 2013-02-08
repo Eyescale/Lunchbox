@@ -1,16 +1,16 @@
 
 /* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
- *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+ *               2012-2013, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1q as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -31,7 +31,7 @@ namespace lunchbox
      *
      * Relies on the held object to implement ref() and unref() correctly.
      */
-    template< class T > class RefPtr 
+    template< class T > class RefPtr
     {
         typedef T* RefPtr::*bool_t;
 
@@ -85,7 +85,7 @@ namespace lunchbox
          * @return true if both reference pointers hold the same C pointer.
          * @version 1.0
          */
-        bool operator == ( const RefPtr& rhs ) const 
+        bool operator == ( const RefPtr& rhs ) const
             { return ( _ptr == rhs._ptr ); }
 
         /**
@@ -131,16 +131,16 @@ namespace lunchbox
         bool operator != ( const T* ptr ) const { return ( _ptr != ptr ); }
 
         /** Access the held object. @version 1.0 */
-        T*       operator->()       
+        T*       operator->()
             { LBASSERTINFO( _ptr, className( this )); return _ptr; }
         /** Access the held object. @version 1.0 */
         const T* operator->() const
             { LBASSERTINFO( _ptr, className( this )); return _ptr; }
         /** Access the held object. @version 1.0 */
-        T&       operator*()        
+        T&       operator*()
             { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
         /** Access the held object. @version 1.0 */
-        const T& operator*() const  
+        const T& operator*() const
             { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
 
         /** @return the C pointer. @version 1.0 */
@@ -150,7 +150,7 @@ namespace lunchbox
 
         /** @return true if the RefPtr holds a non-0 pointer. @version 1.0 */
         bool isValid() const { return ( _ptr != 0 ); }
-        
+
     private:
         T* _ptr;
 
@@ -158,7 +158,7 @@ namespace lunchbox
         void _ref()   { if(_ptr) _ptr->ref( this ); }
 
         /** Artificially dereference the held object. */
-        void _unref() 
+        void _unref()
         {
             if(_ptr)
             {
@@ -189,8 +189,7 @@ namespace lunchbox
         { return className( rp.get( )); }
 }
 
-#ifdef LUNCHBOX_USE_BOOST
-#  include <boost/serialization/split_free.hpp>
+#include <boost/serialization/split_free.hpp>
 
 namespace boost
 {
@@ -224,5 +223,4 @@ inline void serialize( Archive& ar, lunchbox::RefPtr< T >& t,
 }
 }
 
-#endif // LUNCHBOX_USE_BOOST
 #endif //LUNCHBOX_REFPTR_H

@@ -55,6 +55,8 @@ set(LUNCHBOX_PUBLIC_HEADERS
   timedLock.h
   types.h
   uint128_t.h
+  unorderedIntervalSet.h
+  unorderedIntervalSet.ipp
   uuid.h
   )
 

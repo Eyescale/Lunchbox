@@ -19,6 +19,7 @@
 #ifndef LUNCHBOX_UNORDEREDINTERVALSET_H
 #define LUNCHBOX_UNORDEREDINTERVALSET_H
 
+#include <lunchbox/types.h>
 #include <set>
 
 namespace lunchbox

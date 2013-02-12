@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2012, EPFL/Blue Brain Project
- *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
+/* Copyright (c) 2012-2013, EPFL/Blue Brain Project
+ *                          Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -22,22 +22,17 @@
 #define LUNCHBOX_SERIALIZABLE_H
 
 #include <lunchbox/defines.h>
-#ifdef LUNCHBOX_USE_BOOST
 
-#  include <boost/serialization/access.hpp>
-#  include <boost/serialization/split_member.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/split_member.hpp>
 
 /** Makes a class to be serializable using boost.serialization. */
-#  define LB_SERIALIZABLE                                       \
-    friend class boost::serialization::access;                  \
-    template< class Archive >                                   \
-    void save( Archive& ar, const unsigned int version ) const; \
-    template< class Archive >                                   \
-    void load( Archive& ar, const unsigned int version );       \
-    BOOST_SERIALIZATION_SPLIT_MEMBER()
-
-#else
-#  define LB_SERIALIZABLE
-#endif
+#define LB_SERIALIZABLE                                       \
+  friend class boost::serialization::access;                  \
+  template< class Archive >                                   \
+  void save( Archive& ar, const unsigned int version ) const; \
+  template< class Archive >                                   \
+  void load( Archive& ar, const unsigned int version );       \
+  BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 #endif // LUNCHBOX_SERIALIZABLE_H

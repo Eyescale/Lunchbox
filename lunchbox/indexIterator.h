@@ -31,6 +31,10 @@ namespace lunchbox
  * assignment and other operators. Access methods are to be implemented by a
  * subclass using container_ and i_. Furthermore subclasses need to implement
  * the necessary constructors (see LFVectorIterator for example).
+ *
+ * @param S CRTP Subclass type
+ * @param C The container type
+ * @param T The element type
  */
 template< class S, class C, class T > class IndexIterator
     : public std::iterator< std::random_access_iterator_tag, T >

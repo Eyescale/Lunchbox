@@ -30,19 +30,20 @@
 namespace lunchbox
 {
 
-Strings searchDirectory( const std::string& dir, const std::string& pattern )
+Strings searchDirectory( const std::string& directory, const std::string& pattern )
 {
     Strings files;
 
 #ifdef _MSC_VER
     WIN32_FIND_DATA file;
-    const std::string search = dir.empty() ? pattern : dir + '\\' + pattern;
+    const std::string search = directory.empty() ? pattern : directory + '\\' +
+                               pattern;
     HANDLE hSearch = FindFirstFile( search.c_str(), &file );
 
     if( hSearch == INVALID_HANDLE_VALUE )
     {
         LBVERB << "Error finding the first file to match " << pattern << " in "
-               << dir << std::endl;
+               << directory << std::endl;
         FindClose( hSearch );
         return files;
     }
@@ -65,10 +66,10 @@ Strings searchDirectory( const std::string& dir, const std::string& pattern )
     const std::string first = pattern.substr( 0, findPos );
     const std::string second = pattern.substr( findPos + 1 );
 
-    DIR* dir = opendir( dir.c_str() );
+    DIR* dir = opendir( directory.c_str() );
     if( dir == 0 )
     {
-        LBVERB << "Can't open directory " << dir << std::endl;
+        LBVERB << "Can't open directory " << directory << std::endl;
         return files;
     }
 

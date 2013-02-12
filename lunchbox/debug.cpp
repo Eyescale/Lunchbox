@@ -5,12 +5,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -58,7 +58,7 @@ void checkHeap()
     if( ( ++count % 10000 ) == 0 && _heapchk() != _HEAPOK )
     {
         LBERROR << disableFlush << "Abort: heap corruption detected"<< std::endl
-                << "    Set breakpoint in " << __FILE__ << ':' << __LINE__ + 1 
+                << "    Set breakpoint in " << __FILE__ << ':' << __LINE__ + 1
                 << " to debug" << std::endl << enableFlush;
     }
 #else
@@ -71,7 +71,7 @@ std::ostream& backtrace( std::ostream& os )
     // Sym* functions from DbgHelp are not thread-safe...
     static Lock lock;
     ScopedMutex<> mutex( lock );
-    
+
     typedef USHORT (WINAPI *CaptureStackBackTraceType)( __in ULONG, __in ULONG,
                                                         __out PVOID*,
                                                         __out_opt PULONG );
@@ -83,16 +83,16 @@ std::ostream& backtrace( std::ostream& os )
     SymSetOptions( SYMOPT_UNDNAME | SYMOPT_LOAD_LINES );
     HANDLE hProcess = GetCurrentProcess();
     if( !SymInitialize( hProcess, 0, TRUE ))
-        return os;  
-    
+        return os;
+
     void* stack[ LB_BACKTRACE_DEPTH ];
     unsigned short frames = (backtraceFunc)( 0, LB_BACKTRACE_DEPTH, stack, 0 );
-  
+
     SYMBOL_INFO* symbol = (SYMBOL_INFO*)calloc( sizeof(SYMBOL_INFO) +
-                                         (LB_SYMBOL_LENGTH+-1)*sizeof(char), 1 );
+                                        (LB_SYMBOL_LENGTH+-1)*sizeof(char), 1 );
     symbol->MaxNameLen   = LB_SYMBOL_LENGTH;
     symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
-    
+
     os << disableFlush << disableHeader << indent << std::endl;
     for( unsigned short i = 0; i < frames; ++i )
     {
@@ -101,14 +101,14 @@ std::ostream& backtrace( std::ostream& os )
             os << "Unknown symbol";
         else
         {
-            os << symbol->Name << " - ";            
+            os << symbol->Name << " - ";
             IMAGEHLP_LINE64 line = { sizeof(IMAGEHLP_LINE64) };
             if( !SymGetLineFromAddr64( hProcess, (DWORD64)stack[i], 0, &line ))
                 os << std::hex << "0x" << symbol->Address << std::dec;
             else
                 os << line.FileName << ":" << line.LineNumber;
         }
-        os << std::endl;                
+        os << std::endl;
     }
     os << exdent << enableHeader << enableFlush;
     free( symbol );

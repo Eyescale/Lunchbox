@@ -1,16 +1,16 @@
 
-/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com> 
- *               2009-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
+ *               2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,29 +30,27 @@
 namespace lunchbox
 {
 
-Strings searchDirectory( const std::string& directory,
-                         const std::string& pattern )
+Strings searchDirectory( const std::string& dir, const std::string& pattern )
 {
     Strings files;
-   
+
 #ifdef _MSC_VER
     WIN32_FIND_DATA file;
-    const std::string search = 
-        directory.empty() ? pattern : directory + '\\' + pattern;
+    const std::string search = dir.empty() ? pattern : dir + '\\' + pattern;
     HANDLE hSearch = FindFirstFile( search.c_str(), &file );
-    
+
     if( hSearch == INVALID_HANDLE_VALUE )
     {
         LBVERB << "Error finding the first file to match " << pattern << " in "
-               << directory << std::endl;
+               << dir << std::endl;
         FindClose( hSearch );
         return files;
     }
 
-    files.push_back( file.cFileName );    
+    files.push_back( file.cFileName );
     while( FindNextFile( hSearch, &file ))
-        files.push_back( file.cFileName );    
-    
+        files.push_back( file.cFileName );
+
     FindClose( hSearch );
 
 #else
@@ -66,16 +64,16 @@ Strings searchDirectory( const std::string& directory,
 
     const std::string first = pattern.substr( 0, findPos );
     const std::string second = pattern.substr( findPos + 1 );
-  
-    DIR* dir = opendir( directory.c_str() );
+
+    DIR* dir = opendir( dir.c_str() );
     if( dir == 0 )
     {
-        LBVERB << "Can't open directory " << directory << std::endl;
+        LBVERB << "Can't open directory " << dir << std::endl;
         return files;
     }
 
     struct dirent* entry;
-    
+
     while(( entry = readdir( dir )) != 0 )
     {
         const std::string candidate( entry->d_name );
@@ -89,9 +87,9 @@ Strings searchDirectory( const std::string& directory,
             continue;
         }
 
-        files.push_back( entry->d_name );  
+        files.push_back( entry->d_name );
     }
-        
+
     closedir(dir);
 #endif
     return files;

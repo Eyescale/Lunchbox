@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -81,7 +81,7 @@ namespace lunchbox
                 LBASSERT( !_hasBeenDeleted );
 #endif
                 LBASSERT( _refCount > 0 );
-                const bool deleteMe = (--_refCount==0);
+                const bool last = (--_refCount==0);
 
 #ifdef LUNCHBOX_REFERENCED_DEBUG
                 if( holder )
@@ -94,9 +94,9 @@ namespace lunchbox
                 }
 #endif
 
-                if( deleteMe )
-                    deleteReferenced( this );
-                return deleteMe;
+                if( last )
+                    const_cast< Referenced* >( this )->notifyFree();
+                return last;
             }
 
         /** @return the current reference count. @version 1.0 */
@@ -147,7 +147,7 @@ namespace lunchbox
         /** Assign another object to this object. @version 1.1.3 */
         Referenced& operator = ( const Referenced& rhs ) { return *this; }
 
-        LUNCHBOX_API virtual void deleteReferenced( const Referenced* ) const;
+        LUNCHBOX_API virtual void notifyFree();
 
     private:
         mutable a_int32_t _refCount;

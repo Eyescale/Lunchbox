@@ -24,6 +24,7 @@ development and deployment of multi-threaded applications:
 * [Ubuntu Packages Repository](https://launchpad.net/~eilemann/+archive/equalizer/)
 * [API Documentation](http://eyescale.github.com/)
 * Building from source:
+
 ```
   git clone https://github.com/Eyescale/Buildyard.git
   cd Buildyard

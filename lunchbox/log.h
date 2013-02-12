@@ -55,8 +55,9 @@ namespace lunchbox
      */
     enum LogTopic
     {
-        LOG_CUSTOM = 0x10,       //!< Log topics for other namespaces start here
-        LOG_ANY    = 0xffffu     //!< Log all Lunchbox topics
+        LOG_EXCEPTION = 0x01,    //!< Log exception within LBTHROW
+        LOG_CUSTOM    = 0x10,    //!< Log topics for other namespaces start here
+        LOG_ANY       = 0xffffu  //!< Log all Lunchbox topics
     };
 
     /** @internal The string buffer used for logging. */
@@ -253,5 +254,15 @@ namespace lunchbox
  */
 #define LBLOG(topic)  (lunchbox::Log::topics & (topic))  &&  \
     lunchbox::Log::instance( __FILE__, __LINE__ )
+
+/**
+ * Log a std::exception if topic LOG_EXCEPTION is set before throwing exception.
+ * @version 1.7.1
+ */
+#define LBTHROW(exc)                                                \
+    {                                                               \
+        LBLOG(lunchbox::LOG_EXCEPTION) << exc.what() << std::endl;  \
+        throw exc;                                                  \
+    }
 
 #endif //LUNCHBOX_LOG_H

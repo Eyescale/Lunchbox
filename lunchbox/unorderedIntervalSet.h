@@ -30,7 +30,7 @@ namespace lunchbox
  *
  * The type can be any class or typename which has the semantics of natural
  * numbers for addition and comparison operations. The intervals are stored in
- * an unordered fashion.
+ * an unordered fashion. Not thread-safe.
  */
 template< typename T >
 class UnorderedIntervalSet

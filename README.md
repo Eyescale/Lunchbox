@@ -23,6 +23,14 @@ development and deployment of multi-threaded applications:
 
 * [Ubuntu Packages Repository](https://launchpad.net/~eilemann/+archive/equalizer/)
 * [API Documentation](http://eyescale.github.com/)
+* Building from source:
+
+```
+  git clone https://github.com/Eyescale/Buildyard.git
+  cd Buildyard
+  git clone https://github.com/Eyescale/config.git config.eyescale
+  make Lunchbox
+```
 
 ### Version 1.6
 
@@ -31,4 +39,3 @@ development and deployment of multi-threaded applications:
 ### Version 1.4
 
 * [Source Code](http://www.equalizergraphics.com/downloads/Lunchbox-1.4.0.tar.gz)
-

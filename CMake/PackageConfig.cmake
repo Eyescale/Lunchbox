@@ -35,6 +35,13 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake.in
 # add helper stuff from CMakePackageConfigHelpers
   "@PACKAGE_INIT@\n"
   "\n"
+# reset before using them
+  "set(_output_type)\n"
+  "set(_out)\n"
+  "set(_req)\n"
+  "set(_quiet)\n"
+  "set(_fail)\n"
+  "\n"
 # add transient library finding
   "@TRANSIENTS@"
   "if(NOT _fail)\n"
@@ -154,10 +161,24 @@ set(TRANSIENTS
   "endif()\n\n"
 )
 foreach(_transient ${${UPPER_PROJECT_NAME}_TRANSIENT_LIBRARIES})
+  if(${_transient}_FOUND)
+    set(${_transient}_name ${_transient})
+  endif()
+  string(TOUPPER ${_transient} _TRANSIENT)
+  if(${_TRANSIENT}_FOUND)
+    set(${_transient}_name ${_TRANSIENT})
+  endif()
+  if(NOT ${_transient}_name)
+    message(FATAL_ERROR "Transient library ${_transient} was not properly resolved")
+  endif()
+  if(${${_transient}_name}_VERSION)
+    set(${${_transient}_name}_findmode EXACT)
+  else()
+    set(${${_transient}_name}_findmode REQUIRED)
+  endif()
   list(APPEND TRANSIENTS
-    "find_package(${_transient} ${${${_transient}_name}_VERSION} EXACT \${_req} \${_quiet})\n"
-    "string(TOUPPER ${_transient} _TRANSIENT)\n"
-    "if(\${_TRANSIENT}_FOUND)\n"
+    "find_package(${_transient} ${${${_transient}_name}_VERSION} ${${${_transient}_name}_findmode} \${_req} \${_quiet})\n"
+    "if(${${_transient}_name}_FOUND)\n"
     "  list(APPEND ${UPPER_PROJECT_NAME}_LIBRARIES \${${${_transient}_name}_LIBRARIES})\n"
     "else()\n"
     "  set(_fail TRUE)\n"

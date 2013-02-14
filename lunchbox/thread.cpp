@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *               2012, Marwan Abdellah <marwan.abdellah@epfl.ch>
  *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
@@ -437,6 +437,17 @@ void Thread::setAffinity( const int32_t affinity )
     LBWARN << "Thread::setAffinity not implemented, hwloc library missing"
            << std::endl;
 #endif
+}
+
+std::ostream& operator << ( std::ostream& os, const Thread::Affinity affinity )
+{
+    if( affinity == Thread::NONE )
+        return os << "No affinity";
+    if( affinity >= Thread::CORE )
+        return os << "Core " << affinity - Thread::CORE;
+
+    LBASSERT( affinity >= Thread::SOCKET && affinity < Thread::SOCKET_MAX );
+    return os << "Socket " <<  affinity - Thread::SOCKET;
 }
 
 #if 0

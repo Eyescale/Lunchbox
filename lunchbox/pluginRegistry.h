@@ -60,7 +60,7 @@ namespace lunchbox
          * Add the lunchbox library plugins to this registry.
          * @return true on success, false otherwise.
          */
-        LUNCHBOX_API bool addLunchbox();
+        LUNCHBOX_API bool addLunchboxPlugins();
 
         /** @internal Search all plugin directories and register found DSOs */
         LUNCHBOX_API void init();

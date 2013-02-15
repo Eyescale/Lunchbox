@@ -116,7 +116,7 @@ void PluginRegistry::removeDirectory( const std::string& path )
         _directories.erase( i );
 }
 
-bool PluginRegistry::addLunchbox()
+bool PluginRegistry::addLunchboxPlugins()
 {
 #ifdef LUNCHBOX_DSO_NAME
     return

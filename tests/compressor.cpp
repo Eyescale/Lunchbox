@@ -54,7 +54,7 @@ float _baseTime = 0.f;
 int main( int argc, char **argv )
 {
     registry.addDirectory( std::string( LUNCHBOX_BUILD_DIR ) + "/lib" );
-    TEST( registry.addLunchbox( ));
+    TEST( registry.addLunchboxPlugins( ));
     registry.init();
 
     _testFile();

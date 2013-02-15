@@ -29,9 +29,12 @@ namespace lunchbox
 namespace detail { class Decompressor; }
 
 /** A C++ class to handle one decompressor instance. */
-class Decompressor
+class Decompressor : public NonCopyable
 {
 public:
+    /** Construct a new decompressor instance. */
+    LUNCHBOX_API Decompressor();
+
     /**
      * Construct a new decompressor instance.
      *
@@ -46,8 +49,14 @@ public:
      /** @return true if the instance is usable. */
     LUNCHBOX_API bool isGood() const;
 
+     /** @return true if the instance is usable and has the given name. */
+    LUNCHBOX_API bool uses( const uint32_t name ) const;
+
     /** @return the information about the allocated compressor. */
-    LUNCHBOX_API const CompressorInfo& getInfo() const;
+    LUNCHBOX_API const EqCompressorInfo& getInfo() const;
+
+    /** Move assignment operator. */
+    LUNCHBOX_API const Decompressor& operator = ( Decompressor& );
 
     /**
      * Decompress one-dimensional data.
@@ -78,6 +87,7 @@ public:
                                   const uint64_t* const inSizes,
                                   const unsigned numInputs, void* const out,
                                   uint64_t pvpOut[4], const uint64_t flags );
+
 private:
     detail::Decompressor* const impl_;
     LB_TS_VAR( _thread );

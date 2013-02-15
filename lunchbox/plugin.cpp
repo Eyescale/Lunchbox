@@ -29,40 +29,47 @@
 namespace lunchbox
 {
 typedef void ( *GetInfo_t ) ( const size_t, EqCompressorInfo* const );
+namespace detail
+{
+class Plugin
+{
+public:
+    CompressorInfos infos;
+};
+}
 
 Plugin::Plugin( const std::string& libraryName )
-    : dso_( libraryName )
-    , getNumCompressors( dso_.getFunctionPointer< GetNumCompressors_t >(
+    : DSO( libraryName )
+    , getNumCompressors( getFunctionPointer< GetNumCompressors_t >(
                              "EqCompressorGetNumCompressors" ))
-    , newCompressor( dso_.getFunctionPointer< NewCompressor_t >(
+    , newCompressor( getFunctionPointer< NewCompressor_t >(
                          "EqCompressorNewCompressor" ))
-    , newDecompressor( dso_.getFunctionPointer< NewDecompressor_t >(
+    , newDecompressor( getFunctionPointer< NewDecompressor_t >(
                            "EqCompressorNewDecompressor" ))
-    , deleteCompressor( dso_.getFunctionPointer< DeleteCompressor_t >(
+    , deleteCompressor( getFunctionPointer< DeleteCompressor_t >(
                             "EqCompressorDeleteCompressor" ))
-    , deleteDecompressor( dso_.getFunctionPointer< DeleteDecompressor_t >(
+    , deleteDecompressor( getFunctionPointer< DeleteDecompressor_t >(
                               "EqCompressorDeleteDecompressor" ))
-    , compress( dso_.getFunctionPointer< Compress_t >( "EqCompressorCompress" ))
-    , decompress( dso_.getFunctionPointer< Decompress_t >(
-                      "EqCompressorDecompress" ))
-    , getNumResults( dso_.getFunctionPointer< GetNumResults_t >(
+    , compress( getFunctionPointer< Compress_t >( "EqCompressorCompress" ))
+    , decompress( getFunctionPointer< Decompress_t >( "EqCompressorDecompress"))
+    , getNumResults( getFunctionPointer< GetNumResults_t >(
                          "EqCompressorGetNumResults" ))
-    , getResult( dso_.getFunctionPointer< GetResult_t >(
-                     "EqCompressorGetResult" ))
-    , isCompatible( dso_.getFunctionPointer< IsCompatible_t >(
+    , getResult( getFunctionPointer< GetResult_t >( "EqCompressorGetResult" ))
+    , isCompatible( getFunctionPointer< IsCompatible_t >(
                         "EqCompressorIsCompatible" ))
-    , download( dso_.getFunctionPointer< Download_t >( "EqCompressorDownload" ))
-    , upload( dso_.getFunctionPointer< Upload_t >( "EqCompressorUpload" ))
-    , startDownload( dso_.getFunctionPointer< StartDownload_t >(
+    , download( getFunctionPointer< Download_t >( "EqCompressorDownload" ))
+    , upload( getFunctionPointer< Upload_t >( "EqCompressorUpload" ))
+    , startDownload( getFunctionPointer< StartDownload_t >(
                          "EqCompressorStartDownload" ))
-    , finishDownload( dso_.getFunctionPointer< FinishDownload_t >(
+    , finishDownload( getFunctionPointer< FinishDownload_t >(
                           "EqCompressorFinishDownload" ))
+    , impl_( new detail::Plugin )
 {
-    if( !dso_.isOpen( ))
+    if( !isOpen( ))
         return;
 
     const GetInfo_t getInfo =
-        dso_.getFunctionPointer< GetInfo_t >( "EqCompressorGetInfo" );
+        getFunctionPointer< GetInfo_t >( "EqCompressorGetInfo" );
 
     const bool hasBase = newDecompressor && newCompressor && deleteCompressor &&
                          deleteDecompressor && getInfo && getNumCompressors &&
@@ -84,10 +91,10 @@ Plugin::Plugin( const std::string& libraryName )
         return;
     }
 
-    infos_.resize( nCompressors );
+    impl_->infos.resize( nCompressors );
     for( size_t i = 0; i < nCompressors; ++i )
     {
-        CompressorInfo& info = infos_[ i ];
+        CompressorInfo& info = impl_->infos[ i ];
         info.version = EQ_COMPRESSOR_VERSION;
         info.outputTokenType = EQ_COMPRESSOR_DATATYPE_NONE;
         info.outputTokenSize = 0;
@@ -98,7 +105,7 @@ Plugin::Plugin( const std::string& libraryName )
         {
             LBWARN << "Download plugin claims to support async readback " <<
                       "but corresponding functions are missing" << std::endl;
-            infos_.clear();
+            impl_->infos.clear();
             return;
         }
         info.ratingAlpha = powf( info.speed, .3f ) / info.ratio;
@@ -139,7 +146,7 @@ Plugin::Plugin( const std::string& libraryName )
 #ifndef NDEBUG // Check that each compressor exist once
         for( size_t j = 0; j < i; ++j )
         {
-            LBASSERTINFO( info.name != infos_[j].name,
+            LBASSERTINFO( info.name != impl_->infos[j].name,
                           "Compressors " << i << " and " << j << " in '" <<
                           libraryName << "' use the same name" );
         }
@@ -151,16 +158,21 @@ Plugin::Plugin( const std::string& libraryName )
            << std::endl;
 }
 
+Plugin::~Plugin()
+{
+    delete impl_;
+}
+
 bool Plugin::isGood() const
 {
-    return !infos_.empty();
+    return !impl_->infos.empty();
 }
 
 void Plugin::initChildren( const PluginRegistry& registry )
 {
     const Plugins& plugins = registry.getPlugins();
 
-    for( CompressorInfos::iterator i = infos_.begin(); i != infos_.end(); ++i )
+    for( CompressorInfos::iterator i = impl_->infos.begin(); i != impl_->infos.end(); ++i )
     {
         CompressorInfo& info = *i;
         LBLOG( LOG_PLUGIN ) << lunchbox::disableFlush << "Engine 0x" << std::hex
@@ -222,8 +234,8 @@ void Plugin::initChildren( const PluginRegistry& registry )
 
 bool Plugin::implementsType( const uint32_t name ) const
 {
-    for( CompressorInfos::const_iterator i = infos_.begin();
-         i != infos_.end(); ++i )
+    for( CompressorInfos::const_iterator i = impl_->infos.begin();
+         i != impl_->infos.end(); ++i )
     {
         if ( i->name == name )
             return true;
@@ -232,17 +244,21 @@ bool Plugin::implementsType( const uint32_t name ) const
     return false;
 }
 
-const CompressorInfo& Plugin::findInfo( const uint32_t name ) const
+const EqCompressorInfo& Plugin::findInfo( const uint32_t name ) const
 {
-    for( CompressorInfos::const_iterator i = infos_.begin();
-         i != infos_.end(); ++i )
+    for( CompressorInfos::const_iterator i = impl_->infos.begin();
+         i != impl_->infos.end(); ++i )
     {
         if( i->name == name )
             return (*i);
     }
 
     LBUNREACHABLE;
-    return infos_.front();
+    return impl_->infos.front();
 }
 
+const CompressorInfos& Plugin::getInfos() const
+{
+    return impl_->infos;
+}
 }

@@ -34,6 +34,10 @@ public:
 };
 }
 
+Decompressor::Decompressor()
+    : impl_( new detail::Decompressor( EQ_COMPRESSOR_NONE ))
+{}
+
 Decompressor::Decompressor( PluginRegistry& registry, const uint32_t name )
     : impl_( new detail::Decompressor( name ))
 {
@@ -60,6 +64,7 @@ Decompressor::~Decompressor()
 {
     if( impl_->instance )
         impl_->plugin->deleteDecompressor( impl_->instance );
+    impl_->clear();
     delete impl_;
 }
 
@@ -69,7 +74,21 @@ bool Decompressor::isGood() const
     return impl_->isGood();
 }
 
-const CompressorInfo& Decompressor::getInfo() const
+bool Decompressor::uses( const uint32_t name ) const
+{
+    return isGood() && impl_->info.name == name;
+}
+
+const Decompressor& Decompressor::operator = ( Decompressor& from )
+{
+    if( impl_->instance )
+        impl_->plugin->deleteDecompressor( impl_->instance );
+    *impl_ = *from.impl_;
+    from.impl_->clear();
+    return *this;
+}
+
+const EqCompressorInfo& Decompressor::getInfo() const
 {
     return impl_->info;
 }

@@ -33,6 +33,9 @@ namespace detail { class Compressor; }
 class Compressor
 {
 public:
+    /** Construct a new compressor instance. */
+    LUNCHBOX_API Compressor();
+
     /**
      * Construct a new, named compressor instance.
      *
@@ -48,14 +51,23 @@ public:
     LUNCHBOX_API Compressor( PluginRegistry& registry, const uint32_t tokenType,
                              const float minQuality, const bool ignoreMSE );
 
+    /** Move constructor. */
+    LUNCHBOX_API Compressor( Compressor& from );
+
     /** Destruct the compressor. */
     LUNCHBOX_API virtual ~Compressor();
 
     /** @return true if the instance is usable. */
     LUNCHBOX_API bool isGood() const;
 
+     /** @return true if the instance is usable and has the given name. */
+    LUNCHBOX_API bool uses( const uint32_t name ) const;
+
     /** @return the information about the allocated compressor. */
-    LUNCHBOX_API const CompressorInfo& getInfo() const;
+    LUNCHBOX_API const EqCompressorInfo& getInfo() const;
+
+    /** Move assignment operator. */
+    LUNCHBOX_API const Compressor& operator = ( Compressor& );
 
     /**
      * Find the best compressor in all plugins for the given parameters.
@@ -74,6 +86,10 @@ public:
                                          const uint32_t tokenType,
                                          const float minQuality,
                                          const bool ignoreMSE );
+
+    /** Reallocate the current instance. */
+    LUNCHBOX_API bool realloc();
+
     /**
      * Compress one-dimensional data.
      *

@@ -159,7 +159,6 @@ class Servus;
 class SpinLock;
 class UUID;
 class uint128_t;
-struct CompressorInfo;
 
 template< class > class Atomic;
 template< class > class Buffer;
@@ -172,12 +171,16 @@ typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable
 typedef Atomic< ssize_t > a_ssize_t; //!< An atomic signed size variable
 typedef Buffer< uint8_t > Bufferb; //!< a byte buffer
 
-typedef std::vector< CompressorInfo > CompressorInfos;
-typedef CompressorInfos::const_iterator CompressorInfosCIter;
-
 typedef std::vector< Plugin* > Plugins;
 typedef Plugins::const_iterator PluginsCIter;
 
+/** @cond IGNORE */
+struct CompressorInfo;
+typedef std::vector< CompressorInfo > CompressorInfos;
+typedef CompressorInfos::const_iterator CompressorInfosCIter;
+/** @endcond */
 }
+
+struct EqCompressorInfo;
 
 #endif //LUNCHBOX_TYPES_H

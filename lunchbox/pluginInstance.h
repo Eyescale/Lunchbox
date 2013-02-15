@@ -31,10 +31,22 @@ public:
         info.name = name;
     }
 
+    ~PluginInstance()
+    {
+        LBASSERT( !plugin );
+        LBASSERT( !instance );
+    }
+
     bool isGood() const
     {
         return ( plugin && info.name != EQ_COMPRESSOR_INVALID &&
                  info.name != EQ_COMPRESSOR_NONE );
+    }
+
+    void clear()
+    {
+        plugin = 0;
+        instance = 0;
     }
 
     /** Plugin handling the allocation */
@@ -44,6 +56,6 @@ public:
     void* instance;
 
     /** Info about the current compressor instance */
-    lunchbox::CompressorInfo info;
+    EqCompressorInfo info;
 };
 }

@@ -31,6 +31,8 @@ namespace detail
 class Compressor : public PluginInstance
 {
 public:
+    Compressor() : PluginInstance( EQ_COMPRESSOR_NONE ) {}
+
     Compressor( lunchbox::PluginRegistry& registry, const uint32_t name )
         : PluginInstance( name )
     {
@@ -46,11 +48,16 @@ public:
         info = plugin->findInfo( name );
         LBASSERT( instance );
         LBASSERT( info.name == name );
-
         LBLOG( LOG_PLUGIN ) << "Instantiated compressor of type 0x" << std::hex
                             << name << std::dec << std::endl;
     }
 };
+}
+
+Compressor::Compressor()
+    : impl_( new detail::Compressor )
+{
+    LB_TS_THREAD( _thread );
 }
 
 Compressor::Compressor( PluginRegistry& registry, const uint32_t name )
@@ -68,10 +75,17 @@ Compressor::Compressor( PluginRegistry& registry, const uint32_t tokenType,
     LB_TS_THREAD( _thread );
 }
 
+Compressor::Compressor( Compressor& from )
+    : impl_( new detail::Compressor( *from.impl_ ))
+{
+    from.impl_->clear();
+}
+
 Compressor::~Compressor()
 {
     if( impl_->instance )
         impl_->plugin->deleteCompressor( impl_->instance );
+    impl_->clear();
     delete impl_;
 }
 
@@ -81,9 +95,23 @@ bool Compressor::isGood() const
     return impl_->isGood() && impl_->instance;
 }
 
-const CompressorInfo& Compressor::getInfo() const
+bool Compressor::uses( const uint32_t name ) const
+{
+    return isGood() && impl_->info.name == name;
+}
+
+const EqCompressorInfo& Compressor::getInfo() const
 {
     return impl_->info;
+}
+
+const Compressor& Compressor::operator = ( Compressor& from )
+{
+    if( impl_->instance )
+        impl_->plugin->deleteCompressor( impl_->instance );
+    *impl_ = *from.impl_;
+    from.impl_->clear();
+    return *this;
 }
 
 uint32_t Compressor::choose( const PluginRegistry& registry,
@@ -122,6 +150,19 @@ uint32_t Compressor::choose( const PluginRegistry& registry,
     }
 
     return candidate.name;
+}
+
+bool Compressor::realloc()
+{
+    if( !isGood( ))
+        return false;
+
+    if( impl_->instance )
+        impl_->plugin->deleteCompressor( impl_->instance );
+
+    impl_->instance = impl_->plugin->newCompressor( impl_->info.name );
+    LBASSERT( impl_->instance );
+    return impl_->instance;
 }
 
 void Compressor::compress( void* const in, const uint64_t pvpIn[4],

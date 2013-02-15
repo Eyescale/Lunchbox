@@ -47,11 +47,18 @@ public:
 }
 
 DSO::DSO()
-        : _impl( new detail::DSO )
+    : _impl( new detail::DSO )
 {}
+
+DSO::DSO( const std::string& name )
+    : _impl( new detail::DSO )
+{
+    open( name );
+}
 
 DSO::~DSO()
 {
+    close();
     delete _impl;
 }
 
@@ -110,6 +117,9 @@ void DSO::close()
 
 void* DSO::getFunctionPointer( const std::string& name )
 {
+    if( !_impl->dso )
+        return 0;
+
 #ifdef _WIN32 //_MSC_VER
     return (void*)GetProcAddress( _impl->dso, name.c_str() );
 #else

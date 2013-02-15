@@ -4,7 +4,7 @@
 include(configure.cmake)
 include(files.cmake)
 
-add_definitions(-DLUNCHBOX_PLUGIN_BUILD)
+add_definitions(-DEQ_PLUGIN_BUILD)
 
 set(LUNCHBOX_LINKLIBS ${PTHREAD_LIBRARIES} ${Boost_SERIALIZATION_LIBRARY}
   ${Boost_REGEX_LIBRARY})

@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -151,12 +151,15 @@ typedef Strings::const_iterator StringsCIter;
 class Clock;
 class Lock;
 class NonCopyable;
+class Plugin;
+class PluginRegistry;
 class Referenced;
 class RequestHandler;
 class Servus;
 class SpinLock;
 class UUID;
 class uint128_t;
+struct CompressorInfo;
 
 template< class > class Atomic;
 template< class > class Buffer;
@@ -168,6 +171,12 @@ template< class T, class V > class LFVectorIterator;
 typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable
 typedef Atomic< ssize_t > a_ssize_t; //!< An atomic signed size variable
 typedef Buffer< uint8_t > Bufferb; //!< a byte buffer
+
+typedef std::vector< CompressorInfo > CompressorInfos;
+typedef CompressorInfos::const_iterator CompressorInfosCIter;
+
+typedef std::vector< Plugin* > Plugins;
+typedef Plugins::const_iterator PluginsCIter;
 
 }
 

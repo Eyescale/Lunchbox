@@ -4,7 +4,11 @@
 include(configure.cmake)
 include(files.cmake)
 
-set(LUNCHBOX_LINKLIBS ${PTHREAD_LIBRARIES} ${Boost_SERIALIZATION_LIBRARY})
+add_definitions(-DLUNCHBOX_PLUGIN_BUILD)
+
+set(LUNCHBOX_LINKLIBS ${PTHREAD_LIBRARIES} ${Boost_SERIALIZATION_LIBRARY}
+  ${Boost_REGEX_LIBRARY})
+
 if(WIN32)
   list(APPEND LUNCHBOX_LINKLIBS ws2_32 mswsock)
 endif(WIN32)
@@ -19,21 +23,22 @@ if(DNSSD_FOUND)
 endif()
 
 source_group(\\ FILES CMakeLists.txt)
+source_group(plugin FILES ${PLUGIN_HEADERS})
+source_group(compressor FILES ${LUNCHBOX_COMPRESSORS})
 source_group(lunchbox FILES ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_HEADERS}
   ${LUNCHBOX_SOURCES})
 
 set(LIBRARY Lunchbox)
-set(LIB_INCLUDE lunchbox)
 
 add_library(${LIBRARY} SHARED ${LUNCHBOX_ALL})
 target_link_libraries(${LIBRARY} ${LUNCHBOX_LINKLIBS})
 set_target_properties(${LIBRARY}
-  PROPERTIES VERSION ${VERSION} SOVERSION ${VERSION_ABI}
-  COMPILE_DEFINITIONS LUNCHBOX_SHARED
-)
+  PROPERTIES VERSION ${VERSION} SOVERSION ${VERSION_ABI})
 
-install(FILES ${LUNCHBOX_PUBLIC_HEADERS}
-        DESTINATION include/${LIB_INCLUDE} COMPONENT dev)
+install(FILES ${LUNCHBOX_PUBLIC_HEADERS} DESTINATION include/lunchbox
+  COMPONENT dev)
+install(FILES ${PLUGIN_HEADERS} DESTINATION include/lunchbox/plugins
+  COMPONENT dev)
 install(TARGETS ${LIBRARY}
         ARCHIVE DESTINATION lib COMPONENT dev
         RUNTIME DESTINATION bin COMPONENT lib

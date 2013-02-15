@@ -4,19 +4,19 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef EQTEST_TEST_H
-#define EQTEST_TEST_H
+#ifndef LBTEST_TEST_H
+#define LBTEST_TEST_H
 
 #include <lunchbox/log.h>
 #include <lunchbox/sleep.h>
@@ -62,12 +62,12 @@ public:
             lunchbox::Thread::setName( "Watchdog" );
 #ifdef TEST_RUNTIME
             lunchbox::sleep( TEST_RUNTIME * 1000 );
-            TESTINFO( false, 
+            TESTINFO( false,
                       "Watchdog triggered - " << _name <<
                       " did not terminate within " << TEST_RUNTIME << "s" );
 #else
             lunchbox::sleep( 60000 );
-            TESTINFO( false, 
+            TESTINFO( false,
                       "Watchdog triggered - " << _name <<
                       " did not terminate within 1 minute" );
 #endif
@@ -98,5 +98,4 @@ int main( int argc, char **argv )
 
 #  define main testMain
 
-#endif // EQTEST_TEST_H
-
+#endif // LBTEST_TEST_H

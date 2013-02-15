@@ -1,5 +1,5 @@
 
-# Copyright (c) 2012 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2013 Stefan Eilemann <eile@eyescale.ch>
 
 set(LUNCHBOX_PUBLIC_HEADERS
   ${OUTPUT_INCLUDE_DIR}/lunchbox/version.h
@@ -12,9 +12,11 @@ set(LUNCHBOX_PUBLIC_HEADERS
   buffer.h
   clock.h
   compiler.h
+  compressor.h
   condition.h
   daemon.h
   debug.h
+  decompressor.h
   defines.h
   dso.h
   file.h
@@ -39,6 +41,8 @@ set(LUNCHBOX_PUBLIC_HEADERS
   os.h
   perThread.h
   perThreadRef.h
+  plugin.h
+  pluginRegistry.h
   pool.h
   refPtr.h
   referenced.h
@@ -64,9 +68,11 @@ set(LUNCHBOX_SOURCES
   any.cpp
   atomic.cpp
   clock.cpp
+  compressor.cpp
   condition.cpp
   condition_w32.ipp
   debug.cpp
+  decompressor.cpp
   dso.cpp
   file.cpp
   init.cpp
@@ -75,12 +81,15 @@ set(LUNCHBOX_SOURCES
   log.cpp
   memoryMap.cpp
   omp.cpp
+  plugin.cpp
+  pluginInstance.h
+  pluginRegistry.cpp
   referenced.cpp
   requestHandler.cpp
   rng.cpp
   servus.cpp
-  spinLock.cpp
   sleep.cpp
+  spinLock.cpp
   thread.cpp
   threadID.cpp
   timedLock.cpp
@@ -90,4 +99,45 @@ set(LUNCHBOX_SOURCES
   md5/md5.cc
   )
 
-set(LUNCHBOX_ALL ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_SOURCES})
+set(PLUGIN_HEADERS
+  plugins/compressor.h
+  plugins/compressorTokens.h
+  plugins/compressorTypes.h
+  )
+
+set(LUNCHBOX_COMPRESSORS
+  compressor/compressor.cpp
+  compressor/compressor.h
+  compressor/compressorFastLZ.cpp
+  compressor/compressorFastLZ.h
+  compressor/compressorLZF.cpp
+  compressor/compressorLZF.h
+  compressor/compressorRLE.ipp
+  compressor/compressorRLE10A2.cpp
+  compressor/compressorRLE10A2.h
+  compressor/compressorRLE4B.cpp
+  compressor/compressorRLE4B.h
+  compressor/compressorRLE4BU.cpp
+  compressor/compressorRLE4BU.h
+  compressor/compressorRLE4HF.cpp
+  compressor/compressorRLE4HF.h
+  compressor/compressorRLE565.cpp
+  compressor/compressorRLE565.h
+  compressor/compressorRLEB.cpp
+  compressor/compressorRLEB.h
+  compressor/compressorRLEYUV.cpp
+  compressor/compressorRLEYUV.h
+  compressor/compressorSnappy.cpp
+  compressor/compressorSnappy.h
+  compressor/fastlz/fastlz.c
+  compressor/fastlz/fastlz.h
+  compressor/liblzf/lzf.h
+  compressor/liblzf/lzf_c.c
+  compressor/liblzf/lzf_d.c
+  compressor/snappy/snappy.h
+  compressor/snappy/snappy.cc
+  compressor/snappy/snappy-sinksource.cc
+  )
+
+set(LUNCHBOX_ALL ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_SOURCES}
+  ${PLUGIN_HEADERS} ${LUNCHBOX_COMPRESSORS})

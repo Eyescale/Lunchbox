@@ -55,8 +55,8 @@ public:
     /** @return the information about the allocated compressor. */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
 
-    /** Move assignment operator. */
-    LUNCHBOX_API const Decompressor& operator = ( Decompressor& );
+    /** Swap the two decompressors instances. */
+    LUNCHBOX_API void swap( Decompressor& other );
 
     /**
      * Decompress one-dimensional data.
@@ -89,7 +89,7 @@ public:
                                   uint64_t pvpOut[4], const uint64_t flags );
 
 private:
-    detail::Decompressor* const impl_;
+    detail::Decompressor* impl_;
     LB_TS_VAR( _thread );
 };
 }

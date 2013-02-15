@@ -79,13 +79,9 @@ bool Decompressor::uses( const uint32_t name ) const
     return isGood() && impl_->info.name == name;
 }
 
-const Decompressor& Decompressor::operator = ( Decompressor& from )
+void Decompressor::swap( Decompressor& other )
 {
-    if( impl_->instance )
-        impl_->plugin->deleteDecompressor( impl_->instance );
-    *impl_ = *from.impl_;
-    from.impl_->clear();
-    return *this;
+    std::swap( impl_, other.impl_ );
 }
 
 const EqCompressorInfo& Decompressor::getInfo() const

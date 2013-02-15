@@ -66,8 +66,8 @@ public:
     /** @return the information about the allocated compressor. */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
 
-    /** Move assignment operator. */
-    LUNCHBOX_API const Compressor& operator = ( Compressor& );
+    /** Swap the two compressors instances. */
+    LUNCHBOX_API void swap( Compressor& other );
 
     /**
      * Find the best compressor in all plugins for the given parameters.
@@ -121,7 +121,7 @@ public:
     LUNCHBOX_API void getResult( const unsigned i, void** const out,
                                  uint64_t* const outSize ) const;
 private:
-    detail::Compressor* const impl_;
+    detail::Compressor* impl_;
     LB_TS_VAR( _thread );
 };
 }

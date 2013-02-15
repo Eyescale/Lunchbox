@@ -105,13 +105,9 @@ const EqCompressorInfo& Compressor::getInfo() const
     return impl_->info;
 }
 
-const Compressor& Compressor::operator = ( Compressor& from )
+void Compressor::swap( Compressor& other )
 {
-    if( impl_->instance )
-        impl_->plugin->deleteCompressor( impl_->instance );
-    *impl_ = *from.impl_;
-    from.impl_->clear();
-    return *this;
+    std::swap( impl_, other.impl_ );
 }
 
 uint32_t Compressor::choose( const PluginRegistry& registry,

@@ -21,23 +21,23 @@
 #include "debug.h"
 #include "os.h"
 
+#include <boost/regex.hpp>
+#include <sys/stat.h>
 #ifndef _MSC_VER
 #  include <dirent.h>
 #endif
 
-#include <sys/stat.h>
-
 namespace lunchbox
 {
-
-Strings searchDirectory( const std::string& directory, const std::string& pattern )
+Strings searchDirectory( const std::string& directory,
+                         const std::string& pattern )
 {
     Strings files;
+    const boost::regex regex( pattern );
 
 #ifdef _MSC_VER
     WIN32_FIND_DATA file;
-    const std::string search = directory.empty() ? pattern : directory + '\\' +
-                               pattern;
+    const std::string search = directory.empty() ? "*.*" : directory + "\\*.*";
     HANDLE hSearch = FindFirstFile( search.c_str(), &file );
 
     if( hSearch == INVALID_HANDLE_VALUE )
@@ -48,26 +48,19 @@ Strings searchDirectory( const std::string& directory, const std::string& patter
         return files;
     }
 
-    files.push_back( file.cFileName );
-    while( FindNextFile( hSearch, &file ))
+    if( boost::regex_match( candidate, regex ))
         files.push_back( file.cFileName );
-
+    while( FindNextFile( hSearch, &file ))
+    {
+        if( boost::regex_match( candidate, regex ))
+            files.push_back( file.cFileName );
+    }
     FindClose( hSearch );
 
 #else
 
-    const size_t findPos = pattern.find( '*' );
-    if( findPos == std::string::npos )
-    {
-        LBASSERTINFO( 0, "Unimplemented" );
-        return files;
-    }
-
-    const std::string first = pattern.substr( 0, findPos );
-    const std::string second = pattern.substr( findPos + 1 );
-
     DIR* dir = opendir( directory.c_str() );
-    if( dir == 0 )
+    if( !dir )
     {
         LBVERB << "Can't open directory " << directory << std::endl;
         return files;
@@ -78,17 +71,8 @@ Strings searchDirectory( const std::string& directory, const std::string& patter
     while(( entry = readdir( dir )) != 0 )
     {
         const std::string candidate( entry->d_name );
-        if( candidate.find( first ) != 0 )
-            continue; // doesn't start with filename
-
-        const size_t end = candidate.rfind( second );
-        if( end == std::string::npos ||               // not found
-            end + second.size() < candidate.size( ))  // not at the end
-        {
-            continue;
-        }
-
-        files.push_back( entry->d_name );
+        if( boost::regex_match( candidate, regex ))
+            files.push_back( entry->d_name );
     }
 
     closedir(dir);

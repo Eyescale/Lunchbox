@@ -1,0 +1,7 @@
+
+This file lists all changes in the public Lunchbox API, latest on top:
+
+15/Feb/2013
+  lunchbox::searchDirectory uses boost::regex for pattern matching. This
+  changes the behaviour of this function, e.g.,
+  searchDirectory( "foo*.bar" ) is now searchDirectory( "foo.*\\.bar" )

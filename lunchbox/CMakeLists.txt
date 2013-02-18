@@ -4,7 +4,7 @@
 include(configure.cmake)
 include(files.cmake)
 
-set(LUNCHBOX_LINKLIBS ${PTHREAD_LIBRARIES} ${Boost_SERIALIZATION_LIBRARY})
+set(LUNCHBOX_LINKLIBS ${PTHREAD_LIBRARIES} ${Boost_LIBRARIES})
 if(WIN32)
   list(APPEND LUNCHBOX_LINKLIBS ws2_32 mswsock)
 endif(WIN32)

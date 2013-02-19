@@ -48,11 +48,11 @@ Strings searchDirectory( const std::string& directory,
         return files;
     }
 
-    if( boost::regex_match( candidate, regex ))
+    if( boost::regex_match( file.cFileName, regex ))
         files.push_back( file.cFileName );
     while( FindNextFile( hSearch, &file ))
     {
-        if( boost::regex_match( candidate, regex ))
+        if( boost::regex_match( file.cFileName, regex ))
             files.push_back( file.cFileName );
     }
     FindClose( hSearch );

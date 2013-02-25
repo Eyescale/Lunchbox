@@ -22,12 +22,15 @@
 #define LUNCHBOX_PLUGINREGISTRY_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/types.h>
 #include <lunchbox/visitorResult.h> // enum
 #include <string>
 
 namespace lunchbox
 {
+namespace detail { class PluginRegistry; }
+
 /**
  * A registry for loaded plugins.
  *
@@ -36,11 +39,14 @@ namespace lunchbox
  * directories before calling co::init(). The internal plugin registry can
  * be obtained using co::Global::getPluginRegistry().
  */
-class PluginRegistry
+class PluginRegistry : public NonCopyable
 {
 public:
-    /** @internal Construct a new plugin registry. */
+    /** Construct a new plugin registry. */
     LUNCHBOX_API PluginRegistry();
+
+    /** Destruct this plugin registry. */
+    LUNCHBOX_API ~PluginRegistry();
 
     /**
      * Add a new directory to search for compressor DSOs during init().
@@ -95,8 +101,7 @@ public:
     LUNCHBOX_API bool addPlugin( const std::string& filename );
 
 private:
-    Strings _directories;
-    Plugins _plugins;
+    detail::PluginRegistry* const impl_;
 };
 }
 #endif // LUNCHBOX_PLUGINREGISTRY_H

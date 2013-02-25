@@ -41,80 +41,87 @@
 
 namespace lunchbox
 {
-namespace
+namespace detail
 {
-Strings _initPluginDirectories()
+class PluginRegistry
 {
-    Strings pluginDirectories;
-
-    char* env = getenv( "EQ_PLUGIN_PATH" );
-    std::string envString( env ? env : "" );
-
-    if( envString.empty( ))
+public:
+    PluginRegistry()
     {
-        char cwd[MAXPATHLEN];
-        pluginDirectories.push_back( getcwd( cwd, MAXPATHLEN ));
+        char* env = getenv( "EQ_PLUGIN_PATH" );
+        std::string envString( env ? env : "" );
+
+        if( envString.empty( ))
+        {
+            char cwd[MAXPATHLEN];
+            directories.push_back( getcwd( cwd, MAXPATHLEN ));
 
 #ifdef _WIN32
-        if( GetModuleFileName( 0, cwd, MAXPATHLEN ) > 0 )
-            pluginDirectories.push_back( lunchbox::getDirname( cwd ));
-#endif
-
-#ifdef Darwin
-        env = getenv( "DYLD_LIBRARY_PATH" );
+            if( GetModuleFileName( 0, cwd, MAXPATHLEN ) > 0 )
+                directories.push_back( lunchbox::getDirname( cwd ));
 #else
-        env = getenv( "LD_LIBRARY_PATH" );
-#endif
+#  ifdef Darwin
+            env = getenv( "DYLD_LIBRARY_PATH" );
+#  else
+            env = getenv( "LD_LIBRARY_PATH" );
+#  endif
         if( env )
             envString = env;
-    }
+#  endif
+        }
 
 #ifdef _WIN32
-    const char separator = ';';
+        const char separator = ';';
 #else
-    const char separator = ':';
+        const char separator = ':';
 #endif
 
-    while( !envString.empty( ))
-    {
-        size_t nextPos = envString.find( separator );
-        if ( nextPos == std::string::npos )
-            nextPos = envString.size();
+        while( !envString.empty( ))
+        {
+            size_t nextPos = envString.find( separator );
+            if ( nextPos == std::string::npos )
+                nextPos = envString.size();
 
-        std::string path = envString.substr( 0, nextPos );
-        if ( nextPos == envString.size())
-            envString = "";
-        else
-            envString = envString.substr( nextPos + 1, envString.size() );
+            std::string path = envString.substr( 0, nextPos );
+            if ( nextPos == envString.size( ))
+                envString = "";
+            else
+                envString = envString.substr( nextPos + 1, envString.size() );
 
-        if( !path.empty( ))
-            pluginDirectories.push_back( path );
+            if( !path.empty( ))
+                directories.push_back( path );
+        }
     }
 
-    return pluginDirectories;
-}
-
+    Strings directories;
+    Plugins plugins;
+};
 }
 
 PluginRegistry::PluginRegistry()
-        : _directories( _initPluginDirectories( ))
+    : impl_( new detail::PluginRegistry )
 {}
+
+PluginRegistry::~PluginRegistry()
+{
+    delete impl_;
+}
 
 const Strings& PluginRegistry::getDirectories() const
 {
-    return _directories;
+    return impl_->directories;
 }
 
 void  PluginRegistry::addDirectory( const std::string& path )
 {
-    _directories.push_back( path );
+    impl_->directories.push_back( path );
 }
 
 void PluginRegistry::removeDirectory( const std::string& path )
 {
-    Strings::iterator i = stde::find( _directories, path );
-    if( i != _directories.end( ))
-        _directories.erase( i );
+    Strings::iterator i = stde::find( impl_->directories, path );
+    if( i != impl_->directories.end( ))
+        impl_->directories.erase( i );
 }
 
 bool PluginRegistry::addLunchboxPlugins()
@@ -140,7 +147,7 @@ bool PluginRegistry::addLunchboxPlugins()
 void PluginRegistry::init()
 {
     // for each directory
-    for( StringsCIter i = _directories.begin(); i != _directories.end(); ++i )
+    for( StringsCIter i = impl_->directories.begin(); i != impl_->directories.end(); ++i )
     {
         const std::string& dir = *i;
         LBLOG( LOG_PLUGIN ) << "Searching plugins in " << dir << std::endl;
@@ -165,7 +172,7 @@ void PluginRegistry::init()
         }
     }
 
-    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i )
+    for( PluginsCIter i = impl_->plugins.begin(); i != impl_->plugins.end(); ++i )
         (*i)->initChildren( *this );
 }
 
@@ -198,12 +205,12 @@ Plugin* _loadPlugin( const std::string& filename, const Strings& directories )
 
 bool PluginRegistry::addPlugin( const std::string& filename )
 {
-    Plugin* plugin = _loadPlugin( filename, _directories );
+    Plugin* plugin = _loadPlugin( filename, impl_->directories );
     if( !plugin )
         return false;
 
     const CompressorInfos& infos = plugin->getInfos();
-    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i)
+    for( PluginsCIter i = impl_->plugins.begin(); i != impl_->plugins.end(); ++i)
     {
         const CompressorInfos& infos2 = (*i)->getInfos();
 
@@ -215,7 +222,7 @@ bool PluginRegistry::addPlugin( const std::string& filename )
         }
     }
 
-    _plugins.push_back( plugin );
+    impl_->plugins.push_back( plugin );
     LBLOG( LOG_PLUGIN ) << "Found " << plugin->getInfos().size()
                         << " compression engines in " << filename << std::endl;
     return true;
@@ -223,13 +230,13 @@ bool PluginRegistry::addPlugin( const std::string& filename )
 
 void PluginRegistry::exit()
 {
-    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i)
+    for( PluginsCIter i = impl_->plugins.begin(); i != impl_->plugins.end(); ++i)
     {
         Plugin* plugin = *i;
         delete plugin;
     }
 
-    _plugins.clear();
+    impl_->plugins.clear();
 }
 
 namespace
@@ -270,7 +277,7 @@ const Plugin* PluginRegistry::findPlugin( const uint32_t name ) const
 VisitorResult PluginRegistry::accept( PluginVisitor& visitor )
 {
     VisitorResult result = TRAVERSE_CONTINUE;
-    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i )
+    for( PluginsCIter i = impl_->plugins.begin(); i != impl_->plugins.end(); ++i )
         switch( (*i)->accept( visitor ))
         {
         case TRAVERSE_TERMINATE:
@@ -286,7 +293,7 @@ VisitorResult PluginRegistry::accept( PluginVisitor& visitor )
 VisitorResult PluginRegistry::accept( ConstPluginVisitor& visitor ) const
 {
     VisitorResult result = TRAVERSE_CONTINUE;
-    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i )
+    for( PluginsCIter i = impl_->plugins.begin(); i != impl_->plugins.end(); ++i )
         switch( (*i)->accept( visitor ))
         {
         case TRAVERSE_TERMINATE:
@@ -302,7 +309,7 @@ VisitorResult PluginRegistry::accept( ConstPluginVisitor& visitor ) const
 
 const Plugins& PluginRegistry::getPlugins() const
 {
-    return _plugins;
+    return impl_->plugins;
 }
 
 }

@@ -46,7 +46,6 @@
 #ifndef _MSC_VER
 #  include <stdint.h>
 #  include <sys/param.h>  // for MIN/MAX
-#else
 #  include <strings.h>
 #endif
 

@@ -30,6 +30,8 @@
 #include <lunchbox/pluginRegistry.h>
 #include <lunchbox/rng.h>
 
+#include <algorithm>
+
 using namespace lunchbox;
 
 void _testFile();

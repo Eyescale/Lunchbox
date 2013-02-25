@@ -24,6 +24,8 @@
 #include "pluginInstance.h"
 #include "pluginRegistry.h"
 
+#include <algorithm>
+
 namespace lunchbox
 {
 namespace detail
@@ -167,7 +169,7 @@ void Compressor::clear()
 }
 
 void Compressor::compress( void* const in, const uint64_t pvpIn[4],
-                           const eq_uint64_t flags )
+                           const uint64_t flags )
 {
     LBASSERT( impl_->plugin );
     LBASSERT( impl_->instance );

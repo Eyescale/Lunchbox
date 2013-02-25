@@ -24,6 +24,8 @@
 #include "pluginVisitor.h"
 #include "transferer.h"
 
+#include <limits>
+
 namespace lunchbox
 {
 namespace detail

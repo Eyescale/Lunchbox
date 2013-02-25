@@ -127,7 +127,8 @@ namespace lunchbox
          *         containing between minimum and maximum elements.
          * @version 1.7.0
          */
-        std::vector< T > timedPop( const unsigned timeout, const size_t minimum = 1,
+        std::vector< T > timedPop( const unsigned timeout,
+                                   const size_t minimum = 1,
                                    const size_t maximum = S );
 
         /**
@@ -181,6 +182,12 @@ namespace lunchbox
 
         /** Push a vector of elements to the front of the queue. @version 1.0 */
         void pushFront( const std::vector< T >& elements );
+
+        /** @name STL compatibility. */
+        //@{
+        void push_back( const T& element ) { push( element ); }
+        bool empty() const { return isEmpty(); }
+        //@}
 
     private:
         std::deque< T > _queue;

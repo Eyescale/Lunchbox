@@ -24,6 +24,7 @@
 #include "file.h"
 #include "log.h"
 #include "plugin.h"
+#include "pluginVisitor.h"
 #include "stdExt.h"
 
 #ifdef _MSC_VER
@@ -202,7 +203,7 @@ bool PluginRegistry::addPlugin( const std::string& filename )
         return false;
 
     const CompressorInfos& infos = plugin->getInfos();
-    for( Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i)
+    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i)
     {
         const CompressorInfos& infos2 = (*i)->getInfos();
 
@@ -222,7 +223,7 @@ bool PluginRegistry::addPlugin( const std::string& filename )
 
 void PluginRegistry::exit()
 {
-    for( Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i)
+    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i)
     {
         Plugin* plugin = *i;
         delete plugin;
@@ -231,17 +232,72 @@ void PluginRegistry::exit()
     _plugins.clear();
 }
 
-Plugin* PluginRegistry::findPlugin( const uint32_t name )
+namespace
 {
-
-    for( Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i)
+template< class P,  class I > class Finder : public PluginVisitorT< P, I >
+{
+public:
+    Finder( const uint32_t name ) : plugin( 0 ), name_( name ) {}
+    virtual VisitorResult visit( P& candidate, I& info )
     {
-        Plugin* plugin = *i;
-        if ( plugin->implementsType( name ))
-            return plugin;
+        if( info.name != name_ )
+            return TRAVERSE_CONTINUE;
+
+        plugin = &candidate;
+        return TRAVERSE_TERMINATE;
     }
 
-    return 0;
+    P* plugin;
+private:
+    const uint32_t name_;
+};
+}
+
+Plugin* PluginRegistry::findPlugin( const uint32_t name )
+{
+    Finder< Plugin, EqCompressorInfo > finder( name );
+    accept( finder );
+    return finder.plugin;
+}
+
+const Plugin* PluginRegistry::findPlugin( const uint32_t name ) const
+{
+    Finder< const Plugin, const EqCompressorInfo > finder( name );
+    accept( finder );
+    return finder.plugin;
+}
+
+VisitorResult PluginRegistry::accept( PluginVisitor& visitor )
+{
+    VisitorResult result = TRAVERSE_CONTINUE;
+    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i )
+        switch( (*i)->accept( visitor ))
+        {
+        case TRAVERSE_TERMINATE:
+            return TRAVERSE_TERMINATE;
+        case TRAVERSE_PRUNE:
+            result = TRAVERSE_PRUNE;
+        default:
+            break;
+        }
+
+    return result;
+}
+VisitorResult PluginRegistry::accept( ConstPluginVisitor& visitor ) const
+{
+    VisitorResult result = TRAVERSE_CONTINUE;
+    for( PluginsCIter i = _plugins.begin(); i != _plugins.end(); ++i )
+        switch( (*i)->accept( visitor ))
+        {
+        case TRAVERSE_TERMINATE:
+            return TRAVERSE_TERMINATE;
+        case TRAVERSE_PRUNE:
+            result = TRAVERSE_PRUNE;
+        case TRAVERSE_CONTINUE:
+            break;
+        }
+
+    return result;
 }
 
 const Plugins& PluginRegistry::getPlugins() const

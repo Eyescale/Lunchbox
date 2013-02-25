@@ -30,7 +30,7 @@ namespace lunchbox
 namespace detail { class Compressor; }
 
 /** A C++ class to handle one compressor instance. */
-class Compressor
+class Compressor : public NonCopyable
 {
 public:
     /** Construct a new compressor instance. */
@@ -50,9 +50,6 @@ public:
      */
     LUNCHBOX_API Compressor( PluginRegistry& registry, const uint32_t tokenType,
                              const float minQuality, const bool ignoreMSE );
-
-    /** Move constructor. */
-    LUNCHBOX_API Compressor( Compressor& from );
 
     /** Destruct the compressor. */
     LUNCHBOX_API virtual ~Compressor();
@@ -89,6 +86,9 @@ public:
 
     /** Reallocate the current instance. */
     LUNCHBOX_API bool realloc();
+
+    /** Reset to EQ_COMPRESSOR_NONE. */
+    LUNCHBOX_API void clear();
 
     /**
      * Compress one-dimensional data.

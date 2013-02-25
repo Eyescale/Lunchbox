@@ -28,7 +28,7 @@ template< class T, int32_t nSlots >
 LFVector< T, nSlots >::LFVector()
     : size_( 0 )
 {
-    lb_bzero( slots_, nSlots * sizeof( T* ));
+    setZero( slots_, nSlots * sizeof( T* ));
 }
 
 template< class T, int32_t nSlots >
@@ -36,7 +36,7 @@ LFVector< T, nSlots >::LFVector( const size_t n )
     : size_( n )
 {
     LBASSERT( n != 0 );
-    lb_bzero( slots_, nSlots * sizeof( T* ));
+    setZero( slots_, nSlots * sizeof( T* ));
     const int32_t s = getIndexOfLastBit( uint64_t( n ));
     for( int32_t i = 0; i <= s; ++i )
         slots_[ i ] = new T[ 1<<i ];
@@ -47,7 +47,7 @@ LFVector< T, nSlots >::LFVector( const size_t n, const T& t )
     : size_( 0 )
 {
     LBASSERT( n != 0 );
-    lb_bzero( slots_, nSlots * sizeof( T* ));
+    setZero( slots_, nSlots * sizeof( T* ));
     const int32_t s = getIndexOfLastBit( uint64_t( n ));
     for( int32_t i = 0; i <= s; ++i )
     {
@@ -299,7 +299,7 @@ template< class T, int32_t nSlots >
 template< int32_t fromSlots >
 void LFVector< T, nSlots >::assign_( const LFVector< T, fromSlots >& from )
 {
-    lb_bzero( slots_, nSlots * sizeof( T* ));
+    setZero( slots_, nSlots * sizeof( T* ));
 
     ScopedWrite mutex( from.lock_ );
     for( int32_t i = 0; i < nSlots; ++i )

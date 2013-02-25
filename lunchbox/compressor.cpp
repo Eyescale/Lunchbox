@@ -32,6 +32,13 @@ class Compressor : public PluginInstance
 {
 public:
     Compressor() : PluginInstance( EQ_COMPRESSOR_NONE ) {}
+    ~Compressor()
+    {
+        if( instance )
+            plugin->deleteCompressor( instance );
+        instance = 0;
+        plugin = 0;
+    }
 
     Compressor( lunchbox::PluginRegistry& registry, const uint32_t name )
         : PluginInstance( name )
@@ -75,17 +82,8 @@ Compressor::Compressor( PluginRegistry& registry, const uint32_t tokenType,
     LB_TS_THREAD( _thread );
 }
 
-Compressor::Compressor( Compressor& from )
-    : impl_( new detail::Compressor( *from.impl_ ))
-{
-    from.impl_->clear();
-}
-
 Compressor::~Compressor()
 {
-    if( impl_->instance )
-        impl_->plugin->deleteCompressor( impl_->instance );
-    impl_->clear();
     delete impl_;
 }
 
@@ -161,6 +159,12 @@ bool Compressor::realloc()
     return impl_->instance;
 }
 
+void Compressor::clear()
+{
+    delete impl_;
+    impl_ = new detail::Compressor;
+}
+
 void Compressor::compress( void* const in, const uint64_t pvpIn[4],
                            const eq_uint64_t flags )
 {
@@ -184,7 +188,7 @@ void Compressor::compress( void* const in, const uint64_t inDims[2] )
                              EQ_COMPRESSOR_DATA_1D );
 }
 
-unsigned Compressor::getNumResults( ) const
+unsigned Compressor::getNumResults() const
 {
     LBASSERT( impl_->plugin );
     LBASSERT( impl_->instance );

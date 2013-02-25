@@ -23,7 +23,9 @@
 #include "compressorInfo.h"
 #include "debug.h"
 #include "log.h"
+#include "os.h"
 #include "pluginRegistry.h"
+#include "pluginVisitor.h"
 #include <cmath>
 
 namespace lunchbox
@@ -168,11 +170,70 @@ bool Plugin::isGood() const
     return !impl_->infos.empty();
 }
 
+VisitorResult Plugin::accept( PluginVisitor& visitor )
+{
+    switch( visitor.visit( *this ))
+    {
+    case TRAVERSE_TERMINATE:
+        return TRAVERSE_TERMINATE;
+    case TRAVERSE_PRUNE:
+        return TRAVERSE_PRUNE;
+    case TRAVERSE_CONTINUE:
+        break;
+    }
+
+    VisitorResult result = TRAVERSE_CONTINUE;
+    for( CompressorInfosIter i = impl_->infos.begin();
+         i != impl_->infos.end(); ++i )
+    {
+        switch( visitor.visit( *i ))
+        {
+        case TRAVERSE_TERMINATE:
+            return TRAVERSE_TERMINATE;
+        case TRAVERSE_PRUNE:
+            result = TRAVERSE_PRUNE;
+        case TRAVERSE_CONTINUE:
+            break;
+        }
+    }
+    return result;
+}
+
+VisitorResult Plugin::accept( ConstPluginVisitor& visitor ) const
+{
+    switch( visitor.visit( *this ))
+    {
+    case TRAVERSE_TERMINATE:
+        return TRAVERSE_TERMINATE;
+    case TRAVERSE_PRUNE:
+        return TRAVERSE_PRUNE;
+    case TRAVERSE_CONTINUE:
+        break;
+    }
+
+    VisitorResult result = TRAVERSE_CONTINUE;
+    for( CompressorInfosIter i = impl_->infos.begin();
+         i != impl_->infos.end(); ++i )
+    {
+        switch( visitor.visit( *i ))
+        {
+        case TRAVERSE_TERMINATE:
+            return TRAVERSE_TERMINATE;
+        case TRAVERSE_PRUNE:
+            result = TRAVERSE_PRUNE;
+        case TRAVERSE_CONTINUE:
+            break;
+        }
+    }
+    return result;
+}
+
 void Plugin::initChildren( const PluginRegistry& registry )
 {
     const Plugins& plugins = registry.getPlugins();
 
-    for( CompressorInfos::iterator i = impl_->infos.begin(); i != impl_->infos.end(); ++i )
+    for( CompressorInfosIter i = impl_->infos.begin();
+         i != impl_->infos.end(); ++i )
     {
         CompressorInfo& info = *i;
         LBLOG( LOG_PLUGIN ) << lunchbox::disableFlush << "Engine 0x" << std::hex
@@ -244,7 +305,7 @@ bool Plugin::implementsType( const uint32_t name ) const
     return false;
 }
 
-const EqCompressorInfo& Plugin::findInfo( const uint32_t name ) const
+EqCompressorInfo Plugin::findInfo( const uint32_t name ) const
 {
     for( CompressorInfos::const_iterator i = impl_->infos.begin();
          i != impl_->infos.end(); ++i )
@@ -254,7 +315,9 @@ const EqCompressorInfo& Plugin::findInfo( const uint32_t name ) const
     }
 
     LBUNREACHABLE;
-    return impl_->infos.front();
+    EqCompressorInfo info;
+    setZero( &info, sizeof( info ));
+    return info;
 }
 
 const CompressorInfos& Plugin::getInfos() const

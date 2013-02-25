@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2010-2013, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -40,11 +40,8 @@ struct CompressorInfo : public EqCompressorInfo
 
 inline std::ostream& operator << ( std::ostream& os, const CompressorInfo& info)
 {
-    return os << "v" << info.version << std::hex << " name 0x" << info.name
-              << " in 0x" << info.tokenType << " out 0x" << info.outputTokenType
-              << " cap 0x" << info.capabilities << std::dec << " quality "
-              << info.quality <<" ratio " << info.ratio << " speed "
-              << info.speed << " rating " << info.ratingAlpha;
+    return os << static_cast< const EqCompressorInfo& >( info ) << " rating "
+              << info.ratingAlpha;
 }
 
 }

@@ -23,63 +23,80 @@
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
+#include <lunchbox/visitorResult.h> // enum
 #include <string>
 
 namespace lunchbox
 {
+/**
+ * A registry for loaded plugins.
+ *
+ * Collage and downstream projects such as Equalizer use and initialize a
+ * global plugin registry in their respective initialization calls by adding
+ * directories before calling co::init(). The internal plugin registry can
+ * be obtained using co::Global::getPluginRegistry().
+ */
+class PluginRegistry
+{
+public:
+    /** @internal Construct a new plugin registry. */
+    LUNCHBOX_API PluginRegistry();
+
     /**
-     * A registry for loaded plugins.
-     *
-     * Collage and downstream projects such as Equalizer use and initialize a
-     * global plugin registry in their respective initialization calls by adding
-     * directories before calling co::init(). The internal plugin registry can
-     * be obtained using co::Global::getPluginRegistry().
+     * Add a new directory to search for compressor DSOs during init().
+     * @version 1.0
      */
-    class PluginRegistry
-    {
-    public:
-        /** @internal Construct a new plugin registry. */
-        PluginRegistry();
+    LUNCHBOX_API void addDirectory( const std::string& path );
 
-        /**
-         * Add a new directory to search for compressor DSOs during init().
-         * @version 1.0
-         */
-        LUNCHBOX_API void addDirectory( const std::string& path );
+    /** Remove a plugin directory. @version 1.0 */
+    LUNCHBOX_API void removeDirectory( const std::string& path );
 
-        /** Remove a plugin directory. @version 1.0 */
-        LUNCHBOX_API void removeDirectory( const std::string& path );
+    /**
+     * @return all directories to search for compressor DSOs during init().
+     * @version 1.0
+     */
+    LUNCHBOX_API const Strings& getDirectories() const;
 
-        /**
-         * @return all directories to search for compressor DSOs during init().
-         * @version 1.0
-         */
-        LUNCHBOX_API const Strings& getDirectories() const;
+    /**
+     * Add the lunchbox library plugins to this registry.
+     * @return true on success, false otherwise.
+     */
+    LUNCHBOX_API bool addLunchboxPlugins();
 
-        /**
-         * Add the lunchbox library plugins to this registry.
-         * @return true on success, false otherwise.
-         */
-        LUNCHBOX_API bool addLunchboxPlugins();
+    /** @internal Search all plugin directories and register found DSOs */
+    LUNCHBOX_API void init();
 
-        /** @internal Search all plugin directories and register found DSOs */
-        LUNCHBOX_API void init();
+    /** @internal Exit all DSOs and free all plugins */
+    LUNCHBOX_API void exit();
 
-        /** @internal Exit all DSOs and free all plugins */
-        LUNCHBOX_API void exit();
+    /**
+     * Visit all plugins and compressors.
+     *
+     * @return TRAVERSE_TERMINATE immediately when one visit method returned
+     *         terminate, TRAVERSE_PRUNE if at least one visit method returned
+     *         prune, TRAVERSE_CONTINUE otherwise.
+     * @version 1.7.1
+     */
+    LUNCHBOX_API VisitorResult accept( PluginVisitor& visitor );
 
-        /** @internal @return all registered compressor plugins */
-        LUNCHBOX_API const Plugins& getPlugins() const;
+    /** Visit all plugins and compressors. @version 1.7.1 */
+    LUNCHBOX_API VisitorResult accept( ConstPluginVisitor& visitor ) const;
 
-        /** @internal @return the plugin containing the given compressor. */
-        LUNCHBOX_API Plugin* findPlugin( const uint32_t name );
+    /** @internal @return all registered compressor plugins */
+    LUNCHBOX_API const Plugins& getPlugins() const;
 
-        /** @internal Add a single DSO before init(). @return true if found. */
-        LUNCHBOX_API bool addPlugin( const std::string& filename );
+    /** @internal @return the plugin containing the given compressor. */
+    LUNCHBOX_API Plugin* findPlugin( const uint32_t name );
 
-    private:
-        Strings _directories;
-        Plugins _plugins;
-    };
+    /** @internal @return the plugin containing the given compressor. */
+    LUNCHBOX_API const Plugin* findPlugin( const uint32_t name ) const;
+
+    /** @internal Add a single DSO before init(). @return true if found. */
+    LUNCHBOX_API bool addPlugin( const std::string& filename );
+
+private:
+    Strings _directories;
+    Plugins _plugins;
+};
 }
 #endif // LUNCHBOX_PLUGINREGISTRY_H

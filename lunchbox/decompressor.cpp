@@ -31,6 +31,13 @@ class Decompressor : public PluginInstance
 {
 public:
     Decompressor( const uint32_t name ) : PluginInstance( name ) {}
+    ~Decompressor()
+    {
+        if( instance )
+            plugin->deleteDecompressor( instance );
+        instance = 0;
+        plugin = 0;
+    }
 };
 }
 
@@ -62,9 +69,6 @@ Decompressor::Decompressor( PluginRegistry& registry, const uint32_t name )
 
 Decompressor::~Decompressor()
 {
-    if( impl_->instance )
-        impl_->plugin->deleteDecompressor( impl_->instance );
-    impl_->clear();
     delete impl_;
 }
 
@@ -82,6 +86,12 @@ bool Decompressor::uses( const uint32_t name ) const
 void Decompressor::swap( Decompressor& other )
 {
     std::swap( impl_, other.impl_ );
+}
+
+void Decompressor::clear()
+{
+    delete impl_;
+    impl_ = new detail::Decompressor( EQ_COMPRESSOR_NONE );
 }
 
 const EqCompressorInfo& Decompressor::getInfo() const

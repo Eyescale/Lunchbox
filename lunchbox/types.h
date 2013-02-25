@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2007-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -142,6 +142,16 @@ typedef SSIZE_T    ssize_t;
 #define LB_48MB  (50331648)
 #define LB_64MB  (67108864)
 
+/** @cond IGNORE */
+struct EqCompressorInfo;
+typedef std::vector< EqCompressorInfo > EqCompressorInfos;
+typedef EqCompressorInfos::const_iterator EqCompressorInfosCIter;
+struct GLEWContextStruct;
+struct WGLEWContextStruct;
+typedef struct GLEWContextStruct GLEWContext;
+typedef struct WGLEWContextStruct WGLEWContext;
+/** @endcond */
+
 namespace lunchbox
 {
 /** A vector of std::strings @version 1.0 */
@@ -158,14 +168,16 @@ class RequestHandler;
 class Servus;
 class SpinLock;
 class UUID;
+class Uploader;
 class uint128_t;
 
 template< class > class Atomic;
 template< class > class Buffer;
 template< class > class Monitor;
-template< class, class> class Lockable;
-template< class T, int32_t > class LFVector;
-template< class T, class V > class LFVectorIterator;
+template< class, class > class LFVectorIterator;
+template< class, class > class PluginVisitorT;
+template< class, class > class Lockable;
+template< class, int32_t > class LFVector;
 
 typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable
 typedef Atomic< ssize_t > a_ssize_t; //!< An atomic signed size variable
@@ -174,13 +186,16 @@ typedef Buffer< uint8_t > Bufferb; //!< a byte buffer
 typedef std::vector< Plugin* > Plugins;
 typedef Plugins::const_iterator PluginsCIter;
 
+typedef PluginVisitorT< Plugin, EqCompressorInfo > PluginVisitor;
+typedef PluginVisitorT< const Plugin,
+                        const EqCompressorInfo > ConstPluginVisitor;
+
 /** @cond IGNORE */
 struct CompressorInfo;
 typedef std::vector< CompressorInfo > CompressorInfos;
 typedef CompressorInfos::const_iterator CompressorInfosCIter;
+typedef CompressorInfos::iterator CompressorInfosIter;
 /** @endcond */
 }
-
-struct EqCompressorInfo;
 
 #endif //LUNCHBOX_TYPES_H

@@ -1,15 +1,15 @@
- 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -46,6 +46,8 @@
 #ifndef _MSC_VER
 #  include <stdint.h>
 #  include <sys/param.h>  // for MIN/MAX
+#else
+#  include <strings.h>
 #endif
 
 #ifdef __APPLE__
@@ -54,5 +56,18 @@
 #elif !defined(_WIN32)
 extern "C" char **environ;
 #endif
+
+namespace lunchbox
+{
+/** OS-independent call to bzero(3). @version 1.7.1 */
+static inline void setZero( void* ptr, const size_t size )
+{
+#ifdef _WIN32
+    ::memset( ptr, 0, size );
+#else
+    ::bzero( ptr, size );
+#endif
+}
+}
 
 #endif //LUNCHBOX_OS_H

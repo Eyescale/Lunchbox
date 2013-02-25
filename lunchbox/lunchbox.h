@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2010-2013, Stefan Eilemann <eile@eyescale.ch>
  *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -32,6 +32,8 @@
  * to implement common utilities for multi-threaded C++ programs. Classes with
  * non-virtual destructors are not intended to be subclassed.
  */
+
+#include <lunchbox/plugins/compressor.h>
 
 #include <lunchbox/any.h>
 #include <lunchbox/api.h>

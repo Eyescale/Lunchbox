@@ -58,6 +58,9 @@ public:
     /** Swap the two decompressors instances. */
     LUNCHBOX_API void swap( Decompressor& other );
 
+    /** Reset to EQ_COMPRESSOR_NONE. */
+    LUNCHBOX_API void clear();
+
     /**
      * Decompress one-dimensional data.
      *

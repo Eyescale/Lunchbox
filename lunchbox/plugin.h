@@ -2,7 +2,7 @@
 /* Copyright (c) 2009-2010, Cedric Stalder <cedric.stalder@gmail.com>
  *               2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
- * This file is part of Collage <https://github.com/Eyescale/Collage>
+ * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,6 +23,7 @@
 
 #include <lunchbox/types.h>
 #include <lunchbox/dso.h>           // base class
+#include <lunchbox/visitorResult.h> // enum
 #include <lunchbox/plugins/compressor.h> // GLEW definition
 
 namespace lunchbox
@@ -81,11 +82,17 @@ public:
     /** @return true if the plugin is usable. */
     LUNCHBOX_API bool isGood() const;
 
+    /** Visit all compressors. @version 1.7.1 */
+    LUNCHBOX_API VisitorResult accept( PluginVisitor& visitor );
+
+    /** Visit all compressors. @version 1.7.1 */
+    LUNCHBOX_API VisitorResult accept( ConstPluginVisitor& visitor ) const;
+
     /** @return true if name is found in the plugin. */
     bool implementsType( const uint32_t name ) const;
 
     /** @return the information for the given compressor, or 0. */
-    const EqCompressorInfo& findInfo( const uint32_t name ) const;
+    EqCompressorInfo findInfo( const uint32_t name ) const;
 
     /** @internal @return all compressor informations. */
     LUNCHBOX_API const CompressorInfos& getInfos() const;

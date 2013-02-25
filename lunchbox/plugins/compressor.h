@@ -204,7 +204,9 @@ typedef unsigned long long eq_uint64_t;
 #include "compressorTypes.h"
 
 #ifdef __cplusplus
-extern "C" {
+#include <iostream>
+extern "C"
+{
 #endif
     /**
      * @name Compressor capability flags
@@ -718,6 +720,16 @@ extern "C" {
 #endif
     /*@}*/
 #ifdef __cplusplus
+} // extern "C"
+
+inline std::ostream& operator << ( std::ostream& os,
+                                   const EqCompressorInfo& info )
+{
+    return os << "v" << info.version << std::hex << " name 0x" << info.name
+              << " in 0x" << info.tokenType << " out 0x" << info.outputTokenType
+              << " cap 0x" << info.capabilities << std::dec << " quality "
+              << info.quality <<" ratio " << info.ratio << " speed "
+              << info.speed;
 }
 #endif
 #endif // EQ_PLUGINS_COMPRESSOR

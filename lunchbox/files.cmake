@@ -18,6 +18,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   debug.h
   decompressor.h
   defines.h
+  downloader.h
   dso.h
   file.h
   hash.h
@@ -43,6 +44,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   perThreadRef.h
   plugin.h
   pluginRegistry.h
+  pluginVisitor.h
   pool.h
   refPtr.h
   referenced.h
@@ -61,7 +63,9 @@ set(LUNCHBOX_PUBLIC_HEADERS
   uint128_t.h
   unorderedIntervalSet.h
   unorderedIntervalSet.ipp
+  uploader.h
   uuid.h
+  visitorResult.h
   )
 
 set(LUNCHBOX_SOURCES
@@ -73,6 +77,7 @@ set(LUNCHBOX_SOURCES
   condition_w32.ipp
   debug.cpp
   decompressor.cpp
+  downloader.cpp
   dso.cpp
   file.cpp
   init.cpp
@@ -94,6 +99,7 @@ set(LUNCHBOX_SOURCES
   threadID.cpp
   timedLock.cpp
   uint128_t.cpp
+  uploader.cpp
   uuid.cpp
   version.cpp
   md5/md5.cc

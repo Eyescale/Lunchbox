@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2012, EPFL/Blue Brain Project
+/* Copyright (c) 2011-2013, EPFL/Blue Brain Project
  *                          Stefan Eilemann <stefan.eilemann@epfl.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
@@ -23,18 +23,11 @@
 
 #include <lunchbox/bitOperation.h> // used inline
 #include <lunchbox/debug.h> // used inline
+#include <lunchbox/os.h> // bzero()
 #include <lunchbox/scopedMutex.h> // member
 #include <lunchbox/serializable.h>
 #include <lunchbox/spinLock.h> // member
 #include <algorithm> // used inline
-
-
-#ifdef _WIN32
-#  define lb_bzero( ptr, size ) memset( ptr, 0, size )
-#else
-#  include <strings.h>
-#  define lb_bzero bzero
-#endif
 
 namespace lunchbox
 {

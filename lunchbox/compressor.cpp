@@ -112,6 +112,7 @@ uint32_t Compressor::choose( const PluginRegistry& registry,
                              const uint32_t tokenType, const float minQuality,
                              const bool ignoreAlpha )
 {
+    LBASSERT( tokenType != EQ_COMPRESSOR_DATATYPE_NONE );
     CompressorInfo candidate;
     candidate.name = EQ_COMPRESSOR_NONE;
     candidate.ratingAlpha = 1.0f;

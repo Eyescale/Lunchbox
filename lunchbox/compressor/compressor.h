@@ -34,133 +34,133 @@ namespace lunchbox
 {
 namespace plugin
 {
-    class Compressor
+class Compressor
+{
+public:
+    typedef void  (*GetInfo_t)( EqCompressorInfo* const );
+    typedef void (*Decompress_t)( const void* const*, const
+                                  eq_uint64_t* const,
+                                  const unsigned, void* const,
+                                  const eq_uint64_t, const bool );
+    typedef bool ( *IsCompatible_t ) ( const GLEWContext* );
+    struct Functions
     {
-    public:
-        typedef void  (*GetInfo_t)( EqCompressorInfo* const );
-        typedef void (*Decompress_t)( const void* const*, const 
-                                      eq_uint64_t* const,
-                                      const unsigned, void* const, 
-                                      const eq_uint64_t, const bool );
-        typedef bool ( *IsCompatible_t ) ( const GLEWContext* );
-        struct Functions
-        {
-            Functions( const unsigned name, GetInfo_t getInfo,
-                       Plugin::NewCompressor_t newCompressor,
-                       Plugin::NewCompressor_t newDecompressor,
-                       Decompress_t decompress, IsCompatible_t isCompatible );
+        Functions( const unsigned name, GetInfo_t getInfo,
+                   Plugin::NewCompressor_t newCompressor,
+                   Plugin::NewCompressor_t newDecompressor,
+                   Decompress_t decompress, IsCompatible_t isCompatible );
 
-            unsigned             name;
-            GetInfo_t               getInfo;
-            Plugin::NewCompressor_t newCompressor;
-            Plugin::NewCompressor_t newDecompressor;
-            Decompress_t            decompress;
-            IsCompatible_t          isCompatible;
-        };
-
-        /** Construct a new compressor. */
-        Compressor();
-        virtual ~Compressor();
-
-        /**
-         * Compress data.
-         *
-         * @param inData data to compress.
-         * @param nPixels number data to compress.
-         * @param useAlpha use alpha channel in compression.
-         */
-        virtual void compress( const void* const inData, const uint64_t nPixels,
-                               const bool useAlpha ) { LBDONTCALL; };
-
-        typedef lunchbox::Bufferb Result;
-        typedef std::vector< Result* > ResultVector;
-
-        /** @return the vector containing the result data. */
-        const ResultVector& getResults() const { return _results; }
-
-        /** @return the number of result items produced. */
-        unsigned getNResults() const { return _nResults; }
-
-        /**
-         * Transfer frame buffer data into main memory.
-         *
-         * @param glewContext the initialized GLEW context describing
-         *                    corresponding to the current OpenGL context.
-         * @param inDims the dimensions of the input data (x, w, y, h).
-         * @param source texture name to process.
-         * @param flags capability flags for the compression (see description).
-         * @param outDims the dimensions of the output data (see description).
-         * @param out the pointer to the output data.
-         */
-        virtual void download( const GLEWContext* glewContext,
-                               const eq_uint64_t  inDims[4],
-                               const unsigned     source,
-                               const eq_uint64_t  flags,
-                               eq_uint64_t        outDims[4],
-                               void**             out ) { LBDONTCALL; }
-
-        /**
-         * Transfer data from main memory into GPU memory.
-         *
-         * @param glewContext the initialized GLEW context describing
-         *                    corresponding to the current OpenGL context.
-         * @param buffer the datas input.
-         * @param inDims the dimension of data in the frame buffer.
-         * @param flags capability flags for the compression.
-         * @param outDims the result data size
-         * @param destination the destination texture name.
-         */
-        virtual void upload( const GLEWContext* glewContext,
-                             const void*        buffer,
-                             const eq_uint64_t  inDims[4],
-                             const eq_uint64_t  flags,
-                             const eq_uint64_t  outDims[4],
-                             const unsigned     destination ) { LBDONTCALL; }
-
-        /**
-         * Start transferring frame buffer data into main memory.
-         *
-         * @param glewContext the initialized GLEW context describing
-         *                    corresponding to the current OpenGL context.
-         * @param inDims the dimensions of the input data (x, w, y, h).
-         * @param source texture name, if EQ_COMPRESSOR_USE_TEXTURE_2D or
-         *               EQ_COMPRESSOR_USE_TEXTURE_RECT is set.
-         * @param flags capability flags for the compression (see description).
-         * @version 4
-         */
-        virtual void startDownload( const GLEWContext* glewContext,
-                                    const eq_uint64_t  inDims[4],
-                                    const unsigned     source,
-                                    const eq_uint64_t  flags ) { LBDONTCALL; }
-
-
-        /**
-         * Finish transferring frame buffer data into main memory.
-         *
-         * @param glewContext the initialized GLEW context describing
-         *                    corresponding to the current OpenGL context.
-         * @param inDims the dimensions of the input data (x, w, y, h).
-         * @param source texture name, if EQ_COMPRESSOR_USE_TEXTURE_2D or
-         *               EQ_COMPRESSOR_USE_TEXTURE_RECT is set.
-         * @param flags capability flags for the compression (see description).
-         * @param outDims the dimensions of the output data (see description).
-         * @param out the pointer to the output data.
-         * @version 4
-         */
-        virtual void finishDownload( const GLEWContext* glewContext,
-                                     const eq_uint64_t  inDims[4],
-                                     const unsigned     source,
-                                     const eq_uint64_t  flags,
-                                     eq_uint64_t        outDims[4],
-                                     void**             out ) { LBDONTCALL; }
-
-        /** @internal Register a new plugin engine. */
-        static void registerEngine( const Functions& functions );
-
-    protected:
-        ResultVector _results;  //!< The compressed data
-        unsigned _nResults;     //!< Number of elements used in _results
+        unsigned             name;
+        GetInfo_t               getInfo;
+        Plugin::NewCompressor_t newCompressor;
+        Plugin::NewCompressor_t newDecompressor;
+        Decompress_t            decompress;
+        IsCompatible_t          isCompatible;
     };
+
+    /** Construct a new compressor. */
+    Compressor();
+    virtual ~Compressor();
+
+    /**
+     * Compress data.
+     *
+     * @param inData data to compress.
+     * @param nPixels number data to compress.
+     * @param useAlpha use alpha channel in compression.
+     */
+    virtual void compress( const void* const inData, const eq_uint64_t nPixels,
+                           const bool useAlpha ) { LBDONTCALL; };
+
+    typedef lunchbox::Bufferb Result;
+    typedef std::vector< Result* > ResultVector;
+
+    /** @return the vector containing the result data. */
+    const ResultVector& getResults() const { return _results; }
+
+    /** @return the number of result items produced. */
+    unsigned getNResults() const { return _nResults; }
+
+    /**
+     * Transfer frame buffer data into main memory.
+     *
+     * @param glewContext the initialized GLEW context describing
+     *                    corresponding to the current OpenGL context.
+     * @param inDims the dimensions of the input data (x, w, y, h).
+     * @param source texture name to process.
+     * @param flags capability flags for the compression (see description).
+     * @param outDims the dimensions of the output data (see description).
+     * @param out the pointer to the output data.
+     */
+    virtual void download( const GLEWContext* glewContext,
+                           const eq_uint64_t  inDims[4],
+                           const unsigned     source,
+                           const eq_uint64_t  flags,
+                           eq_uint64_t        outDims[4],
+                           void**             out ) { LBDONTCALL; }
+
+    /**
+     * Transfer data from main memory into GPU memory.
+     *
+     * @param glewContext the initialized GLEW context describing
+     *                    corresponding to the current OpenGL context.
+     * @param buffer the datas input.
+     * @param inDims the dimension of data in the frame buffer.
+     * @param flags capability flags for the compression.
+     * @param outDims the result data size
+     * @param destination the destination texture name.
+     */
+    virtual void upload( const GLEWContext* glewContext,
+                         const void*        buffer,
+                         const eq_uint64_t  inDims[4],
+                         const eq_uint64_t  flags,
+                         const eq_uint64_t  outDims[4],
+                         const unsigned     destination ) { LBDONTCALL; }
+
+    /**
+     * Start transferring frame buffer data into main memory.
+     *
+     * @param glewContext the initialized GLEW context describing
+     *                    corresponding to the current OpenGL context.
+     * @param inDims the dimensions of the input data (x, w, y, h).
+     * @param source texture name, if EQ_COMPRESSOR_USE_TEXTURE_2D or
+     *               EQ_COMPRESSOR_USE_TEXTURE_RECT is set.
+     * @param flags capability flags for the compression (see description).
+     * @version 4
+     */
+    virtual void startDownload( const GLEWContext* glewContext,
+                                const eq_uint64_t  inDims[4],
+                                const unsigned     source,
+                                const eq_uint64_t  flags ) { LBDONTCALL; }
+
+
+    /**
+     * Finish transferring frame buffer data into main memory.
+     *
+     * @param glewContext the initialized GLEW context describing
+     *                    corresponding to the current OpenGL context.
+     * @param inDims the dimensions of the input data (x, w, y, h).
+     * @param source texture name, if EQ_COMPRESSOR_USE_TEXTURE_2D or
+     *               EQ_COMPRESSOR_USE_TEXTURE_RECT is set.
+     * @param flags capability flags for the compression (see description).
+     * @param outDims the dimensions of the output data (see description).
+     * @param out the pointer to the output data.
+     * @version 4
+     */
+    virtual void finishDownload( const GLEWContext* glewContext,
+                                 const eq_uint64_t  inDims[4],
+                                 const unsigned     source,
+                                 const eq_uint64_t  flags,
+                                 eq_uint64_t        outDims[4],
+                                 void**             out ) { LBDONTCALL; }
+
+    /** @internal Register a new plugin engine. */
+    static void registerEngine( const Functions& functions );
+
+protected:
+    ResultVector _results;  //!< The compressed data
+    unsigned _nResults;     //!< Number of elements used in _results
+};
 }
 }
 

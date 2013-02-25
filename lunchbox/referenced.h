@@ -33,20 +33,20 @@
 
 namespace lunchbox
 {
-    /**
-     * Base class for referenced objects.
-     *
-     * Implements reference-counted objects which destroy themselves once they
-     * are no longer referenced. Uses an Atomic variable to keep the reference
-     * count access thread-safe and efficient.
-     *
-     * @sa RefPtr
-     */
-    class Referenced
-    {
-    public:
-        /** Increase the reference count. @version 1.0 .*/
-        void ref( const void* holder = 0 ) const
+/**
+ * Base class for referenced objects.
+ *
+ * Implements reference-counted objects which destroy themselves once they are
+ * no longer referenced. Uses an Atomic variable to keep the reference count
+ * access thread-safe and efficient.
+ *
+ * @sa RefPtr
+ */
+class Referenced
+{
+public:
+    /** Increase the reference count. @version 1.0 .*/
+    void ref( const void* holder = 0 ) const
         {
 #ifndef NDEBUG
             LBASSERT( !_hasBeenDeleted );
@@ -68,111 +68,111 @@ namespace lunchbox
 #endif
         }
 
-        /**
-         * Decrease the reference count.
-         *
-         * The object is deleted when the reference count reaches 0.
-         * @version 1.0
-         * @return true if the reference count went to 0, false otherwise.
-         */
-        bool unref( const void* holder = 0 ) const
-            {
+    /**
+     * Decrease the reference count.
+     *
+     * The object is deleted when the reference count reaches 0.
+     * @version 1.0
+     * @return true if the reference count went to 0, false otherwise.
+     */
+    bool unref( const void* holder = 0 ) const
+        {
 #ifndef NDEBUG
-                LBASSERT( !_hasBeenDeleted );
+            LBASSERT( !_hasBeenDeleted );
 #endif
-                LBASSERT( _refCount > 0 );
-                const bool last = (--_refCount==0);
+            LBASSERT( _refCount > 0 );
+            const bool last = (--_refCount==0);
 
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-                if( holder )
-                {
-                    ScopedFastWrite mutex( _holders );
-                    HolderHash::iterator i = _holders->find( holder );
-                    LBASSERT( i != _holders->end( ));
-                    _holders->erase( i );
-                    LBASSERT( _holders->find( holder ) == _holders->end( ));
-                }
+            if( holder )
+            {
+                ScopedFastWrite mutex( _holders );
+                HolderHash::iterator i = _holders->find( holder );
+                LBASSERT( i != _holders->end( ));
+                _holders->erase( i );
+                LBASSERT( _holders->find( holder ) == _holders->end( ));
+            }
 #endif
 
-                if( last )
-                    const_cast< Referenced* >( this )->notifyFree();
-                return last;
-            }
+            if( last )
+                const_cast< Referenced* >( this )->notifyFree();
+            return last;
+        }
 
-        /** @return the current reference count. @version 1.0 */
-        int  getRefCount() const { return _refCount; }
+    /** @return the current reference count. @version 1.0 */
+    int32_t getRefCount() const { return _refCount; }
 
-        /** @internal print holders of this if debugging is enabled. */
-        void printHolders( std::ostream& os ) const
-            {
+    /** @internal print holders of this if debugging is enabled. */
+    void printHolders( std::ostream& os ) const
+        {
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-                os << disableFlush << disableHeader << std::endl;
-                {
-                    ScopedFastRead mutex( _holders );
-                    for( HolderHash::const_iterator i = _holders->begin();
-                         i != _holders->end(); ++i )
-                    {
-                        os << "Holder " << i->first << ": " << i->second
-                           << std::endl;
-                    }
-                }
-                os << enableHeader << enableFlush;
-#endif
-            }
-
-    protected:
-        /** Construct a new reference-counted object. @version 1.0 */
-        Referenced()
-                : _refCount( 0 )
-                , _hasBeenDeleted( false )
-            {}
-
-        /** Construct a new copy of a reference-counted object. @version 1.0 */
-        Referenced( const Referenced& )
-                : _refCount( 0 )
-                , _hasBeenDeleted( false )
-            {}
-
-        /** Destruct a reference-counted object. @version 1.0 */
-        virtual ~Referenced()
+            os << disableFlush << disableHeader << std::endl;
             {
+                ScopedFastRead mutex( _holders );
+                for( HolderHash::const_iterator i = _holders->begin();
+                     i != _holders->end(); ++i )
+                {
+                    os << "Holder " << i->first << ": " << i->second
+                       << std::endl;
+                }
+            }
+            os << enableHeader << enableFlush;
+#endif
+        }
+
+protected:
+    /** Construct a new reference-counted object. @version 1.0 */
+    Referenced()
+        : _refCount( 0 )
+        , _hasBeenDeleted( false )
+        {}
+
+    /** Construct a new copy of a reference-counted object. @version 1.0 */
+    Referenced( const Referenced& )
+    : _refCount( 0 )
+    , _hasBeenDeleted( false )
+        {}
+
+    /** Destruct a reference-counted object. @version 1.0 */
+    virtual ~Referenced()
+        {
 #ifndef NDEBUG
-                LBASSERT( !_hasBeenDeleted );
-                _hasBeenDeleted = true;
+            LBASSERT( !_hasBeenDeleted );
+            _hasBeenDeleted = true;
 #endif
-                LBASSERTINFO( _refCount == 0,
-                              "Deleting object with ref count " << _refCount );
-            }
+            LBASSERTINFO( _refCount == 0,
+                          "Deleting object with ref count " << _refCount );
+        }
 
-        /** Assign another object to this object. @version 1.1.3 */
-        Referenced& operator = ( const Referenced& rhs ) { return *this; }
+    /** Assign another object to this object. @version 1.1.3 */
+    Referenced& operator = ( const Referenced& rhs ) { return *this; }
 
-        LUNCHBOX_API virtual void notifyFree();
+    LUNCHBOX_API virtual void notifyFree();
 
-    private:
-        mutable a_int32_t _refCount;
-        bool _hasBeenDeleted;
+private:
+    mutable a_int32_t _refCount;
+    bool _hasBeenDeleted;
 
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-        typedef PtrHash< const void*, std::string > HolderHash;
-        mutable Lockable< HolderHash, SpinLock > _holders;
+    typedef PtrHash< const void*, std::string > HolderHash;
+    mutable Lockable< HolderHash, SpinLock > _holders;
 #endif
-    };
+};
 }
 
 namespace boost
 {
-    /** Allow creation of boost::intrusive_ptr from RefPtr or Referenced. */
-    inline void intrusive_ptr_add_ref( lunchbox::Referenced* referenced )
-    {
-        referenced->ref();
-    }
+/** Allow creation of boost::intrusive_ptr from RefPtr or Referenced. */
+inline void intrusive_ptr_add_ref( lunchbox::Referenced* referenced )
+{
+    referenced->ref();
+}
 
-    /** Allow creation of boost::intrusive_ptr from RefPtr or Referenced. */
-    inline void intrusive_ptr_release( lunchbox::Referenced* referenced )
-    {
-        referenced->unref();
-    }
+/** Allow creation of boost::intrusive_ptr from RefPtr or Referenced. */
+inline void intrusive_ptr_release( lunchbox::Referenced* referenced )
+{
+    referenced->unref();
+}
 }
 
 #endif //LUNCHBOX_REFERENCED_H

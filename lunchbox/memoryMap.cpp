@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2009-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License version 2.1 as published 
+ * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -39,7 +39,20 @@ MemoryMap::MemoryMap()
 #endif
         , _ptr( 0 )
         , _size( 0 )
-{}
+{
+}
+
+MemoryMap::MemoryMap( const std::string& filename )
+#ifdef _WIN32
+        : _map( 0 )
+#else
+        : _fd( 0 )
+#endif
+        , _ptr( 0 )
+        , _size( 0 )
+{
+    map( filename );
+}
 
 MemoryMap::~MemoryMap()
 {
@@ -73,10 +86,10 @@ const void* MemoryMap::map( const std::string& filename )
         LBWARN << "File mapping failed: " << sysError << std::endl;
         return 0;
     }
-    
+
     // get a view of the mapping
     _ptr = MapViewOfFile( _map, FILE_MAP_READ, 0, 0, 0 );
-    
+
     // get size
     DWORD highSize;
     const DWORD lowSize = GetFileSize( file, &highSize );
@@ -92,11 +105,11 @@ const void* MemoryMap::map( const std::string& filename )
         LBINFO << "Can't open " << filename << std::endl;
         return 0;
     }
-    
+
     // retrieving file information
     struct stat status;
     fstat( _fd, &status );
-    
+
     // create memory mapped file
     _size = status.st_size;
     _ptr = mmap( 0, _size, PROT_READ, MAP_SHARED, _fd, 0 );
@@ -124,14 +137,14 @@ void MemoryMap::unmap()
 #ifdef _WIN32
     UnmapViewOfFile( _ptr );
     CloseHandle( _map );
-    
+
     _ptr = 0;
     _size = 0;
     _map = 0;
 #else
     munmap( _ptr, _size );
     close( _fd );
-    
+
     _ptr = 0;
     _size = 0;
     _fd = 0;

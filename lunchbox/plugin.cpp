@@ -186,7 +186,7 @@ VisitorResult Plugin::accept( PluginVisitor& visitor )
     for( CompressorInfosIter i = impl_->infos.begin();
          i != impl_->infos.end(); ++i )
     {
-        switch( visitor.visit( *i ))
+        switch( visitor.visit( *this, *i ))
         {
         case TRAVERSE_TERMINATE:
             return TRAVERSE_TERMINATE;
@@ -215,7 +215,7 @@ VisitorResult Plugin::accept( ConstPluginVisitor& visitor ) const
     for( CompressorInfosIter i = impl_->infos.begin();
          i != impl_->infos.end(); ++i )
     {
-        switch( visitor.visit( *i ))
+        switch( visitor.visit( *this, *i ))
         {
         case TRAVERSE_TERMINATE:
             return TRAVERSE_TERMINATE;

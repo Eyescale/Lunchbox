@@ -43,6 +43,8 @@ namespace lunchbox
     //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=6424
     {
     public:
+        class Group;
+
         /** Construct a new queue. @version 1.0 */
         MTQueue( size_t maxSize = S ) : _maxSize( maxSize ) {}
 
@@ -154,6 +156,21 @@ namespace lunchbox
          * @version 1.1.6
          */
         void tryPop( const size_t num, std::vector< T >& result );
+
+        /**
+         * Retrieve the front element, or abort if the barrier is reached
+         *
+         * Used for worker threads recursively processing data, pushing it back
+         * the queue. Either returns an item from the queue, or aborts if num
+         * participants are waiting in the queue.
+         *
+         * @param result the result element, unmodified on false return value.
+         * @param barrier the group's barrier handle.
+         * @return true if an element was retrieved, false if the barrier height
+         *         was reached.
+         * @version 1.7.1
+         */
+        bool popBarrier( T& element, Group& barrier );
 
         /**
          * @param result the front value or unmodified.

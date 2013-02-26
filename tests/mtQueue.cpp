@@ -42,7 +42,9 @@ public:
     static void run_()
     {
         uint64_t item = 0xffffffffffffffffull;
+#ifndef NDEBUG
         uint64_t last = 0;
+#endif
         while( queue.popBarrier( item, group ))
         {
 #ifndef NDEBUG

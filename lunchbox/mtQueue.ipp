@@ -183,12 +183,18 @@ void MTQueue< T, S >::tryPop( const size_t num, std::vector< T >& result )
 template< typename T, size_t S > class MTQueue< T, S >::Group
 {
     friend class MTQueue< T, S >;
-    const size_t height_;
+    size_t height_;
     size_t waiting_;
 
 public:
-    /** Construct a new group of the given size. Can only be used once. */
+    /**
+     * Construct a new group of the given size. Can only be used once.
+     * @version 1.7.1
+     */
     Group( const size_t height ) : height_( height ), waiting_( 0 ) {}
+
+    /** Update the height. @version 1.7.1  */
+    void setHeight( const size_t height ) { height_ = height; }
 };
 
 template< typename T, size_t S >

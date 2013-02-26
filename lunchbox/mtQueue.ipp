@@ -179,6 +179,45 @@ void MTQueue< T, S >::tryPop( const size_t num, std::vector< T >& result )
     _cond.unlock();
 }
 
+/** Group descriptor for popBarrier(). @version 1.7.1 */
+template< typename T, size_t S > class MTQueue< T, S >::Group
+{
+    friend class MTQueue< T, S >;
+    const size_t height_;
+    size_t waiting_;
+
+public:
+    /** Construct a new group of the given size. Can only be used once. */
+    Group( const size_t height ) : height_( height ), waiting_( 0 ) {}
+};
+
+template< typename T, size_t S >
+bool MTQueue< T, S >::popBarrier( T& element, Group& barrier )
+{
+    LBASSERT( barrier.height_ > 0 )
+
+    _cond.lock();
+    ++barrier.waiting_;
+    while( _queue.empty() && barrier.waiting_ < barrier.height_ )
+        _cond.wait();
+
+    if( _queue.empty( ))
+    {
+        LBASSERT( barrier.waiting_ == barrier.height_ );
+        _cond.signal();
+        _cond.unlock();
+        return false;
+    }
+
+    element = _queue.front();
+    _queue.pop_front();
+    --barrier.waiting_;
+    _cond.signal();
+    _cond.unlock();
+    return true;
+
+}
+
 template< typename T, size_t S >
 bool MTQueue< T, S >::getFront( T& result ) const
 {

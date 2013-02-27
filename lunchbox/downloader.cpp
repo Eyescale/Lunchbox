@@ -20,9 +20,9 @@
 #include "downloader.h"
 
 #include "plugin.h"
+#include "pluginInstance.h"
 #include "pluginRegistry.h"
 #include "pluginVisitor.h"
-#include "transferer.h"
 
 #include <limits>
 
@@ -30,14 +30,13 @@ namespace lunchbox
 {
 namespace detail
 {
-class Downloader : public Transferer
+class Downloader : public PluginInstance
 {
 public:
-    Downloader() : Transferer( EQ_COMPRESSOR_NONE, 0 ) {}
+    Downloader() : PluginInstance( EQ_COMPRESSOR_NONE ) {}
 
-    Downloader( lunchbox::PluginRegistry& from, const uint32_t name,
-                const GLEWContext* gl_ )
-        : Transferer( name, gl_ )
+    Downloader( lunchbox::PluginRegistry& from, const uint32_t name )
+        : PluginInstance( name )
     {
         if( name <= EQ_COMPRESSOR_NONE )
             return;
@@ -47,8 +46,8 @@ public:
         if( !plugin )
             return;
 
-        // instance = plugin->newDownloader( name );
-        // info = plugin->findInfo( name );
+        instance = plugin->newDecompressor( name );
+        info = plugin->findInfo( name );
         LBASSERT( instance );
         LBASSERT( info.name == name );
         LBLOG( LOG_PLUGIN ) << "Instantiated downloader of type 0x" << std::hex
@@ -71,9 +70,8 @@ Downloader::Downloader()
     LB_TS_THREAD( _thread );
 }
 
-Downloader::Downloader( PluginRegistry& from, const uint32_t name,
-                        const GLEWContext* gl )
-    : impl_( new detail::Downloader( from, name, gl ))
+Downloader::Downloader( PluginRegistry& from, const uint32_t name )
+    : impl_( new detail::Downloader( from, name ))
 {
     LB_TS_THREAD( _thread );
 }
@@ -83,8 +81,7 @@ Downloader::Downloader( PluginRegistry& from, const uint32_t internalFormat,
                         const uint64_t capabilities, const GLEWContext* gl )
     : impl_( new detail::Downloader( from,
                                      choose( from, internalFormat, minQuality,
-                                             ignoreAlpha, capabilities, gl ),
-                                     gl ))
+                                             ignoreAlpha, capabilities, gl )))
 {
     LB_TS_THREAD( _thread );
 }
@@ -193,38 +190,35 @@ void Downloader::clear()
 
 bool Downloader::start( void** buffer, const uint64_t inDims[4],
                         const uint64_t flags, uint64_t outDims[4],
-                        const unsigned source )
+                        const unsigned source, const GLEWContext* gl )
 {
+    LBASSERT( gl );
     if( impl_->info.capabilities & EQ_COMPRESSOR_USE_ASYNC_DOWNLOAD )
     {
-        impl_->plugin->startDownload( impl_->instance, impl_->info.name,
-                                      impl_->gl, inDims, source,
-                                      flags|EQ_COMPRESSOR_USE_ASYNC_DOWNLOAD );
+        impl_->plugin->startDownload( impl_->instance, impl_->info.name, gl,
+                                      inDims, source,
+                                      flags | EQ_COMPRESSOR_USE_ASYNC_DOWNLOAD);
         return true;
     }
 
-    impl_->plugin->download( impl_->instance, impl_->info.name, impl_->gl,
-                             inDims, source, flags, outDims, buffer );
+    impl_->plugin->download( impl_->instance, impl_->info.name, gl, inDims,
+                             source, flags, outDims, buffer );
     return false;
 }
 
 void Downloader::finish( void** buffer, const uint64_t inDims[4],
-                         const uint64_t flags, uint64_t outDims[4] )
+                         const uint64_t flags, uint64_t outDims[4],
+                         const GLEWContext* gl )
 {
     LBASSERT( impl_->plugin );
     LBASSERT( impl_->instance );
-    LBASSERT( impl_->gl );
+    LBASSERT( gl );
 
     if( impl_->info.capabilities & EQ_COMPRESSOR_USE_ASYNC_DOWNLOAD )
-        impl_->plugin->finishDownload( impl_->instance, impl_->info.name,
-                                       impl_->gl, inDims,
+        impl_->plugin->finishDownload( impl_->instance, impl_->info.name, gl,
+                                       inDims,
                                        flags | EQ_COMPRESSOR_USE_ASYNC_DOWNLOAD,
                                        outDims, buffer );
-}
-
-const GLEWContext* Downloader::glewGetContext() const
-{
-    return impl_->gl;
 }
 
 }

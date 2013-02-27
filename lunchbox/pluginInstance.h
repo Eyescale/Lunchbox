@@ -18,6 +18,7 @@
  */
 
 #include "compressorInfo.h"
+#include "os.h"
 
 namespace
 {
@@ -28,6 +29,7 @@ public:
         : plugin( 0 )
         , instance( 0 )
     {
+        lunchbox::setZero( &info, sizeof( info ));
         info.name = name;
     }
 

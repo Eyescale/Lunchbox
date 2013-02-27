@@ -42,8 +42,7 @@ public:
      * @param name the name of the downloader.
      * @param gl the OpenGL function table.
      */
-    LUNCHBOX_API Downloader( PluginRegistry& from, const uint32_t name,
-                             const GLEWContext* gl );
+    LUNCHBOX_API Downloader( PluginRegistry& from, const uint32_t name );
 
     /**
      * Construct a new, auto-selected downloader instance.
@@ -107,13 +106,14 @@ public:
      * @param flags capability flags for the compression.
      * @param outDims return value for the dimensions of the output data.
      * @param source the source texture name, or 0 for framebuffer.
+     * @param gl the OpenGL function table.
      * @return true if finish is needed, false if a synchronous download was
      *         done.
      * @version 1.7.1
      */
     LUNCHBOX_API bool start( void** buffer, const uint64_t inDims[4],
                              const uint64_t flags, uint64_t outDims[4],
-                             const unsigned source );
+                             const unsigned source, const GLEWContext* gl );
 
     /**
      * Finish download data from the GPU to the CPU
@@ -122,10 +122,12 @@ public:
      * @param inDims the dimensions of the input data.
      * @param flags capability flags for the compression.
      * @param outDims return value for the dimensions of the output data.
+     * @param gl the OpenGL function table.
      * @version 1.7.1
      */
     LUNCHBOX_API void finish( void** buffer, const uint64_t inDims[4],
-                              const uint64_t flags, uint64_t outDims[4] );
+                              const uint64_t flags, uint64_t outDims[4],
+                              const GLEWContext* gl );
 
     LUNCHBOX_API const GLEWContext* glewGetContext() const; //!< @internal
 

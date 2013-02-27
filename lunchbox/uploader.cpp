@@ -20,7 +20,7 @@
 #include "uploader.h"
 
 #include "plugin.h"
-#include "transferer.h"
+#include "pluginInstance.h"
 #include "pluginRegistry.h"
 #include "pluginVisitor.h"
 
@@ -28,18 +28,20 @@ namespace lunchbox
 {
 namespace detail
 {
-class Uploader : public Transferer
+class Uploader : public PluginInstance
 {
 public:
-    Uploader() : Transferer( EQ_COMPRESSOR_NONE, 0 ) {}
+    Uploader() : PluginInstance( EQ_COMPRESSOR_NONE ), gl( 0 ) {}
 
     Uploader( lunchbox::PluginRegistry& registry, const uint32_t name,
               const GLEWContext* gl_ )
-        : Transferer( name, gl_ )
+        : PluginInstance( name )
+        , gl( gl_ )
     {
         if( name <= EQ_COMPRESSOR_NONE )
             return;
 
+        LBASSERT( gl );
         plugin = registry.findPlugin( name );
         LBASSERT( plugin );
         if( !plugin )
@@ -55,12 +57,16 @@ public:
     }
 
     ~Uploader()
-     {
-         if( instance )
-             plugin->deleteDecompressor( instance );
-         instance = 0;
-         plugin = 0;
-     }
+    {
+        if( instance )
+            plugin->deleteDecompressor( instance );
+        instance = 0;
+        plugin = 0;
+    }
+
+    bool isGood() const { return gl && PluginInstance::isGood(); }
+
+    const GLEWContext* const gl;
 };
 }
 

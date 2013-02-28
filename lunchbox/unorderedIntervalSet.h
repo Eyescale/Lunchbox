@@ -32,8 +32,7 @@ namespace lunchbox
  * numbers for addition and comparison operations. The intervals are stored in
  * an unordered fashion. Not thread-safe.
  */
-template< typename T >
-class UnorderedIntervalSet
+template< typename T > class UnorderedIntervalSet
 {
 public:
     /** Element iterator which points to a current element of type T. */

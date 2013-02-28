@@ -170,7 +170,7 @@ namespace lunchbox
          *         was reached.
          * @version 1.7.1
          */
-        bool popBarrier( T& element, Group& barrier );
+        bool popBarrier( T& result, Group& barrier );
 
         /**
          * @param result the front value or unmodified.

@@ -20,7 +20,7 @@
 
 #include <boost/iterator/iterator_facade.hpp>
 
-
+/** @cond IGNORE */
 namespace lunchbox
 {
 
@@ -388,3 +388,4 @@ void UnorderedIntervalSet< T >::swap( UnorderedIntervalSet& rhs )
 }
 
 }
+/** @endcond */

@@ -40,7 +40,6 @@ public:
      *
      * @param from the plugin registry.
      * @param name the name of the downloader.
-     * @param gl the OpenGL function table.
      */
     LUNCHBOX_API Downloader( PluginRegistry& from, const uint32_t name );
 

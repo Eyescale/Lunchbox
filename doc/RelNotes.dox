@@ -26,14 +26,14 @@
 <h2>1. Introduction</h2>
 <p>
   Welcome to Lunchbox, a C++ library for multi-threaded programming. Lunchbox
-  1.6 adds major new features, most notably support for serializable
-  boost::any-like data.
+  1.8 adds major new features, most notably runtime-loadable compression plugins
+  and an UnorderedIntervalSet container.
 </p>
 <p>
-  Lunchbox 1.6 is a feature release based on the 1.4 Lunchbox API. It is
+  Lunchbox 1.8 is a feature release based on the 1.6 Lunchbox API. It is
   intended for all application developers creating high-preformance
-  multi-threaded programs. Lunchbox 1.6 beta can be retrieved by downloading the
-  <a href="http://www.equalizergraphics.com/downloads/Lunchbox-1.6.0.tar.gz">source
+  multi-threaded programs. Lunchbox 1.8 can be retrieved by downloading the
+  <a href="http://www.equalizergraphics.com/downloads/Lunchbox-1.8.0.tar.gz">source
     code</a> or one of the
   <a href="http://www.equalizergraphics.com/downloads/major.html">precompiled
     packages</a>.
@@ -59,30 +59,22 @@
 <a name="new"></a>
 <h2>2. New in this release</h2>
 <p>
-  Lunchbox 1.6 contains the following features, enhancements, bug fixes and
-  documentation changes over the co::base functionality found in Equalizer
-  1.2.1:
+  Lunchbox 1.8 contains the following features, enhancements, bug fixes and
+  documentation changes over Lunchbox 1.6:
 </p>
 
 <a name="newFeatures"></a>
 <h3>2.1. New Features</h3>
 <ul>
-  <li>Any, a serializable derivative of boost::any</li>
-  <li><a href="https://github.com/Eyescale/Lunchbox/issues/10">daemonize</a>
-    function to create daemon programs</li>
-  <li>byteswap template function to perform little-to-big-endian or
-    big-to-little endian swapping</li>
+  <li>Runtime-loadable compression and CPU-GPU transfer plugins</li>
+  <li>UnorderedIntervalSet container</li>
 </ul>
 
 <a name="enhancements"></a>
 <h3>2.2. Enhancements</h3>
 <ul>
-  <li>New compiler support: XLC 9 on PowerPC, gcc 4.1.</li>
-  <li>Copyable (move semantics) ScopedMutex</li>
-  <li>Method to directly redirect Log to a file</li>
-  <li>Improved Buffer, uint128_t and LFVector APIs</li>
-  <li><a href="https://github.com/Eyescale/Lunchbox/issues/7">Servus get API</a>
-    for announced keys</li>
+  <li>Improved DSO, MemoryMap, MTQueue, uint128_t, UUID APIs</li>
+  <li>searchDirectory uses boost::regex for file matching</li>
 </ul>
 
 <a name="optimizations"></a>
@@ -104,14 +96,12 @@
 <a name="bugfixes"></a>
 <h3>2.5. Bug Fixes</h3>
 <p>
-  Lunchbox 1.6 includes various bugfixes over the 1.4 release, including the
+  Lunchbox 1.8 includes various bugfixes over the 1.6 release, including the
   following:
 </p>
 <ul>
   <li><a href="https://github.com/Eyescale/Lunchbox/issues/9">9:</a>
     Memory leak in Thread::setAffinity</li>
-  <li><a href="https://github.com/Eyescale/Lunchbox/issues/4">4:</a>
-    sleep is not signal-safe</li>
 </ul>
 
 <a name="knownbugs"></a>
@@ -147,11 +137,11 @@
 <a name="documentation"></a>
 <h3>3.2. Documentation</h3>
 <p>
-  The <a href="http://eyescale.github.com/Lunchbox-1.6/index.html">API
+  The <a href="http://eyescale.github.com/Lunchbox-1.8/index.html">API
     documentation</a> can be found on
   <a href="http://eyescale.github.com/">eyescale.github.com</a>. As with any
   open source project, the available source code, in particular the
-  <a href="https://github.com/Eyescale/Lunchbox/tree/1.6/tests">unit tests</a>
+  <a href="https://github.com/Eyescale/Lunchbox/tree/1.8/tests">unit tests</a>
   provide a reference for developing applications.
 </p>
 

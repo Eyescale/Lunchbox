@@ -36,10 +36,6 @@ public:
 
     /** Visit a compressor of a plugin. @version 1.7.1 */
     virtual VisitorResult visit( P& plugin, I& compressorInfo )
-        { return visit( compressorInfo ); }
-
-    /** Visit a compressor of a plugin. @version 1.7.1 */
-    virtual VisitorResult visit( I& compressorInfo )
         { return TRAVERSE_CONTINUE; }
 };
 }

@@ -20,6 +20,7 @@
 
 #include "compressor.h"
 
+#include "compressorInfo.h"
 #include "plugin.h"
 #include "pluginInstance.h"
 #include "pluginRegistry.h"

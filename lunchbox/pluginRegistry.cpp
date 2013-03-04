@@ -171,9 +171,6 @@ void PluginRegistry::init()
             addPlugin( libraryName );
         }
     }
-
-    for( PluginsCIter i = impl_->plugins.begin(); i != impl_->plugins.end(); ++i )
-        (*i)->initChildren( *this );
 }
 
 namespace

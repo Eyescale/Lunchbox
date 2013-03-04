@@ -95,7 +95,7 @@ public:
     EqCompressorInfo findInfo( const uint32_t name ) const;
 
     /** @internal @return all compressor informations. */
-    LUNCHBOX_API const CompressorInfos& getInfos() const;
+    const CompressorInfos& getInfos() const;
     //@}
 
     /** @name Plugin function pointers. */
@@ -145,10 +145,6 @@ public:
 
 private:
     detail::Plugin* const impl_;
-
-    /** Initialize the child list for each compressor. */
-    void initChildren( const PluginRegistry& registry );
-    friend class PluginRegistry;
 };
 }
 #endif //LUNCHBOX_PLUGIN_H

@@ -34,8 +34,6 @@ struct CompressorInfo : public EqCompressorInfo
 
     float ratingAlpha; //!< f( speed, ratio ) heuristic, bigger is better
     float ratingNoAlpha; //!< f( speed, ratio ) heuristic
-    CompressorInfos compressors; //!< potential compressors of a downloader
-    CompressorInfos uploaders;   //!< potential uploaders of a decompressor
 };
 
 inline std::ostream& operator << ( std::ostream& os, const CompressorInfo& info)

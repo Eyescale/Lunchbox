@@ -170,7 +170,7 @@ namespace lunchbox
          *         was reached.
          * @version 1.7.1
          */
-        bool popBarrier( T& element, Group& barrier );
+        bool popBarrier( T& result, Group& barrier );
 
         /**
          * @param result the front value or unmodified.
@@ -200,7 +200,7 @@ namespace lunchbox
         /** Push a vector of elements to the front of the queue. @version 1.0 */
         void pushFront( const std::vector< T >& elements );
 
-        /** @name STL compatibility. */
+        /** @name STL compatibility. @version 1.7.1 */
         //@{
         void push_back( const T& element ) { push( element ); }
         bool empty() const { return isEmpty(); }

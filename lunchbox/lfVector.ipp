@@ -370,6 +370,7 @@ LFVector< T, nSlots >::iterator LFVector< T, nSlots >::end()
     return iterator( this, size_ );
 }
 
+/** @cond IGNORE */
 template< class T, int32_t nSlots > template< class Archive >
 inline void LFVector< T, nSlots >::save( Archive& ar,
                                          const unsigned int version ) const
@@ -391,6 +392,7 @@ inline void LFVector< T, nSlots >::load( Archive& ar,
     for( size_t i = 0; i < size_; ++i )
         ar >> operator[](i);
 }
+/** @endcond */
 
 template< class T >
 std::ostream& operator << ( std::ostream& os, const LFVector< T >& v )

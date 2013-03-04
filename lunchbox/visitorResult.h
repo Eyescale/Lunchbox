@@ -25,7 +25,7 @@
 
 namespace lunchbox
 {
-     /** The result code from any visit operation. */
+    /** The result code from any visit operation. */
     enum VisitorResult
     {
         TRAVERSE_CONTINUE,   //!< continue the traversal

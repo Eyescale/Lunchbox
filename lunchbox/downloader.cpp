@@ -215,10 +215,12 @@ void Downloader::finish( void** buffer, const uint64_t inDims[4],
     LBASSERT( gl );
 
     if( impl_->info.capabilities & EQ_COMPRESSOR_USE_ASYNC_DOWNLOAD )
+    {
         impl_->plugin->finishDownload( impl_->instance, impl_->info.name, gl,
                                        inDims,
                                        flags | EQ_COMPRESSOR_USE_ASYNC_DOWNLOAD,
                                        outDims, buffer );
+    }
 }
 
 }

@@ -210,7 +210,7 @@ bool MTQueue< T, S >::popBarrier( T& element, Group& barrier )
     if( _queue.empty( ))
     {
         LBASSERT( barrier.waiting_ == barrier.height_ );
-        _cond.signal();
+        _cond.broadcast();
         _cond.unlock();
         return false;
     }

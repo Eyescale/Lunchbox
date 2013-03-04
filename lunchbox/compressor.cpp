@@ -154,10 +154,9 @@ bool Compressor::realloc()
     if( !isGood( ))
         return false;
 
-    if( impl_->instance )
-        impl_->plugin->deleteCompressor( impl_->instance );
-
+    impl_->plugin->deleteCompressor( impl_->instance );
     impl_->instance = impl_->plugin->newCompressor( impl_->info.name );
+
     LBASSERT( impl_->instance );
     return impl_->instance;
 }

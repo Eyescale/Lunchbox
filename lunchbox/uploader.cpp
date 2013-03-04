@@ -98,7 +98,7 @@ Uploader::Uploader( PluginRegistry& registry, const uint32_t externalFormat,
 Uploader::~Uploader()
 {
     LBASSERTINFO( impl_->plugin == 0,
-                  "Clear downloader while GL context is still active" );
+                  "Clear uploader while GL context is still active" );
     delete impl_;
 }
 

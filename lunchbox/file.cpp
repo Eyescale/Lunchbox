@@ -89,7 +89,8 @@ std::string getFilename( const std::string& filename )
         if( filename[ i ] == '/' || filename[i] == '\\' )
             lastSeparator = i+1;
 
-    return filename.substr( lastSeparator, length );
+    return lastSeparator == 0 ? filename :
+                                filename.substr( lastSeparator, length );
 }
 
 std::string getDirname( const std::string& filename )
@@ -101,7 +102,7 @@ std::string getDirname( const std::string& filename )
         if( filename[ i ] == '/' || filename[i] == '\\' )
             lastSeparator = i+1;
 
-    return filename.substr( 0, lastSeparator );
+    return lastSeparator == 0 ? "." : filename.substr( 0, lastSeparator );
 }
 
 }

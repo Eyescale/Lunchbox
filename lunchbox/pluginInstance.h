@@ -24,12 +24,11 @@ namespace
 class PluginInstance
 {
 public:
-    PluginInstance( const uint32_t name )
+    PluginInstance()
         : plugin( 0 )
         , instance( 0 )
     {
         lunchbox::setZero( &info, sizeof( info ));
-        info.name = name;
     }
 
     ~PluginInstance()

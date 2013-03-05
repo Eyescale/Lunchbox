@@ -40,24 +40,14 @@ public:
      *
      * @param from the plugin registry
      * @param name the name of the uploader
-     * @param gl the OpenGL function table
      */
-    LUNCHBOX_API Uploader( PluginRegistry& from, const uint32_t name,
-                           const GLEWContext* gl );
-
-    /**
-     * Construct a new, auto-selected uploader instance.
-     * @sa choose() for parameters.
-     */
-    LUNCHBOX_API Uploader( PluginRegistry& from, const uint32_t externalFormat,
-                           const uint32_t internalFormat,
-                           const uint64_t capabilities, const GLEWContext* gl );
+    LUNCHBOX_API Uploader( PluginRegistry& from, const uint32_t name );
 
     /** Destruct the uploader. */
     LUNCHBOX_API virtual ~Uploader();
 
     /** @return true if the instance is usable. */
-    LUNCHBOX_API bool isGood() const;
+    LUNCHBOX_API bool isGood( const GLEWContext* gl ) const;
 
      /** @return true if the instance is usable and has the given name. */
     LUNCHBOX_API bool uses( const uint32_t name ) const;
@@ -68,7 +58,8 @@ public:
      */
     LUNCHBOX_API bool supports( const uint32_t externalFormat,
                                 const uint32_t internalFormat,
-                                const uint64_t capabilities ) const;
+                                const uint64_t capabilities,
+                                const GLEWContext* gl ) const;
 
     /**
      * Find the best uploader in all plugins for the given parameters.
@@ -86,8 +77,23 @@ public:
     /** @return the information about the allocated uploader. */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
 
-    /** Swap the two uploaders instances. */
-    LUNCHBOX_API void swap( Uploader& other );
+    /**
+     * Set up a new, named uploader instance.
+     *
+     * @param from the plugin registry
+     * @param name the name of the uploader
+     */
+    LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name );
+
+    /**
+     * Set up a new, auto-selected uploader instance.
+     * @sa choose() for parameters.
+     */
+    LUNCHBOX_API bool setup( PluginRegistry& from,
+                             const uint32_t externalFormat,
+                             const uint32_t internalFormat,
+                             const uint64_t capabilities,
+                             const GLEWContext* gl );
 
     /** Reset to EQ_COMPRESSOR_NONE. */
     LUNCHBOX_API void clear();
@@ -100,12 +106,14 @@ public:
      * @param flags capability flags for the compression
      * @param outDims the dimensions of the output data
      * @param destination the destination texture name, or 0 for framebuffer
+     * @param gl the OpenGL function table
      */
     LUNCHBOX_API void upload( const void* buffer, const uint64_t inDims[4],
                               const uint64_t flags, const uint64_t outDims[4],
-                              const unsigned destination );
+                              const unsigned destination,
+                              const GLEWContext* gl );
 private:
-    detail::Uploader* impl_;
+    detail::Uploader* const impl_;
     LB_TS_VAR( _thread );
 };
 }

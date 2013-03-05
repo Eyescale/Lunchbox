@@ -34,8 +34,19 @@ namespace detail
 class Compressor : public PluginInstance
 {
 public:
-    Compressor() : PluginInstance( EQ_COMPRESSOR_NONE ) {}
+    Compressor() {}
+
+    Compressor( lunchbox::PluginRegistry& registry, const uint32_t name )
+    {
+        setup( registry, name );
+    }
+
     ~Compressor()
+    {
+        clear();
+    }
+
+    void clear()
     {
         if( instance )
             plugin->deleteCompressor( instance );
@@ -43,16 +54,20 @@ public:
         plugin = 0;
     }
 
-    Compressor( lunchbox::PluginRegistry& registry, const uint32_t name )
-        : PluginInstance( name )
+    bool setup( lunchbox::PluginRegistry& registry, const uint32_t name )
     {
+        if( instance && info.name == name )
+            return true;
+
+        clear();
+
         if( name <= EQ_COMPRESSOR_NONE )
-            return;
+            return false;
 
         plugin = registry.findPlugin( name );
         LBASSERT( plugin );
         if( !plugin )
-            return;
+            return false;
 
         instance = plugin->newCompressor( name );
         info = plugin->findInfo( name );
@@ -60,6 +75,7 @@ public:
         LBASSERT( info.name == name );
         LBLOG( LOG_PLUGIN ) << "Instantiated compressor of type 0x" << std::hex
                             << name << std::dec << std::endl;
+        return instance;
     }
 };
 }
@@ -72,15 +88,6 @@ Compressor::Compressor()
 
 Compressor::Compressor( PluginRegistry& registry, const uint32_t name )
     : impl_( new detail::Compressor( registry, name ))
-{
-    LB_TS_THREAD( _thread );
-}
-
-Compressor::Compressor( PluginRegistry& registry, const uint32_t tokenType,
-                        const float minQuality, const bool ignoreMSE )
-    : impl_( new detail::Compressor( registry,
-                                     choose( registry, tokenType, minQuality,
-                                             ignoreMSE )))
 {
     LB_TS_THREAD( _thread );
 }
@@ -104,11 +111,6 @@ bool Compressor::uses( const uint32_t name ) const
 const EqCompressorInfo& Compressor::getInfo() const
 {
     return impl_->info;
-}
-
-void Compressor::swap( Compressor& other )
-{
-    std::swap( impl_, other.impl_ );
 }
 
 uint32_t Compressor::choose( const PluginRegistry& registry,
@@ -150,6 +152,19 @@ uint32_t Compressor::choose( const PluginRegistry& registry,
     return candidate.name;
 }
 
+bool Compressor::setup( PluginRegistry& registry, const uint32_t name )
+{
+    LB_TS_THREAD( _thread );
+    return impl_->setup( registry, name );
+}
+
+bool Compressor::setup( PluginRegistry& registry, const uint32_t tokenType,
+                        const float minQuality, const bool ignoreMSE )
+{
+    return impl_->setup( registry,
+                         choose( registry, tokenType, minQuality, ignoreMSE ));
+}
+
 bool Compressor::realloc()
 {
     if( !isGood( ))
@@ -164,8 +179,7 @@ bool Compressor::realloc()
 
 void Compressor::clear()
 {
-    delete impl_;
-    impl_ = new detail::Compressor;
+    impl_->clear();
 }
 
 void Compressor::compress( void* const in, const uint64_t pvpIn[4],

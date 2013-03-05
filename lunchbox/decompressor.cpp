@@ -30,41 +30,64 @@ namespace detail
 class Decompressor : public PluginInstance
 {
 public:
-    Decompressor( const uint32_t name ) : PluginInstance( name ) {}
+    Decompressor() {}
+
+    Decompressor( lunchbox::PluginRegistry& registry, const uint32_t name )
+    {
+        setup( registry, name );
+    }
+
     ~Decompressor()
+    {
+        clear();
+    }
+
+    void clear()
     {
         if( instance )
             plugin->deleteDecompressor( instance );
         instance = 0;
         plugin = 0;
     }
+
+    bool setup( lunchbox::PluginRegistry& registry, const uint32_t name )
+    {
+        if( plugin && info.name == name )
+            return true;
+
+        clear();
+
+        if( name <= EQ_COMPRESSOR_NONE )
+            return false;
+
+        plugin = registry.findPlugin( name );
+        LBASSERTINFO( plugin,
+                      "Can't find plugin for decompressor " << name );
+        if( !plugin )
+            return false;
+
+        instance = plugin->newDecompressor( name );
+        info = plugin->findInfo( name );
+        LBASSERT( info.name == name );
+
+        LBLOG( LOG_PLUGIN ) << "Instantiated " << (instance ? "" : "empty ")
+                            << "decompressor of type 0x" << std::hex << name
+                            << std::dec << std::endl;
+        return true;
+    }
 };
 }
 
 Decompressor::Decompressor()
-    : impl_( new detail::Decompressor( EQ_COMPRESSOR_NONE ))
-{}
-
-Decompressor::Decompressor( PluginRegistry& registry, const uint32_t name )
-    : impl_( new detail::Decompressor( name ))
+    : impl_( new detail::Decompressor )
 {
     LB_TS_THREAD( _thread );
-    if( name <= EQ_COMPRESSOR_NONE )
-        return;
+}
 
-    impl_->plugin = registry.findPlugin( name );
-    LBASSERTINFO( impl_->plugin,
-                  "Can't find plugin for decompressor " << name );
-    if( !impl_->plugin )
-        return;
-
-    impl_->instance = impl_->plugin->newDecompressor( name );
-    impl_->info = impl_->plugin->findInfo( name );
-    LBASSERT( impl_->info.name == name );
-
-    LBLOG( LOG_PLUGIN ) << "Instantiated " << (impl_->instance ? "" : "empty ")
-                        << "decompressor of type 0x" << std::hex << name
-                        << std::dec << std::endl;
+Decompressor::Decompressor( PluginRegistry& registry, const uint32_t name )
+    : impl_( new detail::Decompressor( registry, name ))
+{
+    LB_TS_THREAD( _thread );
 }
 
 Decompressor::~Decompressor()
@@ -83,15 +106,14 @@ bool Decompressor::uses( const uint32_t name ) const
     return isGood() && impl_->info.name == name;
 }
 
-void Decompressor::swap( Decompressor& other )
+bool Decompressor::setup( PluginRegistry& from, const uint32_t name )
 {
-    std::swap( impl_, other.impl_ );
+    return impl_->setup( from, name );
 }
 
 void Decompressor::clear()
 {
-    delete impl_;
-    impl_ = new detail::Decompressor( EQ_COMPRESSOR_NONE );
+    impl_->clear();
 }
 
 const EqCompressorInfo& Decompressor::getInfo() const

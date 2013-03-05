@@ -21,6 +21,7 @@
 #include "pluginRegistry.h"
 
 #include "compressorInfo.h"
+#include "debug.h"
 #include "file.h"
 #include "log.h"
 #include "plugin.h"
@@ -93,6 +94,11 @@ public:
         }
     }
 
+    ~PluginRegistry()
+    {
+        LBASSERTINFO( plugins.empty(), "Plugin registry not de-initialized" );
+    }
+
     Strings directories;
     Plugins plugins;
 };
@@ -147,7 +153,8 @@ bool PluginRegistry::addLunchboxPlugins()
 void PluginRegistry::init()
 {
     // for each directory
-    for( StringsCIter i = impl_->directories.begin(); i != impl_->directories.end(); ++i )
+    for( StringsCIter i = impl_->directories.begin();
+         i != impl_->directories.end(); ++i )
     {
         const std::string& dir = *i;
         LBLOG( LOG_PLUGIN ) << "Searching plugins in " << dir << std::endl;

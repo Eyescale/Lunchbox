@@ -31,21 +31,40 @@ namespace detail
 class Uploader : public PluginInstance
 {
 public:
-    Uploader() : PluginInstance( EQ_COMPRESSOR_NONE ), gl( 0 ) {}
+    Uploader() {}
 
-    Uploader( lunchbox::PluginRegistry& registry, const uint32_t name,
-              const GLEWContext* gl_ )
-        : PluginInstance( name )
-        , gl( gl_ )
+    Uploader( lunchbox::PluginRegistry& registry, const uint32_t name )
     {
-        if( name <= EQ_COMPRESSOR_NONE )
-            return;
+        setup( registry, name );
+    }
 
-        LBASSERT( gl );
+    ~Uploader()
+    {
+        clear();
+    }
+
+    void clear()
+    {
+        if( instance )
+            plugin->deleteDecompressor( instance );
+        instance = 0;
+        plugin = 0;
+    }
+
+    bool setup( lunchbox::PluginRegistry& registry, const uint32_t name )
+    {
+        if( instance && name == info.name )
+            return true;
+
+        clear();
+
+        if( name <= EQ_COMPRESSOR_NONE )
+            return false;
+
         plugin = registry.findPlugin( name );
         LBASSERT( plugin );
         if( !plugin )
-            return;
+            return false;
 
         instance = plugin->newCompressor( name );
         info = plugin->findInfo( name );
@@ -54,19 +73,8 @@ public:
         LBASSERT( info.capabilities & EQ_COMPRESSOR_TRANSFER );
         LBLOG( LOG_PLUGIN ) << "Instantiated uploader of type 0x" << std::hex
                             << name << std::dec << std::endl;
+        return instance;
     }
-
-    ~Uploader()
-    {
-        if( instance )
-            plugin->deleteDecompressor( instance );
-        instance = 0;
-        plugin = 0;
-    }
-
-    bool isGood() const { return gl && PluginInstance::isGood(); }
-
-    const GLEWContext* const gl;
 };
 }
 
@@ -76,24 +84,11 @@ Uploader::Uploader()
     LB_TS_THREAD( _thread );
 }
 
-Uploader::Uploader( PluginRegistry& registry, const uint32_t name,
-                    const GLEWContext* gl )
-    : impl_( new detail::Uploader( registry, name, gl ))
+Uploader::Uploader( PluginRegistry& registry, const uint32_t name )
+    : impl_( new detail::Uploader( registry, name ))
 {
     LB_TS_THREAD( _thread );
 }
-
-Uploader::Uploader( PluginRegistry& registry, const uint32_t externalFormat,
-                    const uint32_t internalFormat, const uint64_t capabilities,
-                    const GLEWContext* gl )
-    : impl_( new detail::Uploader( registry,
-                                   choose( registry, externalFormat,
-                                           internalFormat, capabilities, gl ),
-                                   gl ))
-{
-    LB_TS_THREAD( _thread );
-}
-
 
 Uploader::~Uploader()
 {
@@ -102,11 +97,11 @@ Uploader::~Uploader()
     delete impl_;
 }
 
-bool Uploader::isGood() const
+bool Uploader::isGood( const GLEWContext* gl ) const
 {
     LB_TS_SCOPED( _thread );
     return impl_->isGood() && impl_->instance &&
-        impl_->plugin->isCompatible( impl_->info.name, impl_->gl );
+        impl_->plugin->isCompatible( impl_->info.name, gl );
 }
 
 bool Uploader::uses( const uint32_t name ) const
@@ -116,9 +111,10 @@ bool Uploader::uses( const uint32_t name ) const
 
 bool Uploader::supports( const uint32_t externalFormat,
                          const uint32_t internalFormat,
-                         const uint64_t capabilities ) const
+                         const uint64_t capabilities,
+                         const GLEWContext* gl ) const
 {
-    return isGood() && impl_->info.outputTokenType == externalFormat &&
+    return isGood( gl ) && impl_->info.outputTokenType == externalFormat &&
            (impl_->info.capabilities & capabilities) == capabilities &&
            impl_->info.tokenType == internalFormat;
 }
@@ -154,6 +150,7 @@ public:
     }
 
     EqCompressorInfo current;
+
 private:
     const uint32_t externalFormat_;
     const uint32_t internalFormat_;
@@ -177,24 +174,32 @@ const EqCompressorInfo& Uploader::getInfo() const
     return impl_->info;
 }
 
-void Uploader::swap( Uploader& other )
+bool Uploader::setup( PluginRegistry& from, const uint32_t name )
 {
-    std::swap( impl_, other.impl_ );
+    return impl_->setup( from, name );
+}
+
+
+bool Uploader::setup( PluginRegistry& from, const uint32_t externalFormat,
+                      const uint32_t internalFormat,
+                      const uint64_t capabilities, const GLEWContext* gl )
+{
+    return impl_->setup( from, choose( from, externalFormat, internalFormat,
+                                       capabilities, gl ));
 }
 
 void Uploader::clear()
 {
-    delete impl_;
-    impl_ = new detail::Uploader;
+    impl_->clear();
 }
 
 void Uploader::upload( const void* buffer, const uint64_t inDims[4],
                        const uint64_t flags, const uint64_t outDims[4],
-                       const unsigned destination )
+                       const unsigned destination, const GLEWContext* gl )
 {
-    LBASSERT( isGood( ));
-    impl_->plugin->upload( impl_->instance, impl_->info.name, impl_->gl,
-                           buffer, inDims, flags, outDims, destination );
+    LBASSERT( isGood( gl ));
+    impl_->plugin->upload( impl_->instance, impl_->info.name, gl, buffer,
+                           inDims, flags, outDims, destination );
 }
 
 }

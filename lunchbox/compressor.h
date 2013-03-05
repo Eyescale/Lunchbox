@@ -44,13 +44,6 @@ public:
      */
     LUNCHBOX_API Compressor( PluginRegistry& from, const uint32_t name );
 
-    /**
-     * Construct a new, auto-selected compressor instance.
-     * @sa choose() for parameters.
-     */
-    LUNCHBOX_API Compressor( PluginRegistry& registry, const uint32_t tokenType,
-                             const float minQuality, const bool ignoreMSE );
-
     /** Destruct the compressor. */
     LUNCHBOX_API virtual ~Compressor();
 
@@ -62,9 +55,6 @@ public:
 
     /** @return the information about the allocated compressor. */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
-
-    /** Swap the two compressors instances. */
-    LUNCHBOX_API void swap( Compressor& other );
 
     /**
      * Find the best compressor in all plugins for the given parameters.
@@ -83,6 +73,21 @@ public:
                                          const uint32_t tokenType,
                                          const float minQuality,
                                          const bool ignoreMSE );
+
+    /**
+     * Set up a new, named compressor instance.
+     *
+     * @param from the plugin registry
+     * @param name the name of the compressor
+     */
+    LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name );
+
+    /**
+     * Set up a new, auto-selected compressor instance.
+     * @sa choose() for parameters.
+     */
+    LUNCHBOX_API bool setup( PluginRegistry& registry, const uint32_t tokenType,
+                             const float minQuality, const bool ignoreMSE );
 
     /** Reallocate the current instance. */
     LUNCHBOX_API bool realloc();
@@ -121,7 +126,7 @@ public:
     LUNCHBOX_API void getResult( const unsigned i, void** const out,
                                  uint64_t* const outSize ) const;
 private:
-    detail::Compressor* impl_;
+    detail::Compressor* const impl_;
     LB_TS_VAR( _thread );
 };
 }

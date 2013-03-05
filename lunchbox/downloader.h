@@ -43,14 +43,6 @@ public:
      */
     LUNCHBOX_API Downloader( PluginRegistry& from, const uint32_t name );
 
-    /**
-     * Construct a new, auto-selected downloader instance.
-     * @sa choose() for parameters.
-     */
-    LUNCHBOX_API Downloader( PluginRegistry& from,const uint32_t internalFormat,
-                             const float minQuality, const bool ignoreAlpha,
-                             const uint64_t capabilities,const GLEWContext* gl);
-
     /** Destruct the downloader. */
     LUNCHBOX_API virtual ~Downloader();
 
@@ -91,8 +83,21 @@ public:
     /** @return the information about the allocated downloader. */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
 
-    /** Swap the two downloaders instances. */
-    LUNCHBOX_API void swap( Downloader& other );
+    /**
+     * Set up a new, named downloader instance.
+     *
+     * @param from the plugin registry.
+     * @param name the name of the downloader.
+     */
+    LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name );
+
+    /**
+     * Set up a new, auto-selected downloader instance.
+     * @sa choose() for parameters.
+     */
+    LUNCHBOX_API bool setup( PluginRegistry& from,const uint32_t internalFormat,
+                             const float minQuality, const bool ignoreAlpha,
+                             const uint64_t capabilities,const GLEWContext* gl);
 
     /** Reset to EQ_COMPRESSOR_NONE. */
     LUNCHBOX_API void clear();
@@ -131,7 +136,7 @@ public:
     LUNCHBOX_API const GLEWContext* glewGetContext() const; //!< @internal
 
 private:
-    detail::Downloader* impl_;
+    detail::Downloader* const impl_;
     LB_TS_VAR( _thread );
 };
 }

@@ -55,8 +55,13 @@ public:
     /** @return the information about the allocated compressor. */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
 
-    /** Swap the two decompressors instances. */
-    LUNCHBOX_API void swap( Decompressor& other );
+    /**
+     * Set up a new, named decompressor instance.
+     *
+     * @param from the plugin registry
+     * @param name the name of the decompressor
+     */
+    LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name );
 
     /** Reset to EQ_COMPRESSOR_NONE. */
     LUNCHBOX_API void clear();
@@ -92,7 +97,7 @@ public:
                                   uint64_t pvpOut[4], const uint64_t flags );
 
 private:
-    detail::Decompressor* impl_;
+    detail::Decompressor* const impl_;
     LB_TS_VAR( _thread );
 };
 }

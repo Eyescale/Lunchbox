@@ -90,7 +90,7 @@ void _testData( const uint32_t compressorName, const std::string& name,
     Compressor compressor( registry, compressorName );
     Decompressor decompressor( registry, compressorName );
     TEST( compressor.isGood( ));
-    TEST( decompressor.isGood( ));
+    TESTINFO( decompressor.isGood(), compressorName );
 
     const uint64_t flags = EQ_COMPRESSOR_DATA_1D;
     uint64_t inDims[2]  = { 0, size };

@@ -33,18 +33,40 @@ namespace detail
 class Downloader : public PluginInstance
 {
 public:
-    Downloader() : PluginInstance( EQ_COMPRESSOR_NONE ) {}
+    Downloader() {}
 
     Downloader( lunchbox::PluginRegistry& from, const uint32_t name )
-        : PluginInstance( name )
     {
+        setup( from, name );
+    }
+
+    ~Downloader()
+    {
+        clear();
+    }
+
+    void clear()
+    {
+        if( instance )
+            plugin->deleteDecompressor( instance );
+        instance = 0;
+        plugin = 0;
+    }
+
+    bool setup( lunchbox::PluginRegistry& from, const uint32_t name )
+    {
+        if( name == info.name )
+            return true;
+
+        clear();
+
         if( name <= EQ_COMPRESSOR_NONE )
-            return;
+            return false;
 
         plugin = from.findPlugin( name );
         LBASSERT( plugin );
         if( !plugin )
-            return;
+            return false;
 
         instance = plugin->newDecompressor( name );
         info = plugin->findInfo( name );
@@ -52,15 +74,9 @@ public:
         LBASSERT( info.name == name );
         LBLOG( LOG_PLUGIN ) << "Instantiated downloader of type 0x" << std::hex
                             << name << std::dec << std::endl;
+        return instance;
     }
 
-    ~Downloader()
-     {
-         if( instance )
-             plugin->deleteDecompressor( instance );
-         instance = 0;
-         plugin = 0;
-     }
 };
 }
 
@@ -75,17 +91,6 @@ Downloader::Downloader( PluginRegistry& from, const uint32_t name )
 {
     LB_TS_THREAD( _thread );
 }
-
-Downloader::Downloader( PluginRegistry& from, const uint32_t internalFormat,
-                        const float minQuality, const bool ignoreAlpha,
-                        const uint64_t capabilities, const GLEWContext* gl )
-    : impl_( new detail::Downloader( from,
-                                     choose( from, internalFormat, minQuality,
-                                             ignoreAlpha, capabilities, gl )))
-{
-    LB_TS_THREAD( _thread );
-}
-
 
 Downloader::~Downloader()
 {
@@ -177,15 +182,22 @@ const EqCompressorInfo& Downloader::getInfo() const
     return impl_->info;
 }
 
-void Downloader::swap( Downloader& other )
+bool Downloader::setup( PluginRegistry& from, const uint32_t name )
 {
-    std::swap( impl_, other.impl_ );
+    return impl_->setup( from, name );
+}
+
+bool Downloader::setup( PluginRegistry& from,const uint32_t internalFormat,
+                        const float minQuality, const bool ignoreAlpha,
+                        const uint64_t capabilities,const GLEWContext* gl)
+{
+    return impl_->setup( from, choose( from, internalFormat, minQuality,
+                                       ignoreAlpha, capabilities, gl ));
 }
 
 void Downloader::clear()
 {
-    delete impl_;
-    impl_ = new detail::Downloader;
+    impl_->clear();
 }
 
 bool Downloader::start( void** buffer, const uint64_t inDims[4],

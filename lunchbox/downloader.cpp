@@ -61,7 +61,7 @@ public:
         clear();
 
         if( name <= EQ_COMPRESSOR_NONE )
-            return false;
+            return true;
 
         plugin = from.findPlugin( name );
         LBASSERT( plugin );

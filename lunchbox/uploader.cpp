@@ -59,7 +59,7 @@ public:
         clear();
 
         if( name <= EQ_COMPRESSOR_NONE )
-            return false;
+            return true;
 
         plugin = registry.findPlugin( name );
         LBASSERT( plugin );

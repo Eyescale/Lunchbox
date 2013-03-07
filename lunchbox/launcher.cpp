@@ -30,6 +30,7 @@
 #  include <io.h>
 #else
 #  include <sys/wait.h>
+#  include <unistd.h>
 #endif
 
 namespace lunchbox

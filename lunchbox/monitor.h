@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *                    2011, Cedric Stalder <cedric.stalder@gmail.com>
  *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
@@ -93,6 +92,15 @@ namespace lunchbox
             {
                 ScopedCondition mutex( _cond );
                 _value |= value;
+                _cond.broadcast();
+                return *this;
+            }
+
+        /** Perform an and operation on the value. @version 1.7 */
+        Monitor& operator &= ( const T& value )
+            {
+                ScopedCondition mutex( _cond );
+                _value &= value;
                 _cond.broadcast();
                 return *this;
             }

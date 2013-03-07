@@ -28,6 +28,8 @@
 #include <cstdlib>
 #ifdef WIN32_API
 #  include <process.h>
+#else
+#  include <unistd.h>
 #endif
 
 #ifdef _MSC_VER

@@ -29,14 +29,15 @@
 namespace lunchbox
 {
 namespace detail { class Plugin; }
-/** Holder for all functions and information of one compressor plugin. */
-class Plugin : public lunchbox::DSO
+
+/** Holder for all functions and information of one compression plugin DSO. */
+class Plugin : public DSO
 {
 public:
-    /** Construct and initialize a new plugin DSO. */
+    /** Construct and initialize a new plugin DSO. @version 1.7.1 */
     LUNCHBOX_API Plugin( const std::string& libraryName );
 
-    /** Destruct this plugin handle. */
+    /** Destruct this plugin handle. @version 1.7.1 */
     LUNCHBOX_API virtual ~Plugin();
 
     /** @name Plugin function prototypes. */
@@ -79,7 +80,7 @@ public:
 
     /** @name Data Access. */
     //@{
-    /** @return true if the plugin is usable. */
+    /** @return true if the plugin is usable. @version 1.7.1 */
     LUNCHBOX_API bool isGood() const;
 
     /** Visit all compressors. @version 1.7.1 */
@@ -88,10 +89,10 @@ public:
     /** Visit all compressors. @version 1.7.1 */
     LUNCHBOX_API VisitorResult accept( ConstPluginVisitor& visitor ) const;
 
-    /** @return true if name is found in the plugin. */
+    /** @internal @return true if name is found in the plugin. */
     bool implementsType( const uint32_t name ) const;
 
-    /** @return the information for the given compressor, or 0. */
+    /** @internal @return the information for the given compressor, or 0. */
     EqCompressorInfo findInfo( const uint32_t name ) const;
 
     /** @internal @return all compressor informations. */
@@ -100,46 +101,46 @@ public:
 
     /** @name Plugin function pointers. */
     //@{
-    /** Get the number of engines found in the plugin. */
+    /** Get the number of engines found in the plugin. @version 1.7.1 */
     GetNumCompressors_t const getNumCompressors;
 
-    /** Get a new compressor instance.  */
+    /** Get a new compressor instance. @version 1.7.1 */
     NewCompressor_t const newCompressor;
 
-    /** Get a new decompressor instance.  */
+    /** Get a new decompressor instance. @version 1.7.1 */
     NewDecompressor_t const newDecompressor;
 
-    /** Delete the compressor instance.  */
+    /** Delete the compressor instance. @version 1.7.1 */
     DeleteCompressor_t const deleteCompressor;
 
-    /** Delete the decompressor instance.  */
+    /** Delete the decompressor instance. @version 1.7.1 */
     DeleteDecompressor_t const deleteDecompressor;
 
-    /** Compress data. */
+    /** Compress data. @version 1.7.1 */
     Compress_t const compress;
 
-    /** Decompress data. */
+    /** Decompress data. @version 1.7.1 */
     Decompress_t const decompress;
 
-    /** Get the number of results from the last compression.  */
+    /** Get the number of results from the last compression. @version 1.7.1 */
     GetNumResults_t const getNumResults;
 
-    /** Get the nth result from the last compression.  */
+    /** Get the nth result from the last compression. @version 1.7.1 */
     GetResult_t const getResult;
 
-    /** Check if the transfer plugin can be used. */
+    /** Check if the transfer plugin can be used. @version 1.7.1 */
     IsCompatible_t const isCompatible;
 
-    /** Download pixel data. */
+    /** Download pixel data. @version 1.7.1 */
     Download_t const download;
 
-    /** Upload pixel data. */
+    /** Upload pixel data. @version 1.7.1 */
     Upload_t const upload;
 
-    /** Start downloading pixel data. */
+    /** Start downloading pixel data. @version 1.7.1 */
     StartDownload_t const startDownload;
 
-    /** Start downloading pixel data. */
+    /** Start downloading pixel data. @version 1.7.1 */
     FinishDownload_t const finishDownload;
     //@}
 

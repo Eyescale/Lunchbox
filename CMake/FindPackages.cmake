@@ -43,6 +43,8 @@ if(Boost_name)
 endif()
 
 
+set(LUNCHBOX_DEPENDS hwloc;DNSSD;Boost)
+
 # Write defines.h and options.cmake
 if(NOT FIND_PACKAGES_INCLUDE)
   set(FIND_PACKAGES_INCLUDE

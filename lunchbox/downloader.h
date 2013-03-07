@@ -28,11 +28,11 @@ namespace lunchbox
 {
 namespace detail { class Downloader; }
 
-/** A C++ class to handle one downloader instance. */
+/** A C++ class to handle one downloader plugin instance. */
 class Downloader : public NonCopyable
 {
 public:
-    /** Construct a new downloader instance. */
+    /** Construct a new, invalid downloader instance. @version 1.7.1 */
     LUNCHBOX_API Downloader();
 
     /**
@@ -40,16 +40,20 @@ public:
      *
      * @param from the plugin registry.
      * @param name the name of the downloader.
+     * @version 1.7.1
      */
     LUNCHBOX_API Downloader( PluginRegistry& from, const uint32_t name );
 
-    /** Destruct the downloader. */
+    /** Destruct this downloader. @version 1.7.1 */
     LUNCHBOX_API virtual ~Downloader();
 
-    /** @return true if the instance is usable. */
+    /** @return true if the instance is usable. @version 1.7.1 */
     LUNCHBOX_API bool isGood() const;
 
-     /** @return true if the instance is usable and has the given name. */
+    /**
+     * @return true if the instance is usable for the given name.
+     * @version 1.7.1
+     */
     LUNCHBOX_API bool uses( const uint32_t name ) const;
 
     /**
@@ -72,6 +76,8 @@ public:
      * @param ignoreAlpha true if the downloader may drop the alpha channel.
      * @param capabilities the capabilities required by the downloader.
      * @param gl the OpenGL function table.
+     * @return the name of the chosen downloader.
+     * @version 1.7.1
      */
     static LUNCHBOX_API uint32_t choose( const PluginRegistry& from,
                                          const uint32_t internalFormat,
@@ -80,7 +86,7 @@ public:
                                          const uint64_t capabilities,
                                          const GLEWContext* gl );
 
-    /** @return the information about the allocated downloader. */
+    /** @return the information about the allocated instance. @version 1.7.1 */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
 
     /**
@@ -88,18 +94,21 @@ public:
      *
      * @param from the plugin registry.
      * @param name the name of the downloader.
+     * @return true on success, false otherwise.
+     * @version 1.7.1
      */
     LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name );
 
     /**
      * Set up a new, auto-selected downloader instance.
      * @sa choose() for parameters.
+     * @version 1.7.1
      */
     LUNCHBOX_API bool setup( PluginRegistry& from,const uint32_t internalFormat,
                              const float minQuality, const bool ignoreAlpha,
                              const uint64_t capabilities,const GLEWContext* gl);
 
-    /** Reset to EQ_COMPRESSOR_NONE. */
+    /** Reset to EQ_COMPRESSOR_NONE. @version 1.7.1 */
     LUNCHBOX_API void clear();
 
     /**
@@ -112,7 +121,7 @@ public:
      * @param source the source texture name, or 0 for framebuffer.
      * @param gl the OpenGL function table.
      * @return true if finish is needed, false if a synchronous download was
-     *         done.
+     *         performed.
      * @version 1.7.1
      */
     LUNCHBOX_API bool start( void** buffer, const uint64_t inDims[4],
@@ -132,8 +141,6 @@ public:
     LUNCHBOX_API void finish( void** buffer, const uint64_t inDims[4],
                               const uint64_t flags, uint64_t outDims[4],
                               const GLEWContext* gl );
-
-    LUNCHBOX_API const GLEWContext* glewGetContext() const; //!< @internal
 
 private:
     detail::Downloader* const impl_;

@@ -123,7 +123,7 @@ public:
     //@}
 
 
-    /** @internal */
+    /** @cond IGNORE */
     class placeholder
     {
     public:
@@ -148,7 +148,6 @@ public:
 
     BOOST_SERIALIZATION_ASSUME_ABSTRACT(placeholder)
 
-    /** @internal */
     template< typename ValueType >
     class holder : public placeholder
     {
@@ -192,6 +191,7 @@ public:
             ar & held;
         }
     };
+    /** @endcond */
 
 private:
     template< typename ValueType >

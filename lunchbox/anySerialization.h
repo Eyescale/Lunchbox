@@ -37,7 +37,6 @@
 #define SERIALIZABLEANY( CLASS ) \
     BOOST_CLASS_EXPORT( lunchbox::Any::holder< CLASS > )
 
-
 namespace lunchbox
 {
 
@@ -49,9 +48,10 @@ typedef boost::mpl::list< int8_t, uint8_t,
                           float, double,
                           bool, std::string, uint128_t > podTypes;
 
+/** @cond IGNORE */
 /**
- * Utility struct for registering types for lunchbox::Any from a type list.
  * @internal
+ * Utility struct for registering types for lunchbox::Any from a type list.
  */
 template< class Archive >
 struct registerWrapper
@@ -65,6 +65,7 @@ struct registerWrapper
         ar_.template register_type< Any::holder< T > >();
     }
 };
+/** @endcond */
 
 /**
  * Registers the types from the given type list for serializing it inside a

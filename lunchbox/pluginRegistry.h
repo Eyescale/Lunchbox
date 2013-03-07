@@ -34,23 +34,24 @@ namespace detail { class PluginRegistry; }
 /**
  * A registry for loaded plugins.
  *
- * Collage and downstream projects such as Equalizer use and initialize a
- * global plugin registry in their respective initialization calls by adding
- * directories before calling co::init(). The internal plugin registry can
- * be obtained using co::Global::getPluginRegistry().
+ * Downstream projects such as Collage and Equalizer use and initialize a global
+ * plugin registry in their respective initialization calls by adding
+ * directories in co::init(). This internal plugin registry can be obtained
+ * using co::Global::getPluginRegistry().
  */
 class PluginRegistry : public NonCopyable
 {
 public:
-    /** Construct a new plugin registry. */
+    /** Construct a new plugin registry. @version 1.7.1 */
     LUNCHBOX_API PluginRegistry();
 
-    /** Destruct this plugin registry. */
+    /** Destruct this plugin registry. @version 1.7.1 */
     LUNCHBOX_API ~PluginRegistry();
 
     /**
      * Add a new directory to search for compressor DSOs during init().
-     * @version 1.0
+     * @version 1.0 in Collage
+     * @version 1.7.1 in Lunchbox
      */
     LUNCHBOX_API void addDirectory( const std::string& path );
 
@@ -59,13 +60,15 @@ public:
 
     /**
      * @return all directories to search for compressor DSOs during init().
-     * @version 1.0
+     * @version 1.0 in Collage
+     * @version 1.7.1 in Lunchbox
      */
     LUNCHBOX_API const Strings& getDirectories() const;
 
     /**
      * Add the lunchbox library plugins to this registry.
      * @return true on success, false otherwise.
+     * @version 1.7.1
      */
     LUNCHBOX_API bool addLunchboxPlugins();
 

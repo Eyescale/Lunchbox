@@ -73,6 +73,7 @@ set(LUNCHBOX_SOURCES
   atomic.cpp
   clock.cpp
   compressor.cpp
+  compressorInfo.h
   condition.cpp
   condition_w32.ipp
   debug.cpp

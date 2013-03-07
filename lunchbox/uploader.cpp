@@ -179,7 +179,6 @@ bool Uploader::setup( PluginRegistry& from, const uint32_t name )
     return impl_->setup( from, name );
 }
 
-
 bool Uploader::setup( PluginRegistry& from, const uint32_t externalFormat,
                       const uint32_t internalFormat,
                       const uint64_t capabilities, const GLEWContext* gl )

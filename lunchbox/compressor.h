@@ -29,11 +29,11 @@ namespace lunchbox
 {
 namespace detail { class Compressor; }
 
-/** A C++ class to handle one compressor instance. */
+/** A C++ class to handle one compressor plugin instance. */
 class Compressor : public NonCopyable
 {
 public:
-    /** Construct a new compressor instance. */
+    /** Construct a new, invalid compressor instance. @version 1.7.1 */
     LUNCHBOX_API Compressor();
 
     /**
@@ -41,19 +41,23 @@ public:
      *
      * @param from the plugin registry
      * @param name the name of the compressor
+     * @version 1.7.1
      */
     LUNCHBOX_API Compressor( PluginRegistry& from, const uint32_t name );
 
-    /** Destruct the compressor. */
+    /** Destruct the compressor. @version 1.7.1 */
     LUNCHBOX_API virtual ~Compressor();
 
-    /** @return true if the instance is usable. */
+    /** @return true if the instance is usable. @version 1.7.1 */
     LUNCHBOX_API bool isGood() const;
 
-     /** @return true if the instance is usable and has the given name. */
+    /**
+     * @return true if the instance is usable for the given name.
+     * @version 1.7.1
+     */
     LUNCHBOX_API bool uses( const uint32_t name ) const;
 
-    /** @return the information about the allocated compressor. */
+    /** @return the information about the allocated instance. @version 1.7.1 */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
 
     /**
@@ -66,8 +70,10 @@ public:
      * @param tokenType the structure of the data to compress.
      * @param minQuality minimal quality of the compressed data, with 0 = no
      *                   quality and 1 = full quality, no loss.
-     * @param ignoreMSE the most-significant element of each token can be
-     *                  ignored, typically the alpha channel of an image.
+     * @param ignoreMSE the most-significant element of a four-element token can
+     *                  be ignored, typically the alpha channel of an image.
+     * @return the name of the chosen compressor.
+     * @version 1.7.1
      */
     static LUNCHBOX_API uint32_t choose( const PluginRegistry& registry,
                                          const uint32_t tokenType,
@@ -77,22 +83,25 @@ public:
     /**
      * Set up a new, named compressor instance.
      *
-     * @param from the plugin registry
-     * @param name the name of the compressor
+     * @param from the plugin registry.
+     * @param name the name of the compressor.
+     * @return true on success, false otherwise.
+     * @version 1.7.1
      */
     LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name );
 
     /**
      * Set up a new, auto-selected compressor instance.
      * @sa choose() for parameters.
+     * @version 1.7.1
      */
     LUNCHBOX_API bool setup( PluginRegistry& registry, const uint32_t tokenType,
                              const float minQuality, const bool ignoreMSE );
 
-    /** Reallocate the current instance. */
+    /** Reallocate the current instance. @version 1.7.1 */
     LUNCHBOX_API bool realloc();
 
-    /** Reset to EQ_COMPRESSOR_NONE. */
+    /** Reset to EQ_COMPRESSOR_NONE. @version 1.7.1 */
     LUNCHBOX_API void clear();
 
     /**
@@ -100,6 +109,7 @@ public:
      *
      * @param in the pointer to the input data.
      * @param inDims the dimensions of the input data
+     * @version 1.7.1
      */
     LUNCHBOX_API void compress( void* const in, const uint64_t inDims[2] );
 
@@ -109,19 +119,24 @@ public:
      * @param in the pointer to the input data.
      * @param pvp the dimensions of the input data
      * @param flags capability flags for the compression
+     * @version 1.7.1
      */
     LUNCHBOX_API void compress( void* const in, const uint64_t pvp[4],
                                 const uint64_t flags );
 
-    /** @return the number of compressed chunks. */
+    /**
+     * @return the number of compressed chunks of the last compression.
+     * @version 1.7.1
+     */
     LUNCHBOX_API unsigned getNumResults() const;
 
     /**
-     * Get one compressed chunk.
+     * Get one compressed chunk of the last compression.
      *
      * @param i the result index to return.
      * @param out the return value to store the result pointer
      * @param outSize the return value to store the result size in bytes
+     * @version 1.7.1
      */
     LUNCHBOX_API void getResult( const unsigned i, void** const out,
                                  uint64_t* const outSize ) const;

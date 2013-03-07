@@ -28,42 +28,48 @@ namespace lunchbox
 {
 namespace detail { class Decompressor; }
 
-/** A C++ class to handle one decompressor instance. */
+/** A C++ class to handle one decompressor plugin instance. */
 class Decompressor : public NonCopyable
 {
 public:
-    /** Construct a new decompressor instance. */
+    /** Construct a new, invalid decompressor instance. @version 1.7.1 */
     LUNCHBOX_API Decompressor();
 
     /**
      * Construct a new decompressor instance.
      *
-     * @param from the plugin registry
-     * @param name the name of the decompressor
+     * @param from the plugin registry.
+     * @param name the name of the decompressor.
+     * @version 1.7.1
      */
     LUNCHBOX_API Decompressor( PluginRegistry& from, const uint32_t name );
 
-    /** Destruct the decompressor. */
+    /** Destruct this decompressor. @version 1.7.1 */
     LUNCHBOX_API virtual ~Decompressor();
 
-     /** @return true if the instance is usable. */
+     /** @return true if the instance is usable. @version 1.7.1 */
     LUNCHBOX_API bool isGood() const;
 
-     /** @return true if the instance is usable and has the given name. */
+    /**
+     * @return true if the instance is usable for the given name.
+     * @version 1.7.1
+     */
     LUNCHBOX_API bool uses( const uint32_t name ) const;
 
-    /** @return the information about the allocated compressor. */
+    /** @return the information about the allocated instance. @version 1.7.1 */
     LUNCHBOX_API const EqCompressorInfo& getInfo() const;
 
     /**
      * Set up a new, named decompressor instance.
      *
-     * @param from the plugin registry
-     * @param name the name of the decompressor
+     * @param from the plugin registry.
+     * @param name the name of the decompressor.
+     * @return true on success, false otherwise.
+     * @version 1.7.1
      */
     LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name );
 
-    /** Reset to EQ_COMPRESSOR_NONE. */
+    /** Reset to EQ_COMPRESSOR_NONE. @version 1.7.1 */
     LUNCHBOX_API void clear();
 
     /**
@@ -75,6 +81,7 @@ public:
      * @param out the pointer to a pre-allocated buffer for the
      *            uncompressed output result.
      * @param outDim the dimensions of the output data.
+     * @version 1.7.1
      */
     LUNCHBOX_API void decompress( const void* const* in,
                                   const uint64_t* const inSizes,
@@ -90,6 +97,7 @@ public:
      *            uncompressed output result.
      * @param pvpOut the dimensions of the output data.
      * @param flags capability flags for the decompression.
+     * @version 1.7.1
      */
     LUNCHBOX_API void decompress( const void* const* in,
                                   const uint64_t* const inSizes,

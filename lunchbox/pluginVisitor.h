@@ -24,7 +24,10 @@
 
 namespace lunchbox
 {
-/** Visit all compressors of a Plugin or PluginRegistry. @version 1.7.1 */
+/**
+ * Visitor for all plugins and compressors of a Plugin or PluginRegistry.
+ * @version 1.7.1
+ */
 template< class P, class I > class PluginVisitorT
 {
 public:

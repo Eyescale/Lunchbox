@@ -297,7 +297,11 @@ static inline EightBytesReference GetEightBytesAt(const char* ptr) {
 static inline uint32 GetUint32AtOffset(uint64 v, int offset) {
   DCHECK_GE(offset, 0);
   DCHECK_LE(offset, 4);
-  return v >> (LittleEndian::IsLittleEndian() ? 8 * offset : 32 - 8 * offset);
+#ifdef LUNCHBOX_BIGENDIAN
+  return v >> (32 - 8 * offset);
+#else
+  return v >> (8 * offset);
+#endif
 }
 
 #else

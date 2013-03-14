@@ -36,6 +36,9 @@ namespace detail { class Clock; }
         /** Destroy the clock. @version 1.0 */
         LUNCHBOX_API ~Clock();
 
+        /** assignment operator */
+        LUNCHBOX_API Clock & operator= (const Clock& ref);
+
         /**
          * Reset the base time of the clock to the current time.
          * @version 1.0

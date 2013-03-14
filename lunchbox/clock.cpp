@@ -59,6 +59,17 @@ Clock::Clock()
 #endif
 }
 
+Clock & Clock::operator= ( const Clock& ref )
+{
+    _impl->start = ref._impl->start;
+#ifdef __APPLE__
+    _impl->timebaseInfo = ref._impl->timebaseInfo;
+#elif defined (_WIN32)
+    _impl->frequency = ref._impl->frequency;
+#endif
+    return *this;
+}
+
 Clock::~Clock()
 {
     delete _impl;

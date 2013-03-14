@@ -20,6 +20,7 @@
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
+#include <lunchbox/nonCopyable.h>
 
 namespace lunchbox
 {
@@ -29,7 +30,7 @@ namespace detail { class Condition; }
      * A condition variable and associated lock.
      * Follows closely pthread_condition and mutex
      */
-    class Condition
+class Condition : public NonCopyable
     {
     public:
         /** Construct a new condition variable. @version 1.0 */

@@ -33,7 +33,7 @@ namespace lunchbox
 namespace detail { class Thread; }
 
 /** An utility class to execute code in a separate execution thread. */
-class Thread
+class Thread : public NonCopyable
 {
 public:
     /** Enumeration values for thread affinity. */

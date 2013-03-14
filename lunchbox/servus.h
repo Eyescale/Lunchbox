@@ -22,6 +22,7 @@
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
+#include <lunchbox/nonCopyable.h>
 #include <map>
 
 namespace lunchbox
@@ -37,7 +38,7 @@ namespace detail { class Servus; }
  * without zeroconf support (LUNCHBOX_USE_DNSSD is not set), this class does not
  * do anything useful.
  */
-class Servus
+class Servus : public NonCopyable
 {
 public:
     enum Interface

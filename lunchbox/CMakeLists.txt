@@ -38,6 +38,14 @@ install(FILES ${LUNCHBOX_PUBLIC_HEADERS} DESTINATION include/lunchbox
   COMPONENT dev)
 install(FILES ${PLUGIN_HEADERS} DESTINATION include/lunchbox/plugins
   COMPONENT dev)
+
+if (MSVC)
+  install(FILES ${CMAKE_BINARY_DIR}/bin/Debug/${LIBRARY}.pdb DESTINATION bin COMPONENT lib CONFIGURATIONS Debug)
+  install(FILES ${CMAKE_BINARY_DIR}/bin/Debug/pthread.pdb DESTINATION bin COMPONENT lib CONFIGURATIONS Debug)
+  install(FILES ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/${LIBRARY}.pdb DESTINATION bin COMPONENT lib CONFIGURATIONS RelWithDebInfo)
+  install(FILES ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/pthread.pdb DESTINATION bin COMPONENT lib CONFIGURATIONS RelWithDebInfo)
+endif()
+
 install(TARGETS ${LIBRARY}
         ARCHIVE DESTINATION lib COMPONENT dev
         RUNTIME DESTINATION bin COMPONENT lib

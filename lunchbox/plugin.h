@@ -96,7 +96,7 @@ public:
     EqCompressorInfo findInfo( const uint32_t name ) const;
 
     /** @internal @return all compressor informations. */
-    const CompressorInfos& getInfos() const;
+    LUNCHBOX_API const CompressorInfos& getInfos() const;
     //@}
 
     /** @name Plugin function pointers. */

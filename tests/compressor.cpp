@@ -150,6 +150,10 @@ void _testFile()
     getFiles( "", files, ".*\\.dll" );
     getFiles( "", files, ".*\\.exe" );
     getFiles( "", files, ".*\\.so" );
+    getFiles( "../bin", files, ".*\\.dll" );
+    getFiles( "../lib", files, ".*\\.so" );
+    getFiles( "../../install/bin", files, ".*\\.dll" );
+    getFiles( "../../install/lib", files, ".*\\.so" );
     getFiles( "images", files, ".*\\.rgb" );
     getFiles( "", files, ".*\\.a" );
     getFiles( "", files, ".*\\.dylib" );

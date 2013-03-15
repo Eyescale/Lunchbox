@@ -1,18 +1,18 @@
 
-/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com> 
+/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
  *               2009-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * Template functions used by all compression routines
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -64,7 +64,7 @@ public:
                                                                         \
     static const bool _initialized ## cls ## type = _register ## cls ## type();
 
-template< typename T > 
+template< typename T >
 inline void _write( const T token, const T numTokens, T*& out )
 {
     if( token == _rleMarker )
@@ -131,13 +131,13 @@ static inline void _compress( const void* const input, const uint64_t nPixels,
 
     const PixelType* pixel = reinterpret_cast< const PixelType* >( input );
 
-    ComponentType* oneOut(   reinterpret_cast< ComponentType* >( 
-                                 results[ 0 ]->getData( ))); 
-    ComponentType* twoOut(   reinterpret_cast< ComponentType* >( 
+    ComponentType* oneOut(   reinterpret_cast< ComponentType* >(
+                                 results[ 0 ]->getData( )));
+    ComponentType* twoOut(   reinterpret_cast< ComponentType* >(
                                  results[ 1 ]->getData( )));
-    ComponentType* threeOut( reinterpret_cast< ComponentType* >( 
+    ComponentType* threeOut( reinterpret_cast< ComponentType* >(
                                  results[ 2 ]->getData( )));
-    ComponentType* fourOut(  reinterpret_cast< ComponentType* >( 
+    ComponentType* fourOut(  reinterpret_cast< ComponentType* >(
                                  results[ 3 ]->getData( )));
 
     ComponentType oneLast(0), twoLast(0), threeLast(0), fourLast(0);
@@ -145,10 +145,10 @@ static inline void _compress( const void* const input, const uint64_t nPixels,
         swizzleFunc::swizzle( *pixel, oneLast, twoLast, threeLast, fourLast );
     else
         swizzleFunc::swizzle( *pixel, oneLast, twoLast, threeLast );
-    
+
     ComponentType oneSame( 1 ), twoSame( 1 ), threeSame( 1 ), fourSame( 1 );
     ComponentType one(0), two(0), three(0), four(0);
-    
+
     for( uint64_t i = 1; i < nPixels; ++i )
     {
         ++pixel;
@@ -207,7 +207,7 @@ static inline void _compress( const void* const input, const uint64_t nPixels,
             ++name ## In;                                   \
         }                                                   \
     }                                                       \
-    --name ## Left; 
+    --name ## Left;
 
 template< typename PixelType, typename ComponentType,
           typename swizzleFunc, typename alphaFunc >
@@ -217,15 +217,15 @@ static inline void _decompress( const void* const* inData,
                                 void* const outData, const eq_uint64_t nPixels )
 {
     assert( (nInputs % 4) == 0 );
-    assert( (inSizes[0] % sizeof( ComponentType )) == 0 ); 
-    assert( (inSizes[1] % sizeof( ComponentType )) == 0 ); 
-    assert( (inSizes[2] % sizeof( ComponentType )) == 0 ); 
+    assert( (inSizes[0] % sizeof( ComponentType )) == 0 );
+    assert( (inSizes[1] % sizeof( ComponentType )) == 0 );
+    assert( (inSizes[2] % sizeof( ComponentType )) == 0 );
 
     const uint64_t nElems = nPixels * 4;
-    const float width = static_cast< float >( nElems ) /  
+    const float width = static_cast< float >( nElems ) /
                         static_cast< float >( nInputs );
 
-    const ComponentType* const* in = 
+    const ComponentType* const* in =
         reinterpret_cast< const ComponentType* const* >( inData );
 
 #pragma omp parallel for
@@ -235,20 +235,20 @@ static inline void _decompress( const void* const* inData,
         const uint64_t nextIndex  =
             static_cast< uint64_t >(( i/4 + 1 ) * width ) * 4;
         const uint64_t chunkSize = ( nextIndex - startIndex ) / 4;
-        PixelType* out = reinterpret_cast< PixelType* >( outData ) + 
+        PixelType* out = reinterpret_cast< PixelType* >( outData ) +
                          startIndex / 4;
 
         const ComponentType* oneIn   = in[ i + 0 ];
         const ComponentType* twoIn   = in[ i + 1 ];
         const ComponentType* threeIn = in[ i + 2 ];
         const ComponentType* fourIn  = in[ i + 3 ];
-        
+
         ComponentType one(0), two(0), three(0), four(0);
         ComponentType oneLeft(0), twoLeft(0), threeLeft(0), fourLeft(0);
-   
+
         for( uint64_t j = 0; j < chunkSize ; ++j )
         {
-            assert( static_cast< uint64_t >( oneIn-in[i+0])   <= 
+            assert( static_cast< uint64_t >( oneIn-in[i+0])   <=
                     inSizes[i+0] / sizeof( ComponentType ) );
             assert( static_cast< uint64_t >( twoIn-in[i+1])   <=
                     inSizes[i+1] / sizeof( ComponentType ) );
@@ -322,17 +322,17 @@ static inline unsigned _compress( const void* const inData,
     const unsigned nChunks = _setupResults( 4, size, results );
 
     const uint64_t nElems = nPixels * 4;
-    const float width = static_cast< float >( nElems ) /  
+    const float width = static_cast< float >( nElems ) /
                         static_cast< float >( nChunks );
 
-    const ComponentType* const data = 
+    const ComponentType* const data =
         reinterpret_cast< const ComponentType* >( inData );
-    
+
 #pragma omp parallel for
     for( ssize_t i = 0; i < static_cast< ssize_t >( nChunks ) ; i += 4 )
     {
         const uint64_t startIndex = static_cast< uint64_t >( i/4 * width ) * 4;
-        const uint64_t nextIndex = 
+        const uint64_t nextIndex =
             static_cast< uint64_t >(( i/4 + 1 ) * width ) * 4;
         const uint64_t chunkSize = ( nextIndex - startIndex ) / 4;
 

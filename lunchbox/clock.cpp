@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2012, Stefan Eilemann <eile@eyescale.ch> 
+/* Copyright (c) 2010-2013, Stefan Eilemann <eile@eyescale.ch> 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -61,12 +61,7 @@ Clock::Clock()
 
 Clock & Clock::operator= ( const Clock& ref )
 {
-    _impl->start = ref._impl->start;
-#ifdef __APPLE__
-    _impl->timebaseInfo = ref._impl->timebaseInfo;
-#elif defined (_WIN32)
-    _impl->frequency = ref._impl->frequency;
-#endif
+    *_impl = *ref._impl;
     return *this;
 }
 

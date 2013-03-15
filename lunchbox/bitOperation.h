@@ -101,11 +101,11 @@ namespace lunchbox
 #  endif
 #endif
 
-    template<> inline void byteswap( void*& /*value*/ ) { /*NOP*/ }
-    template<> inline void byteswap( bool& /*value*/ ) { /*NOP*/ }
-    template<> inline void byteswap( char& /*value*/ ) { /*NOP*/ }
-    template<> inline void byteswap( signed char& /*value*/ ) { /*NOP*/ }
-    template<> inline void byteswap( unsigned char& /*value*/ ) { /*NOP*/ }
+    template<> inline void byteswap( void*& ) { /*NOP*/ }
+    template<> inline void byteswap( bool&) { /*NOP*/ }
+    template<> inline void byteswap( char& ) { /*NOP*/ }
+    template<> inline void byteswap( signed char& ) { /*NOP*/ }
+    template<> inline void byteswap( unsigned char& ) { /*NOP*/ }
 
     template<> inline void byteswap( uint32_t& value )
     {

@@ -30,7 +30,7 @@ namespace detail { class Condition; }
      * A condition variable and associated lock.
      * Follows closely pthread_condition and mutex
      */
-class Condition : public NonCopyable
+    class Condition : public NonCopyable
     {
     public:
         /** Construct a new condition variable. @version 1.0 */

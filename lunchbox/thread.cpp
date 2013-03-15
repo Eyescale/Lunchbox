@@ -87,12 +87,14 @@ public:
 void _notifyStopping( void* arg );
 
 Thread::Thread()
-        : _impl( new detail::Thread )
+    : NonCopyable()
+    , _impl( new detail::Thread )
 {
 }
 
 Thread::Thread( const Thread& from )
-        : _impl( new detail::Thread )
+    : NonCopyable()
+    , _impl( new detail::Thread )
 {
 }
 

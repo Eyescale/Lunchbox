@@ -103,7 +103,7 @@ public:
      * @return all instance names found during discovery.
      * @version 0.9
      */
-    LUNCHBOX_API Strings discover( const Interface interface,
+    LUNCHBOX_API Strings discover( const Interface addr,
                                    const unsigned browseTime );
 
     /** @return all instances found during the last discovery. @version 0.9 */

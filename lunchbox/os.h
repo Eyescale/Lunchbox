@@ -29,8 +29,12 @@
 #  ifndef _WIN32_WINNT // Hopefully to higher than 0x500...
 #     define _WIN32_WINNT 0x501 // => XP, for WM_XBUTTONDOWN and others
 #  endif
-#  define _USE_MATH_DEFINES
-#  define WIN32_LEAN_AND_MEAN
+#  ifndef _USE_MATH_DEFINES
+#    define _USE_MATH_DEFINES
+#  endif
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
 #  ifndef NOMINMAX
 #    define NOMINMAX
 #  endif

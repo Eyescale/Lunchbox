@@ -40,8 +40,6 @@ void _testData( const uint32_t nameCompressor, const std::string& name,
                 const uint8_t* data, const uint64_t size );
 
 std::vector< uint32_t > getCompressorNames( const uint32_t tokenType );
-void compare( const uint8_t *dst, const uint8_t *src, const uint32_t nbytes );
-
 std::vector< std::string > getFiles( const std::string path,
                                      std::vector< std::string >& files,
                                      const std::string& ext );
@@ -68,8 +66,8 @@ int main( int argc, char **argv )
 std::vector< uint32_t > getCompressorNames( const uint32_t tokenType )
 {
     const Plugins& plugins = registry.getPlugins();
-
     std::vector< uint32_t > names;
+
     for( PluginsCIter i = plugins.begin(); i != plugins.end(); ++i )
     {
         const CompressorInfos& infos = (*i)->getInfos();
@@ -127,7 +125,7 @@ void _testData( const uint32_t compressorName, const std::string& name,
                              numResults, outData, inDims );
     const float decompressTime = clock.getTimef();
 
-    compare( outData, data, size );
+    TEST( memcmp( outData, data, size ) == 0 );
     std::cout  << std::setw(20) << name << ", 0x" << std::setw(8)
                << std::setfill( '0' ) << std::hex << compressorName << std::dec
                << std::setfill(' ') << ", " << std::setw(10) << size << ", "
@@ -250,16 +248,6 @@ void _testRandom()
    }
 
     delete [] data;
-}
-
-void compare( const uint8_t *dst, const uint8_t *src, const uint32_t nbytes )
-{
-#pragma omp parallel for
-    for( int64_t i = 0; i < int64_t( nbytes ); ++i )
-    {
-        TESTINFO( dst[i] == src[i],
-                  int( dst[i] ) << " != " << int( src[i] ) << " @ " << i );
-    }
 }
 
 std::vector< std::string > getFiles( const std::string path,

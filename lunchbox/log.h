@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *                    2011, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -87,8 +87,7 @@ namespace lunchbox
         LUNCHBOX_API void setThreadName( const std::string& name );
         const char* getThreadName() const { return _thread; }
 
-        void setLogInfo( const char* file, const int line )
-            { _file = file; _line = line; }
+        LUNCHBOX_API void setLogInfo( const char* file, const int line );
 
     protected:
         virtual int_type overflow( LogBuffer::int_type c );

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -215,8 +215,18 @@ std::ostream& Log::getOutput()
 void LogBuffer::setThreadName( const std::string& name )
 {
     LBASSERT( !name.empty( ));
-    snprintf( _thread, 12, "%s", name.c_str( ));
-    _thread[11] = 0;
+    snprintf( _thread, 12, "%11s", name.c_str( ));
+}
+
+void LogBuffer::setLogInfo( const char* file, const int line )
+{
+    LBASSERT( file );
+    _file = file;
+
+    const size_t length = _file.length();
+    if( length > 30 )
+        _file = _file.substr( length - 30, length );
+    _line = line;
 }
 
 LogBuffer::int_type LogBuffer::overflow( LogBuffer::int_type c )

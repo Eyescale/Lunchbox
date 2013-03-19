@@ -1,15 +1,16 @@
 
-/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com>
+ *                    2013, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -40,7 +41,7 @@ LUNCHBOX_API void abort();
  */
 LUNCHBOX_API void checkHeap();
 
-/** 
+/**
  * Print a textual description of the current system error.
  *
  * The current system error is OS-specific, e.g., errno or GetLastError().
@@ -48,7 +49,7 @@ LUNCHBOX_API void checkHeap();
  */
 LUNCHBOX_API std::ostream& sysError( std::ostream& os );
 
-/** 
+/**
  * Print the current call stack.
  *
  * May not be implemented on all platforms.
@@ -59,11 +60,11 @@ LUNCHBOX_API std::ostream& backtrace( std::ostream& os );
 LUNCHBOX_API std::string demangleTypeID( const char* mangled ); //!< @internal
 
 /** Print the RTTI name of the given class. @version 1.0 */
-template< class T > inline std::string className( T* object )
+template< class T > inline std::string className( const T* object )
     { return demangleTypeID( typeid( *object ).name( )); }
 
 /** Print the RTTI name of the given class. @version 1.0 */
-template< class T > inline std::string className( T& object )
+template< class T > inline std::string className( const T& object )
     { return demangleTypeID( typeid( object ).name( )); }
 }
 
@@ -111,7 +112,7 @@ template< class T > inline std::string className( T& object )
             lunchbox::abort();                                          \
         }                                                               \
         lunchbox::checkHeap();                                          \
-    } 
+    }
 #  define LBASSERTINFO(x, info)                                         \
     {                                                                   \
         if( !(x) )                                                      \

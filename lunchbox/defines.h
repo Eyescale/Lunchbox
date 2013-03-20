@@ -42,8 +42,14 @@
 #define LB_MAX(a,b) ((a)>(b)?(a):(b)) //!< returns the maximum of two values
 #define LB_MIN(a,b) ((a)<(b)?(a):(b)) //!< returns the minimum of two values
 
+/** A 'NULL' value for an uint16.*/
+#define LB_UNDEFINED_UINT16   (0xffffu)
+
 /** A 'NULL' value for an uint32.*/
 #define LB_UNDEFINED_UINT32   (0xffffffffu)
+
+/** A 'NULL' value for an uint64.*/
+#define LB_UNDEFINED_UINT64   (0xffffffffffffffffu)
 
 /** The biggest usable value when using special uint32 values.*/
 #define LB_MAX_UINT32         (0xfffffff0u)

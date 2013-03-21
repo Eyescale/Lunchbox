@@ -193,6 +193,17 @@ public:
     iterator erase( const T& element );
 
     /**
+     * Resize the vector.
+     *
+     * Thread-safe with other write operations. Shrinking is not thread-safe
+     * with concurrent reads on the removed elements and produces undefined
+     * results.
+     *
+     * @version 1.7.2
+     */
+    void resize( const size_t size, const T& value = T( ));
+
+    /**
      * Clear the vector and all storage.
      *
      * Thread-safe with other write operations. By nature not thread-safe with

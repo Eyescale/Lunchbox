@@ -274,6 +274,21 @@ LFVector< T, nSlots >::erase( const T& element )
 }
 
 template< class T, int32_t nSlots >
+void LFVector< T, nSlots >::resize( const size_t newSize, const T& value )
+{
+    ScopedWrite mutex( lock_ );
+    while( size_ > newSize )
+    {
+        --size_;
+        (*this)[size_] = 0; // not correct for all T? Needed to reset RefPtr
+    }
+    trim_();
+
+    while( size_ < newSize )
+        push_back_unlocked_( value );
+}
+
+template< class T, int32_t nSlots >
 void LFVector< T, nSlots >::clear()
 {
     ScopedWrite mutex( lock_ );

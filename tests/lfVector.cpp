@@ -1,16 +1,16 @@
 
-/* Copyright (c) 2011-2012, Stefan Eilemann <stefan.eilemann@epfl.ch>
+/* Copyright (c) 2011-2013, Stefan Eilemann <stefan.eilemann@epfl.ch>
  *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -248,7 +248,7 @@ template< class V, class T > void _runSerialTest()
 
     std::cerr << std::setw(11) << float(LOOPSIZE*10)/rTime_ << ", "
               << std::setw(11) << float(LOOPSIZE*10)/wTime_ << ", "
-              << std::setw(11) << float(LOOPSIZE*10)/pTime_ << ", " 
+              << std::setw(11) << float(LOOPSIZE*10)/pTime_ << ", "
               << std::setw(9) << float(10)/cTime_ << ", "
               << std::setw(9) << float(10)/eTime_ << ", "
               << std::setw(9) << float(LOOPSIZE*10)/fTime << ", "
@@ -259,6 +259,19 @@ template< class V, class T > void _runSerialTest()
     i = vector.begin();
     i = vector.erase( i );
     TEST( i == vector.begin( ));
+    TEST( vector.empty( ));
+
+    vector.push_back( 42 );
+    vector.push_back( 17 );
+    vector.resize( 1 );
+    TEST( vector.size() == 1 );
+    TEST( vector[0] == 42 );
+
+    vector.resize( 10, 17 );
+    TEST( vector.size() == 10 );
+    TEST( vector[0] == 42 );
+    TEST( vector[1] == 17 );
+    TEST( vector[9] == 17 );
 }
 
 int main( int argc, char **argv )
@@ -324,7 +337,7 @@ int main( int argc, char **argv )
 
             for( size_t k = 0; k < vector.size(); ++k )
                 TEST( vector[k] == k || vector[k] == 0 );
-            
+
             // multi-threaded erase
             std::vector< Eraser > erasers(j);
 
@@ -367,7 +380,7 @@ int main( int argc, char **argv )
 
             std::cerr << std::setw(11) << float(i*LOOPSIZE)/rTime_ << ", "
                       << std::setw(11) << float(j*LOOPSIZE)/wTime_ << ", "
-                      << std::setw(11) << float(LOOPSIZE)/pTime_ << ", " 
+                      << std::setw(11) << float(LOOPSIZE)/pTime_ << ", "
                       << std::setw(9) << float(j)/cTime_ << ", "
                       << std::setw(9) << float(j)/eTime_ << ", "
                       << std::setw(9) << float(fOps)/fTime << ", "

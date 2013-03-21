@@ -96,10 +96,10 @@ public:
     T& back();
 
     /** Iterator over the vector elements. @version 1.3.2 */
-    typedef LFVectorIterator< LFVector< T >, T > iterator;
+    typedef LFVectorIterator< LFVector< T, nSlots >, T > iterator;
 
     /** Iterator over the const vector elements. @version 1.3.2 */
-    typedef LFVectorIterator< const LFVector< T >, const T > const_iterator;
+    typedef LFVectorIterator<const LFVector<T, nSlots>, const T> const_iterator;
 
     const_iterator begin() const; //!< @version 1.3.2
     const_iterator end() const; //!< @version 1.3.2

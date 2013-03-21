@@ -29,7 +29,10 @@ source_group(lunchbox FILES ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_HEADERS}
 
 set(LIBRARY Lunchbox)
 
-add_definitions(-DHAVE_BUILTIN_CTZ -DHAVE_BUILTIN_EXPECT -DHAVE_BYTESWAP_H)
+if(NOT WIN32)
+  add_definitions(-DHAVE_BUILTIN_CTZ -DHAVE_BUILTIN_EXPECT)
+endif()
+add_definitions(-DHAVE_BYTESWAP_H)
 add_library(${LIBRARY} SHARED ${LUNCHBOX_ALL})
 target_link_libraries(${LIBRARY} ${LUNCHBOX_LINKLIBS})
 set_target_properties(${LIBRARY}

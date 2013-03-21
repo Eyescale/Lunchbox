@@ -215,7 +215,7 @@ void LFVector< T, nSlots >::pop_back()
     if( size_ == 0 )
         return;
     --size_;
-    (*this)[size_] = 0; // not correct for all T? Needed to reset RefPtr
+    (*this)[size_] = T(); // not correct for all T? Needed to reset RefPtr
     trim_();
 }
 
@@ -228,7 +228,7 @@ bool LFVector< T, nSlots >::pop_back( T& element )
 
     element = back();
     --size_;
-    (*this)[size_] = 0; // not correct for all T? Needed to reset RefPtr
+    (*this)[size_] = T(); // not correct for all T? Needed to reset RefPtr
     trim_();
     return true;
 }
@@ -280,7 +280,7 @@ void LFVector< T, nSlots >::resize( const size_t newSize, const T& value )
     while( size_ > newSize )
     {
         --size_;
-        (*this)[size_] = 0; // not correct for all T? Needed to reset RefPtr
+        (*this)[size_] = T(); // not correct for all T? Needed to reset RefPtr
     }
     trim_();
 
@@ -295,7 +295,7 @@ void LFVector< T, nSlots >::clear()
     while( size_ > 0 )
     {
         --size_;
-        (*this)[size_] = 0; // Needed to reset RefPtr
+        (*this)[size_] = T(); // Needed to reset RefPtr
     }
     for( int32_t i = 0; i < nSlots; ++i )
     {

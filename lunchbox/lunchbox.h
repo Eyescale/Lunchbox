@@ -48,11 +48,13 @@
 #include <lunchbox/monitor.h>
 #include <lunchbox/mtQueue.h>
 #include <lunchbox/perThread.h>
+#include <lunchbox/refPtr.h>
 #include <lunchbox/rng.h>
 #include <lunchbox/scopedMutex.h>
 #include <lunchbox/servus.h>
 #include <lunchbox/sleep.h>
 #include <lunchbox/spinLock.h>
+#include <lunchbox/stdExt.h>
 #include <lunchbox/version.h>
 
 #ifdef LB_SYSTEM_INCLUDES

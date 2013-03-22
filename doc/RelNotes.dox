@@ -73,7 +73,7 @@
 <a name="enhancements"></a>
 <h3>2.2. Enhancements</h3>
 <ul>
-  <li>Improved DSO, MemoryMap, MTQueue, uint128_t, UUID APIs</li>
+  <li>Improved DSO, MemoryMap, MTQueue, uint128_t, UUID and LFVector APIs</li>
   <li>searchDirectory uses boost::regex for file matching</li>
 </ul>
 

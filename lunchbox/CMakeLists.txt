@@ -29,7 +29,7 @@ source_group(lunchbox FILES ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_HEADERS}
 
 set(LIBRARY Lunchbox)
 
-if(NOT WIN32)
+if(NOT WIN32 AND NOT CMAKE_COMPILER_IS_XLCXX)
   add_definitions(-DHAVE_BUILTIN_CTZ -DHAVE_BUILTIN_EXPECT)
 endif()
 add_definitions(-DHAVE_BYTESWAP_H)

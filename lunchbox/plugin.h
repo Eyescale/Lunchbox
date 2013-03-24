@@ -93,7 +93,7 @@ public:
     bool implementsType( const uint32_t name ) const;
 
     /** @internal @return the information for the given compressor, or 0. */
-    EqCompressorInfo findInfo( const uint32_t name ) const;
+    LUNCHBOX_API EqCompressorInfo findInfo( const uint32_t name ) const;
 
     /** @internal @return all compressor informations. */
     LUNCHBOX_API const CompressorInfos& getInfos() const;

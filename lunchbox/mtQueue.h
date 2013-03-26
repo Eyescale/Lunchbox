@@ -100,6 +100,13 @@ namespace lunchbox
         T pop();
 
         /**
+         * Retrieve a given number of elements from the front of the queue.
+         * May block.
+         * @version 1.7.2
+         */
+        std::vector< T > pop( const size_t num );
+
+        /**
          * Retrieve and pop the front element from the queue.
          *
          * @param timeout the timeout

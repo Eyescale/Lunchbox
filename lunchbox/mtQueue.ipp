@@ -98,6 +98,26 @@ T MTQueue< T, S >::pop()
 }
 
 template< typename T, size_t S >
+std::vector< T > MTQueue< T, S >::pop( const size_t num )
+{
+    std::vector< T > result;
+    result.reserve( num );
+
+    _cond.lock();
+    while( _queue.size() < num )
+        _cond.wait();
+
+    result.insert( result.end(), _queue.begin(), _queue.begin() + num );
+    _queue.erase( _queue.begin(), _queue.begin() + num );
+
+    _cond.signal();
+    _cond.unlock();
+
+    return result;
+}
+
+
+template< typename T, size_t S >
 bool MTQueue< T, S >::timedPop( const unsigned timeout, T& element )
 {
     _cond.lock();
@@ -134,12 +154,11 @@ MTQueue< T, S >::timedPop( const unsigned timeout, const size_t minimum,
     }
 
     const size_t size = LB_MIN( maximum, _queue.size( ));
+
     result.reserve( size );
-    for( size_t i = 0; i < size; ++i )
-    {
-        result.push_back( _queue.front( ));
-        _queue.pop_front();
-    }
+    result.insert( result.end(), _queue.begin(), _queue.begin() + size );
+    _queue.erase( _queue.begin(), _queue.begin() + size );
+
     _cond.unlock();
     return result;
 }

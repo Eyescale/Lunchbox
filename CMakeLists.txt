@@ -61,8 +61,7 @@ if(OPENMP_FOUND)
   endif()
 endif(OPENMP_FOUND)
 
-set(FIND_PACKAGES_INCLUDE
-  "${CMAKE_BINARY_DIR}/include/lunchbox/defines${SYSTEM}.h")
+set(PROJECT_INCLUDE_NAME lunchbox)
 include(FindPackages)
 
 if(HWLOC_FOUND)

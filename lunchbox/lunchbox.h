@@ -48,6 +48,7 @@
 #include <lunchbox/monitor.h>
 #include <lunchbox/mtQueue.h>
 #include <lunchbox/perThread.h>
+#include <lunchbox/referenced.h>
 #include <lunchbox/refPtr.h>
 #include <lunchbox/rng.h>
 #include <lunchbox/scopedMutex.h>

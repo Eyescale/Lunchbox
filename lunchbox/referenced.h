@@ -47,26 +47,26 @@ class Referenced
 public:
     /** Increase the reference count. @version 1.0 .*/
     void ref( const void* holder = 0 ) const
-        {
+    {
 #ifndef NDEBUG
-            LBASSERT( !_hasBeenDeleted );
+        LBASSERT( !_hasBeenDeleted );
 #endif
-            ++_refCount;
+        ++_refCount;
 
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-            if( holder )
-            {
-                std::stringstream cs;
-                cs << "Thread " << Log::instance().getThreadName() << " @ "
-                   << Log::instance().getClock().getTime64() << " rc "
-                   << _refCount << " from " << backtrace;
-                ScopedFastWrite mutex( _holders );
-                HolderHash::iterator i = _holders->find( holder );
-                LBASSERTINFO( i == _holders->end(), i->second );
-                _holders.data[ holder ] = cs.str();
-            }
-#endif
+        if( holder )
+        {
+            std::stringstream cs;
+            cs << "Thread " << Log::instance().getThreadName() << " @ "
+               << Log::instance().getClock().getTime64() << " rc " << _refCount
+               << " from " << backtrace;
+            ScopedFastWrite mutex( _holders );
+            HolderHash::iterator i = _holders->find( holder );
+            LBASSERTINFO( i == _holders->end(), i->second );
+            _holders.data[ holder ] = cs.str();
         }
+#endif
+    }
 
     /**
      * Decrease the reference count.
@@ -129,20 +129,20 @@ protected:
 
     /** Construct a new copy of a reference-counted object. @version 1.0 */
     Referenced( const Referenced& )
-    : _refCount( 0 )
-    , _hasBeenDeleted( false )
-        {}
+        : _refCount( 0 )
+        , _hasBeenDeleted( false )
+    {}
 
     /** Destruct a reference-counted object. @version 1.0 */
     virtual ~Referenced()
-        {
+    {
 #ifndef NDEBUG
-            LBASSERT( !_hasBeenDeleted );
-            _hasBeenDeleted = true;
+        LBASSERT( !_hasBeenDeleted );
+        _hasBeenDeleted = true;
 #endif
-            LBASSERTINFO( _refCount == 0,
-                          "Deleting object with ref count " << _refCount );
-        }
+        LBASSERTINFO( _refCount == 0,
+                      "Deleting object with ref count " << _refCount );
+    }
 
     /** Assign another object to this object. @version 1.1.3 */
     Referenced& operator = ( const Referenced& rhs ) { return *this; }

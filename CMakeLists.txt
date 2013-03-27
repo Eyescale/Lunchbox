@@ -11,10 +11,10 @@ mark_as_advanced(LUNCHBOX_FORCE_OPENMP)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 
 set(RELEASE_VERSION 1) # OFF or ABI version
-set(LAST_RELEASE 1.6.0) # tarball, MacPorts, ...
+set(LAST_RELEASE 1.6.1) # tarball, MacPorts, ...
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "6")
-set(VERSION_PATCH "0")
+set(VERSION_PATCH "1")
 set(LUNCHBOX_FEATURES)
 
 if(CMAKE_OSX_DEPLOYMENT_TARGET)
@@ -74,13 +74,9 @@ add_subdirectory(tests)
 add_subdirectory(doc)
 include(DoxygenRule) # must be after all targets
 
-install(FILES CMake/FindLunchbox.cmake
-  DESTINATION ${CMAKE_MODULE_INSTALL_PATH} COMPONENT dev)
-install(FILES CMake/FindLibraryPackage.cmake
-  DESTINATION ${CMAKE_MODULE_INSTALL_PATH}/FindLunchbox COMPONENT dev)
-
 message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${LUNCHBOX_FEATURES}")
 
 include(CPackConfig)
+include(PackageConfig)
 include(GNUModules)
 include(CTest)

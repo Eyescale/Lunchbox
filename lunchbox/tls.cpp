@@ -17,6 +17,7 @@
 
 #include "tls.h"
 #include "debug.h"
+#include <cstring>
 #include <pthread.h>
 
 namespace lunchbox

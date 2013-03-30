@@ -213,6 +213,9 @@ namespace lunchbox
         bool empty() const { return isEmpty(); }
         //@}
 
+        /** Value type. @version 1.7.x */
+        typedef T value_type;
+
     private:
         std::deque< T > _queue;
         mutable Condition _cond;

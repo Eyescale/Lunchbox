@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -35,7 +35,7 @@ namespace detail { class PerThread; }
 
     /**
      * Implements thread-specific storage for C++ objects.
-     * 
+     *
      * The default destructor function deletes the object on thread exit.
      *
      * To instantiate the template code for this class, applications have to
@@ -55,7 +55,7 @@ namespace detail { class PerThread; }
         /** Destruct the per-thread variable. @version 1.0 */
         ~PerThread();
 
-        /** Assign an object to the thread-local storage. @version 1.0 */ 
+        /** Assign an object to the thread-local storage. @version 1.0 */
         PerThread<T, D>& operator = ( const T* data );
         /** Assign an object from another thread-local storage. @version 1.0 */
         PerThread<T, D>& operator = ( const PerThread<T, D>& rhs );
@@ -80,7 +80,7 @@ namespace detail { class PerThread; }
          * @return true if the thread-local variables hold the same object.
          * @version 1.0
          */
-        bool operator == ( const PerThread& rhs ) const 
+        bool operator == ( const PerThread& rhs ) const
             { return ( get() == rhs.get( )); }
 
         /**
@@ -140,14 +140,14 @@ public:
 }
 
 template< class T, void (*D)( T* ) >
-PerThread<T, D>::PerThread() 
+PerThread<T, D>::PerThread()
         : _impl( new detail::PerThread )
 {
     typedef void (*PThreadDtor_t)(void*);
     const int error = pthread_key_create( &_impl->key, (PThreadDtor_t)( D ));
     if( error )
     {
-        LBERROR << "Can't create thread-specific key: " 
+        LBERROR << "Can't create thread-specific key: "
                 << strerror( error ) << std::endl;
         LBASSERT( !error );
     }
@@ -166,14 +166,14 @@ PerThread<T, D>::~PerThread()
 
 template< class T, void (*D)( T* ) >
 PerThread<T, D>& PerThread<T, D>::operator = ( const T* data )
-{ 
+{
     pthread_setspecific( _impl->key, static_cast<const void*>( data ));
-    return *this; 
+    return *this;
 }
 
 template< class T, void (*D)( T* ) >
 PerThread<T, D>& PerThread<T, D>::operator = ( const PerThread<T, D>& rhs )
-{ 
+{
     pthread_setspecific( _impl->key, pthread_getspecific( rhs._impl->key ));
     return *this;
 }
@@ -181,23 +181,23 @@ PerThread<T, D>& PerThread<T, D>::operator = ( const PerThread<T, D>& rhs )
 template< class T, void (*D)( T* ) >
 T* PerThread<T, D>::get()
 {
-    return static_cast< T* >( pthread_getspecific( _impl->key )); 
+    return static_cast< T* >( pthread_getspecific( _impl->key ));
 }
 template< class T, void (*D)( T* ) >
 const T* PerThread<T, D>::get() const
 {
-    return static_cast< const T* >( pthread_getspecific( _impl->key )); 
+    return static_cast< const T* >( pthread_getspecific( _impl->key ));
 }
 
 template< class T, void (*D)( T* ) >
-T* PerThread<T, D>::operator->() 
+T* PerThread<T, D>::operator->()
 {
-    return static_cast< T* >( pthread_getspecific( _impl->key )); 
+    return static_cast< T* >( pthread_getspecific( _impl->key ));
 }
 template< class T, void (*D)( T* ) >
-const T* PerThread<T, D>::operator->() const 
-{ 
-    return static_cast< const T* >( pthread_getspecific( _impl->key )); 
+const T* PerThread<T, D>::operator->() const
+{
+    return static_cast< const T* >( pthread_getspecific( _impl->key ));
 }
 
 template< class T, void (*D)( T* ) >

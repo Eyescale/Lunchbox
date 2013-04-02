@@ -337,7 +337,9 @@ void Thread::setName( const std::string& name )
     std::ostringstream stream;
     {
         ScopedFastWrite mutex( _names );
-        stream << ++_names.data[ name ];
+        if( _names.data[ name ] > 0 )
+            stream << _names.data[ name ];
+        ++_names.data[ name ];
     }
     uniqueName += stream.str();
 

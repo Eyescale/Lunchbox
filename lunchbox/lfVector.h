@@ -101,6 +101,9 @@ public:
     /** Iterator over the const vector elements. @version 1.3.2 */
     typedef LFVectorIterator<const LFVector<T, nSlots>, const T> const_iterator;
 
+    /** Value type. @version 1.3.x */
+    typedef T value_type;
+
     const_iterator begin() const; //!< @version 1.3.2
     const_iterator end() const; //!< @version 1.3.2
     iterator begin(); //!< @version 1.3.2

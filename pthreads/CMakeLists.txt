@@ -1,5 +1,5 @@
 # Copyright (c) 2010 Daniel Pfeifer <daniel@pfeifer-mail.de>
-#               2011-2012 Stefan Eilemann <eile@eyescale.ch>
+#               2011-2013 Stefan Eilemann <eile@eyescale.ch>
 
 find_package(Threads REQUIRED)
 
@@ -50,7 +50,8 @@ add_library(pthread SHARED
   ${PTHREADS_DIR}/nonportable.c
   )
 
-set_target_properties(pthread PROPERTIES COMPILE_DEFINITIONS PTW32_BUILD=1 FOLDER "Libraries")
+set_target_properties(pthread PROPERTIES COMPILE_DEFINITIONS PTW32_BUILD=1
+  FOLDER "Libraries")
 target_link_libraries(pthread ws2_32)
 
 install(TARGETS pthread
@@ -58,5 +59,3 @@ install(TARGETS pthread
   LIBRARY DESTINATION lib COMPONENT codev
   RUNTIME DESTINATION bin COMPONENT colib
   )
-install(FILES ${PTHREADS_DIR}/pthread.h ${PTHREADS_DIR}/sched.h
-	       DESTINATION include/ COMPONENT codev)

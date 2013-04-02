@@ -59,6 +59,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   thread.h
   threadID.h
   timedLock.h
+  tls.h
   types.h
   uint128_t.h
   unorderedIntervalSet.h
@@ -98,6 +99,7 @@ set(LUNCHBOX_SOURCES
   spinLock.cpp
   thread.cpp
   threadID.cpp
+  tls.cpp
   timedLock.cpp
   uint128_t.cpp
   uploader.cpp

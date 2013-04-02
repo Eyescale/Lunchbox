@@ -44,6 +44,7 @@ namespace lunchbox
     {
     public:
         class Group;
+        typedef T value_type;
 
         /** Construct a new queue. @version 1.0 */
         MTQueue( size_t maxSize = S ) : _maxSize( maxSize ) {}
@@ -212,9 +213,6 @@ namespace lunchbox
         void push_back( const T& element ) { push( element ); }
         bool empty() const { return isEmpty(); }
         //@}
-
-        /** Value type. @version 1.7.x */
-        typedef T value_type;
 
     private:
         std::deque< T > _queue;

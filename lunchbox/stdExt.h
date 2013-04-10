@@ -32,6 +32,9 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#ifdef LB_GCC_4_4_OR_LATER
+#  include <parallel/algorithm>
+#endif
 
 //----- Common extensions of the STL
 #ifdef __GNUC__
@@ -228,6 +231,13 @@ LB_STDEXT_NAMESPACE_OPEN
         std::sort( c.begin(), c.end( ));
         c.erase( std::unique( c.begin(), c.end( )), c.end( ));
     }
+
+    /** Use parallel sorting where available @version 1.7.2 */
+#ifdef LB_GCC_4_4_OR_LATER
+    using __gnu_parallel::sort;
+#else
+    using std::sort;
+#endif
 
     /** Find the element in the given vector. @version 1.0 */
     template< typename T > typename std::vector< T >::iterator

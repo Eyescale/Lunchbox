@@ -21,60 +21,67 @@
 #include <lunchbox/api.h>
 #include <lunchbox/nonCopyable.h>
 
+#include <iostream>
 #include <string>
 
 namespace lunchbox
 {
-    /** Helper to map a file to a memory address (mmap) */
-    class MemoryMap : public NonCopyable
-    {
-    public:
-        /** Construct a new memory map. @version 1.0 */
-        LUNCHBOX_API MemoryMap();
+/** Helper to map a file to a memory address (mmap) */
+class MemoryMap : public NonCopyable
+{
+public:
+    /** Construct a new memory map. @version 1.0 */
+    LUNCHBOX_API MemoryMap();
 
-        /** Construct and initialize a new memory map. @version 1.7.1 */
-        LUNCHBOX_API MemoryMap( const std::string& filename );
+    /** Construct and initialize a new memory map. @version 1.7.1 */
+    LUNCHBOX_API MemoryMap( const std::string& filename );
 
-        /**
-         * Destruct the memory map.
-         *
-         * Unmaps the file, if it is still mapped.
-         * @sa unmap()
-         * @version 1.0
-         */
-        LUNCHBOX_API ~MemoryMap();
+    /**
+     * Destruct the memory map.
+     *
+     * Unmaps the file, if it is still mapped.
+     * @sa unmap()
+     * @version 1.0
+     */
+    LUNCHBOX_API ~MemoryMap();
 
-        /**
-         * Map a file to a memory address.
-         *
-         * Currently the file is only mapped read-only. The file is
-         * automatically unmapped when the memory map is deleted.
-         *
-         * @param filename The filename of the file to map.
-         * @return the pointer to the mapped file, or 0 upon error.
-         * @version 1.0
-         */
-        LUNCHBOX_API const void* map( const std::string& filename );
+    /**
+     * Map a file to a memory address.
+     *
+     * Currently the file is only mapped read-only. The file is
+     * automatically unmapped when the memory map is deleted.
+     *
+     * @param filename The filename of the file to map.
+     * @return the pointer to the mapped file, or 0 upon error.
+     * @version 1.0
+     */
+    LUNCHBOX_API const void* map( const std::string& filename );
 
-        /** Unmap the file. @version 1.0 */
-        LUNCHBOX_API void unmap();
+    /** Unmap the file. @version 1.0 */
+    LUNCHBOX_API void unmap();
 
-        /** @return the pointer to the memory map. @version 1.0 */
-        const void* getAddress() const { return _ptr; }
+    /** @return the pointer to the memory map. @version 1.0 */
+    const void* getAddress() const { return _ptr; }
 
-        /** @return the size of the memory map. @version 1.0 */
-        size_t getSize() const { return _size; }
+    /** @return the size of the memory map. @version 1.0 */
+    size_t getSize() const { return _size; }
 
-    private:
+private:
 #ifdef _WIN32
-        void* _map;
+    void* _map;
 #else
-        int _fd;
+    int _fd;
 #endif
 
-        void* _ptr;
-        size_t _size;
-    };
+    void* _ptr;
+    size_t _size;
+};
+
+inline std::ostream& operator << ( std::ostream& os, const MemoryMap& m )
+{
+    return os << "MemoryMap at " << m.getAddress() << " size " << m.getSize();
+}
+
 }
 
 #endif //LUNCHBOX_MEMORYMAP_H

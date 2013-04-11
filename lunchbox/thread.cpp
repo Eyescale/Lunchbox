@@ -84,8 +84,6 @@ public:
 };
 }
 
-void _notifyStopping( void* arg );
-
 Thread::Thread()
     : NonCopyable()
     , _impl( new detail::Thread )

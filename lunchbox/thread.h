@@ -171,12 +171,6 @@ private:
 
     static void* runChild( void* arg );
     void        _runChild();
-
-    void _installCleanupHandler();
-
-    static void _notifyStarted();
-    static void _notifyStopping();
-    friend void _notifyStopping( void* ); //!< @internal
 };
 
 /** Output the affinity setting in human-readable form. @version 1.7.1 */

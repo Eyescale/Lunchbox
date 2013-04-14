@@ -141,8 +141,10 @@ bool LFVector< T, nSlots >::operator == ( const LFVector& rhs ) const
 }
 
 // http://gcc.gnu.org/bugzilla/show_bug.cgi?id=51721
-#ifdef LB_GCC_4_6_OR_LATER
-#  pragma GCC diagnostic push
+#ifdef LB_GCC_4_4_OR_LATER
+#  ifdef LB_GCC_4_6_OR_LATER
+#    pragma GCC diagnostic push
+#  endif
 #  pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
 

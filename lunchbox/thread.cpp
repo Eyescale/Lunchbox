@@ -85,14 +85,12 @@ public:
 }
 
 Thread::Thread()
-    : NonCopyable()
-    , _impl( new detail::Thread )
+    : _impl( new detail::Thread )
 {
 }
 
 Thread::Thread( const Thread& from )
-    : NonCopyable()
-    , _impl( new detail::Thread )
+    : _impl( new detail::Thread )
 {
 }
 

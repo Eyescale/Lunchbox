@@ -157,7 +157,7 @@ T& LFVector< T, nSlots >::operator[]( size_t i )
 
     LBASSERTINFO( slot >=0 && slot < nSlots, slot );
     LBASSERT( slots_[ slot ] );
-    LBASSERT( index < ((uint64_t)1<<slot) );
+    LBASSERT( index < (1ull<<slot) );
     return slots_[ slot ][ index ];
 }
 
@@ -171,7 +171,7 @@ const T& LFVector< T, nSlots >::operator[]( size_t i ) const
 
     LBASSERTINFO( slot >=0 && slot < nSlots, slot );
     LBASSERT( slots_[ slot ] );
-    LBASSERT( index < ((uint64_t)1<<slot) );
+    LBASSERT( index < (1ull<<slot) );
     return slots_[ slot ][ index ];
 }
 

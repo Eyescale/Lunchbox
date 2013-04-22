@@ -46,8 +46,7 @@ class Referenced
 {
 public:
     /** Increase the reference count. @version 1.0 .*/
-#ifdef LUNCHBOX_REFERENCED_DEBUG
-    void ref( const void* /*holder*/ = 0 ) const
+    void ref( const void* holder = 0 ) const
     {
 #ifndef NDEBUG
         LBASSERT( !_hasBeenDeleted );
@@ -76,11 +75,7 @@ public:
      * @version 1.0
      * @return true if the reference count went to 0, false otherwise.
      */
-#ifdef LUNCHBOX_REFERENCED_DEBUG
     bool unref( const void* holder = 0 ) const
-#else
-    bool unref( const void* /*holder*/ = 0 ) const
-#endif
         {
 #ifndef NDEBUG
             LBASSERT( !_hasBeenDeleted );
@@ -107,10 +102,10 @@ public:
     /** @return the current reference count. @version 1.0 */
     int32_t getRefCount() const { return _refCount; }
 
-#ifdef LUNCHBOX_REFERENCED_DEBUG
     /** @internal print holders of this if debugging is enabled. */
     void printHolders( std::ostream& os ) const
         {
+#ifdef LUNCHBOX_REFERENCED_DEBUG
             os << disableFlush << disableHeader << std::endl;
             {
                 ScopedFastRead mutex( _holders );
@@ -122,10 +117,8 @@ public:
                 }
             }
             os << enableHeader << enableFlush;
-        }
-#else
-    void printHolders( std::ostream& /*os*/ ) const {}
 #endif
+        }
 
 protected:
     /** Construct a new reference-counted object. @version 1.0 */

@@ -39,7 +39,7 @@ namespace lunchbox
 inline bool daemonize()
 {
 #ifdef _MSC_VER
-    LBABORT( "Not implemented." );
+    LBABORT( "Not implemented" );
     return false;
 #else
     const pid_t pid = fork();

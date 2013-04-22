@@ -33,7 +33,7 @@ namespace lunchbox
 namespace detail { class Thread; }
 
 /** An utility class to execute code in a separate execution thread. */
-class Thread : public NonCopyable
+class Thread
 {
 public:
     /** Enumeration values for thread affinity. */
@@ -168,6 +168,8 @@ public:
 
 private:
     detail::Thread* const _impl;
+
+    Thread& operator=( const Thread& ) { return *this; }
 
     static void* runChild( void* arg );
     void        _runChild();

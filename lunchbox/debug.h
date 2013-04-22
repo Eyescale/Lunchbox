@@ -59,9 +59,15 @@ LUNCHBOX_API std::ostream& backtrace( std::ostream& os );
 
 LUNCHBOX_API std::string demangleTypeID( const char* mangled ); //!< @internal
 
+#ifdef _WIN32
+#  pragma warning( disable: 4100 ) // VS Bug
+#endif
 /** Print the RTTI name of the given class. @version 1.0 */
 template< class T > inline std::string className( const T* object )
     { return demangleTypeID( typeid( *object ).name( )); }
+#ifdef _WIN32
+#  pragma warning( default: 4100 )
+#endif
 
 /** Print the RTTI name of the given class. @version 1.0 */
 template< class T > inline std::string className( const T& object )

@@ -39,7 +39,7 @@ install(TARGETS ${LIBRARY}
         RUNTIME DESTINATION bin COMPONENT lib
         LIBRARY DESTINATION lib COMPONENT lib)
 
-configure_file(Lunchbox.pc ${CMAKE_CURRENT_BINARY_DIR}/Lunchbox.pc @ONLY)
+update_file(Lunchbox.pc ${CMAKE_CURRENT_BINARY_DIR}/Lunchbox.pc)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Lunchbox.pc
-        DESTINATION ${LIBRARY_DIR}/pkgconfig COMPONENT lib)
+        DESTINATION ${LIBRARY_DIR}/pkgconfig COMPONENT dev)
 install(FILES ${OPTIONS_CMAKE} DESTINATION share/Lunchbox/CMake COMPONENT dev)

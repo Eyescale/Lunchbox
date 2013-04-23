@@ -38,7 +38,7 @@ PROJECT_NUMBER         = @VERSION@
 # for a project that appears at the top of each page and should give viewer
 # a quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          =
+PROJECT_BRIEF          = "@CPACK_PACKAGE_DESCRIPTION_SUMMARY@"
 
 # With the PROJECT_LOGO tag one can specify an logo or icon that is
 # included in the documentation. The maximum height of the logo should not
@@ -344,7 +344,7 @@ SYMBOL_CACHE_SIZE      = 5
 # formula: 2^(16+LOOKUP_CACHE_SIZE). The valid range is 0..9, the default is 0,
 # corresponding to a cache size of 2^16 = 65536 symbols.
 
-LOOKUP_CACHE_SIZE      = 0
+LOOKUP_CACHE_SIZE      = 5
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -583,7 +583,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            = DoxygenLayout.xml
+LAYOUT_FILE            =
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files
 # containing the references data. This must be a list of .bib files. The
@@ -678,7 +678,7 @@ FILE_PATTERNS          = *.h \
                          *.c \
                          *.cpp \
                          *.ipp \
-                         *.dox
+                         *.md
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.

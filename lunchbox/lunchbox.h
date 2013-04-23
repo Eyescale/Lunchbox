@@ -22,7 +22,9 @@
 
 /** @mainpage Lunchbox API Documentation
  *
- * Welcome to Lunchbox, a C++ library for multi-threaded programming.
+ * Welcome to Lunchbox, a C++ library for multi-threaded programming. Lunchbox
+ * provides the following functionality:
+ *
  * - Operating System Abstraction: lunchbox::Atomic, lunchbox::Clock,
  *   lunchbox::Condition, lunchbox::DSO, lunchbox::Lock, lunchbox::MemoryMap,
  *   lunchbox::PerThread, lunchbox::RNG, lunchbox::Thread, lunchbox::TimedLock

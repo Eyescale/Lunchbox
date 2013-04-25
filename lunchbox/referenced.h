@@ -136,10 +136,8 @@ protected:
     /** Destruct a reference-counted object. @version 1.0 */
     virtual ~Referenced()
     {
-#ifndef NDEBUG
         LBASSERT( !_hasBeenDeleted );
         _hasBeenDeleted = true;
-#endif
         LBASSERTINFO( _refCount == 0,
                       "Deleting object with ref count " << _refCount );
     }

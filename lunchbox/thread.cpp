@@ -132,11 +132,11 @@ void Thread::_runChild()
     }
 
     _impl->state = STATE_RUNNING;
-    LBINFO << "Thread " << className( this ) << " successfully initialized"
+    LBVERB << "Thread " << className( this ) << " successfully initialized"
            << std::endl;
 
     run();
-    LBINFO << "Thread " << className( this ) << " finished" << std::endl;
+    LBVERB << "Thread " << className( this ) << " finished" << std::endl;
     this->exit();
 
     LBUNREACHABLE;
@@ -181,7 +181,7 @@ bool Thread::start()
 void Thread::exit()
 {
     LBASSERTINFO( isCurrent(), "Thread::exit not called from child thread" );
-    LBINFO << "Exiting thread " << className( this ) << std::endl;
+    LBVERB << "Exiting thread " << className( this ) << std::endl;
     Log::instance().forceFlush();
     Log::instance().exit();
 
@@ -194,7 +194,7 @@ void Thread::cancel()
 {
     LBASSERTINFO( !isCurrent(), "Thread::cancel called from child thread" );
 
-    LBINFO << "Canceling thread " << className( this ) << std::endl;
+    LBVERB << "Canceling thread " << className( this ) << std::endl;
     _impl->state = STATE_STOPPING;
 
     pthread_cancel( _impl->id._impl->pthread );
@@ -210,7 +210,7 @@ bool Thread::join()
     _impl->state.waitNE( STATE_RUNNING );
     _impl->state = STATE_STOPPED;
 
-    LBINFO << "Joined thread " << className( this ) << std::endl;
+    LBVERB << "Joined thread " << className( this ) << std::endl;
     return true;
 }
 

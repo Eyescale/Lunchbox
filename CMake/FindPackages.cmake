@@ -3,7 +3,7 @@
 include(System)
 list(APPEND FIND_PACKAGES_DEFINES ${SYSTEM})
 
-find_package(hwloc 1.5)
+find_package(hwloc 1.3)
 if(hwloc_FOUND)
   set(hwloc_name hwloc)
 endif()

@@ -16,11 +16,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#define TEST_RUNTIME 300 // seconds
 #include "test.h"
+
 #pragma warning (push)
 #pragma warning (disable: 4985) // http://www.softwareverify.com/blog/?p=671
-#include <lunchbox/lfVector.h>
+#  include <lunchbox/lfVector.h>
 #pragma warning (pop)
+
 #include <lunchbox/clock.h>
 #include <lunchbox/init.h>
 #include <lunchbox/monitor.h>

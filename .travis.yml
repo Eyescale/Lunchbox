@@ -10,4 +10,4 @@ script:
  - git clone --depth 10 https://github.com/Eyescale/Buildyard.git
  - cd Buildyard
  - git clone --depth 10 https://github.com/Eyescale/config.git config.eyescale
- - make Lunchbox-test
+ - make -j8 Lunchbox-test ARGS=-V

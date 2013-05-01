@@ -14,9 +14,9 @@ include_directories(
 
 file(GLOB_RECURSE TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 list(SORT TEST_FILES)
-#if($ENV{TRAVIS})
-#  list(REMOVE_ITEM TEST_FILES "servus")
-#endif()
+if($ENV{TRAVIS})
+  list(REMOVE_ITEM TEST_FILES "servus")
+endif()
 
 set(ALL_TESTS)
 foreach(FILE ${TEST_FILES})

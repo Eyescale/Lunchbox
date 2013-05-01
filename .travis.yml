@@ -6,9 +6,8 @@ language: cpp
 script:
  - git clone --depth 10 https://github.com/Eyescale/Buildyard.git
  - cd Buildyard
-eyescale LUNCHBOX_GROUP LUNCHBOX
  - git clone --depth 10 https://github.com/Eyescale/config.git config.eyescale
  - env TRAVIS=1 make -j8 Lunchbox-test ARGS=-V
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq libavahi-compat-libdnssd-dev libboost-regex-dev libboost-serialization-dev libhwloc-dev avahi-daemon
+ - sudo apt-get install -qq libavahi-compat-libdnssd-dev libboost-regex-dev libboost-serialization-dev libhwloc-dev 

@@ -101,13 +101,6 @@ namespace lunchbox
         T pop();
 
         /**
-         * Retrieve a given number of elements from the front of the queue.
-         * May block.
-         * @version 1.7.2
-         */
-        std::vector< T > pop( const size_t num );
-
-        /**
          * Retrieve and pop the front element from the queue.
          *
          * @param timeout the timeout
@@ -137,9 +130,9 @@ namespace lunchbox
          *         containing between minimum and maximum elements.
          * @version 1.7.0
          */
-        std::vector< T > timedPop( const unsigned timeout,
-                                   const size_t minimum = 1,
-                                   const size_t maximum = S );
+        std::vector< T > timedPopRange( const unsigned timeout,
+                                        const size_t minimum = 1,
+                                        const size_t maximum = S );
 
         /**
          * Retrieve and pop the front element from the queue if it is not empty.

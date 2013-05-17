@@ -38,7 +38,7 @@
  *   lunchbox::Decompressor, lunchbox::Downloader, lunchbox::Plugin,
  *   lunchbox::PluginRegistry, lunchbox::Uploader
  *
- * @ref md_RelNotes
+ * @ref RelNotes
  */
 
 /**

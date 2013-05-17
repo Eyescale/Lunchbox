@@ -1,4 +1,9 @@
-# Release Notes
+Release Notes {#RelNotes}
+============
+
+[TOC]
+
+# Introduction {#Introduction}
 
 Welcome to Lunchbox, a C++ library for multi-threaded programming.
 Lunchbox 1.8 adds major new features, most notably runtime-loadable
@@ -12,7 +17,7 @@ code](http://www.equalizergraphics.com/downloads/Lunchbox-1.8.0.tar.gz)
 [precompiled
 packages](http://www.equalizergraphics.com/downloads/major.html).
 
-# Features
+## Features {#Features}
 
 Lunchbox provides the following major features to facilitate the
 development and deployment of multi-threaded applications:
@@ -26,29 +31,29 @@ development and deployment of multi-threaded applications:
 * Utility classes: Helper primitives which are not in the standard
   library, e.g., logging, pools and random number generation.
 
-# New in this release
+# New in this release {#New}
 
 Lunchbox 1.8 contains the following features, enhancements, bug fixes
 and documentation changes over Lunchbox 1.6:
 
-## New Features
+## New Features {#NewFeatures}
 
 * Runtime-loadable compression and CPU-GPU transfer plugins
   ([18](https://github.com/Eyescale/Lunchbox/issues/18))
 * UnorderedIntervalSet container
 
-## Enhancements
+## Enhancements {#Enhancements}
 
 * Improved DSO, MemoryMap, MTQueue, uint128_t, UUID and LFVector APIs
 * searchDirectory uses boost::regex for file matching
 * [Hide pthread from API](https://github.com/Eyescale/Lunchbox/issues/26)
 
-## Optimizations
+## Optimizations {#Optimizations}
 
 * Increased speed and compression ratio for
   [updated snappy compressor](https://github.com/Eyescale/Lunchbox/issues/19)
 
-## Documentation
+## Documentation {#Documentation}
 
 The following documentation has been added or substantially improved
 since the last release:
@@ -56,7 +61,7 @@ since the last release:
 * [API documentation](http://eyescale.github.com/) of the public
   Lunchbox API
 
-## Bug Fixes
+## Bug Fixes {#Fixes}
 
 Lunchbox 1.8 includes various bugfixes over the 1.6 release, including
 the following:
@@ -66,7 +71,7 @@ the following:
 * [9:](https://github.com/Eyescale/Lunchbox/issues/9) Memory leak in
   Thread::setAffinity
 
-## Known Bugs
+## Known Bugs {#Bugs}
 
 The following bugs were known at release time. Please file a
 [Bug Report](https://github.com/Eyescale/Lunchbox/issues) if you find
@@ -75,7 +80,7 @@ any other issue with this release.
 * [6:](https://github.com/Eyescale/Lunchbox/issues/6)
 Condition::timedWait does not wait on early RHEL 6.1 versions
 
-# About
+# About {#About}
 
 Lunchbox is a cross-platform library, designed to run on any modern
 operating system, including all Unix variants and the Windows operating

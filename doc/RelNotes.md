@@ -12,10 +12,10 @@ compression plugins and an UnorderedIntervalSet container.
 Lunchbox 1.8 is a feature release based on the 1.6 Lunchbox API. It is
 intended for all application developers creating high-preformance
 multi-threaded programs. Lunchbox 1.8 can be retrieved by downloading
-the [source
-code](http://www.equalizergraphics.com/downloads/Lunchbox-1.8.0.tar.gz)
-[precompiled
-packages](http://www.equalizergraphics.com/downloads/major.html).
+the
+[source code](http://www.equalizergraphics.com/downloads/Lunchbox-1.8.0.tar.gz)
+or any of the
+[precompiled packages](http://www.equalizergraphics.com/downloads/major.html).
 
 ## Features {#Features}
 
@@ -58,8 +58,8 @@ and documentation changes over Lunchbox 1.6:
 The following documentation has been added or substantially improved
 since the last release:
 
-* [API documentation](http://eyescale.github.com/) of the public
-  Lunchbox API
+* [API documentation](http://eyescale.github.io/Lunchbox-1.8/index.html)
+  of the public Lunchbox API
 
 ## Bug Fixes {#Fixes}
 
@@ -92,8 +92,8 @@ environment. The following platforms and build environments are tested:
 * Mac OS X: 10.8 (Makefile, XCode, i386, x64)
 
 The
-[API documentation](http://eyescale.github.com/Lunchbox-1.8/index.html)
-can be found on [eyescale.github.com](http://eyescale.github.com/). As
+[API documentation](http://eyescale.github.io/Lunchbox-1.8/index.html)
+can be found on [eyescale.github.io](http://eyescale.github.io/). As
 with any open source project, the available source code, in particular
 the [unit tests](https://github.com/Eyescale/Lunchbox/tree/1.8/tests)
 provide a reference for developing applications.

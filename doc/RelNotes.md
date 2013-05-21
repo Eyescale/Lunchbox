@@ -87,7 +87,7 @@ operating system, including all Unix variants and the Windows operating
 system. Lunchbox uses CMake to create a platform-specific build
 environment. The following platforms and build environments are tested:
 
-* Linux: Ubuntu 12.04, 12.10, 13.04, RHEL 6 (Makefile, x64)
+* Linux: Ubuntu 12.04, 12.10, 13.04, RHEL 6 (Makefile, i386, x64)
 * Windows: 7 (Visual Studio 2008, i386, x64)
 * Mac OS X: 10.8 (Makefile, XCode, i386, x64)
 

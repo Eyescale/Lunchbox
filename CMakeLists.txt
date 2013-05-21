@@ -92,4 +92,3 @@ include(CTest)
 include(PackageConfig)
 
 message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${LUNCHBOX_FEATURES}")
-

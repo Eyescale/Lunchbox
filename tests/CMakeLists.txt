@@ -3,6 +3,8 @@
 #
 # Change this number when adding tests to force a CMake run: 9
 
+include(InstallFiles)
+
 if(NOT WIN32) # tests want to be with DLLs on Windows - no rpath
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests)
 endif()
@@ -14,6 +16,8 @@ include_directories(
 
 file(GLOB_RECURSE TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 list(SORT TEST_FILES)
+install_files(share/Lunchbox/tests FILES ${TEST_FILES} COMPONENT examples)
+
 if($ENV{TRAVIS})
   list(REMOVE_ITEM TEST_FILES "servus.cpp")
 endif()

@@ -33,6 +33,8 @@ public:
 };
 }
 
+const ThreadID ThreadID::ZERO;
+
 ThreadID::ThreadID()
         : _impl( new detail::ThreadID )
 {

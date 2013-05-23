@@ -20,6 +20,11 @@
 
 namespace lunchbox
 {
+void Referenced::deleteReferenced( const Referenced* object ) const
+{
+    const_cast< Referenced* >( this )->notifyFree();
+}
+
 void Referenced::notifyFree()
 {
     // Don't inline referenced destruction

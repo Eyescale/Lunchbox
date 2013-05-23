@@ -46,8 +46,7 @@ public:
     {
         if( instance )
             plugin->deleteDecompressor( instance );
-        instance = 0;
-        plugin = 0;
+        PluginInstance::clear();
     }
 
     bool setup( lunchbox::PluginRegistry& registry, const uint32_t name )

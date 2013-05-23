@@ -725,11 +725,11 @@ extern "C"
 inline std::ostream& operator << ( std::ostream& os,
                                    const EqCompressorInfo& info )
 {
-    return os << "v" << info.version << std::hex << " name 0x" << info.name
-              << " in 0x" << info.tokenType << " out 0x" << info.outputTokenType
+    return os << std::hex << "name 0x" << info.name << " in 0x"
+              << info.tokenType << " out 0x" << info.outputTokenType
               << " cap 0x" << info.capabilities << std::dec << " quality "
               << info.quality <<" ratio " << info.ratio << " speed "
-              << info.speed;
+              << info.speed << " v" << info.version;
 }
 #endif
 #endif // EQ_PLUGINS_COMPRESSOR

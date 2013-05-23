@@ -43,6 +43,13 @@ public:
                  info.name != EQ_COMPRESSOR_NONE );
     }
 
+    void clear()
+    {
+        instance = 0;
+        plugin = 0;
+        lunchbox::setZero( &info, sizeof( info ));
+    }
+
     /** Plugin handling the allocation */
     lunchbox::Plugin* plugin;
 

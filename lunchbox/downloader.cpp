@@ -49,31 +49,40 @@ public:
     {
         if( instance )
             plugin->deleteDecompressor( instance );
-        instance = 0;
-        plugin = 0;
+        PluginInstance::clear();
     }
 
     bool setup( lunchbox::PluginRegistry& from, const uint32_t name )
     {
         if( name == info.name )
+        {
+            LBASSERT( isGood() && instance );
             return true;
+        }
 
         clear();
 
         if( name <= EQ_COMPRESSOR_NONE )
+        {
+            LBASSERT( isGood() && instance );
             return true;
+        }
 
         plugin = from.findPlugin( name );
         LBASSERT( plugin );
         if( !plugin )
+        {
+            LBWARN << "Plugin for downloader 0x" << std::hex << name << std::dec
+                   << " not found" << std::endl;
             return false;
+        }
 
         instance = plugin->newDecompressor( name );
         info = plugin->findInfo( name );
+        LBASSERT( isGood( ));
         LBASSERT( instance );
         LBASSERT( info.name == name );
-        LBLOG( LOG_PLUGIN ) << "Instantiated downloader of type 0x" << std::hex
-                            << name << std::dec << std::endl;
+        LBLOG( LOG_PLUGIN ) << "Instantiated downloader " << info << std::endl;
         return instance;
     }
 
@@ -150,6 +159,7 @@ public:
            ( current.ratio > info.ratio ||
              ( current.ratio == info.ratio && current.speed < info.speed )))
         {
+            LBLOG( LOG_PLUGIN ) << "Pick "  << info << std::endl;
             current = info;
         }
         return TRAVERSE_CONTINUE;

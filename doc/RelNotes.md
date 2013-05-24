@@ -52,6 +52,8 @@ and documentation changes over Lunchbox 1.6:
 
 * Increased speed and compression ratio for
   [updated snappy compressor](https://github.com/Eyescale/Lunchbox/issues/19)
+* [Equalizer#140:](https://github.com/Eyescale/Equalizer/issues/140) Add
+  LZ-variant byte compressors
 
 ## Documentation {#Documentation}
 

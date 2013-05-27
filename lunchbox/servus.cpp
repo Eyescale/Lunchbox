@@ -62,6 +62,8 @@ static const std::string empty_;
 static Lock lock_;
 #endif
 
+#define ANNOUNCE_TIMEOUT 1000 /*ms*/
+
 namespace detail
 {
 class Servus
@@ -133,8 +135,9 @@ public:
 
         if( error == kDNSServiceErr_NoError )
         {
-            handleEvents_( service_ );
-            return service_ != 0;
+            if( handleEvents_( service_, ANNOUNCE_TIMEOUT ))
+                return service_ != 0;
+            LBWARN << "Service registration timed out" << std::endl;
         }
 
         LBWARN << "DNSServiceRegister returned: " << error << std::endl;
@@ -334,11 +337,11 @@ private:
         }
     }
 
-    void handleEvents_( DNSServiceRef service, const int32_t timeout = -1 )
+    bool handleEvents_( DNSServiceRef service, const int32_t timeout = -1 )
     {
         assert( service );
         if( !service )
-            return;
+            return false;
 
         const int fd = DNSServiceRefSockFD( service );
         const int nfds = fd + 1;
@@ -358,7 +361,7 @@ private:
             switch( result )
             {
               case 0: // timeout
-                return;
+                return false;
 
               case -1: // error
                 LBWARN << "Select error: " << strerror( errno ) << " ("
@@ -387,7 +390,10 @@ private:
                 break;
             }
         }
+        if( !handled_ )
+            return false;
         handled_ = false;
+        return true;
     }
 
     static void registerCBS_( DNSServiceRef serviceRef, DNSServiceFlags flags,

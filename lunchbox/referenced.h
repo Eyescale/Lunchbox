@@ -157,9 +157,6 @@ protected:
 
     LUNCHBOX_API virtual void notifyFree();
 
-    /** @deprecated do not use */
-    LUNCHBOX_API virtual void deleteReferenced( const Referenced* ) const;
-
 private:
     mutable a_int32_t _refCount;
     bool _hasBeenDeleted;

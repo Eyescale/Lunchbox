@@ -12,7 +12,7 @@ mark_as_advanced(LUNCHBOX_FORCE_OPENMP)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 
-set(RELEASE_VERSION 1) # OFF or ABI version
+set(RELEASE_VERSION 2) # OFF or ABI version
 set(LAST_RELEASE 1.6.0) # tarball, MacPorts, ...
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "8")

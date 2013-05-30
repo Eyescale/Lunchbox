@@ -197,7 +197,9 @@ void Thread::cancel()
     LBVERB << "Canceling thread " << className( this ) << std::endl;
     _impl->state = STATE_STOPPING;
 
-    pthread_cancel( _impl->id._impl->pthread );
+    const int error = pthread_cancel( _impl->id._impl->pthread );
+    if( error !=  0 )
+        LBWARN << "Could not cancel thread: " << strerror( error ) << std::endl;
 }
 
 bool Thread::join()

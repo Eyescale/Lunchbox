@@ -52,8 +52,6 @@ namespace detail { class ThreadID; }
          */
         LUNCHBOX_API bool operator != ( const ThreadID& rhs ) const;
 
-        LUNCHBOX_API static const ThreadID ZERO; //!< @deprecated do not use
-
     private:
         detail::ThreadID* const _impl;
         friend class Thread;

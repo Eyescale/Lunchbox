@@ -128,6 +128,7 @@ set(LIBRARY_DIR lib${LIB_SUFFIX})
 
 if(APPLE)
   list(APPEND CMAKE_PREFIX_PATH /opt/local/ /opt/local/lib) # Macports
+  set(ENV{PATH} "/opt/local/bin:$ENV{PATH}") # dito
   if(NOT CMAKE_OSX_ARCHITECTURES OR CMAKE_OSX_ARCHITECTURES STREQUAL "")
     if(_CMAKE_OSX_MACHINE MATCHES "ppc")
       set(CMAKE_OSX_ARCHITECTURES "ppc;ppc64" CACHE

@@ -128,6 +128,7 @@ set(LIBRARY_DIR lib${LIB_SUFFIX})
 
 if(APPLE)
   list(APPEND CMAKE_PREFIX_PATH /opt/local/ /opt/local/lib) # Macports
+  set(ENV{PATH} "/opt/local/bin:$ENV{PATH}") # dito
   if(NOT CMAKE_OSX_ARCHITECTURES OR CMAKE_OSX_ARCHITECTURES STREQUAL "")
     if(_CMAKE_OSX_MACHINE MATCHES "ppc")
       set(CMAKE_OSX_ARCHITECTURES "ppc;ppc64" CACHE
@@ -159,7 +160,11 @@ macro(add_library _target)
 
   # ignore IMPORTED add_library from finders (e.g. Qt)
   cmake_parse_arguments(_arg "IMPORTED" "" "" ${ARGN})
-  if(NOT _arg_IMPORTED)
+
+  # ignore user-specified targets, e.g. language bindings
+  list(FIND IGNORE_LIB_TARGETS ${_target} _ignore_target)
+
+  if(NOT _arg_IMPORTED AND _ignore_target EQUAL -1)
     # add defines TARGET_DSO_NAME and TARGET_SHARED for dlopen() usage
     get_target_property(THIS_DEFINITIONS ${_target} COMPILE_DEFINITIONS)
     if(NOT THIS_DEFINITIONS)

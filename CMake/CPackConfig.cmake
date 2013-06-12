@@ -14,6 +14,6 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
   "libstdc++6, libboost-regex-dev, libboost-serialization-dev, libavahi-compat-libdnssd1, libhwloc-dev")
 
 set(CPACK_MACPORTS_CATEGORY devel)
-set(CPACK_MACPORTS_DEPENDS boost avahi)
+set(CPACK_MACPORTS_DEPENDS boost)
 
 include(CommonCPack)

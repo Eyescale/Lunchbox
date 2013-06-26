@@ -83,12 +83,12 @@ add_subdirectory(tests)
 add_subdirectory(doc)
 include(DoxygenRule) # must be after all targets
 include(CPackConfig)
+include(PackageConfig)
 include(GNUModules)
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION ${CTEST_CUSTOM_WARNING_EXCEPTION}
   # http://public.kitware.com/Bug/view.php?id=10179
   "ld: warning: duplicate dylib")
 include(CTest)
-include(PackageConfig)
 
 message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${LUNCHBOX_FEATURES}")

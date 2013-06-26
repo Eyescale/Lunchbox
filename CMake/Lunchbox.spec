@@ -1,5 +1,5 @@
 Name:		Lunchbox
-Version:	1.8.0
+Version:	1.9.0
 Release:	1%{?dist}
 Summary:	Multi-threaded toolbox library
 
@@ -7,7 +7,7 @@ Group:		Development/Libraries
 License:	
 URL:		http://www.equalizergraphics.com/
 Source0:	http://www.equalizergraphics.com/downloads/Lunchbox-%{version}.tar.gz
-#Patch0:		Lunchbox-1.8.0-build-fix.patch
+#Patch0:		Lunchbox-1.9.0-build-fix.patch
 BuildRequires:	cmake boost-devel
 
 %description

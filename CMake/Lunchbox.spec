@@ -1,13 +1,13 @@
-Name:		LunchBox
-Version:	@VERSION@
+Name:		Lunchbox
+Version:	1.8.0
 Release:	1%{?dist}
-Summary:	Library for multi-threaded programming
+Summary:	Multi-threaded toolbox library
 
 Group:		Development/Libraries
-License:	LGPLv2
+License:	
 URL:		http://www.equalizergraphics.com/
-Source0:	http://www.equalizergraphics.com/downloads/%{name}-%{version}.tar.gz
-#Patch0:		LunchBox-@VERSION@-build-fix.patch
+Source0:	http://www.equalizergraphics.com/downloads/Lunchbox-%{version}.tar.gz
+#Patch0:		Lunchbox-1.8.0-build-fix.patch
 BuildRequires:	cmake boost-devel
 
 %description

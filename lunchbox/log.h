@@ -90,9 +90,8 @@ namespace lunchbox
         LUNCHBOX_API void setLogInfo( const char* file, const int line );
 
     protected:
-        virtual int_type overflow( LogBuffer::int_type c );
-
-        virtual int sync();
+        virtual int_type overflow( LogBuffer::int_type c ) override;
+        virtual int sync() override;
 
     private:
         LogBuffer( const LogBuffer& );

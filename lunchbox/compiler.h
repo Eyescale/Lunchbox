@@ -18,6 +18,8 @@
 #ifndef LUNCHBOX_COMPILER_H
 #define LUNCHBOX_COMPILER_H
 
+#include <boost/config.hpp>
+
 #ifdef _MSC_VER
 /** Declare and align a variable to a 8-byte boundary. */
 #  define LB_ALIGN8( var )  __declspec (align (8)) var;
@@ -66,5 +68,15 @@
 #    define LB_GCC_4_3_OR_OLDER
 #  endif
 #endif // GCC
+
+// C++11 feature 'backported' to C++03
+#ifdef BOOST_NO_CXX11_NULLPTR
+#  define nullptr 0
+#endif
+
+#ifndef CXX_FINAL_OVERRIDE_SUPPORTED
+#  define final
+#  define override
+#endif
 
 #endif //LUNCHBOX_COMPILER_H

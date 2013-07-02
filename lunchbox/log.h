@@ -28,6 +28,7 @@
 #define LUNCHBOX_LOG_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/compiler.h>
 #include <lunchbox/types.h>
 
 #include <assert.h>

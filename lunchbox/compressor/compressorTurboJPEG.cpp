@@ -75,21 +75,21 @@ namespace
     static bool _initialized ## token_ ## name_ ## alpha =                   \
         _registerTurbo ## token_ ## name_ ## alpha();
 
-REGISTER_ENGINE( RGBA, 100, 0.9, 0.33, 0.34, true );
-REGISTER_ENGINE( BGRA, 100, 0.9, 0.33, 0.34, true );
+REGISTER_ENGINE( RGBA, 100, 0.95, 0.33, 0.34, true );
+REGISTER_ENGINE( BGRA, 100, 0.95, 0.33, 0.34, true );
 
-REGISTER_ENGINE( RGBA, 90, 0.8, 0.09, 0.65, true );
-REGISTER_ENGINE( BGRA, 90, 0.8, 0.09, 0.65, true );
+REGISTER_ENGINE( RGBA, 90, 0.9, 0.09, 0.65, true );
+REGISTER_ENGINE( BGRA, 90, 0.9, 0.09, 0.65, true );
 
-REGISTER_ENGINE( RGBA, 80, 0.7, 0.07, 0.75, true );
-REGISTER_ENGINE( BGRA, 80, 0.7, 0.07, 0.75, true );
+REGISTER_ENGINE( RGBA, 80, 0.8, 0.07, 0.75, true );
+REGISTER_ENGINE( BGRA, 80, 0.8, 0.07, 0.75, true );
 
-REGISTER_ENGINE( RGB, 100, 0.9, 0.3, 1.2, false );
-REGISTER_ENGINE( RGB, 90, 0.8, 0.3, 1.2, false );
-REGISTER_ENGINE( RGB, 80, 0.7, 0.3, 1.2, false );
-REGISTER_ENGINE( BGR, 100, 0.9, 0.3, 1.2, false );
-REGISTER_ENGINE( BGR, 90, 0.8, 0.3, 1.2, false );
-REGISTER_ENGINE( BGR, 80, 0.7, 0.3, 1.2, false );
+REGISTER_ENGINE( RGB, 100, 0.95, 0.3, 1.2, false );
+REGISTER_ENGINE( RGB, 90, 0.9, 0.3, 1.2, false );
+REGISTER_ENGINE( RGB, 80, 0.8, 0.3, 1.2, false );
+REGISTER_ENGINE( BGR, 100, 0.95, 0.3, 1.2, false );
+REGISTER_ENGINE( BGR, 90, 0.9, 0.3, 1.2, false );
+REGISTER_ENGINE( BGR, 80, 0.8, 0.3, 1.2, false );
 }
 
 CompressorTurboJPEG::CompressorTurboJPEG( const unsigned name )

@@ -1,16 +1,16 @@
 
-/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com> 
- *               2009, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
+ *               2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -54,7 +54,7 @@ class NoSwizzle
 {
 public:
     static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three, uint8_t& four ) 
+                                uint8_t& two, uint8_t& three, uint8_t& four )
         {
             one = input & 0xff;
             two = (input & 0xff00) >> 8;
@@ -87,14 +87,14 @@ class SwizzleUInt32
 {
 public:
     static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three, uint8_t& four ) 
+                                uint8_t& two, uint8_t& three, uint8_t& four )
     {
         NoSwizzle::swizzle(
-            (( input &  ( LB_BIT32 | LB_BIT31 | LB_BIT22 | LB_BIT21 | 
+            (( input &  ( LB_BIT32 | LB_BIT31 | LB_BIT22 | LB_BIT21 |
                           LB_BIT12 | LB_BIT11 | LB_BIT2 | LB_BIT1 ))        |
              (( input & ( LB_BIT8  | LB_BIT7 ))<<18 )                       |
              (( input & ( LB_BIT24 | LB_BIT23 | LB_BIT14 | LB_BIT13 ))<<6 ) |
-             (( input & ( LB_BIT16 | LB_BIT15 | LB_BIT6  | 
+             (( input & ( LB_BIT16 | LB_BIT15 | LB_BIT6  |
                           LB_BIT5  | LB_BIT4  | LB_BIT3 )) <<12 )           |
              (( input & ( LB_BIT28 | LB_BIT27 | LB_BIT26 | LB_BIT25 ))>>18) |
              (( input & ( LB_BIT18 | LB_BIT17 ))>>12)                       |
@@ -110,15 +110,15 @@ public:
                                       const uint8_t three, const uint8_t four )
     {
         const uint32_t input = one + (two<<8) + (three<<16) + (four<<24);
-        return ((  input & ( LB_BIT32 | LB_BIT31 | LB_BIT22 | LB_BIT21 | 
+        return ((  input & ( LB_BIT32 | LB_BIT31 | LB_BIT22 | LB_BIT21 |
                              LB_BIT11 | LB_BIT12 | LB_BIT2 | LB_BIT1 ))        |
                 (( input & ( LB_BIT26 | LB_BIT25 )) >>18 )                     |
                 (( input & ( LB_BIT30 | LB_BIT29 | LB_BIT20 | LB_BIT19 ))>>6 ) |
-                (( input & ( LB_BIT28 | LB_BIT27 | LB_BIT18 | 
+                (( input & ( LB_BIT28 | LB_BIT27 | LB_BIT18 |
                              LB_BIT17 | LB_BIT16 |LB_BIT15 ))>>12 )            |
                 (( input & ( LB_BIT10 | LB_BIT9  | LB_BIT8  | LB_BIT7 ))<<18 ) |
                 (( input & ( LB_BIT6  | LB_BIT5 ))<<12 )                       |
-                (( input & ( LB_BIT24 | LB_BIT23 | LB_BIT14 | 
+                (( input & ( LB_BIT24 | LB_BIT23 | LB_BIT14 |
                              LB_BIT13 | LB_BIT4  | LB_BIT3 ))<<6 ));
     }
 
@@ -126,7 +126,7 @@ public:
                                       const uint8_t three )
         { assert( 0 ); return 0; }
 };
- 
+
 class SwizzleUInt24
 {
 public:
@@ -135,12 +135,12 @@ public:
         { assert( 0 ); }
 
     static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three ) 
+                                uint8_t& two, uint8_t& three )
     {
         NoSwizzle::swizzle(
-            (( input &  ( LB_BIT24 | LB_BIT23 | LB_BIT22 | LB_BIT13 | 
+            (( input &  ( LB_BIT24 | LB_BIT23 | LB_BIT22 | LB_BIT13 |
                           LB_BIT12 | LB_BIT3  | LB_BIT2  | LB_BIT1 )) |
-             (( input & ( LB_BIT16 | LB_BIT15 | LB_BIT14 )) << 5 )    | 
+             (( input & ( LB_BIT16 | LB_BIT15 | LB_BIT14 )) << 5 )    |
              (( input & ( LB_BIT11 | LB_BIT10 | LB_BIT9  )) >> 5 )    |
              (( input & ( LB_BIT8  | LB_BIT7  | LB_BIT6  | LB_BIT5  |
                           LB_BIT4  )) << 10 )                         |
@@ -156,20 +156,20 @@ public:
                                       const uint8_t three )
     {
         const uint32_t input = one + (two<<8) + (three<<16);
-        return ((  input & ( LB_BIT24 | LB_BIT23 | LB_BIT22 | LB_BIT13 | 
+        return ((  input & ( LB_BIT24 | LB_BIT23 | LB_BIT22 | LB_BIT13 |
                              LB_BIT12 | LB_BIT3  | LB_BIT2  | LB_BIT1 )) |
                 (( input & ( LB_BIT21 | LB_BIT20 | LB_BIT19 ))>>5 )      |
-                (( input & ( LB_BIT6  | LB_BIT5  | LB_BIT4 ))<<5 )       | 
-                (( input & ( LB_BIT18 | LB_BIT17 | LB_BIT16 | 
+                (( input & ( LB_BIT6  | LB_BIT5  | LB_BIT4 ))<<5 )       |
+                (( input & ( LB_BIT18 | LB_BIT17 | LB_BIT16 |
                              LB_BIT15 | LB_BIT14 ))>>10 )                |
-                (( input & ( LB_BIT11 | LB_BIT10 | LB_BIT9  | 
+                (( input & ( LB_BIT11 | LB_BIT10 | LB_BIT9  |
                              LB_BIT8  | LB_BIT7 ))<<10 ));
     }
-};  
+};
 
 }
 
-void CompressorRLE4B::compress( const void* const inData, 
+void CompressorRLE4B::compress( const void* const inData,
                                 const eq_uint64_t nPixels, const bool useAlpha,
                                 const bool swizzle )
 {
@@ -189,27 +189,27 @@ void CompressorRLE4B::compress( const void* const inData,
                             inData, nPixels, _results );
 }
 
-void CompressorRLE4B::decompress( const void* const* inData, 
-                                  const eq_uint64_t* const inSizes, 
+void CompressorRLE4B::decompress( const void* const* inData,
+                                  const eq_uint64_t* const inSizes,
                                   const unsigned numInputs,
-                                  void* const outData, 
+                                  void* const outData,
                                   const eq_uint64_t nPixels,
-                                  const bool useAlpha )
+                                  const bool useAlpha, void* const )
 {
     if( useAlpha )
-        _decompress< uint32_t, uint8_t, NoSwizzle, UseAlpha >( 
+        _decompress< uint32_t, uint8_t, NoSwizzle, UseAlpha >(
             inData, inSizes, numInputs, outData, nPixels );
     else
         _decompress< uint32_t, uint8_t, NoSwizzle, NoAlpha >(
             inData, inSizes, numInputs, outData, nPixels );
 }
 
-void CompressorDiffRLE4B::decompress( const void* const* inData, 
-                                      const eq_uint64_t* const inSizes, 
+void CompressorDiffRLE4B::decompress( const void* const* inData,
+                                      const eq_uint64_t* const inSizes,
                                       const unsigned numInputs,
                                       void* const outData,
                                       const eq_uint64_t nPixels,
-                                      const bool useAlpha )
+                                      const bool useAlpha, void* const )
 {
     if( useAlpha )
         _decompress< uint32_t, uint8_t, SwizzleUInt32, UseAlpha >(

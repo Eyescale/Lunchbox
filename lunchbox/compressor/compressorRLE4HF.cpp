@@ -1,27 +1,27 @@
 
-/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com> 
- *               2009-2010, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
+ *               2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 #include "compressorRLE4HF.h"
 
 namespace
 {
 // NaN
-static const uint16_t _rleMarker = 0xffff; 
+static const uint16_t _rleMarker = 0xffff;
 }
 
 #include "compressorRLE.ipp"
@@ -38,7 +38,7 @@ REGISTER_ENGINE( CompressorDiffRLE4HF, DIFF_RGBA16F,    \
                  RGBA16F, 1., 0.9, 1., true );
 REGISTER_ENGINE( CompressorDiffRLE4HF, DIFF_BGRA16F,    \
                  BGRA16F, 1., 0.9, 1., true );
-        
+
 class NoSwizzle
 {
 public:
@@ -62,7 +62,7 @@ public:
     static inline uint64_t deswizzle( const uint16_t one, const uint16_t two,
                                       const uint16_t three, const uint16_t four)
     {
-        return 
+        return
             one +
             ( static_cast< uint64_t >( two ) << 16 ) +
             ( static_cast< uint64_t > ( three ) << 32) +
@@ -72,7 +72,7 @@ public:
     static inline uint64_t deswizzle( const uint16_t one, const uint16_t two,
                                       const uint16_t three )
     {
-        return 
+        return
             one +
             ( static_cast< uint64_t >( two ) << 16 ) +
             ( static_cast< uint64_t > ( three ) << 32);
@@ -153,7 +153,7 @@ public:
 };
 }
 
-void CompressorRLE4HF::compress( const void* const inData, 
+void CompressorRLE4HF::compress( const void* const inData,
                                  const eq_uint64_t nPixels, const bool useAlpha,
                                  const bool swizzle )
 {
@@ -166,7 +166,7 @@ void CompressorRLE4HF::compress( const void* const inData,
             _nResults = _compress< uint64_t, uint16_t, Swizzle, NoAlpha >(
                             inData, nPixels, _results );
     }
-    else 
+    else
     {
         if( useAlpha )
             _nResults = _compress< uint64_t, uint16_t, NoSwizzle, UseAlpha >(
@@ -177,14 +177,14 @@ void CompressorRLE4HF::compress( const void* const inData,
     }
 }
 
-void CompressorRLE4HF::decompress( const void* const* inData, 
+void CompressorRLE4HF::decompress( const void* const* inData,
                                    const eq_uint64_t* const inSizes,
-                                   const unsigned nInputs, void* const outData, 
-                                   const eq_uint64_t nPixels, 
-                                   const bool useAlpha )
+                                   const unsigned nInputs, void* const outData,
+                                   const eq_uint64_t nPixels,
+                                   const bool useAlpha, void* const )
 {
     if( useAlpha )
-        _decompress< uint64_t, uint16_t, NoSwizzle, UseAlpha >( 
+        _decompress< uint64_t, uint16_t, NoSwizzle, UseAlpha >(
             inData, inSizes, nInputs, outData, nPixels );
     else
         _decompress< uint64_t, uint16_t, NoSwizzle, NoAlpha >(
@@ -192,14 +192,15 @@ void CompressorRLE4HF::decompress( const void* const* inData,
 }
 
 
-void CompressorDiffRLE4HF::decompress( const void* const* inData, 
-                                   const eq_uint64_t* const inSizes,
-                                   const unsigned nInputs, void* const outData, 
-                                   const eq_uint64_t nPixels, 
-                                   const bool useAlpha )
+void CompressorDiffRLE4HF::decompress( const void* const* inData,
+                                       const eq_uint64_t* const inSizes,
+                                       const unsigned nInputs,
+                                       void* const outData,
+                                       const eq_uint64_t nPixels,
+                                       const bool useAlpha, void* const )
 {
     if( useAlpha )
-        _decompress< uint64_t, uint16_t, Swizzle, UseAlpha >( 
+        _decompress< uint64_t, uint16_t, Swizzle, UseAlpha >(
             inData, inSizes, nInputs, outData, nPixels );
     else
         _decompress< uint64_t, uint16_t, Swizzle, NoAlpha >(

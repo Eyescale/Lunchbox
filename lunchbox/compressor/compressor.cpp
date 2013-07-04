@@ -55,8 +55,8 @@ Compressor::~Compressor()
 
 Compressor::Functions::Functions( const unsigned name_,
                                   GetInfo_t getInfo_,
-                                  Plugin::NewCompressor_t newCompressor_,
-                                  Plugin::NewCompressor_t newDecompressor_,
+                                  NewCompressor_t newCompressor_,
+                                  NewCompressor_t newDecompressor_,
                                   Decompress_t decompress_,
                                   IsCompatible_t isCompatible_ )
         : name( name_ )
@@ -162,14 +162,14 @@ void EqCompressorDecompress( void* const decompressor, const unsigned name,
                              void* const out, eq_uint64_t* const outDims,
                              const eq_uint64_t flags )
 {
-    assert( !decompressor );
     const bool useAlpha = !(flags & EQ_COMPRESSOR_IGNORE_ALPHA);
     const eq_uint64_t nPixels = ( flags & EQ_COMPRESSOR_DATA_1D) ?
                            outDims[1] : outDims[1] * outDims[3];
 
     const lunchbox::plugin::Compressor::Functions& functions =
         lunchbox::plugin::_findFunctions( name );
-    functions.decompress( in, inSizes, nInputs, out, nPixels, useAlpha );
+    functions.decompress( in, inSizes, nInputs, out, nPixels, useAlpha,
+                          decompressor );
 }
 
 bool EqCompressorIsCompatible( const unsigned     name,

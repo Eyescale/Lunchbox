@@ -1,16 +1,16 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010, Stefan Eilemann <eile@eyescale.ch>
+ *               2010-2013, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -45,11 +45,11 @@ inline void _compressChunk( const T* const in, const eq_uint64_t nPixels,
         return;
     }
 
-    T* tokenOut = reinterpret_cast< T* >( result->getData( )); 
+    T* tokenOut = reinterpret_cast< T* >( result->getData( ));
     T tokenLast( in[0] );
     T tokenSame( 1 );
     T token(0);
-    
+
     for( eq_uint64_t i = 1; i < nPixels; ++i )
     {
         token = in[i];
@@ -64,22 +64,22 @@ inline void _compressChunk( const T* const in, const eq_uint64_t nPixels,
 #endif
 }
 
-template< typename T > 
+template< typename T >
 ssize_t _compress( const void* const inData, const eq_uint64_t nPixels,
                    Compressor::ResultVector& results )
 {
     const eq_uint64_t size = nPixels * sizeof( T );
     const ssize_t nChunks = _setupResults( 1, size, results );
-    const float width = static_cast< float >( nPixels ) /  
+    const float width = static_cast< float >( nPixels ) /
                         static_cast< float >( nChunks );
 
     const T* const data = reinterpret_cast< const T* >( inData );
-    
+
 #pragma omp parallel for
     for( ssize_t i = 0; i < static_cast< ssize_t >( nChunks ) ; ++i )
     {
         const eq_uint64_t startIndex = static_cast< eq_uint64_t >( i * width );
-        
+
         eq_uint64_t nextIndex;
         if ( i == nChunks - 1 )
             nextIndex = nPixels;
@@ -93,7 +93,7 @@ ssize_t _compress( const void* const inData, const eq_uint64_t nPixels,
 }
 
 
-void CompressorRLEB::compress( const void* const inData, 
+void CompressorRLEB::compress( const void* const inData,
                                const eq_uint64_t nPixels, const bool useAlpha )
 {
     if( (nPixels & 0x7) == 0 )
@@ -112,7 +112,7 @@ inline void _decompressChunk( const T* in, T* out, const eq_uint64_t nPixels )
 {
     T token(0);
     T tokenLeft(0);
-   
+
     for( eq_uint64_t i = 0; i < nPixels ; ++i )
     {
         if( tokenLeft == 0 )
@@ -137,7 +137,7 @@ template< typename T >
 void _decompress( const void* const* inData, const unsigned nInputs,
                   void* const outData, const eq_uint64_t nPixels )
 {
-    const float width = static_cast< float >( nPixels ) /  
+    const float width = static_cast< float >( nPixels ) /
                         static_cast< float >( nInputs );
 
     const T* const* in = reinterpret_cast< const T* const* >( inData );
@@ -146,13 +146,13 @@ void _decompress( const void* const* inData, const unsigned nInputs,
     for( ssize_t i = 0; i < static_cast< ssize_t >( nInputs ) ; ++i )
     {
         const eq_uint64_t startIndex = static_cast<uint64_t>( i * width );
-        
+
         eq_uint64_t nextIndex;
         if ( i == static_cast<ssize_t>( nInputs -1 ) )
             nextIndex = nPixels;
         else
             nextIndex = static_cast< eq_uint64_t >(( i + 1 ) * width );
-        
+
         const eq_uint64_t chunkSize = ( nextIndex - startIndex );
         T* out = reinterpret_cast< T* >( outData ) + startIndex;
 
@@ -160,12 +160,12 @@ void _decompress( const void* const* inData, const unsigned nInputs,
     }
 }
 
-void CompressorRLEB::decompress( const void* const* inData, 
-                                 const eq_uint64_t* const inSizes, 
+void CompressorRLEB::decompress( const void* const* inData,
+                                 const eq_uint64_t* const inSizes,
                                  const unsigned nInputs,
-                                 void* const outData, 
+                                 void* const outData,
                                  const eq_uint64_t nPixels,
-                                 const bool useAlpha )
+                                 const bool useAlpha, void* const )
 {
     if( (nPixels & 0x7) == 0 )
         _decompress< uint64_t >( inData, nInputs, outData, nPixels>>3 );

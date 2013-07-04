@@ -37,11 +37,11 @@ public:
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,
                             const unsigned nInputs, void* const outData,
-                            const eq_uint64_t nPixels, const bool useAlpha );
+                            const eq_uint64_t nPixels, const bool useAlpha,
+                            void* const );
 
-    static void* getNewCompressor( const unsigned name )
-        { return new lunchbox::plugin::CompressorLZF; }
-    static void* getNewDecompressor( const unsigned name ){ return 0; }
+    static Compressor* getNewCompressor( const unsigned name )
+        { return new CompressorLZF; }
 };
 }
 }

@@ -1,15 +1,16 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
+ *               2013, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -37,9 +38,9 @@ class SwizzleUInt32
 {
 public:
     static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three, uint8_t& four ) 
+                                uint8_t& two, uint8_t& three, uint8_t& four )
     {
-        
+
         one = ( input & 0xf ) | (( input &( LB_BIT14 | LB_BIT13 )) >> 8 ) |
                                 (( input &( LB_BIT24 | LB_BIT23 )) >> 16 );
 
@@ -52,8 +53,8 @@ public:
                 (( input &( LB_BIT18 | LB_BIT17 )) >> 14 ) |
                  ( input &( LB_BIT8 | LB_BIT7 )) |
                 (( input &( LB_BIT22 | LB_BIT21 )) >> 20 );
-        
-        four  = (( input &( LB_BIT32 | LB_BIT31 | 
+
+        four  = (( input &( LB_BIT32 | LB_BIT31 |
                             LB_BIT30 | LB_BIT29 )) >> 24 ) |
                 (( input &( LB_BIT20 | LB_BIT19 )) >> 16 ) |
                 (( input &( LB_BIT10 | LB_BIT9 )) >> 8 );
@@ -62,11 +63,11 @@ public:
     static inline void swizzle( const uint32_t input, uint8_t& one,
                                 uint8_t& two, uint8_t& three )
         { assert( 0 ); }
-    
+
     static inline uint32_t deswizzle( const uint8_t one, const uint8_t two,
                                       const uint8_t three, const uint8_t four )
     {
-        return ( one & 0xf ) | 
+        return ( one & 0xf ) |
                (( one &( LB_BIT5 | LB_BIT6 )) << 8 ) |
                (( one &( LB_BIT7 | LB_BIT8 )) << 16 ) |
                (( two &( LB_BIT1 | LB_BIT2 )) << 24 ) |
@@ -86,11 +87,11 @@ public:
                                   const uint8_t three )
         { assert( 0 ); return 0; }
 };
- 
+
 
 }
 
-void CompressorRLE10A2::compress( const void* const inData, 
+void CompressorRLE10A2::compress( const void* const inData,
                                 const eq_uint64_t nPixels, const bool useAlpha,
                                 const bool swizzle )
 {
@@ -99,12 +100,12 @@ void CompressorRLE10A2::compress( const void* const inData,
 
 }
 
-void CompressorRLE10A2::decompress( const void* const* inData, 
-                                      const eq_uint64_t* const inSizes, 
-                                      const unsigned numInputs,
-                                      void* const outData,
-                                      const eq_uint64_t nPixels,
-                                      const bool useAlpha )
+void CompressorRLE10A2::decompress( const void* const* inData,
+                                    const eq_uint64_t* const inSizes,
+                                    const unsigned numInputs,
+                                    void* const outData,
+                                    const eq_uint64_t nPixels,
+                                    const bool useAlpha, void* const )
 {
     _decompress< uint32_t, uint8_t, SwizzleUInt32, UseAlpha >(
         inData, inSizes, numInputs, outData, nPixels );

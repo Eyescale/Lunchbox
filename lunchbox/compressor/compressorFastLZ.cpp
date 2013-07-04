@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2012-2013, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -65,11 +65,12 @@ void CompressorFastLZ::compress( const void* const inData,
 }
 
 void CompressorFastLZ::decompress( const void* const* inData,
-                                const eq_uint64_t* const inSizes,
-                                const unsigned nInputs,
-                                void* const outData,
-                                const eq_uint64_t nPixels,
-                                const bool useAlpha )
+                                   const eq_uint64_t* const inSizes,
+                                   const unsigned nInputs,
+                                   void* const outData,
+                                   const eq_uint64_t nPixels,
+                                   const bool useAlpha,
+                                   void* const )
 {
     if( nInputs == 0 )
         return;

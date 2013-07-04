@@ -1,16 +1,16 @@
 
-/* Copyright (c) 2009-2010, Sarah Amsellem <sarah.amsellem@gmail.com> 
- *               2009-2010, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2010, Sarah Amsellem <sarah.amsellem@gmail.com>
+ *               2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -42,7 +42,7 @@ class NoSwizzle
 {
 public:
     static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three, uint8_t& four ) 
+                                uint8_t& two, uint8_t& three, uint8_t& four )
         {
             one   = input & 0xff;
             two   = ( input & 0xff00 ) >> 8;
@@ -63,13 +63,13 @@ class SwizzleUInt32
 {
 public:
     static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three, uint8_t& four ) 
+                                uint8_t& two, uint8_t& three, uint8_t& four )
     {
          NoSwizzle::swizzle(
            ((( input & ( LB_BIT6  | LB_BIT5  | LB_BIT4 )) >> 3 )           |
             (( input & ( LB_BIT14 | LB_BIT13 | LB_BIT12 )) >> 8 )          |
             (( input & ( LB_BIT8  | LB_BIT7 )) << 5 )                      |
-            (( input & ( LB_BIT24 | LB_BIT23 | LB_BIT22 | 
+            (( input & ( LB_BIT24 | LB_BIT23 | LB_BIT22 |
                          LB_BIT21 | LB_BIT20 )) >> 13 )                    |
             (( input & ( LB_BIT16 | LB_BIT15 )) >> 1 )                     |
             (( input &   LB_BIT32 ) >> 16 )),
@@ -99,7 +99,7 @@ public:
                                       const uint8_t three )
         { assert( 0 ); return 0; }
 };
- 
+
 class SwizzleUInt24
 {
 public:
@@ -108,7 +108,7 @@ public:
         { assert( 0 ); }
 
     static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three ) 
+                                uint8_t& two, uint8_t& three )
     {
         NoSwizzle::swizzle(
            ((( input & ( LB_BIT6  | LB_BIT5  | LB_BIT4 )) >> 3 )           |
@@ -133,11 +133,11 @@ public:
                  (( input & ( LB_BIT13 | LB_BIT12 )) >> 5 )                   |
                  (( input & ( LB_BIT11 | LB_BIT10 | LB_BIT9 |
                               LB_BIT8  | LB_BIT7 )) << 13 )                   |
-                  ( input & ( LB_BIT16 | LB_BIT15 | LB_BIT14 ))) 
+                  ( input & ( LB_BIT16 | LB_BIT15 | LB_BIT14 )))
                           & 0xf8fcf8 )
                           | 0x020202;
     }
-};  
+};
 
 }
 
@@ -153,12 +153,12 @@ void CompressorRLE565::compress( const void* const inData,
                         inData, nPixels, _results );
 }
 
-void CompressorRLE565::decompress( const void* const* inData, 
-                                   const eq_uint64_t* const inSizes, 
+void CompressorRLE565::decompress( const void* const* inData,
+                                   const eq_uint64_t* const inSizes,
                                    const unsigned numInputs,
                                    void* const outData,
                                    const eq_uint64_t nPixels,
-                                   const bool useAlpha )
+                                   const bool useAlpha, void* const )
 {
     if( useAlpha )
         _decompress< uint32_t, uint8_t, SwizzleUInt32, UseAlpha >(

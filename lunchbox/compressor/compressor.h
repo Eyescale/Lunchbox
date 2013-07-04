@@ -37,25 +37,27 @@ namespace plugin
 class Compressor
 {
 public:
-    typedef void  (*GetInfo_t)( EqCompressorInfo* const );
-    typedef void (*Decompress_t)( const void* const*, const
-                                  eq_uint64_t* const,
-                                  const unsigned, void* const,
-                                  const eq_uint64_t, const bool );
-    typedef bool ( *IsCompatible_t ) ( const GLEWContext* );
+    typedef void        ( *GetInfo_t )( EqCompressorInfo* const );
+    typedef Compressor* ( *NewCompressor_t )( const unsigned );
+    typedef void        ( *Decompress_t )( const void* const*,
+                                           const eq_uint64_t* const,
+                                           const unsigned, void* const,
+                                           const eq_uint64_t, const bool,
+                                           void* const );
+    typedef bool        ( *IsCompatible_t )( const GLEWContext* );
     struct Functions
     {
         Functions( const unsigned name, GetInfo_t getInfo,
-                   Plugin::NewCompressor_t newCompressor,
-                   Plugin::NewCompressor_t newDecompressor,
+                   NewCompressor_t newCompressor,
+                   NewCompressor_t newDecompressor,
                    Decompress_t decompress, IsCompatible_t isCompatible );
 
-        unsigned             name;
-        GetInfo_t               getInfo;
-        Plugin::NewCompressor_t newCompressor;
-        Plugin::NewCompressor_t newDecompressor;
-        Decompress_t            decompress;
-        IsCompatible_t          isCompatible;
+        unsigned name;
+        GetInfo_t getInfo;
+        NewCompressor_t newCompressor;
+        NewCompressor_t newDecompressor;
+        Decompress_t decompress;
+        IsCompatible_t isCompatible;
     };
 
     /** Construct a new compressor. */
@@ -157,9 +159,13 @@ public:
     /** @internal Register a new plugin engine. */
     static void registerEngine( const Functions& functions );
 
+    /** Convenience function for instance-less decompressor allocation. */
+    static Compressor* getNewDecompressor( const unsigned name ){ return 0; }
+
 protected:
     ResultVector _results;  //!< The compressed data
     unsigned _nResults;     //!< Number of elements used in _results
+
 };
 }
 }

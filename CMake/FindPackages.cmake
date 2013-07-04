@@ -33,6 +33,21 @@ if(DNSSD_name)
   endif()
 endif()
 
+find_package(LibJpegTurbo 1.2.1)
+if(LibJpegTurbo_FOUND)
+  set(LibJpegTurbo_name LibJpegTurbo)
+endif()
+if(LIBJPEGTURBO_FOUND)
+  set(LibJpegTurbo_name LIBJPEGTURBO)
+endif()
+if(LibJpegTurbo_name)
+  list(APPEND FIND_PACKAGES_DEFINES LUNCHBOX_USE_LIBJPEGTURBO)
+  link_directories(${${LibJpegTurbo_name}_LIBRARY_DIRS})
+  if(NOT "${${LibJpegTurbo_name}_INCLUDE_DIRS}" MATCHES "-NOTFOUND")
+    include_directories(${${LibJpegTurbo_name}_INCLUDE_DIRS})
+  endif()
+endif()
+
 find_package(Boost 1.41.0 REQUIRED regex serialization)
 if(Boost_FOUND)
   set(Boost_name Boost)
@@ -55,7 +70,7 @@ endif()
 
 set(LUNCHBOX_BUILD_DEBS libavahi-compat-libdnssd-dev;libboost-regex-dev;libboost-serialization-dev;libhwloc-dev)
 
-set(LUNCHBOX_DEPENDS hwloc;DNSSD;Boost)
+set(LUNCHBOX_DEPENDS hwloc;DNSSD;LibJpegTurbo;Boost)
 
 # Write defines.h and options.cmake
 if(NOT PROJECT_INCLUDE_NAME)

@@ -1,21 +1,21 @@
 
-/* Copyright (c) 2009-2010, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *               2009, Maxim Makhinya
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 #include "compressorRLE4BU.h"
 
 namespace
@@ -65,7 +65,7 @@ REGISTER_ENGINE( CompressorRLE4BU, 4_BYTE_UNSIGNED, BGRA, 1., 0.89, 2.1, true );
                       "Overwrite array bounds during image compress" ); \
     }
 
-static uint64_t _compress( const uint64_t* data, const uint64_t nWords, 
+static uint64_t _compress( const uint64_t* data, const uint64_t nWords,
                                  uint64_t* out )
 {
     out[ 0 ] = nWords;
@@ -128,11 +128,11 @@ void CompressorRLE4BU::compress( const void* const inData,
 }
 
 
-void CompressorRLE4BU::decompress( const void* const* inData, 
+void CompressorRLE4BU::decompress( const void* const* inData,
                                    const eq_uint64_t* const inSizes,
-                                   const unsigned nInputs, void* const outData, 
-                                   const eq_uint64_t nPixels, 
-                                   const bool useAlpha )
+                                   const unsigned nInputs, void* const outData,
+                                   const eq_uint64_t nPixels,
+                                   const bool useAlpha, void* const )
 {
     if( nPixels == 0 )
         return;
@@ -148,7 +148,7 @@ void CompressorRLE4BU::decompress( const void* const* inData,
         {
             outTable[i] = reinterpret_cast< uint64_t* >( out );
 
-            const uint64_t* in  = 
+            const uint64_t* in  =
                 reinterpret_cast< const uint64_t* >( inData[i] );
             const uint64_t nWords = in[0];
             out += nWords * sizeof( uint64_t );
@@ -157,7 +157,7 @@ void CompressorRLE4BU::decompress( const void* const* inData,
         LBASSERTINFO(
             nPixels*4 >= (uint64_t)(out-reinterpret_cast<uint8_t*>(outData)-7),
                 "Pixel data size does not match expected image size: "
-                << nPixels*4 << " ? " 
+                << nPixels*4 << " ? "
                 << (uint64_t)(out-reinterpret_cast<uint8_t*>(outData)-7));
     }
 

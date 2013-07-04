@@ -39,12 +39,12 @@ public:
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,
                             const unsigned nInputs, void* const outData,
-                            const eq_uint64_t nPixels, const bool useAlpha );
+                            const eq_uint64_t nPixels, const bool useAlpha,
+                            void* const );
 
 
-    static void* getNewCompressor( const unsigned name )
-                           { return new lunchbox::plugin::CompressorRLE4B; }
-    static void* getNewDecompressor( const unsigned name ){ return 0; }
+    static Compressor* getNewCompressor( const unsigned name )
+        { return new CompressorRLE4B; }
 
 protected:
     void compress( const void* const inData, const eq_uint64_t nPixels,
@@ -60,8 +60,8 @@ public:
     virtual ~CompressorDiffRLE4B() {}
 
     /** get a new instance of compressor RLE 4 bytes and swizzle data. */
-    static void* getNewCompressor( const unsigned name )
-        { return new lunchbox::plugin::CompressorDiffRLE4B; }
+    static Compressor* getNewCompressor( const unsigned name )
+        { return new CompressorDiffRLE4B; }
 
     void compress( const void* const inData, const eq_uint64_t nPixels,
                    const bool useAlpha ) override
@@ -70,7 +70,8 @@ public:
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,
                             const unsigned nInputs, void* const outData,
-                            const eq_uint64_t nPixels, const bool useAlpha );
+                            const eq_uint64_t nPixels, const bool useAlpha,
+                            void* const );
 };
 
 }

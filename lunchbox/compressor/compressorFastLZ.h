@@ -31,8 +31,8 @@ public:
     CompressorFastLZ() : Compressor() {}
     virtual ~CompressorFastLZ() {}
 
-    virtual void compress( const void* const inData, const eq_uint64_t nPixels,
-                           const bool useAlpha );
+    void compress( const void* const inData, const eq_uint64_t nPixels,
+                   const bool useAlpha ) override;
 
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,
@@ -40,7 +40,7 @@ public:
                             const eq_uint64_t nPixels, const bool useAlpha );
 
     static void* getNewCompressor( const unsigned name )
-        { return new lunchbox::plugin::CompressorFastLZ; }
+        { return new CompressorFastLZ; }
     static void* getNewDecompressor( const unsigned name ){ return 0; }
 };
 }

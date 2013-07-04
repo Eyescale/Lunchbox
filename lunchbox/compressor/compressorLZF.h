@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2012-2013, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -31,8 +31,8 @@ public:
     CompressorLZF() : Compressor() {}
     virtual ~CompressorLZF() {}
 
-    virtual void compress( const void* const inData, const eq_uint64_t nPixels,
-                           const bool useAlpha );
+    void compress( const void* const inData, const eq_uint64_t nPixels,
+                   const bool useAlpha ) override;
 
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,

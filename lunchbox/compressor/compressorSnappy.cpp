@@ -72,8 +72,8 @@ void CompressorSnappy::decompress( const void* const* inData,
                                    const eq_uint64_t* const inSizes,
                                    const unsigned nInputs,
                                    void* const outData,
-                                   const eq_uint64_t nPixels,
-                                   const bool useAlpha, void* const )
+                                   eq_uint64_t* const outDims,
+                                   const eq_uint64_t, void* const )
 {
     if( nInputs == 0 )
         return;

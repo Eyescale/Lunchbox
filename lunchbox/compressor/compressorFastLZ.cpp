@@ -68,13 +68,14 @@ void CompressorFastLZ::decompress( const void* const* inData,
                                    const eq_uint64_t* const inSizes,
                                    const unsigned nInputs,
                                    void* const outData,
-                                   const eq_uint64_t nPixels,
-                                   const bool useAlpha,
-                                   void* const )
+                                   eq_uint64_t* const outDims,
+                                   const eq_uint64_t flags, void* const )
 {
     if( nInputs == 0 )
         return;
 
+    const eq_uint64_t nPixels = ( flags & EQ_COMPRESSOR_DATA_1D) ?
+                                    outDims[1] : outDims[1] * outDims[3];
     fastlz_decompress( inData[0], inSizes[0], outData, nPixels );
 }
 

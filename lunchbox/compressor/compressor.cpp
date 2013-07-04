@@ -74,6 +74,16 @@ void Compressor::registerEngine( const Compressor::Functions& functions )
     _functions->push_back( functions );
 }
 
+void Compressor::compress( const void* const inData, const eq_uint64_t* inDims,
+                           const eq_uint64_t flags )
+{
+    const bool useAlpha = !(flags & EQ_COMPRESSOR_IGNORE_ALPHA);
+    const eq_uint64_t nPixels = (flags & EQ_COMPRESSOR_DATA_1D) ?
+                                  inDims[1]: inDims[1] * inDims[3];
+
+    compress( inData, nPixels, useAlpha );
+}
+
 }
 }
 
@@ -121,13 +131,8 @@ void EqCompressorCompress( void* const ptr, const unsigned name,
                            const eq_uint64_t flags )
 {
     assert( ptr );
-    const bool useAlpha = !(flags & EQ_COMPRESSOR_IGNORE_ALPHA);
-    const eq_uint64_t nPixels = (flags & EQ_COMPRESSOR_DATA_1D) ?
-                                  inDims[1]: inDims[1] * inDims[3];
-
-    lunchbox::plugin::Compressor* compressor =
-        reinterpret_cast< lunchbox::plugin::Compressor* >( ptr );
-    compressor->compress( in, nPixels, useAlpha );
+    reinterpret_cast< lunchbox::plugin::Compressor* >( ptr )->
+        compress( in, inDims, flags );
 }
 
 unsigned EqCompressorGetNumResults( void* const ptr,
@@ -162,13 +167,9 @@ void EqCompressorDecompress( void* const decompressor, const unsigned name,
                              void* const out, eq_uint64_t* const outDims,
                              const eq_uint64_t flags )
 {
-    const bool useAlpha = !(flags & EQ_COMPRESSOR_IGNORE_ALPHA);
-    const eq_uint64_t nPixels = ( flags & EQ_COMPRESSOR_DATA_1D) ?
-                           outDims[1] : outDims[1] * outDims[3];
-
     const lunchbox::plugin::Compressor::Functions& functions =
         lunchbox::plugin::_findFunctions( name );
-    functions.decompress( in, inSizes, nInputs, out, nPixels, useAlpha,
+    functions.decompress( in, inSizes, nInputs, out, outDims, flags,
                           decompressor );
 }
 

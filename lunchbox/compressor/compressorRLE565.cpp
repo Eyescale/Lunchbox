@@ -157,15 +157,17 @@ void CompressorRLE565::decompress( const void* const* inData,
                                    const eq_uint64_t* const inSizes,
                                    const unsigned numInputs,
                                    void* const outData,
-                                   const eq_uint64_t nPixels,
-                                   const bool useAlpha, void* const )
+                                   eq_uint64_t* const outDims,
+                                   const eq_uint64_t flags, void* const )
 {
-    if( useAlpha )
-        _decompress< uint32_t, uint8_t, SwizzleUInt32, UseAlpha >(
-            inData, inSizes, numInputs, outData, nPixels );
+    const eq_uint64_t nPixels = ( flags & EQ_COMPRESSOR_DATA_1D) ?
+                                    outDims[1] : outDims[1] * outDims[3];
+    if( flags & EQ_COMPRESSOR_IGNORE_ALPHA )
+        _decompress< uint32_t, uint8_t, SwizzleUInt24,
+                     NoAlpha >( inData, inSizes, numInputs, outData, nPixels );
     else
-        _decompress< uint32_t, uint8_t, SwizzleUInt24, NoAlpha >(
-            inData, inSizes, numInputs, outData, nPixels );
+        _decompress< uint32_t, uint8_t, SwizzleUInt32,
+                     UseAlpha >( inData, inSizes, numInputs, outData, nPixels );
 }
 
 }

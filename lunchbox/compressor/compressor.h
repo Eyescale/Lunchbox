@@ -42,8 +42,8 @@ public:
     typedef void        ( *Decompress_t )( const void* const*,
                                            const eq_uint64_t* const,
                                            const unsigned, void* const,
-                                           const eq_uint64_t, const bool,
-                                           void* const );
+                                           eq_uint64_t* const,
+                                           const eq_uint64_t, void* const );
     typedef bool        ( *IsCompatible_t )( const GLEWContext* );
     struct Functions
     {
@@ -63,6 +63,16 @@ public:
     /** Construct a new compressor. */
     Compressor();
     virtual ~Compressor();
+
+    /**
+     * Compress data.
+     *
+     * @param inData data to compress.
+     * @param inDims input dimensions.
+     * @param flags compression flags.
+     */
+    virtual void compress( const void* const inData, const eq_uint64_t* inDims,
+                           const eq_uint64_t flags );
 
     /**
      * Compress data.

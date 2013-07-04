@@ -148,5 +148,11 @@ set(LUNCHBOX_COMPRESSORS
   compressor/snappy/snappy-sinksource.cc
   )
 
+if(LibJpegTurbo_FOUND)
+  list(APPEND LUNCHBOX_LINKLIBS ${LibJpegTurbo_LIBRARIES})
+  list(APPEND LUNCHBOX_COMPRESSORS
+    compressor/compressorTurboJPEG.h compressor/compressorTurboJPEG.cpp)
+endif()
+
 set(LUNCHBOX_ALL ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_SOURCES}
   ${PLUGIN_HEADERS} ${LUNCHBOX_COMPRESSORS})

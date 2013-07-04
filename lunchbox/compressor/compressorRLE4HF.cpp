@@ -180,15 +180,17 @@ void CompressorRLE4HF::compress( const void* const inData,
 void CompressorRLE4HF::decompress( const void* const* inData,
                                    const eq_uint64_t* const inSizes,
                                    const unsigned nInputs, void* const outData,
-                                   const eq_uint64_t nPixels,
-                                   const bool useAlpha, void* const )
+                                   eq_uint64_t* const outDims,
+                                   const eq_uint64_t flags, void* const )
 {
-    if( useAlpha )
-        _decompress< uint64_t, uint16_t, NoSwizzle, UseAlpha >(
-            inData, inSizes, nInputs, outData, nPixels );
+    const eq_uint64_t nPixels = ( flags & EQ_COMPRESSOR_DATA_1D) ?
+                                    outDims[1] : outDims[1] * outDims[3];
+    if( flags & EQ_COMPRESSOR_IGNORE_ALPHA )
+        _decompress< uint64_t, uint16_t, NoSwizzle,
+                     NoAlpha >( inData, inSizes, nInputs, outData, nPixels );
     else
-        _decompress< uint64_t, uint16_t, NoSwizzle, NoAlpha >(
-            inData, inSizes, nInputs, outData, nPixels );
+        _decompress< uint64_t, uint16_t, NoSwizzle,
+                     UseAlpha >( inData, inSizes, nInputs, outData, nPixels );
 }
 
 
@@ -196,15 +198,17 @@ void CompressorDiffRLE4HF::decompress( const void* const* inData,
                                        const eq_uint64_t* const inSizes,
                                        const unsigned nInputs,
                                        void* const outData,
-                                       const eq_uint64_t nPixels,
-                                       const bool useAlpha, void* const )
+                                       eq_uint64_t* const outDims,
+                                       const eq_uint64_t flags, void* const )
 {
-    if( useAlpha )
-        _decompress< uint64_t, uint16_t, Swizzle, UseAlpha >(
-            inData, inSizes, nInputs, outData, nPixels );
+    const eq_uint64_t nPixels = ( flags & EQ_COMPRESSOR_DATA_1D) ?
+                                    outDims[1] : outDims[1] * outDims[3];
+    if( flags & EQ_COMPRESSOR_IGNORE_ALPHA )
+        _decompress< uint64_t, uint16_t, Swizzle,
+                     NoAlpha >( inData, inSizes, nInputs, outData, nPixels );
     else
-        _decompress< uint64_t, uint16_t, Swizzle, NoAlpha >(
-            inData, inSizes, nInputs, outData, nPixels );
+        _decompress< uint64_t, uint16_t, Swizzle,
+                     UseAlpha >( inData, inSizes, nInputs, outData, nPixels );
 }
 }
 }

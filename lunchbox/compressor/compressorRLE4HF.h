@@ -39,7 +39,7 @@ public:
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,
                             const unsigned nInputs, void* const outData,
-                            const eq_uint64_t nPixels, const bool useAlpha,
+                            eq_uint64_t* const outDims, const eq_uint64_t flags,
                             void* const );
 
     static Compressor* getNewCompressor( const unsigned name )
@@ -63,7 +63,7 @@ public:
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,
                             const unsigned nInputs, void* const outData,
-                            const eq_uint64_t nPixels, const bool useAlpha,
+                            eq_uint64_t* const outDims, const eq_uint64_t flags,
                             void* const );
 
     static Compressor* getNewCompressor( const unsigned name )

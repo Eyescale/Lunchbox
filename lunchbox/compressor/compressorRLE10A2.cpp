@@ -95,8 +95,8 @@ void CompressorRLE10A2::compress( const void* const inData,
                                 const eq_uint64_t nPixels, const bool useAlpha,
                                 const bool swizzle )
 {
-        _nResults = _compress< uint32_t, uint8_t, SwizzleUInt32, UseAlpha >(
-                        inData, nPixels, _results );
+    _nResults = _compress< uint32_t, uint8_t, SwizzleUInt32,
+                           UseAlpha >( inData, nPixels, _results );
 
 }
 
@@ -104,11 +104,13 @@ void CompressorRLE10A2::decompress( const void* const* inData,
                                     const eq_uint64_t* const inSizes,
                                     const unsigned numInputs,
                                     void* const outData,
-                                    const eq_uint64_t nPixels,
-                                    const bool useAlpha, void* const )
+                                    eq_uint64_t* const outDims,
+                                    const eq_uint64_t flags, void* const )
 {
-    _decompress< uint32_t, uint8_t, SwizzleUInt32, UseAlpha >(
-        inData, inSizes, numInputs, outData, nPixels );
+    const eq_uint64_t nPixels = ( flags & EQ_COMPRESSOR_DATA_1D) ?
+                                    outDims[1] : outDims[1] * outDims[3];
+    _decompress< uint32_t, uint8_t, SwizzleUInt32,
+                 UseAlpha >( inData, inSizes, numInputs, outData, nPixels );
 }
 
 }

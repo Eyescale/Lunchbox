@@ -131,15 +131,17 @@ void CompressorRLE4BU::compress( const void* const inData,
 void CompressorRLE4BU::decompress( const void* const* inData,
                                    const eq_uint64_t* const inSizes,
                                    const unsigned nInputs, void* const outData,
-                                   const eq_uint64_t nPixels,
-                                   const bool useAlpha, void* const )
+                                   eq_uint64_t* const outDims,
+                                   const eq_uint64_t flags, void* const )
 {
+    const eq_uint64_t nPixels = ( flags & EQ_COMPRESSOR_DATA_1D) ?
+                                    outDims[1] : outDims[1] * outDims[3];
     if( nPixels == 0 )
         return;
 
     // Prepare table with input pointer into decompressed data
     //   Needed since decompress loop is parallelized
-    uint64_t**    outTable = static_cast< uint64_t** >(
+    uint64_t** outTable = static_cast< uint64_t** >(
         alloca( nInputs * sizeof( uint64_t* )));
 
     {

@@ -33,8 +33,7 @@ public:
     virtual ~CompressorRLE4HF() {}
 
     void compress( const void* const inData, const eq_uint64_t nPixels,
-                   const bool useAlpha ) override
-        { compress( inData, nPixels, useAlpha, false ); }
+                   const bool useAlpha ) override;
 
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,
@@ -44,10 +43,6 @@ public:
 
     static Compressor* getNewCompressor( const unsigned name )
         { return new CompressorRLE4HF; }
-
-protected:
-    void compress( const void* const inData, const eq_uint64_t nPixels,
-                   const bool useAlpha, const bool swizzle );
 };
 
 class CompressorDiffRLE4HF : public CompressorRLE4HF
@@ -57,8 +52,7 @@ public:
     virtual ~CompressorDiffRLE4HF() {}
 
     void compress( const void* const inData, const eq_uint64_t nPixels,
-                   const bool useAlpha ) override
-        { CompressorRLE4HF::compress( inData, nPixels, useAlpha, true ); }
+                   const bool useAlpha ) override;
 
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,

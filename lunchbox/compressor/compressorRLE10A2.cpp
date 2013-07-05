@@ -92,8 +92,8 @@ public:
 }
 
 void CompressorRLE10A2::compress( const void* const inData,
-                                const eq_uint64_t nPixels, const bool useAlpha,
-                                const bool swizzle )
+                                  const eq_uint64_t nPixels,
+                                  const bool useAlpha )
 {
     _nResults = _compress< uint32_t, uint8_t, SwizzleUInt32,
                            UseAlpha >( inData, nPixels, _results );

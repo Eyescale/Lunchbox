@@ -33,8 +33,7 @@ public:
     virtual ~CompressorRLEYUV() {}
 
     void compress( const void* const inData, const eq_uint64_t nPixels,
-                   const bool useAlpha ) override
-        { compress( inData, nPixels, useAlpha, false ); }
+                   const bool useAlpha ) override;
 
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,
@@ -44,10 +43,6 @@ public:
 
     static Compressor* getNewCompressor( const unsigned name )
         { return new CompressorRLEYUV; }
-
-protected:
-    void compress( const void* const inData, const eq_uint64_t nPixels,
-                   const bool useAlpha, const bool swizzle );
 };
 
 class CompressorDiffRLEYUV : public CompressorRLEYUV
@@ -60,8 +55,7 @@ public:
         { return new CompressorDiffRLEYUV; }
 
     void compress( const void* const inData, const eq_uint64_t nPixels,
-                   const bool useAlpha ) override
-        { CompressorRLEYUV::compress( inData, nPixels, useAlpha, true ); }
+                   const bool useAlpha ) override;
 
     static void decompress( const void* const* inData,
                             const eq_uint64_t* const inSizes,

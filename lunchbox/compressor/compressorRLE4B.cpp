@@ -170,23 +170,15 @@ public:
 }
 
 void CompressorRLE4B::compress( const void* const inData,
-                                const eq_uint64_t nPixels, const bool useAlpha,
-                                const bool swizzle )
+                                const eq_uint64_t nPixels,
+                                const bool useAlpha )
 {
     if( useAlpha )
-        if( swizzle )
-            _nResults = _compress< uint32_t, uint8_t, SwizzleUInt32, UseAlpha >(
-                            inData, nPixels, _results );
-        else
-            _nResults = _compress< uint32_t, uint8_t, NoSwizzle, UseAlpha >(
-                            inData, nPixels, _results );
+        _nResults = _compress< uint32_t, uint8_t, NoSwizzle,
+                               UseAlpha >( inData, nPixels, _results );
     else
-        if( swizzle )
-            _nResults = _compress< uint32_t, uint8_t, SwizzleUInt24, NoAlpha >(
-                            inData, nPixels, _results );
-        else
-            _nResults = _compress< uint32_t, uint8_t, NoSwizzle, NoAlpha >(
-                            inData, nPixels, _results );
+        _nResults = _compress< uint32_t, uint8_t, NoSwizzle,
+                               NoAlpha >( inData, nPixels, _results );
 }
 
 void CompressorRLE4B::decompress( const void* const* inData,
@@ -204,6 +196,18 @@ void CompressorRLE4B::decompress( const void* const* inData,
     else
         _decompress< uint32_t, uint8_t, NoSwizzle,
                      UseAlpha >( inData, inSizes, numInputs, outData, nPixels );
+}
+
+void CompressorDiffRLE4B::compress( const void* const inData,
+                                    const eq_uint64_t nPixels,
+                                    const bool useAlpha )
+{
+    if( useAlpha )
+        _nResults = _compress< uint32_t, uint8_t, SwizzleUInt32,
+                               UseAlpha >( inData, nPixels, _results );
+    else
+        _nResults = _compress< uint32_t, uint8_t, SwizzleUInt24,
+                               NoAlpha >( inData, nPixels, _results );
 }
 
 void CompressorDiffRLE4B::decompress( const void* const* inData,

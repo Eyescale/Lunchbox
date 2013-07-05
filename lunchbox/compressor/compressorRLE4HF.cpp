@@ -154,27 +154,15 @@ public:
 }
 
 void CompressorRLE4HF::compress( const void* const inData,
-                                 const eq_uint64_t nPixels, const bool useAlpha,
-                                 const bool swizzle )
+                                 const eq_uint64_t nPixels,
+                                 const bool useAlpha )
 {
-    if ( swizzle )
-    {
-        if( useAlpha )
-            _nResults = _compress< uint64_t, uint16_t, Swizzle, UseAlpha >(
-                            inData, nPixels, _results );
-        else
-            _nResults = _compress< uint64_t, uint16_t, Swizzle, NoAlpha >(
-                            inData, nPixels, _results );
-    }
+    if( useAlpha )
+        _nResults = _compress< uint64_t, uint16_t, NoSwizzle,
+                               UseAlpha >( inData, nPixels, _results );
     else
-    {
-        if( useAlpha )
-            _nResults = _compress< uint64_t, uint16_t, NoSwizzle, UseAlpha >(
-                            inData, nPixels, _results );
-        else
-            _nResults = _compress< uint64_t, uint16_t, NoSwizzle, NoAlpha >(
-                            inData, nPixels, _results );
-    }
+        _nResults = _compress< uint64_t, uint16_t, NoSwizzle,
+                               NoAlpha >( inData, nPixels, _results );
 }
 
 void CompressorRLE4HF::decompress( const void* const* inData,
@@ -194,6 +182,18 @@ void CompressorRLE4HF::decompress( const void* const* inData,
 }
 
 
+void CompressorDiffRLE4HF::compress( const void* const inData,
+                                     const eq_uint64_t nPixels,
+                                     const bool useAlpha )
+{
+    if( useAlpha )
+        _nResults = _compress< uint64_t, uint16_t, Swizzle,
+                               UseAlpha >( inData, nPixels, _results );
+    else
+        _nResults = _compress< uint64_t, uint16_t, Swizzle,
+                               NoAlpha >( inData, nPixels, _results );
+}
+
 void CompressorDiffRLE4HF::decompress( const void* const* inData,
                                        const eq_uint64_t* const inSizes,
                                        const unsigned nInputs,
@@ -210,5 +210,6 @@ void CompressorDiffRLE4HF::decompress( const void* const* inData,
         _decompress< uint64_t, uint16_t, Swizzle,
                      UseAlpha >( inData, inSizes, nInputs, outData, nPixels );
 }
+
 }
 }

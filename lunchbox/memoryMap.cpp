@@ -135,10 +135,10 @@ void* MemoryMap::_init( const std::string& filename, const size_t size )
 
     // try to open binary file (and size it)
     const int flags = size ? O_RDWR | O_CREAT : O_RDONLY;
-    _fd = open( filename.c_str(), flags );
+    _fd = open( filename.c_str(), flags, S_IRUSR | S_IWUSR );
     if( _fd < 0 )
     {
-        LBINFO << "Can't open " << filename << std::endl;
+        LBINFO << "Can't open " << filename << ": " << sysError << std::endl;
         return 0;
     }
 

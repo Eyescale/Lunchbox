@@ -27,7 +27,7 @@ using lunchbox::MemoryMap;
 int main( int argc, char **argv )
 {
     MemoryMap map( "foo.mmap", MAP_SIZE );
-    TEST( map.getSize() == MAP_SIZE );
+    TESTINFO( map.getSize() == MAP_SIZE, map.getSize( ));
 
     uint8_t* writePtr = map.getAddress< uint8_t >();
     TEST( writePtr );

@@ -157,6 +157,7 @@ namespace lunchbox
 /** A vector of std::strings @version 1.0 */
 typedef std::vector< std::string > Strings;
 typedef Strings::const_iterator StringsCIter;
+typedef Strings::iterator StringsIter;
 
 class Clock;
 class Lock;

@@ -33,7 +33,7 @@ namespace lunchbox
  * @version 1.7.1 using boost::regex for matching
  */
 LUNCHBOX_API Strings searchDirectory( const std::string& directory,
-                                    const std::string& pattern );
+                                      const std::string& pattern );
 
 /** @return the file name part of a path. @version 1.0 */
 LUNCHBOX_API std::string getFilename( const std::string& filename );

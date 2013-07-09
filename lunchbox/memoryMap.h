@@ -33,8 +33,11 @@ public:
     /** Construct a new memory map. @version 1.0 */
     LUNCHBOX_API MemoryMap();
 
-    /** Construct and initialize a new memory map. @version 1.7.1 */
+    /** Construct and initialize a new, readonly memory map. @version 1.7.1 */
     LUNCHBOX_API MemoryMap( const std::string& filename );
+
+    /** Construct and initialize a new, read-write memory map. @version 1.9.1 */
+    LUNCHBOX_API MemoryMap( const std::string& filename, const size_t size );
 
     /**
      * Destruct the memory map.
@@ -48,8 +51,8 @@ public:
     /**
      * Map a file to a memory address.
      *
-     * Currently the file is only mapped read-only. The file is
-     * automatically unmapped when the memory map is deleted.
+     * The file is only mapped read-only. The file is automatically unmapped
+     * when the memory map is deleted.
      *
      * @param filename The filename of the file to map.
      * @return the pointer to the mapped file, or 0 upon error.
@@ -57,11 +60,34 @@ public:
      */
     LUNCHBOX_API const void* map( const std::string& filename );
 
+    /**
+     * Create a writable file to a memory address.
+     *
+     * The file is mapped read-write. An existing file will be overwritten. The
+     * file is automatically unmapped when the memory map is deleted.
+     *
+     * @param filename The filename of the file to map.
+     * @param size this size of the file.
+     * @return the pointer to the mapped file, or 0 upon error.
+     * @version 1.9.1
+     */
+    LUNCHBOX_API void* create( const std::string& filename, const size_t size );
+
     /** Unmap the file. @version 1.0 */
     LUNCHBOX_API void unmap();
 
     /** @return the pointer to the memory map. @version 1.0 */
     const void* getAddress() const { return _ptr; }
+
+    /** @return the pointer to the memory map. @version 1.9.1 */
+    void* getAddress() { return _ptr; }
+
+    /** @return the pointer to the memory map. @version 1.9.1 */
+    template< class T > const T* getAddress() const
+        { return static_cast< const T* >( _ptr ); }
+
+    /** @return the pointer to the memory map. @version 1.9.1 */
+    template< class T > T* getAddress() { return static_cast< T* >( _ptr ); }
 
     /** @return the size of the memory map. @version 1.0 */
     size_t getSize() const { return _size; }
@@ -75,6 +101,8 @@ private:
 
     void* _ptr;
     size_t _size;
+
+    void* _init( const std::string& filename, const size_t size );
 };
 
 inline std::ostream& operator << ( std::ostream& os, const MemoryMap& m )

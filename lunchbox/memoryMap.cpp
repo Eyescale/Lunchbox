@@ -54,6 +54,18 @@ MemoryMap::MemoryMap( const std::string& filename )
     map( filename );
 }
 
+MemoryMap::MemoryMap( const std::string& filename, const size_t size )
+#ifdef _WIN32
+        : _map( 0 )
+#else
+        : _fd( 0 )
+#endif
+        , _ptr( 0 )
+        , _size( 0 )
+{
+    create( filename, size );
+}
+
 MemoryMap::~MemoryMap()
 {
     if( _ptr )
@@ -62,6 +74,20 @@ MemoryMap::~MemoryMap()
 
 const void* MemoryMap::map( const std::string& filename )
 {
+    return _init( filename, 0 );
+}
+
+void* MemoryMap::create( const std::string& filename, const size_t size )
+{
+    LBASSERT( size > 0 );
+    if( size == 0 )
+        return 0;
+
+    return _init( filename, size );
+}
+
+void* MemoryMap::_init( const std::string& filename, const size_t size )
+{
     if( _ptr )
     {
         LBWARN << "File already mapped" << std::endl;
@@ -69,18 +95,26 @@ const void* MemoryMap::map( const std::string& filename )
     }
 
 #ifdef _WIN32
-    // try to open binary file
-    HANDLE file = CreateFile( filename.c_str(), GENERIC_READ, FILE_SHARE_READ,
-                              0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0 );
+    // try to open binary file (and size it)
+    const DWORD access = size ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ;
+    const DWORD create = size ? CREATE_ALWAYS : OPEN_EXISTING;
+    HANDLE file = CreateFile( filename.c_str(), access, FILE_SHARE_READ,
+                              0, create, FILE_ATTRIBUTE_NORMAL, 0 );
     if( file == INVALID_HANDLE_VALUE )
     {
-        LBWARN << "Can't open " << filename << ": " << sysError
-               << std::endl;
+        LBWARN << "Can't open " << filename << ": " << sysError << std::endl;
         return 0;
     }
 
+    if( size )
+    {
+        SetFilePointer( file, size, 0, FILE_BEGIN );
+        SetEndOfFile( file );
+    }
+
     // create a file mapping
-    _map = CreateFileMapping( file, 0, PAGE_READONLY, 0, 0, 0 );
+    const DWORD mode = size ? PAGE_READWRITE : PAGE_READONLY;
+    _map = CreateFileMapping( file, 0, mode, 0, 0, 0 );
     if( !_map )
     {
         LBWARN << "File mapping failed: " << sysError << std::endl;
@@ -94,15 +128,23 @@ const void* MemoryMap::map( const std::string& filename )
     DWORD highSize;
     const DWORD lowSize = GetFileSize( file, &highSize );
     _size = lowSize | ( static_cast< uint64_t >( highSize ) << 32 );
+    LBASSERT( size == 0 || size == _size );
 
     CloseHandle( file );
 #else // POSIX
 
-    // try to open binary file
-    _fd = open( filename.c_str(), O_RDONLY );
+    // try to open binary file (and size it)
+    const int flags = size ? O_RDWR | O_CREAT : O_RDONLY;
+    _fd = open( filename.c_str(), flags );
     if( _fd < 0 )
     {
         LBINFO << "Can't open " << filename << std::endl;
+        return 0;
+    }
+
+    if( size > 0 && ::ftruncate( _fd, size ) != 0 )
+    {
+        LBINFO << "Can't resize " << filename << ": " << sysError << std::endl;
         return 0;
     }
 
@@ -112,8 +154,10 @@ const void* MemoryMap::map( const std::string& filename )
 
     // create memory mapped file
     _size = status.st_size;
-    _ptr = mmap( 0, _size, PROT_READ, MAP_SHARED, _fd, 0 );
+    LBASSERT( size == 0 || size == _size );
 
+    const int mapFlags = size ? PROT_READ | PROT_WRITE : PROT_READ;
+    _ptr = mmap( 0, _size, mapFlags, MAP_SHARED, _fd, 0 );
     if( _ptr == MAP_FAILED )
     {
         close( _fd );

@@ -61,6 +61,17 @@ public:
     LUNCHBOX_API const void* map( const std::string& filename );
 
     /**
+     * Remap a different file for this memory map.
+     *
+     * The file is only mapped read-only. An existing map is unmapped.
+     *
+     * @param filename The filename of the file to map.
+     * @return the pointer to the mapped file, or 0 upon error.
+     * @version 1.9.1
+     */
+    LUNCHBOX_API const void* remap( const std::string& filename );
+
+    /**
      * Create a writable file to a memory address.
      *
      * The file is mapped read-write. An existing file will be overwritten. The

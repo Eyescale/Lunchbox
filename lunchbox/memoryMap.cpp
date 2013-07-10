@@ -77,6 +77,13 @@ const void* MemoryMap::map( const std::string& filename )
     return _init( filename, 0 );
 }
 
+const void* MemoryMap::remap( const std::string& filename )
+{
+    if( _ptr )
+        unmap();
+    return _init( filename, 0 );
+}
+
 void* MemoryMap::create( const std::string& filename, const size_t size )
 {
     LBASSERT( size > 0 );
@@ -174,7 +181,7 @@ void MemoryMap::unmap()
 {
     if( !_ptr )
     {
-        LBWARN << "File not mapped" << std::endl;
+        LBINFO << "File not mapped" << std::endl;
         return;
     }
 

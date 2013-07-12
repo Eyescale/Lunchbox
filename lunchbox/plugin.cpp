@@ -153,7 +153,6 @@ Plugin::Plugin( const std::string& libraryName )
                           libraryName << "' use the same name" );
         }
 #endif
-
     }
 
     LBINFO << "Loaded " << nCompressors << " plugins from " << libraryName

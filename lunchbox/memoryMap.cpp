@@ -93,6 +93,13 @@ void* MemoryMap::create( const std::string& filename, const size_t size )
     return _init( filename, size );
 }
 
+void* MemoryMap::recreate( const std::string& filename, const size_t size )
+{
+    if( _ptr )
+        unmap();
+    return create( filename, size );
+}
+
 void* MemoryMap::_init( const std::string& filename, const size_t size )
 {
     if( _ptr )

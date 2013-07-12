@@ -84,6 +84,19 @@ public:
      */
     LUNCHBOX_API void* create( const std::string& filename, const size_t size );
 
+    /**
+     * Recreate a different writable file for this memory map.
+     *
+     * The file is only mapped read-write. An existing map is unmapped.
+     *
+     * @param filename The filename of the file to map.
+     * @param size this size of the file.
+     * @return the pointer to the mapped file, or 0 upon error.
+     * @version 1.0
+     */
+    LUNCHBOX_API void* recreate( const std::string& filename,
+                                 const size_t size );
+
     /** Unmap the file. @version 1.0 */
     LUNCHBOX_API void unmap();
 

@@ -44,8 +44,10 @@ bool init( const int argc, char** argv )
 
     for( int i = 1; i < argc; ++i )
     {
-        // verbose option
-        if( std::string( argv[i] ) == "-v" )
+        // verbose options
+        if( std::string( argv[i] ) == "-vv" )
+            Log::level = LOG_VERB;
+        else if( std::string( argv[i] ) == "-v" )
             Log::level = LOG_INFO;
     }
 

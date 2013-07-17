@@ -35,7 +35,7 @@ if(DNSSD_name)
   endif()
 endif()
 
-find_package(LibJpegTurbo )
+find_package(LibJpegTurbo 1.2.1)
 if(LibJpegTurbo_FOUND)
   set(LibJpegTurbo_name LibJpegTurbo)
 endif()
@@ -72,7 +72,7 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
   include(${CMAKE_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
 endif()
 
-set(LUNCHBOX_BUILD_DEBS libavahi-compat-libdnssd-dev;libboost-regex-dev;libboost-serialization-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg)
+set(LUNCHBOX_BUILD_DEBS cmake;git;git-svn;libavahi-compat-libdnssd-dev;libboost-regex-dev;libboost-serialization-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;pkg-config;subversion)
 
 set(LUNCHBOX_DEPENDS hwloc;DNSSD;LibJpegTurbo;Boost)
 

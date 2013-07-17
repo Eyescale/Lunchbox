@@ -42,6 +42,13 @@ bool init( const int argc, char** argv )
     LBVERB << std::endl;
 #endif
 
+    for( int i = 1; i < argc; ++i )
+    {
+        // verbose option
+        if( std::string( argv[i] ) == "-v" )
+            Log::level = LOG_INFO;
+    }
+
     if( ++_initialized > 1 ) // not first
         return true;
 

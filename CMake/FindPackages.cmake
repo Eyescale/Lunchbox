@@ -35,7 +35,7 @@ if(DNSSD_name)
   endif()
 endif()
 
-find_package(LibJpegTurbo )
+find_package(LibJpegTurbo 1.2.1)
 if(LibJpegTurbo_FOUND)
   set(LibJpegTurbo_name LibJpegTurbo)
 endif()

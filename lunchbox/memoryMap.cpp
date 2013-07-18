@@ -122,7 +122,7 @@ void* MemoryMap::_init( const std::string& filename, const size_t size )
 
     if( size )
     {
-        SetFilePointer( file, size, 0, FILE_BEGIN );
+        SetFilePointer( file, LONG(size), PLONG(&size)+1, FILE_BEGIN );
         SetEndOfFile( file );
     }
 

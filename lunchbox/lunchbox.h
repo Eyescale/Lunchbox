@@ -33,7 +33,7 @@
  *   lunchbox::RequestHandler, lunchbox::SpinLock
  * - Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
  *   lunchbox::ScopedMutex, lunchbox::uint128_t, lunchbox::UnorderedIntervalSet,
- *   lunchbox::UUID
+ *   lunchbox::UUID, lunchbox::Future
  * - Compression and CPU-GPU transfer plugin handling: lunchbox::Compressor,
  *   lunchbox::Decompressor, lunchbox::Downloader, lunchbox::Plugin,
  *   lunchbox::PluginRegistry, lunchbox::Uploader
@@ -60,6 +60,7 @@
 #include <lunchbox/daemon.h>
 #include <lunchbox/debug.h>
 #include <lunchbox/file.h>
+#include <lunchbox/future.h>
 #include <lunchbox/lfVector.h>
 #include <lunchbox/memoryMap.h>
 #include <lunchbox/monitor.h>

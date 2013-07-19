@@ -21,6 +21,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   downloader.h
   dso.h
   file.h
+  future.h
   hash.h
   indexIterator.h
   init.h

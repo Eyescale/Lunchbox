@@ -41,7 +41,7 @@ namespace lunchbox
 
 void abort()
 {
-    LBERROR << ", in: " << backtrace << std::endl;
+    LBERROR << "  in: " << backtrace << std::endl;
 
     // if LB_ABORT_WAIT is set, spin forever to allow identifying and debugging
     // crashed nodes.

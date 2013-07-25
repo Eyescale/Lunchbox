@@ -31,13 +31,21 @@ public:
     /** Destruct the future. @version 1.9.1 */
     virtual ~FutureImpl(){}
 
-    /** Wait for the promise to be fullfilled. @version 1.9.1 */
+    /**
+     * Wait for the promise to be fullfilled.
+     *
+     * May be called multiple times.
+     *
+     * @version 1.9.1 */
     virtual T wait() = 0;
 };
 
 /** A future represents a asynchronous operation. Do not subclass. */
 template< class T > class Future
 {
+    typedef void (Future< T >::*bool_t)() const;
+    void bool_true() const {}
+
 public:
     typedef RefPtr< FutureImpl< T > > Impl; //!< The wait implementation
 
@@ -49,6 +57,33 @@ public:
 
     /** Wait for the promise to be fullfilled. @version 1.9.1 */
     T wait() { return impl_->wait(); }
+
+    /** @name Blocking comparison operators. */
+    //@{
+    /** @return a bool conversion of the result. @version 1.9.1 */
+    operator bool_t() { return wait() ? &Future< T >::bool_true : 0; }
+
+    /** @return true if the result does convert to false. @version 1.9.1 */
+    bool operator ! () { return !wait(); }
+
+    /** @return true if the result is equal to the given value. @version 1.9.1*/
+    bool operator == ( const T& rhs ) { return wait() == rhs; }
+
+    /** @return true if the result is not equal to the rhs. @version 1.9.1*/
+    bool operator != ( const T& rhs ) { return wait() != rhs; }
+
+    /** @return true if the result is smaller than the rhs. @version 1.9.1 */
+    bool operator < ( const T& rhs ) { return wait() < rhs; }
+
+    /** @return true if the result is bigger than the rhs. @version 1.9.1 */
+    bool operator > ( const uint128_t& rhs ) { return wait() > rhs; }
+
+    /** @return true if the result is smaller or equal. @version 1.9.1 */
+    bool operator <= ( const uint128_t& rhs ) { return wait() <= rhs; }
+
+    /** @return true if the result is bigger or equal. @version 1.9.1 */
+    bool operator >= ( const uint128_t& rhs ) { return wait() >= rhs; }
+    //@}
 
 private:
     Impl impl_;

@@ -218,10 +218,16 @@ void LogBuffer::setThreadName( const std::string& name )
     snprintf( _thread, 12, "%-11s", name.c_str( ));
 }
 
-void LogBuffer::setLogInfo( const char* file, const int line )
+void LogBuffer::setLogInfo( const char* f, const int line )
 {
-    LBASSERT( file );
-    snprintf( _file, 35, "%29.29s:%-4d", file, line );
+    LBASSERT( f );
+    std::string file( f );
+    const size_t length = file.length();
+
+    if( length > 29 )
+        file = file.substr( length - 29, length );
+
+    snprintf( _file, 35, "%29s:%-4d", file.c_str(), line );
 }
 
 LogBuffer::int_type LogBuffer::overflow( LogBuffer::int_type c )

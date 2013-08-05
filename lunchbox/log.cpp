@@ -215,18 +215,13 @@ std::ostream& Log::getOutput()
 void LogBuffer::setThreadName( const std::string& name )
 {
     LBASSERT( !name.empty( ));
-    snprintf( _thread, 12, "%11s", name.c_str( ));
+    snprintf( _thread, 12, "%-11s", name.c_str( ));
 }
 
 void LogBuffer::setLogInfo( const char* file, const int line )
 {
     LBASSERT( file );
-    _file = file;
-
-    const size_t length = _file.length();
-    if( length > 30 )
-        _file = _file.substr( length - 30, length );
-    _line = line;
+    snprintf( _file, 35, "%29.29s:%-4d", file, line );
 }
 
 LogBuffer::int_type LogBuffer::overflow( LogBuffer::int_type c )
@@ -239,8 +234,8 @@ LogBuffer::int_type LogBuffer::overflow( LogBuffer::int_type c )
         if( !_noHeader )
         {
             //assert( _thread[0] );
-            _stringStream << getpid()  << " " << _thread << " " << _file << ":"
-                          << _line << " " << _clock->getTime64() << " ";
+            _stringStream << getpid()  << " " << _thread << " " << _file << " "
+                          << _clock->getTime64() << " ";
         }
 
         for( int i=0; i<_indent; ++i )

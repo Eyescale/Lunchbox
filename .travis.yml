@@ -4,10 +4,10 @@ notifications:
     on_success: never
 language: cpp
 script:
- - git clone --depth 10 https://github.com/Eyescale/Buildyard.git
- - cd Buildyard
- - git clone --depth 10 https://github.com/Eyescale/config.git config.eyescale
+ - mkdir Build
+ - cd Build
+ - cmake .. -DCI_BUILD_COMMIT=$TRAVIS_COMMIT
  - env TRAVIS=1 make -j8 Lunchbox-test ARGS=-V
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq cmake git git-svn libavahi-compat-libdnssd-dev libboost-regex-dev libboost-serialization-dev libhwloc-dev libjpeg-turbo8-dev libturbojpeg pkg-config subversion 
+ - sudo apt-get install -qq autoconf automake cmake git git-svn libavahi-compat-libdnssd-dev libboost-regex-dev libboost-serialization-dev libhwloc-dev libjpeg-turbo8-dev libturbojpeg pkg-config subversion 

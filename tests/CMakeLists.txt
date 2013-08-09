@@ -39,6 +39,6 @@ foreach(FILE ${TEST_FILES})
   list(APPEND ALL_TESTS ${NAME})
 endforeach(FILE ${TEST_FILES})
 
-# workaround bug that tests won't get built
+# workaround: 'make test' does not build tests beforehand
 add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS ${ALL_TESTS})
 set_target_properties(tests PROPERTIES FOLDER "Tests")

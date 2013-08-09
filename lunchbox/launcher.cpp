@@ -1,16 +1,16 @@
- 
+
 /* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -37,24 +37,6 @@
 namespace lunchbox
 {
 
-#ifndef _WIN32
-// the signal handler for SIGCHILD
-static void sigChildHandler( int /*signal*/ )
-{
-    // Get exit status to avoid zombies
-    int status;
-    ::wait( &status );
-
-    // DO NOT USE cout/cerr: signal handler might be called while another cout
-    //            is in progress, which will cause a deadlock due to a double
-    //            flockfile() 
-    // LBINFO << "Received SIGCHILD" << endl;
-    
-    // Re-install signal handler
-    signal( SIGCHLD, sigChildHandler );
-}
-#endif
-
 bool Launcher::run( const std::string& command )
 {
     if( command.empty( ))
@@ -71,7 +53,7 @@ bool Launcher::run( const std::string& command )
     const char*         cmdLine     = command.c_str();
 
     startupInfo.cb = sizeof( STARTUPINFO );
-    const bool success = 
+    const bool success =
         CreateProcess( 0, LPSTR( cmdLine ), // program, command line
                        0, 0,                // process, thread attributes
                        FALSE,               // inherit handles
@@ -95,7 +77,12 @@ bool Launcher::run( const std::string& command )
     std::vector<std::string> commandLine;
     _buildCommandLine( command, commandLine );
 
-    signal( SIGCHLD, sigChildHandler );
+    struct sigaction act;
+    setZero( &act, sizeof( act ));
+    act.sa_handler = SIG_DFL;
+    act.sa_flags = SA_NOCLDWAIT;
+    ::sigaction( SIGCHLD, &act, &act );
+
     const int result = fork();
     switch( result )
     {
@@ -141,7 +128,7 @@ bool Launcher::run( const std::string& command )
 }
 
 #ifndef _WIN32
-void Launcher::_buildCommandLine( const std::string& command, 
+void Launcher::_buildCommandLine( const std::string& command,
                                   std::vector<std::string>& commandLine )
 {
     const size_t length    = command.size();
@@ -151,7 +138,7 @@ void Launcher::_buildCommandLine( const std::string& command,
     char         buffer[length+1];
 
     commandLine.clear();
-    
+
     // tokenize command line
     for( size_t i=0; i<length; i++ )
     {

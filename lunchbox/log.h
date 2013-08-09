@@ -67,9 +67,9 @@ namespace lunchbox
     {
     public:
         LogBuffer( std::ostream& stream )
-                : _line(0), _indent(0), _blocked(0), _noHeader(0),
+                : _indent(0), _blocked(0), _noHeader(0),
                   _newLine(true), _stream(stream)
-            { _thread[0] = 0; }
+            { _thread[0] = 0; _file[0] = 0; }
         virtual ~LogBuffer() {}
 
         void indent() { ++_indent; }
@@ -102,10 +102,7 @@ namespace lunchbox
         char _thread[12];
 
         /** The current file logging. */
-        std::string _file;
-
-        /** The current line logging. */
-        int _line;
+        char _file[35];
 
         /** The current indentation level. */
         int _indent;

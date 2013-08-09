@@ -37,7 +37,10 @@
 #endif
 
 //----- Common extensions of the STL
-#ifdef __GNUC__
+#ifdef CXX_UNORDERED_MAP_SUPPORTED
+#  define LB_STDEXT_STD
+#  define LB_STDEXT_STD11
+#elif defined __GNUC__
 #  if defined LB_GCC_4_3_OR_LATER && !defined __INTEL_COMPILER
 #    define LB_STDEXT_TR1
 #  elif defined __clang__
@@ -88,8 +91,13 @@ namespace stde = stdext;
 #endif
 
 #ifdef LB_STDEXT_STD
-#  include <hash_map>
-#  include <hash_set>
+#  ifdef LB_STDEXT_STD11
+#    include <unordered_map>
+#    include <unordered_set>
+#  else
+#    include <hash_map>
+#    include <hash_set>
+#  endif
 /* Alias stde namespace to uniformly access stl extensions. */
 namespace stde = std;
 #  define LB_STDEXT_NAMESPACE_OPEN namespace std {
@@ -100,7 +108,7 @@ namespace stde = std;
 LB_STDEXT_NAMESPACE_OPEN
 
 //----- Our extensions of the STL
-#ifdef LB_STDEXT_TR1
+#if defined LB_STDEXT_TR1 || defined LB_STDEXT_STD11
 #  ifndef LB_HAVE_HASH_MAP
     template<class K, class T, class H = hash< K >,
              class P = std::equal_to< K >, class A = std::allocator< K > >

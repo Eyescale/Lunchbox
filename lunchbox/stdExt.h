@@ -240,33 +240,36 @@ LB_STDEXT_NAMESPACE_OPEN
         c.erase( std::unique( c.begin(), c.end( )), c.end( ));
     }
 
-    /** Use parallel sorting where available @version 1.7.2 */
-#ifdef LB_GCC_4_4_OR_LATER
+#ifndef LB_STDEXT_STD
+    /** @deprecated Use lunchbox::sort() */
+#  ifdef LB_GCC_4_4_OR_LATER
     using __gnu_parallel::sort;
-#else
+#  else
     using std::sort;
+#  endif
 #endif
 
-    /** Find the element in the given vector. @version 1.0 */
+    /** @deprecated Use lunchbox::find() */
     template< typename T > typename std::vector< T >::iterator
     find( std::vector< T >& container, const T& element )
         { return std::find( container.begin(), container.end(), element ); }
 
-    /** Find the element in the given vector. @version 1.0 */
+    /** @deprecated Use lunchbox::find() */
     template< typename T > typename std::vector< T >::const_iterator
     find( const std::vector< T >& container, const T& element )
         { return std::find( container.begin(), container.end(), element ); }
 
-    /** Find the element matching the predicate @version 1.0 */
+    /** @deprecated Use lunchbox::find() */
     template< typename T, typename P > typename std::vector< T >::iterator
     find_if( std::vector< T >& container, const P& predicate )
         { return std::find_if( container.begin(), container.end(), predicate );}
 
-    /** Find the element matching the predicate @version 1.0 */
+    /** @deprecated Use lunchbox::find() */
     template< typename T, typename P > typename std::vector<T>::const_iterator
     find_if( std::vector< const T >& container, const P& predicate )
         { return std::find_if( container.begin(), container.end(), predicate );}
 
 LB_STDEXT_NAMESPACE_CLOSE
+
 
 #endif // LUNCHBOX_STDEXT_H

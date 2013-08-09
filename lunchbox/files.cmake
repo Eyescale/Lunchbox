@@ -4,6 +4,7 @@
 set(LUNCHBOX_PUBLIC_HEADERS
   ${OUTPUT_INCLUDE_DIR}/lunchbox/version.h
   ${DEFINES_FILE}
+  algorithm.h
   any.h
   anySerialization.h
   api.h

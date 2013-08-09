@@ -52,6 +52,7 @@
 
 #include <lunchbox/plugins/compressor.h>
 
+#include <lunchbox/algorithm.h>
 #include <lunchbox/any.h>
 #include <lunchbox/api.h>
 #include <lunchbox/atomic.h>

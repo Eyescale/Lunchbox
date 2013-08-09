@@ -20,12 +20,15 @@
 
 #include <lunchbox/compiler.h>
 #include <algorithm>
+#ifdef LB_GCC_4_4_OR_LATER
+#  include <parallel/algorithm>
+#endif
 
 namespace lunchbox
 {
     /** std::sort using parallel sorting where available @version 1.9.1 */
 #ifdef LB_GCC_4_4_OR_LATER
-    using __gnu_algorithm::sort;
+    using std::__parallel::sort;
 #else
     using std::sort;
 #endif

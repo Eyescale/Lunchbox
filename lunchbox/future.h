@@ -118,7 +118,5 @@ protected:
     Impl impl_;
 };
 
-typedef Future< bool > Futureb; //!< A future with a boolean return value
-
 }
 #endif //LUNCHBOX_FUTURE_H

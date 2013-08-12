@@ -20,6 +20,8 @@
 
 #include <lunchbox/future.h>
 #include <boost/bind.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace lunchbox
 {
@@ -28,21 +30,23 @@ namespace lunchbox
  * A Future implementation for a RequestHandler request.
  * @version 1.9.1
  */
-template< class T > class RequestFuture : public Futureb
+template< class T > class RequestFuture : public Future< bool >
 {
     class Impl : public FutureFunction< bool >
     {
+        typedef typename boost::mpl::if_< boost::is_same< T, void >,
+                                          void*, T >::type value_t;
     public:
         Impl( RequestHandler& handler, const uint32_t req )
             : FutureFunction< bool >(
                           boost::bind( &RequestFuture< T >::Impl::wait_, this ))
-            , result( 0 )
             , request( req )
+            , result( 0 )
             , handler_( handler )
         {}
 
-        T result;
         const uint32_t request;
+        value_t result;
 
     private:
         RequestHandler& handler_;
@@ -52,7 +56,7 @@ template< class T > class RequestFuture : public Futureb
 
 public:
     RequestFuture( RequestHandler& handler, const uint32_t request )
-        : Futureb( new Impl( handler, request ))
+        : Future< bool >( new Impl( handler, request ))
     {}
 
     virtual ~RequestFuture() { wait(); }

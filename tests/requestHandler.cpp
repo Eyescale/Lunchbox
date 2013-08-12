@@ -41,6 +41,16 @@ public:
         request = requestQ_.pop();
         TEST( handler_.getRequestData( request ) == ++payload );
         handler_.serveRequest( request, uint32In );
+
+        request = requestQ_.pop();
+        TEST( handler_.getRequestData( request ) == ++payload );
+        handler_.serveRequest( request );
+
+        request = requestQ_.pop();
+        TESTINFO( handler_.getRequestData( request ) == ++payload,
+                  (size_t)handler_.getRequestData( request ) << " for " <<
+                  request );
+        handler_.serveRequest( request );
     }
 };
 
@@ -56,10 +66,19 @@ int main( int argc, char **argv )
     TEST( handler_.waitRequest( request, boolOut ));
     TEST( boolOut = true );
 
-    lunchbox::f_uint32_t future =
+    lunchbox::RequestFuture< uint32_t > future =
         handler_.registerRequest< uint32_t >( ++payload );
     requestQ_.push( future.getID( ));
     TEST( future == 0xC0FFEE );
+
+    request = handler_.registerRequest( ++payload );
+    requestQ_.push( request );
+    TEST( handler_.waitRequest( request ));
+
+    lunchbox::RequestFuture< void > voidFuture =
+        handler_.registerRequest< void >( ++payload );
+    requestQ_.push( voidFuture.getID( ));
+    TEST( future.wait( ));
 
     TEST( thread.join( ));
     return EXIT_SUCCESS;

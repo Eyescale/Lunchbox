@@ -20,6 +20,7 @@
 
 #include <lunchbox/referenced.h>
 #include <lunchbox/refPtr.h>
+#include <boost/function/function0.hpp>
 
 namespace lunchbox
 {
@@ -38,6 +39,33 @@ public:
      *
      * @version 1.9.1 */
     virtual T wait() = 0;
+};
+
+/**
+ * A Future implementation using a boost::function for fulfilment.
+ * @version 1.9.1
+ */
+template< class T > class FutureFunction : public FutureImpl< T >
+{
+public:
+    typedef boost::function< T() > Func;
+
+    FutureFunction( const Func& func ) : func_( func ) {}
+    virtual ~FutureFunction() { wait(); }
+
+    virtual T wait() final
+    {
+        if( !func_.empty( ))
+        {
+            result_ = func_();
+            func_.clear();
+        }
+        return result_;
+    }
+
+private:
+    Func func_;
+    T result_;
 };
 
 /** A future represents a asynchronous operation. Do not subclass. */

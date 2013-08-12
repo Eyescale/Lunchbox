@@ -20,6 +20,8 @@
 
 #include <lunchbox/compiler.h>
 #include <algorithm>
+#include <vector>
+
 #ifdef LB_GCC_4_4_OR_LATER
 #  include <parallel/algorithm>
 #endif

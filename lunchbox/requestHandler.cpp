@@ -1,15 +1,15 @@
- 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -23,6 +23,8 @@
 #include <lunchbox/stdExt.h>
 #include <lunchbox/spinLock.h>
 #include <lunchbox/timedLock.h>
+
+#include <list>
 
 namespace lunchbox
 {
@@ -263,7 +265,7 @@ void RequestHandler::serveRequest( const uint32_t requestID,
         if( i != _impl->requests.end( ))
             request = i->second;
     }
-        
+
     if( request )
     {
         request->result.rUint128.low = result.low();
@@ -271,7 +273,7 @@ void RequestHandler::serveRequest( const uint32_t requestID,
         request->lock.unset();
     }
 }
-    
+
 bool RequestHandler::isRequestServed( const uint32_t requestID ) const
 {
     ScopedFastWrite mutex( _impl->lock );
@@ -300,7 +302,7 @@ std::ostream& operator << ( std::ostream& os, const detail::RequestHandler& rh )
            << std::endl;
     }
 
-    return os;    
+    return os;
 }
 
 std::ostream& operator << ( std::ostream& os, const RequestHandler& rh )

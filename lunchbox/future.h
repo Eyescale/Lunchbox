@@ -18,15 +18,16 @@
 #ifndef LUNCHBOX_FUTURE_H
 #define LUNCHBOX_FUTURE_H
 
-#include <lunchbox/referenced.h>
-#include <lunchbox/refPtr.h>
+#include <lunchbox/nonCopyable.h> // base class
+#include <lunchbox/referenced.h>  // used inline for impl
+#include <lunchbox/refPtr.h>      // used inline to store impl
 #include <boost/function/function0.hpp>
 
 namespace lunchbox
 {
 
 /** @internal subclass to implement the wait method fulfilling the future. */
-template< class T > class FutureImpl : public Referenced
+template< class T > class FutureImpl : public Referenced, public NonCopyable
 {
 public:
     /** Destruct the future. @version 1.9.1 */
@@ -113,7 +114,7 @@ public:
     bool operator >= ( const uint128_t& rhs ) { return wait() >= rhs; }
     //@}
 
-private:
+protected:
     Impl impl_;
 };
 

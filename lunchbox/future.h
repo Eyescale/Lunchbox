@@ -18,9 +18,8 @@
 #ifndef LUNCHBOX_FUTURE_H
 #define LUNCHBOX_FUTURE_H
 
-#include <lunchbox/referenced.h>
-#include <lunchbox/refPtr.h>
-#include <boost/function/function0.hpp>
+#include <lunchbox/referenced.h> // base class
+#include <lunchbox/refPtr.h>     // used inline
 
 namespace lunchbox
 {
@@ -39,33 +38,12 @@ public:
      *
      * @version 1.9.1 */
     virtual T wait() = 0;
-};
 
-/**
- * A Future implementation using a boost::function for fulfilment.
- * @version 1.9.1
- */
-template< class T > class FutureFunction : public FutureImpl< T >
-{
-public:
-    typedef boost::function< T() > Func;
-
-    FutureFunction( const Func& func ) : func_( func ) {}
-    virtual ~FutureFunction() { wait(); }
-
-    virtual T wait() final
-    {
-        if( !func_.empty( ))
-        {
-            result_ = func_();
-            func_.clear();
-        }
-        return result_;
-    }
-
-private:
-    Func func_;
-    T result_;
+    /**
+     * @return true if the future has been fulfilled, false if it is pending.
+     * @version 1.9.1
+     */
+    virtual bool isReady() const = 0;
 };
 
 /** A future represents a asynchronous operation. Do not subclass. */
@@ -85,6 +63,12 @@ public:
 
     /** Wait for the promise to be fullfilled. @version 1.9.1 */
     T wait() { return impl_->wait(); }
+
+    /**
+     * @return true if the future has been fulfilled, false if it is pending.
+     * @version 1.9.1
+     */
+    bool isReady() const { return impl_->isReady(); }
 
     /** @name Blocking comparison operators. */
     //@{

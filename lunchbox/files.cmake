@@ -23,6 +23,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   dso.h
   file.h
   future.h
+  futureFunction.h
   hash.h
   indexIterator.h
   init.h

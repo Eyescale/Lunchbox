@@ -1,15 +1,15 @@
- 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+
+/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -62,38 +62,38 @@ public:
 
     bool waitRequest( const uint32_t requestID_, Request::Result& result,
                       const uint32_t timeout )
-        {
-            result.rUint128.low = 0;
-            result.rUint128.high = 0;
-            Request* request = 0;
-            {
-                ScopedFastWrite mutex( lock );
-                RequestHashCIter i = requests.find( requestID_ );
-                if( i == requests.end( ))
-                    return false;
-
-                request = i->second;
-            }
-
-            const bool requestServed = request->lock.set( timeout );
-            if( requestServed )
-                result = request->result;
-
-            unregisterRequest( requestID_ );
-            return requestServed;
-        }
-
-    void unregisterRequest( const uint32_t requestID_ )
+    {
+        result.rUint128.low = 0;
+        result.rUint128.high = 0;
+        Request* request = 0;
         {
             ScopedFastWrite mutex( lock );
-            RequestHash::iterator i = requests.find( requestID_ );
+            RequestHashCIter i = requests.find( requestID_ );
             if( i == requests.end( ))
-                return;
+                return false;
 
-            Request* request = i->second;
-            requests.erase( i );
-            freeRequests.push_front( request );
+            request = i->second;
         }
+
+        const bool requestServed = request->lock.set( timeout );
+        if( requestServed )
+            result = request->result;
+
+        unregisterRequest( requestID_ );
+        return requestServed;
+    }
+
+    void unregisterRequest( const uint32_t requestID_ )
+    {
+        ScopedFastWrite mutex( lock );
+        RequestHash::iterator i = requests.find( requestID_ );
+        if( i == requests.end( ))
+            return;
+
+        Request* request = i->second;
+        requests.erase( i );
+        freeRequests.push_front( request );
+    }
 
     mutable lunchbox::SpinLock lock;
     uint32_t requestID;
@@ -263,7 +263,7 @@ void RequestHandler::serveRequest( const uint32_t requestID,
         if( i != _impl->requests.end( ))
             request = i->second;
     }
-        
+
     if( request )
     {
         request->result.rUint128.low = result.low();
@@ -271,7 +271,7 @@ void RequestHandler::serveRequest( const uint32_t requestID,
         request->lock.unset();
     }
 }
-    
+
 bool RequestHandler::isRequestServed( const uint32_t requestID ) const
 {
     ScopedFastWrite mutex( _impl->lock );
@@ -300,7 +300,7 @@ std::ostream& operator << ( std::ostream& os, const detail::RequestHandler& rh )
            << std::endl;
     }
 
-    return os;    
+    return os;
 }
 
 std::ostream& operator << ( std::ostream& os, const RequestHandler& rh )

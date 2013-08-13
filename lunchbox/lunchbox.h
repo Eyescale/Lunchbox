@@ -62,6 +62,7 @@
 #include <lunchbox/debug.h>
 #include <lunchbox/file.h>
 #include <lunchbox/future.h>
+#include <lunchbox/futureFunction.h>
 #include <lunchbox/lfVector.h>
 #include <lunchbox/memoryMap.h>
 #include <lunchbox/monitor.h>

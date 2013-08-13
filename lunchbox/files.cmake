@@ -51,6 +51,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   pool.h
   refPtr.h
   referenced.h
+  requestFuture.h
   requestHandler.h
   rng.h
   scopedMutex.h

@@ -174,15 +174,22 @@ class uint128_t;
 
 template< class > class Atomic;
 template< class > class Buffer;
+template< class > class Future;
 template< class > class Monitor;
+template< class > class RequestFuture;
 template< class, class > class LFVectorIterator;
-template< class, class > class PluginVisitorT;
 template< class, class > class Lockable;
+template< class, class > class PluginVisitorT;
 template< class, int32_t > class LFVector;
 
 typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable
 typedef Atomic< ssize_t > a_ssize_t; //!< An atomic signed size variable
 typedef Buffer< uint8_t > Bufferb; //!< a byte buffer
+
+typedef Future< bool > f_bool_t; //!< A future with a boolean return value
+typedef Future< uint32_t > f_uint32_t; //!< A future 32 bit unsigned promise
+typedef Future< ssize_t > f_ssize_t; //!< A future signed size promise
+typedef Future< void > f_void_t; //!< A future signed size promise
 
 typedef std::vector< Plugin* > Plugins;
 typedef Plugins::const_iterator PluginsCIter;

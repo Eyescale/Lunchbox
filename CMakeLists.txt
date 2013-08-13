@@ -42,8 +42,13 @@ if(OPENMP_FOUND)
 endif()
 
 set(LUNCHBOX_DEFINITIONS ${LUNCHBOX_DEFINITIONS}
-    -DLUNCHBOX_BUILD_DIR="${CMAKE_BINARY_DIR}/")
+  -DLUNCHBOX_BUILD_DIR="${CMAKE_BINARY_DIR}/")
 add_definitions(${LUNCHBOX_DEFINITIONS})
+
+if(APPLE)
+  # WAR needed when CMAKE_OSX_SYSROOT is set to find /usr/include/turbojpeg.h
+  include_directories(SYSTEM /usr/local/../include)
+endif()
 
 include(InstallSymlink)
 include(pthreads/CMakeLists.txt)

@@ -18,7 +18,7 @@
 #ifndef LUNCHBOX_REQUESTFUTURE_H
 #define LUNCHBOX_REQUESTFUTURE_H
 
-#include <lunchbox/future.h>
+#include <lunchbox/futureFunction.h>
 #include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>

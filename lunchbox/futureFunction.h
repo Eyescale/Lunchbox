@@ -42,7 +42,7 @@ public:
 
     FutureFunction( const Func& func ) : func_( func ) {}
 
-private:
+protected:
     virtual ~FutureFunction() { wait(); }
 
     virtual T wait() final

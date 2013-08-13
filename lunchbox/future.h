@@ -104,13 +104,13 @@ public:
     bool operator < ( const T& rhs ) { return wait() < rhs; }
 
     /** @return true if the result is bigger than the rhs. @version 1.9.1 */
-    bool operator > ( const uint128_t& rhs ) { return wait() > rhs; }
+    bool operator > ( const T& rhs ) { return wait() > rhs; }
 
     /** @return true if the result is smaller or equal. @version 1.9.1 */
-    bool operator <= ( const uint128_t& rhs ) { return wait() <= rhs; }
+    bool operator <= ( const T& rhs ) { return wait() <= rhs; }
 
     /** @return true if the result is bigger or equal. @version 1.9.1 */
-    bool operator >= ( const uint128_t& rhs ) { return wait() >= rhs; }
+    bool operator >= ( const T& rhs ) { return wait() >= rhs; }
     //@}
 
 private:

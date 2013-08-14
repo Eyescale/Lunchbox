@@ -49,6 +49,9 @@ LUNCHBOX_API void checkHeap();
  */
 LUNCHBOX_API std::ostream& sysError( std::ostream& os );
 
+/** @return a textual description of the current system error. @version 1.9.1 */
+LUNCHBOX_API std::string sysError();
+
 /**
  * Print the current call stack.
  *

@@ -185,12 +185,17 @@ std::ostream& sysError( std::ostream& os )
     if( length>2 && text[length-2] == '\r' )
         text[length-2] = '\0';
 
-    os << text << " (" << error << ")";
+    return os << text << " (" << error << ")";
 #else
-    os << strerror( errno ) << " (" << errno << ")";
+    return os << strerror( errno ) << " (" << errno << ")";
 #endif
+}
 
-    return os;
+std::string sysError()
+{
+    std::ostringstream os;
+    os << sysError;
+    return os.str();
 }
 
 }

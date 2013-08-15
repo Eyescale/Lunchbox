@@ -57,10 +57,10 @@ LUNCHBOX_API std::string sysError();
  *
  * May not be implemented on all platforms.
  *
- * @param ignoreHead the number of most recent stack frames to ignore.
+ * @param skipFrames the number of most recent stack frames to ignore.
  * @version 1.9.1
  */
-LUNCHBOX_API std::string backtrace( const size_t ignoreHead );
+LUNCHBOX_API std::string backtrace( const size_t skipFrames );
 
 /** Print the current call stack. @version 1.0 */
 LUNCHBOX_API std::ostream& backtrace( std::ostream& os );

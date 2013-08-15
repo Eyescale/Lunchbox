@@ -67,7 +67,7 @@ void checkHeap()
 
 namespace
 {
-static void backtrace_( std::ostream& os, const size_t ignoreHead )
+static void backtrace_( std::ostream& os, const size_t skipFrames )
 {
 #ifdef _WIN32
     // Sym* functions from DbgHelp are not thread-safe...
@@ -95,7 +95,7 @@ static void backtrace_( std::ostream& os, const size_t ignoreHead )
     symbol->MaxNameLen   = LB_SYMBOL_LENGTH;
     symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
 
-    for( unsigned short i = ignoreHead; i < frames; ++i )
+    for( unsigned short i = skipFrames; i < frames; ++i )
     {
         os << "\n  " << frames-i-1 << ": ";
         if ( !SymFromAddr( hProcess, (DWORD64)stack[i], 0, symbol ))
@@ -117,7 +117,7 @@ static void backtrace_( std::ostream& os, const size_t ignoreHead )
     void* callstack[ LB_BACKTRACE_DEPTH ];
     const int frames = ::backtrace( callstack, LB_BACKTRACE_DEPTH );
     char** names = ::backtrace_symbols( callstack, frames );
-    for( int i = ignoreHead + 1; i < frames; ++i )
+    for( int i = skipFrames + 1; i < frames; ++i )
     {
         std::string name = names[ i ];
 #  ifdef __linux__
@@ -159,10 +159,10 @@ static void backtrace_( std::ostream& os, const size_t ignoreHead )
 }
 }
 
-std::string backtrace( const size_t ignoreHead )
+std::string backtrace( const size_t skipFrames )
 {
     std::ostringstream os;
-    backtrace_( os, ignoreHead + 1/*cut self*/ );
+    backtrace_( os, skipFrames + 1/*cut self*/ );
     return os.str();
 }
 

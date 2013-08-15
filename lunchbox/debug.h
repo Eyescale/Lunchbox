@@ -53,11 +53,16 @@ LUNCHBOX_API std::ostream& sysError( std::ostream& os );
 LUNCHBOX_API std::string sysError();
 
 /**
- * Print the current call stack.
+ * Get the current call stack.
  *
  * May not be implemented on all platforms.
- * @version 1.0
+ *
+ * @param ignoreHead the number of most recent stack frames to ignore.
+ * @version 1.9.1
  */
+LUNCHBOX_API std::string backtrace( const size_t ignoreHead );
+
+/** Print the current call stack. @version 1.0 */
 LUNCHBOX_API std::ostream& backtrace( std::ostream& os );
 
 LUNCHBOX_API std::string demangleTypeID( const char* mangled ); //!< @internal

@@ -65,7 +65,9 @@ void checkHeap()
 #endif
 }
 
-std::ostream& backtrace( std::ostream& os )
+namespace
+{
+static void backtrace_( std::ostream& os, const size_t ignoreHead )
 {
 #ifdef _WIN32
     // Sym* functions from DbgHelp are not thread-safe...
@@ -93,10 +95,9 @@ std::ostream& backtrace( std::ostream& os )
     symbol->MaxNameLen   = LB_SYMBOL_LENGTH;
     symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
 
-    os << disableFlush << disableHeader << indent << std::endl;
-    for( unsigned short i = 0; i < frames; ++i )
+    for( unsigned short i = ignoreHead; i < frames; ++i )
     {
-        os << frames-i-1 << ": ";
+        os << "\n  " << frames-i-1 << ": ";
         if ( !SymFromAddr( hProcess, (DWORD64)stack[i], 0, symbol ))
             os << "Unknown symbol";
         else
@@ -108,17 +109,15 @@ std::ostream& backtrace( std::ostream& os )
             else
                 os << line.FileName << ":" << line.LineNumber;
         }
-        os << std::endl;
     }
-    os << exdent << enableHeader << enableFlush;
+    os << std::endl;
     free( symbol );
     SymCleanup( hProcess );
 #else
     void* callstack[ LB_BACKTRACE_DEPTH ];
     const int frames = ::backtrace( callstack, LB_BACKTRACE_DEPTH );
     char** names = ::backtrace_symbols( callstack, frames );
-    os << disableFlush << disableHeader << indent << std::endl;
-    for( int i = 1; i < frames; ++i )
+    for( int i = ignoreHead + 1; i < frames; ++i )
     {
         std::string name = names[ i ];
 #  ifdef __linux__
@@ -140,23 +139,36 @@ std::ostream& backtrace( std::ostream& os )
         int status;
         char* demangled = abi::__cxa_demangle( name.c_str(), 0, 0, &status);
 
+        os << "\n  " << frames-i-1 << ": ";
         if( symbolPos == std::string::npos || spacePos == std::string::npos )
-            os << names[ i ] << std::endl;
+            os << names[ i ];
         else
         {
             if( demangled )
             {
-                os << demangled << std::endl;
+                os << demangled;
                 free( demangled );
             }
             else
-                os << name << std::endl;
+                os << name;
         }
     }
-    os << exdent << enableHeader << enableFlush;
+    os << std::endl;
     ::free( names );
 #endif
+}
+}
 
+std::string backtrace( const size_t ignoreHead )
+{
+    std::ostringstream os;
+    backtrace_( os, ignoreHead + 1/*cut self*/ );
+    return os.str();
+}
+
+std::ostream& backtrace( std::ostream& os )
+{
+    backtrace_( os, 1 /*cut self*/ );
     return os;
 }
 

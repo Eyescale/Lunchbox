@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *               2012-2013, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -26,139 +26,137 @@
 
 namespace lunchbox
 {
+/**
+ * A smart reference pointer, aka boost::intrusive_ptr.
+ *
+ * Relies on the held object to implement ref() and unref() correctly.
+ */
+template< class T > class RefPtr
+{
+    typedef T* RefPtr::*bool_t;
+
+public:
+    /** Construct a new, empty reference pointer. @version 1.0 */
+    RefPtr()                     : _ptr( 0 )         {}
+
+    /** Construct a reference pointer from a C pointer. @version 1.0 */
+    RefPtr( T* const ptr )       : _ptr( ptr )       { _ref(); }
+
+    /** Construct a copy of a reference pointer. @version 1.0 */
+    RefPtr( const RefPtr& from ) : _ptr( from._ptr ) { _ref(); }
+
     /**
-     * A smart reference pointer, aka boost::intrusive_ptr.
-     *
-     * Relies on the held object to implement ref() and unref() correctly.
+     * Construct a copy of a reference pointer of a different type.
+     * @version 1.0
      */
-    template< class T > class RefPtr
-    {
-        typedef T* RefPtr::*bool_t;
+    template< class O > RefPtr( RefPtr< O > from )
+        : _ptr( from.get( )) { _ref(); }
 
-    public:
-        /** Construct a new, empty reference pointer. @version 1.0 */
-        RefPtr()                     : _ptr( 0 )         {}
+    /** Destruct this reference pointer. @version 1.0 */
+    ~RefPtr() { _unref(); _ptr = 0; }
 
-        /** Construct a reference pointer from a C pointer. @version 1.0 */
-        RefPtr( T* const ptr )       : _ptr( ptr )       { _ref(); }
-
-        /** Construct a copy of a reference pointer. @version 1.0 */
-        RefPtr( const RefPtr& from ) : _ptr( from._ptr ) { _ref(); }
-
-        /**
-         * Construct a copy of a reference pointer of a different type.
-         * @version 1.0
-         */
-        template< class O > RefPtr( RefPtr< O > from )
-                : _ptr( from.get( )) { _ref(); }
-
-        /** Destruct this reference pointer. @version 1.0 */
-        ~RefPtr() { _unref(); _ptr = 0; }
-
-        /** Assign another RefPtr to this reference pointer. @version 1.0 */
-        RefPtr& operator = ( const RefPtr& rhs )
-            {
-                if( _ptr == rhs._ptr )
-                    return *this;
-
-                T* tmp = _ptr;
-                _ptr = rhs._ptr;
-                _ref();
-                if( tmp ) tmp->unref( this );
+    /** Assign another RefPtr to this reference pointer. @version 1.0 */
+    RefPtr& operator = ( const RefPtr& rhs )
+        {
+            if( _ptr == rhs._ptr )
                 return *this;
-            }
 
-        /** Assign a C pointer to this reference pointer. @version 1.0 */
-        RefPtr& operator = ( T* ptr )
-            {
-                if( _ptr == ptr )
-                    return *this;
+            T* tmp = _ptr;
+            _ptr = rhs._ptr;
+            _ref();
+            if( tmp ) tmp->unref( this );
+            return *this;
+        }
 
-                T* tmp = _ptr;
-                _ptr = ptr;
-                _ref();
-                if( tmp ) tmp->unref( this );
+    /** Assign a C pointer to this reference pointer. @version 1.0 */
+    RefPtr& operator = ( T* ptr )
+        {
+            if( _ptr == ptr )
                 return *this;
-            }
 
-        /**
-         * @return true if both reference pointers hold the same C pointer.
-         * @version 1.0
-         */
-        bool operator == ( const RefPtr& rhs ) const
-            { return ( _ptr == rhs._ptr ); }
+            T* tmp = _ptr;
+            _ptr = ptr;
+            _ref();
+            if( tmp ) tmp->unref( this );
+            return *this;
+        }
 
-        /**
-         * @return true if both reference pointer hold different C pointer.
-         * @version 1.0
-         */
-        bool operator != ( const RefPtr& rhs ) const
-            { return ( _ptr != rhs._ptr ); }
+    /**
+     * @return true if both reference pointers hold the same C pointer.
+     * @version 1.0
+     */
+    bool operator == ( const RefPtr& rhs ) const
+        { return ( _ptr == rhs._ptr ); }
 
-        /**
-         * @return true if a pointer is held, false otherwise.
-         * @version 1.1.5
-         */
-        operator bool_t() const { return _ptr == 0 ? 0 : &RefPtr::_ptr; }
+    /**
+     * @return true if both reference pointer hold different C pointer.
+     * @version 1.0
+     */
+    bool operator != ( const RefPtr& rhs ) const
+        { return ( _ptr != rhs._ptr ); }
 
-        /**
-         * @return true if the left RefPtr is smaller then the right.
-         * @version 1.0
-         */
-        bool operator < ( const RefPtr& rhs ) const
-            { return ( _ptr < rhs._ptr ); }
+    /**
+     * @return true if a pointer is held, false otherwise.
+     * @version 1.1.5
+     */
+    operator bool_t() const { return _ptr == 0 ? 0 : &RefPtr::_ptr; }
 
-        /**
-         * @return true if the right RefPtr is smaller then the left.
-         * @version 1.0
-         */
-        bool operator > ( const RefPtr& rhs ) const
-            { return ( _ptr > rhs._ptr ); }
+    /**
+     * @return true if the left RefPtr is smaller then the right.
+     * @version 1.0
+     */
+    bool operator < ( const RefPtr& rhs ) const { return ( _ptr < rhs._ptr ); }
 
-        /** @return true if the RefPtr is empty. @version 1.0 */
-        bool operator ! () const               { return ( _ptr==0 ); }
+    /**
+     * @return true if the right RefPtr is smaller then the left.
+     * @version 1.0
+     */
+    bool operator > ( const RefPtr& rhs ) const { return ( _ptr > rhs._ptr ); }
 
-        /**
-         * @return true if the reference pointers holds the C pointer.
-         * @version 1.0
-         */
-        bool operator == ( const T* ptr ) const { return ( _ptr == ptr ); }
+    /** @return true if the RefPtr is empty. @version 1.0 */
+    bool operator ! () const               { return ( _ptr==0 ); }
 
-        /**
-         * @return true if the reference pointers does not hold the C pointer
-         * @version 1.0
-         */
-        bool operator != ( const T* ptr ) const { return ( _ptr != ptr ); }
+    /**
+     * @return true if the reference pointers holds the C pointer.
+     * @version 1.0
+     */
+    bool operator == ( const T* ptr ) const { return ( _ptr == ptr ); }
 
-        /** Access the held object. @version 1.0 */
-        T*       operator->()
-            { LBASSERTINFO( _ptr, className( this )); return _ptr; }
-        /** Access the held object. @version 1.0 */
-        const T* operator->() const
-            { LBASSERTINFO( _ptr, className( this )); return _ptr; }
-        /** Access the held object. @version 1.0 */
-        T&       operator*()
-            { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
-        /** Access the held object. @version 1.0 */
-        const T& operator*() const
-            { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
+    /**
+     * @return true if the reference pointers does not hold the C pointer
+     * @version 1.0
+     */
+    bool operator != ( const T* ptr ) const { return ( _ptr != ptr ); }
 
-        /** @return the C pointer. @version 1.0 */
-        T*       get()                { return _ptr; }
-        /** @return the C pointer. @version 1.0 */
-        const T* get() const          { return _ptr; }
+    /** Access the held object. @version 1.0 */
+    T*       operator->()
+        { LBASSERTINFO( _ptr, className( this )); return _ptr; }
+    /** Access the held object. @version 1.0 */
+    const T* operator->() const
+        { LBASSERTINFO( _ptr, className( this )); return _ptr; }
+    /** Access the held object. @version 1.0 */
+    T&       operator*()
+        { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
+    /** Access the held object. @version 1.0 */
+    const T& operator*() const
+        { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
 
-        /** @return true if the RefPtr holds a non-0 pointer. @version 1.0 */
-        bool isValid() const { return ( _ptr != 0 ); }
+    /** @return the C pointer. @version 1.0 */
+    T*       get()                { return _ptr; }
+    /** @return the C pointer. @version 1.0 */
+    const T* get() const          { return _ptr; }
 
-    private:
-        T* _ptr;
+    /** @return true if the RefPtr holds a non-0 pointer. @version 1.0 */
+    bool isValid() const { return ( _ptr != 0 ); }
 
-        /** Artificially reference the held object. */
-        void _ref()   { if(_ptr) _ptr->ref( this ); }
+private:
+    T* _ptr;
 
-        /** Artificially dereference the held object. */
-        void _unref()
+    /** Artificially reference the held object. */
+    void _ref()   { if(_ptr) _ptr->ref( this ); }
+
+    /** Artificially dereference the held object. */
+    void _unref()
         {
             if(_ptr)
             {
@@ -170,23 +168,23 @@ namespace lunchbox
 #endif
             }
         }
-    };
+};
 
-    /** Print the reference pointer to the given output stream. */
-    template< class T >
-    inline std::ostream& operator << ( std::ostream& os, RefPtr< T > rp )
-    {
-        const T* p = rp.get();
-        if( !p )
-            return os << "RP[ 0:NULL ]";
+/** Print the reference pointer to the given output stream. */
+template< class T >
+inline std::ostream& operator << ( std::ostream& os, RefPtr< T > rp )
+{
+    const T* p = rp.get();
+    if( !p )
+        return os << "RP[ 0:NULL ]";
 
-        os << disableFlush << "RP[" << p->getRefCount() << ":" << *p << "]";
-        p->printHolders( os );
-        return os << enableFlush;
-    }
+    os << disableFlush << "RP[" << p->getRefCount() << ":" << *p << "]";
+    p->printHolders( os );
+    return os << enableFlush;
+}
 
-    template< class T > inline std::string className( const RefPtr<T>& rp )
-        { return className( rp.get( )); }
+template< class T > inline std::string className( const RefPtr<T>& rp )
+{ return className( rp.get( )); }
 }
 
 #include <boost/serialization/split_free.hpp>

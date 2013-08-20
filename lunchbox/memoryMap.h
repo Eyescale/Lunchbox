@@ -34,7 +34,7 @@ public:
     LUNCHBOX_API MemoryMap();
 
     /** Construct and initialize a new, readonly memory map. @version 1.7.1 */
-    LUNCHBOX_API MemoryMap( const std::string& filename );
+    LUNCHBOX_API explicit MemoryMap( const std::string& filename );
 
     /** Construct and initialize a new, read-write memory map. @version 1.9.1 */
     LUNCHBOX_API MemoryMap( const std::string& filename, const size_t size );

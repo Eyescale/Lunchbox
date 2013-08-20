@@ -69,7 +69,7 @@ namespace detail
 class Servus
 {
 public:
-    Servus( const std::string& name )
+    explicit Servus( const std::string& name )
 #ifdef LUNCHBOX_USE_DNSSD
             : name_( name )
             , service_( 0 )

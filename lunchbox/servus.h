@@ -54,7 +54,7 @@ public:
      * @param name the service descriptor, e.g., "_gpu-sd._tcp"
      * @version 0.9
      */
-    LUNCHBOX_API Servus( const std::string& name );
+    LUNCHBOX_API explicit Servus( const std::string& name );
 
     /** Destruct this service. */
     LUNCHBOX_API virtual ~Servus();

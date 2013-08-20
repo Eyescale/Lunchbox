@@ -32,7 +32,7 @@ namespace plugin
 class CompressorTurboJPEG : public Compressor
 {
 public:
-    CompressorTurboJPEG( const unsigned name );
+    explicit CompressorTurboJPEG( const unsigned name );
     virtual ~CompressorTurboJPEG();
 
     void compress( const void* const inData, const eq_uint64_t* inDims,

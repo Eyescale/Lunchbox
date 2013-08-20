@@ -51,7 +51,11 @@ namespace lunchbox
          * 128 bit integer value.
          * @version 1.0
          */
-        UUID( const uint128_t& from ) : uint128_t( from ) {}
+        explicit UUID( const uint128_t& from ) : uint128_t( from ) {}
+
+        /** Assign an uin128_t value. @version 1.9.0 */
+        UUID& operator = ( const uint128_t& rhs )
+            { *(static_cast< uint128_t* >( this )) = rhs; return *this; }
 
         /** Assign an integer value. @version 1.7.1 */
         UUID& operator = ( const int rhs )

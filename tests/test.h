@@ -55,7 +55,7 @@ namespace
 class Watchdog : public lunchbox::Thread
 {
 public:
-    Watchdog( const std::string& name ) : _name( name ) {}
+    explicit Watchdog( const std::string& name ) : _name( name ) {}
 
     virtual void run()
         {

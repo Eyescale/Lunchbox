@@ -60,7 +60,7 @@ public:
     explicit LFVector( const size_t n );
 
     /** @version 1.3.2 */
-    explicit LFVector( const size_t n, const T& t );
+    LFVector( const size_t n, const T& t );
 
     /** @version 1.3.2 */
     explicit LFVector( const LFVector& from );

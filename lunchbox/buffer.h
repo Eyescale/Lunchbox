@@ -44,11 +44,11 @@ public:
     Buffer() : _data(0), _size(0), _maxSize(0) {}
 
     /** Construct a new buffer of the given size. @version 1.0 */
-    Buffer( const uint64_t size ) : _data(0), _size(0), _maxSize(0)
+    explicit Buffer( const uint64_t size ) : _data(0), _size(0), _maxSize(0)
         { reset( size ); }
 
     /** "Move" constructor, transfers ownership to new Buffer. @version 1.0 */
-    Buffer( Buffer& from )
+    explicit Buffer( Buffer& from )
     {
         _data = from._data; _size = from._size; _maxSize = from._maxSize;
         from._data = 0; from._size = 0; from._maxSize = 0;

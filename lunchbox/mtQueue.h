@@ -47,7 +47,7 @@ public:
     typedef T value_type;
 
     /** Construct a new queue. @version 1.0 */
-    MTQueue( size_t maxSize = S ) : _maxSize( maxSize ) {}
+    explicit MTQueue( size_t maxSize = S ) : _maxSize( maxSize ) {}
 
     /** Construct a copy of a queue. @version 1.0 */
     MTQueue( const MTQueue< T, S >& from )  { *this = from; }

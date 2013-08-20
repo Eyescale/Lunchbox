@@ -62,7 +62,7 @@ int main( int argc, char **argv )
     lunchbox::UUID id1( true );
     lunchbox::UUID id2( true );
 
-    TEST( id1 != 0 );
+    TEST( id1 != lunchbox::UUID( ));
     TEST( id1 != id2 );
 
     id1 = id2;
@@ -81,7 +81,7 @@ int main( int argc, char **argv )
     delete id4;
 
     lunchbox::UUID id5, id6;
-    TEST( id5 == 0 );
+    TEST( id5 == lunchbox::UUID( ));
     TEST( id5 == id6 );
 
     const lunchbox::uint128_t& empty = lunchbox::make_uint128( "" );
@@ -121,7 +121,7 @@ int main( int argc, char **argv )
         for( TestHash::const_iterator j = current.begin();
              j != current.end(); ++j )
         {
-            lunchbox::UUID uuid = j->first;
+            lunchbox::UUID uuid( j->first );
             TESTINFO( uuid == j->first, j->first << " = " << uuid );
 
             std::ostringstream stream;

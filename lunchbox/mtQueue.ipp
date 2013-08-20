@@ -190,7 +190,7 @@ public:
      * Construct a new group of the given size. Can only be used once.
      * @version 1.7.1
      */
-    Group( const size_t height ) : height_( height ), waiting_( 0 ) {}
+    explicit Group( const size_t height ) : height_( height ), waiting_( 0 ) {}
 
     /** Update the height. @version 1.7.1  */
     void setHeight( const size_t height ) { height_ = height; }

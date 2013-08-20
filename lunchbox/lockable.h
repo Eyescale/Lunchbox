@@ -33,7 +33,7 @@ namespace lunchbox
     {
     public:
         /** Construct a new lockable data structure. @version 1.0 */
-        explicit Lockable() {}
+        Lockable() {}
 
         /** Construct and initialize a new data structure. @version 1.0 */
         explicit Lockable( const D& value ) : data( value ) {}

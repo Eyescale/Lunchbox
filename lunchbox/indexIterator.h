@@ -42,7 +42,7 @@ template< class S, class C, class T > class IndexIterator
 public:
     IndexIterator( C* container, const size_t i )
             : container_( container ), i_(i) {}
-    IndexIterator( const S& from )
+    explicit IndexIterator( const S& from )
             : container_( from.container_ ), i_( from.i_ ) {}
     template< class U, class V, class W >
     IndexIterator( const IndexIterator< U, V, W >& from )

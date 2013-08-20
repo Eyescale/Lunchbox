@@ -35,7 +35,7 @@ public:
     LUNCHBOX_API DSO();
 
     /** Construct and initialize a dynamic shared object. @version 1.7.1 */
-    LUNCHBOX_API DSO( const std::string& name );
+    LUNCHBOX_API explicit DSO( const std::string& name );
 
     /** Destruct this DSO handle. @version 1.0 */
     LUNCHBOX_API ~DSO();

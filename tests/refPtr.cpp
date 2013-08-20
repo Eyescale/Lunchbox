@@ -179,7 +179,7 @@ int main( int argc, char **argv )
 
     foo = 0;
 
-    FooPtr inFoo1 = new Foo;
+    FooPtr inFoo1( new Foo );
     TEST( inFoo1->getRefCount() == 1 );
     FooPtr inFoo2 = inFoo1;
     TEST( inFoo2->getRefCount() == 2 );

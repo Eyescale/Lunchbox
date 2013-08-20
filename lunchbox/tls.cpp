@@ -27,7 +27,7 @@ namespace detail
 class TLS
 {
 public:
-    TLS( lunchbox::TLS::ThreadDestructor_t df ) : dtorFunc ( df ) {}
+    explicit TLS( lunchbox::TLS::ThreadDestructor_t df ) : dtorFunc ( df ) {}
 
     pthread_key_t key;
     const lunchbox::TLS::ThreadDestructor_t dtorFunc;

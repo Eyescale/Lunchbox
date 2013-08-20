@@ -57,7 +57,7 @@ public:
     typedef RefPtr< FutureImpl< T > > Impl; //!< The wait implementation
 
     /** Construct a new future. @version 1.9.1 */
-    Future( Impl impl ) : impl_( impl ){}
+    explicit Future( Impl impl ) : impl_( impl ){}
 
     /** Destruct the future. @version 1.9.1 */
      ~Future(){}

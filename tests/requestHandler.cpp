@@ -64,7 +64,7 @@ int main( int argc, char **argv )
     requestQ_.push( request );
     bool boolOut = false;
     TEST( handler_.waitRequest( request, boolOut ));
-    TEST( boolOut = true );
+    TEST( boolOut == true );
 
     lunchbox::RequestFuture< uint32_t > future =
         handler_.registerRequest< uint32_t >( ++payload );

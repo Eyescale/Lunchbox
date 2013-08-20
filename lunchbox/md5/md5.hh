@@ -57,10 +57,10 @@ public:
 
 // constructors for special circumstances.  All these constructors finalize
 // the MD5 context.
-  MD5              (unsigned char *string); // digest string, finalize
-  MD5              (std::istream& stream);       // digest stream, finalize
-  MD5              (FILE *file);            // digest file, close, finalize
-  MD5              (std::ifstream& stream);      // digest stream, close, finalize
+  explicit MD5     (unsigned char *string); // digest string, finalize
+  explicit MD5     (std::istream& stream);       // digest stream, finalize
+  explicit MD5     (FILE *file);            // digest file, close, finalize
+  explicit MD5     (std::ifstream& stream);      // digest stream, close, finalize
 
 // methods to acquire finalized result
   unsigned char    *raw_digest ();  // digest as a 16-byte binary array

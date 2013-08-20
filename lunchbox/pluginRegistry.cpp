@@ -248,7 +248,7 @@ namespace
 template< class P,  class I > class Finder : public PluginVisitorT< P, I >
 {
 public:
-    Finder( const uint32_t name ) : plugin( 0 ), name_( name ) {}
+    explicit Finder( const uint32_t name ) : plugin( 0 ), name_( name ) {}
     virtual VisitorResult visit( P& candidate, I& info )
     {
         if( info.name != name_ )

@@ -45,7 +45,7 @@ namespace lunchbox
     {
     public:
         /** Construct a new queue. @version 1.0 */
-        LFQueue( const int32_t size )
+        explicit LFQueue( const int32_t size )
                 : _data( size + 1 ), _readPos( 0 ), _writePos( 0 ) {}
 
         /** Destruct this queue. @version 1.0 */

@@ -45,14 +45,14 @@ namespace lunchbox
          * Construct a new 128 bit integer with a default value.
          * @version 1.0
          */
-        uint128_t( const uint64_t low_ = 0 )
+        explicit uint128_t( const uint64_t low_ = 0 )
             : _high( 0 ), _low( low_ ) {}
 
         /**
          * Construct a new 128 bit integer with default values.
          * @version 1.0
          **/
-        explicit uint128_t( const uint64_t high_, const uint64_t low_ )
+        uint128_t( const uint64_t high_, const uint64_t low_ )
             : _high( high_ ), _low( low_ ) {}
 
         /**

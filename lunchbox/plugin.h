@@ -35,7 +35,7 @@ class Plugin : public DSO
 {
 public:
     /** Construct and initialize a new plugin DSO. @version 1.7.1 */
-    LUNCHBOX_API Plugin( const std::string& libraryName );
+    LUNCHBOX_API explicit Plugin( const std::string& libraryName );
 
     /** Destruct this plugin handle. @version 1.7.1 */
     LUNCHBOX_API virtual ~Plugin();

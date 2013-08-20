@@ -37,7 +37,7 @@ public:
      *                 storage, not called if 0.
      * @version 1.7.2
      */
-    LUNCHBOX_API TLS( ThreadDestructor_t dtorFunc );
+    LUNCHBOX_API explicit TLS( ThreadDestructor_t dtorFunc );
 
     /** Destruct the per-thread storage. @version 1.7.2 */
     LUNCHBOX_API ~TLS();

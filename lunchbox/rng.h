@@ -59,7 +59,7 @@ namespace detail { class RNG; }
         {
             T value;
             if( !_get( &value, sizeof( T )))
-                return 0;
+                return T();
             return value;
         }
 

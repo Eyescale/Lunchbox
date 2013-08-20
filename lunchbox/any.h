@@ -157,7 +157,7 @@ public:
         {
         }
 
-        holder( const ValueType& value )
+        explicit holder( const ValueType& value )
           : held( value )
         {
         }

@@ -66,7 +66,7 @@ namespace lunchbox
     class LogBuffer : public std::streambuf
     {
     public:
-        LogBuffer( std::ostream& stream )
+        explicit LogBuffer( std::ostream& stream )
                 : _indent(0), _blocked(0), _noHeader(0),
                   _newLine(true), _stream(stream)
             { _thread[0] = 0; _file[0] = 0; }

@@ -40,7 +40,7 @@ template< class T > class FutureFunction : public FutureImpl< T >
 public:
     typedef boost::function< T() > Func; //!< The fulfilling function
 
-    FutureFunction( const Func& func ) : func_( func ) {}
+    explicit FutureFunction( const Func& func ) : func_( func ) {}
 
 protected:
     virtual ~FutureFunction() { wait(); }

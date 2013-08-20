@@ -56,7 +56,7 @@ typedef boost::mpl::list< int8_t, uint8_t,
 template< class Archive >
 struct registerWrapper
 {
-    registerWrapper( Archive& ar ) : ar_( ar ) {}
+    explicit registerWrapper( Archive& ar ) : ar_( ar ) {}
     Archive& ar_;
 
     template< typename T >

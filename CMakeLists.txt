@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
-if(NOT BUILDYARD)
-  include(Buildyard)
+include(Buildyard)
+if(BUILDYARD_STOP)
   return()
 endif()
 

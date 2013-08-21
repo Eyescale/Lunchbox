@@ -23,6 +23,8 @@
 #ifndef LUNCHBOX_TYPES_H
 #define LUNCHBOX_TYPES_H
 
+#include <lunchbox/defines.h>
+
 #include <string>
 #include <vector>
 #include <sys/types.h>
@@ -168,7 +170,6 @@ class Referenced;
 class RequestHandler;
 class Servus;
 class SpinLock;
-class UUID;
 class Uploader;
 class uint128_t;
 
@@ -197,6 +198,10 @@ typedef Plugins::const_iterator PluginsCIter;
 typedef PluginVisitorT< Plugin, EqCompressorInfo > PluginVisitor;
 typedef PluginVisitorT< const Plugin,
                         const EqCompressorInfo > ConstPluginVisitor;
+
+#ifdef LUNCHBOX_USE_V1_API
+typedef uint128_t UUID;
+#endif
 
 /** @cond IGNORE */
 struct CompressorInfo;

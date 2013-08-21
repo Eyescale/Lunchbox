@@ -53,6 +53,13 @@ namespace lunchbox
          */
         explicit UUID( const uint128_t& from ) : uint128_t( from ) {}
 
+        /**
+         * Construct a UUID from a string representation.
+         * @version 1.9.1
+         **/
+        explicit UUID( const std::string& string )
+            : uint128_t( string ) {}
+
         /** Assign an uin128_t value. @version 1.9.0 */
         UUID& operator = ( const uint128_t& rhs )
             { *(static_cast< uint128_t* >( this )) = rhs; return *this; }
@@ -64,6 +71,48 @@ namespace lunchbox
         /** Assign another UUID from a string representation. @version 1.0 */
         UUID& operator = ( const std::string& from )
             { *(static_cast< uint128_t* >( this )) = from; return *this; }
+
+        /**
+         * @return true if the values are equal, false if not.
+         * @version 1.9.1
+         **/
+        bool operator == ( const uint64_t low_ ) const
+            { return (static_cast< uint128_t >( *this )) == low_; }
+
+        /**
+         * @return true if the values are different, false otherwise.
+         * @version 1.9.1
+         **/
+        bool operator != ( const uint64_t low_ ) const
+            { return (static_cast< uint128_t >( *this )) != low_; }
+
+        /**
+         * @return true if the values are equal, false if not.
+         * @version 1.9.1
+         **/
+        bool operator == ( const uint128_t& rhs ) const
+            { return (static_cast< uint128_t >( *this )) == rhs; }
+
+        /**
+         * @return true if the values are different, false otherwise.
+         * @version 1.9.1
+         **/
+        bool operator != ( const uint128_t& rhs ) const
+            { return (static_cast< uint128_t >( *this )) != rhs; }
+
+        /**
+         * @return true if the values are equal, false if not.
+         * @version 1.9.1
+         **/
+        bool operator == ( const UUID& rhs ) const
+            { return (static_cast< uint128_t >( *this )) == static_cast< uint128_t >( rhs ); }
+
+        /**
+         * @return true if the values are different, false otherwise.
+         * @version 1.9.1
+         **/
+        bool operator != ( const UUID& rhs ) const
+            { return (static_cast< uint128_t >( *this )) != static_cast< uint128_t >( rhs ); }
 
         /** @return true if the UUID was generated. */
         bool isGenerated() const { return high() != 0; }

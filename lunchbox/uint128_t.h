@@ -104,6 +104,20 @@ namespace lunchbox
             { return _high != rhs._high || _low != rhs._low; }
 
         /**
+         * @return true if the values are equal, false otherwise.
+         * @version 1.9.1
+         **/
+        bool operator == ( const uint64_t& low_ ) const
+            { return *this == uint128_t( low_ ); }
+
+        /**
+         * @return true if the values are different, false otherwise.
+         * @version 1.9.1
+         **/
+        bool operator != ( const uint64_t& low_ ) const
+            { return *this != uint128_t( low_ ); }
+
+        /**
          * @return true if this value is smaller than the RHS value.
          * @version 1.0
          **/

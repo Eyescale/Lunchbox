@@ -69,7 +69,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   unorderedIntervalSet.h
   unorderedIntervalSet.ipp
   uploader.h
-  uuid.h
   visitorResult.h
   )
 
@@ -107,7 +106,6 @@ set(LUNCHBOX_SOURCES
   timedLock.cpp
   uint128_t.cpp
   uploader.cpp
-  uuid.cpp
   version.cpp
   md5/md5.cc
   )

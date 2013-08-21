@@ -48,6 +48,18 @@ namespace lunchbox
         explicit uint128_t( const uint64_t low_ = 0 )
             : _high( 0 ), _low( low_ ) {}
 
+#ifdef LUNCHBOX_USE_V1_API
+        /**
+         * Construct a new 128 bit integer with a generated universally unique
+         * identifier.
+         *
+         * @param generate if set to false, the uint128_t will be set to 0.
+         * @version 1.9.1
+         * @deprecated
+         */
+        LUNCHBOX_API explicit uint128_t( const bool generate );
+#endif
+
         /**
          * Construct a new 128 bit integer with default values.
          * @version 1.0
@@ -61,6 +73,13 @@ namespace lunchbox
          **/
         explicit uint128_t( const std::string& string )
             : _high( 0 ), _low( 0 ) { *this = string; }
+
+        /**
+         * @return true if the uint128_t is a generated universally unique
+         * identifier.
+         * @version 1.9.1
+         */
+        bool isUUID() const { return high() != 0; }
 
         /** Assign another 128 bit value. @version 1.0 */
         uint128_t& operator = ( const uint128_t& rhs )
@@ -233,12 +252,17 @@ namespace lunchbox
         /** Serialize this object to a boost archive. @version 1.3.1 */
         template< class Archive >
         void serialize( Archive& ar, const unsigned int version )
-        {
-            ar & low();
-            ar & high();
-        }
+            {
+                ar & low();
+                ar & high();
+            }
 
 #ifdef LUNCHBOX_USE_V1_API
+        /** @return true if the uint128_t was generated.
+         *  @deprecated
+         */
+        bool isGenerated() const { return high() != 0; }
+
         /** @deprecated Don't use, static initializer fiasco. Use 0/uint128_t()*/
         static LUNCHBOX_API const uint128_t ZERO;
 #endif
@@ -322,5 +346,12 @@ namespace lunchbox
      * @version 1.3.2
      */
     LUNCHBOX_API uint128_t make_uint128( const char* string );
+
+    /**
+     * Construct a new 128 bit integer with a generated universally unique
+     * identifier.
+     * @version 1.9.1
+     */
+    LUNCHBOX_API uint128_t make_UUID();
 }
 #endif // LUNCHBOX_UINT128_H

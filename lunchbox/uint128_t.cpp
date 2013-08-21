@@ -17,6 +17,7 @@
 
 #include "uint128_t.h"
 #include "debug.h"
+#include "rng.h"
 #include "md5/md5.hh"
 
 #include <cstdlib> // for strtoull
@@ -30,6 +31,18 @@ namespace lunchbox
 {
 #ifdef LUNCHBOX_USE_V1_API
 const uint128_t uint128_t::ZERO; //!< Special identifier values
+
+uint128_t::uint128_t( const bool generate )
+    : _high( 0 )
+    , _low( 0 )
+{
+    while( generate && high() == 0 )
+    {
+        RNG rng;
+        high() = rng.get< uint64_t >();
+        low() = rng.get< uint64_t >();
+    }
+}
 #endif
 
 uint128_t& uint128_t::operator = ( const std::string& from )
@@ -79,6 +92,18 @@ uint128_t make_uint128( const char* string )
                (uint64_t( data[11] )<<32) | (uint64_t( data[10] )<<40) |
                (uint64_t( data[9] )<<48) | (uint64_t( data[8] )<<56) );
     delete [] data;
+    return value;
+}
+
+uint128_t make_UUID()
+{
+    uint128_t value;
+    while( value.high() == 0 )
+    {
+        RNG rng;
+        value.high() = rng.get< uint64_t >();
+        value.low() = rng.get< uint64_t >();
+    }
     return value;
 }
 

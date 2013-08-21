@@ -39,7 +39,10 @@ template< class T > class RequestFuture : public Future< bool >
     public:
         Impl( RequestHandler& handler, const uint32_t req )
             : FutureFunction< bool >(
+#pragma warning(push)
+#pragma warning(disable : 4355)
                           boost::bind( &RequestFuture< T >::Impl::wait_, this ))
+#pragma warning(pop)
             , request( req )
             , result( 0 )
             , handler_( handler )

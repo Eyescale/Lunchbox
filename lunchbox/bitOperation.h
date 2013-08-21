@@ -22,7 +22,7 @@
 
 #include <lunchbox/compiler.h>       // GCC version
 #include <lunchbox/types.h>
-#include <lunchbox/uuid.h>
+#include <lunchbox/uint128_t.h>
 
 #ifdef _MSC_VER
 #  pragma warning (push)
@@ -164,9 +164,6 @@ namespace lunchbox
         byteswap( value.high( ));
         byteswap( value.low( ));
     }
-
-    template<> inline void byteswap( UUID& value )
-    { byteswap< uint128_t >( value ); }
 
     template< typename T >
     inline void byteswap( typename std::vector< T >& value )

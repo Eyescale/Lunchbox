@@ -42,7 +42,7 @@ namespace lunchbox
     {
     public:
         /** Construct a new monitor with a default value of 0. @version 1.0 */
-        Monitor() : _value( T( 0 )) {}
+        Monitor() : _value( T( )) {}
 
         /** Construct a new monitor with a given default value. @version 1.0 */
         explicit Monitor( const T& value ) : _value( value ) {}

@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -24,7 +24,7 @@
 namespace lunchbox
 {
     /** A hash for pointer keys. @version 1.0 */
-    template<class K, class T> class PtrHash 
+    template<class K, class T> class PtrHash
 #ifdef _MSC_VER
         : public stde::hash_map< K, T, stde::hash_compare< const void* > >
 #else
@@ -50,7 +50,7 @@ namespace lunchbox
         }
     };
 
-    template< class K, class T > class RefPtrHash 
+    template< class K, class T > class RefPtrHash
         : public stde::hash_map< RefPtr< K >, T, hashRefPtr< K > >
     {};
 
@@ -64,13 +64,15 @@ namespace lunchbox
     };
 
     /** A hash for RefPtr keys. @version 1.0 */
-    template< class K, class T > class RefPtrHash 
+    template< class K, class T > class RefPtrHash
         : public stde::hash_map< RefPtr< K >, T, hashRefPtr< K > >
     {};
 #endif
 
+#ifdef LUNCHBOX_USE_V1_API
 /** A hash for UUID keys. @version 1.0 */
 template<class T> class UUIDHash : public stde::hash_map<lunchbox::UUID, T> {};
+#endif
 
 }
 #endif // LUNCHBOX_HASH_H

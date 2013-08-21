@@ -159,16 +159,11 @@ namespace lunchbox
     template<> inline void byteswap( double& value )
         { byteswap( reinterpret_cast< uint64_t& >( value )); }
 
-#ifdef LUNCHBOX_USE_V1_API
-    template<> inline void byteswap( UUID& value )
-    { byteswap< uint128_t >( value ); }
-#else
     template<> inline void byteswap( uint128_t& value )
     {
         byteswap( value.high( ));
         byteswap( value.low( ));
     }
-#endif
 
     template< typename T >
     inline void byteswap( typename std::vector< T >& value )

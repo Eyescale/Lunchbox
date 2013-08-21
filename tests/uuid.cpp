@@ -23,12 +23,12 @@
 #include <lunchbox/rng.h>
 #include <lunchbox/stdExt.h>
 #include <lunchbox/thread.h>
-#include <lunchbox/uuid.h>
+#include <lunchbox/uint128_t.h>
 
 #define N_UUIDS 10000
 #define N_THREADS 10
 
-typedef lunchbox::uint128_t uint128_t;
+using lunchbox::uint128_t;
 typedef stde::hash_map< uint128_t, bool > TestHash;
 
 void testConvertUint128ToUUID();
@@ -43,7 +43,8 @@ public:
 
             while( i-- )
             {
-                lunchbox::UUID uuid( true );
+                lunchbox::uint128_t uuid( true );
+                TEST( uuid.isUUID( ));
 
                 TESTINFO( hash.find( uuid ) == hash.end(),
                           "Iteration " << N_UUIDS - i );
@@ -59,17 +60,17 @@ int main( int argc, char **argv )
     TEST( lunchbox::init( argc, argv ));
 
     // basic tests
-    lunchbox::UUID id1( true );
-    lunchbox::UUID id2( true );
+    lunchbox::uint128_t id1( true );
+    lunchbox::uint128_t id2( true );
 
-    TEST( id1 != lunchbox::UUID( ));
+    TEST( id1 != lunchbox::uint128_t( ));
     TEST( id1 != id2 );
 
     id1 = id2;
     TEST( id1 == id2 );
 
-    lunchbox::UUID* id3 = new lunchbox::UUID( id1 );
-    lunchbox::UUID* id4 = new lunchbox::UUID( true );
+    lunchbox::uint128_t* id3 = new lunchbox::uint128_t( id1 );
+    lunchbox::uint128_t* id4 = new lunchbox::uint128_t( true );
 
     TEST( id1 == *id3 );
     TEST( *id4 != *id3 );
@@ -80,8 +81,8 @@ int main( int argc, char **argv )
     delete id3;
     delete id4;
 
-    lunchbox::UUID id5, id6;
-    TEST( id5 == lunchbox::UUID( ));
+    lunchbox::uint128_t id5, id6;
+    TEST( id5 == lunchbox::uint128_t( ));
     TEST( id5 == id6 );
 
     const lunchbox::uint128_t& empty = lunchbox::make_uint128( "" );
@@ -97,7 +98,7 @@ int main( int argc, char **argv )
     lunchbox::RNG rng;
     uint16_t high = rng.get< uint16_t >();
     int32_t low = rng.get< int32_t >();
-    lunchbox::UUID id7( high, low );
+    lunchbox::uint128_t id7( high, low );
     TEST( id7.high() == high );
     TEST( id7.low() == uint64_t( low ));
 
@@ -121,7 +122,7 @@ int main( int argc, char **argv )
         for( TestHash::const_iterator j = current.begin();
              j != current.end(); ++j )
         {
-            lunchbox::UUID uuid( j->first );
+            lunchbox::uint128_t uuid( j->first );
             TESTINFO( uuid == j->first, j->first << " = " << uuid );
 
             std::ostringstream stream;
@@ -149,7 +150,7 @@ void testConvertUint128ToUUID()
     uint128_t test128( high, low );
     TEST( test128.low() == low && test128.high() == high );
 
-    lunchbox::UUID testUUID;
+    lunchbox::uint128_t testUUID;
     testUUID = test128;
     const uint128_t compare128 = testUUID;
     TEST( compare128 == test128 );
@@ -184,7 +185,7 @@ void testIncrement()
     }
 
     {
-        lunchbox::UUID test128( 0, 0 );
+        lunchbox::uint128_t test128( 0, 0 );
         ++test128;
         TEST( test128.high() == 0 && test128.low() == 1 );
         --test128;
@@ -196,7 +197,7 @@ void testIncrement()
     }
 
     {
-        lunchbox::UUID test128( 0, std::numeric_limits< uint64_t >::max() );
+        lunchbox::uint128_t test128( 0, std::numeric_limits< uint64_t >::max() );
         ++test128;
         TEST( test128.high() == 1 && test128.low() == 0 );
         --test128;

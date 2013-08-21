@@ -33,7 +33,8 @@ namespace lunchbox
 const uint128_t uint128_t::ZERO; //!< Special identifier values
 
 uint128_t::uint128_t( const bool generate )
-    : uint128_t( 0, 0 )
+    : _high( 0 )
+    , _low( 0 )
 {
     while( generate && high() == 0 )
     {
@@ -42,7 +43,6 @@ uint128_t::uint128_t( const bool generate )
         low() = rng.get< uint64_t >();
     }
 }
-
 #endif
 
 uint128_t& uint128_t::operator = ( const std::string& from )

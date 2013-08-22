@@ -45,8 +45,20 @@ public:
      * Construct a new 128 bit integer with a default value.
      * @version 1.0
      */
-    explicit uint128_t( const uint64_t low_ = 0 )
+    explicit uint128_t( const unsigned long long low_ = 0 )
         : _high( 0 ), _low( low_ ) {}
+
+    /**
+     * Construct a new 128 bit integer with a default value.
+     * @version 1.9.1
+     */
+    explicit uint128_t( const unsigned long low_ ) : _high( 0 ), _low( low_ ) {}
+
+    /**
+     * Construct a new 128 bit integer with a default value.
+     * @version 1.9.1
+     */
+    explicit uint128_t( const int low_ ) : _high( 0 ), _low( low_ ) {}
 
 #ifdef LUNCHBOX_USE_V1_API
     /**
@@ -126,14 +138,14 @@ public:
      * @return true if the values are equal, false otherwise.
      * @version 1.9.1
      **/
-    bool operator == ( const uint64_t& low_ ) const
+    bool operator == ( const unsigned long long& low_ ) const
         { return *this == uint128_t( low_ ); }
 
     /**
      * @return true if the values are different, false otherwise.
      * @version 1.9.1
      **/
-    bool operator != ( const uint64_t& low_ ) const
+    bool operator != ( const unsigned long long& low_ ) const
         { return *this != uint128_t( low_ ); }
 
     /**

@@ -80,12 +80,12 @@ static void backtrace_( std::ostream& os, const size_t skipFrames )
     CaptureStackBackTraceType backtraceFunc = (CaptureStackBackTraceType)
        GetProcAddress(LoadLibrary("kernel32.dll"), "RtlCaptureStackBackTrace");
     if( !backtraceFunc )
-        return os;
+        return;
 
     SymSetOptions( SYMOPT_UNDNAME | SYMOPT_LOAD_LINES );
     HANDLE hProcess = GetCurrentProcess();
     if( !SymInitialize( hProcess, 0, TRUE ))
-        return os;
+        return;
 
     void* stack[ LB_BACKTRACE_DEPTH ];
     unsigned short frames = (backtraceFunc)( 0, LB_BACKTRACE_DEPTH, stack, 0 );

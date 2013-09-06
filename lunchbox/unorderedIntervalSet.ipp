@@ -136,7 +136,7 @@ void UnorderedIntervalSet< T >::insert( const T& startElement,
     {
         if( previous_to_start == _intervals.begin( ))
         {
-            if( previous_to_start->first != startValue.first )
+            if( startValue.first < previous_to_start->first )
                 previous_to_start = _intervals.end();
         }
         else

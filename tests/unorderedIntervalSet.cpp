@@ -31,6 +31,9 @@ int main( int argc, char **argv )
     TEST( set.exists( 3 ));
     TEST( set.size() == 5 );
 
+    set.insert( 1, 5 );
+    TEST( set.size() == 5 );
+
     set.insert( 2, 4 );
     TEST( set.size() == 5 );
 

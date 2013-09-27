@@ -15,4 +15,4 @@ script:
  - env TRAVIS=1 make -j8 tests ARGS=-V
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq autoconf automake cmake git git-review git-svn libavahi-compat-libdnssd-dev libboost-regex-dev libboost-serialization-dev libhwloc-dev libjpeg-turbo8-dev libturbojpeg ninja-build pkg-config subversion  || /bin/true
+ - sudo apt-get install -qq --ignore-missing autoconf automake cmake git git-review git-svn libavahi-compat-libdnssd-dev libboost-regex-dev libboost-serialization-dev libhwloc-dev libjpeg-turbo8-dev libturbojpeg ninja-build pkg-config subversion  || /bin/true

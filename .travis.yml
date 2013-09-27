@@ -4,6 +4,7 @@ notifications:
     on_success: never
 language: cpp
 script:
+ - ls /usr/lib/x86_64-linux-gnu/libturbojpeg*
  - mkdir Debug
  - cd Debug
  - cmake .. -DCI_BUILD_COMMIT=$TRAVIS_COMMIT -DCMAKE_BUILD_TYPE=Debug
@@ -14,4 +15,4 @@ script:
  - env TRAVIS=1 make -j8 tests ARGS=-V
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq autoconf automake cmake git git-svn libavahi-compat-libdnssd-dev libboost-regex-dev libboost-serialization-dev libhwloc-dev libjpeg-turbo8-dev libturbojpeg pkg-config subversion 
+ - sudo apt-get install -qq autoconf automake cmake git git-review git-svn libavahi-compat-libdnssd-dev libboost-regex-dev libboost-serialization-dev libhwloc-dev libjpeg-turbo8-dev libturbojpeg ninja-build pkg-config subversion

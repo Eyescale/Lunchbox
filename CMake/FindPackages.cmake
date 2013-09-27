@@ -3,11 +3,11 @@
 include(System)
 list(APPEND FIND_PACKAGES_DEFINES ${SYSTEM})
 
-find_package(hwloc 1.3)
-find_package(DNSSD )
-find_package(LibJpegTurbo 1.2.1)
-find_package(OpenMP )
-find_package(Boost 1.41.0 REQUIRED regex serialization)
+find_package(hwloc 1.3 )
+find_package(DNSSD  )
+find_package(LibJpegTurbo 1.2.1 )
+find_package(OpenMP  )
+find_package(Boost 1.41.0  REQUIRED regex serialization)
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
   include(${CMAKE_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
@@ -88,7 +88,7 @@ if(Boost_name)
   endif()
 endif()
 
-set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;git;git-svn;libavahi-compat-libdnssd-dev;libboost-regex-dev;libboost-serialization-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;pkg-config;subversion)
+set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;git;git-review;git-svn;libavahi-compat-libdnssd-dev;libboost-regex-dev;libboost-serialization-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;ninja-build;pkg-config;subversion)
 
 set(LUNCHBOX_DEPENDS hwloc;DNSSD;LibJpegTurbo;OpenMP;Boost)
 

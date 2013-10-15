@@ -263,11 +263,11 @@ public:
 
     /** Serialize this object to a boost archive. @version 1.3.1 */
     template< class Archive >
-    void serialize( Archive& ar, const unsigned int version )
-        {
-            ar & low();
-            ar & high();
-        }
+    void serialize( Archive& ar, const unsigned int /*version*/ )
+    {
+        ar & low();
+        ar & high();
+    }
 
 #ifdef LUNCHBOX_USE_V1_API
     /** @return true if the uint128_t was generated.

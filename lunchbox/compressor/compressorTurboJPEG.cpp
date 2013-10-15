@@ -210,7 +210,7 @@ void CompressorTurboJPEG::decompress( const void* const* inData,
 
 void CompressorTurboJPEG::_decompress( const void* const* inData,
                                        const eq_uint64_t inSize,
-                                       const unsigned nInputs,
+                                       const unsigned nInputs LB_UNUSED,
                                        void* const outData,
                                        eq_uint64_t* const outDims,
                                        const bool useAlpha )

@@ -89,7 +89,7 @@ Thread::Thread()
 {
 }
 
-Thread::Thread( const Thread& from )
+Thread::Thread( const Thread& )
     : _impl( new detail::Thread )
 {
 }

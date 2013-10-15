@@ -42,7 +42,7 @@ public:
                             void* const );
 
 
-    static Compressor* getNewCompressor( const unsigned name )
+    static Compressor* getNewCompressor( const unsigned /*name*/ )
         { return new CompressorRLE4B; }
 
 protected:
@@ -57,7 +57,7 @@ public:
     virtual ~CompressorDiffRLE4B() {}
 
     /** get a new instance of compressor RLE 4 bytes and swizzle data. */
-    static Compressor* getNewCompressor( const unsigned name )
+    static Compressor* getNewCompressor( const unsigned /*name*/ )
         { return new CompressorDiffRLE4B; }
 
     void compress( const void* const inData, const eq_uint64_t nPixels,

@@ -18,7 +18,7 @@
 #include <test.h>
 #include <lunchbox/unorderedIntervalSet.h>
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     typedef lunchbox::UnorderedIntervalSet< size_t > SetType;
     SetType set;

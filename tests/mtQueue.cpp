@@ -56,7 +56,7 @@ public:
     }
 };
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     ReadThread reader[ NTHREADS ];
     for( size_t i = 0; i < NTHREADS; ++i )
@@ -75,4 +75,3 @@ int main( int argc, char **argv )
     std::cout << NOPS/time << " writes/ms" << std::endl;
     return EXIT_SUCCESS;
 }
-

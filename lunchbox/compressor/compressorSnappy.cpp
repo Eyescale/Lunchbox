@@ -54,7 +54,7 @@ static const bool _initialized = _register();
 
 void CompressorSnappy::compress( const void* const inData,
                                  const eq_uint64_t nPixels,
-                                 const bool useAlpha )
+                                 const bool /*alpha*/ )
 {
     _nResults = 1;
     if( _results.size() < _nResults )
@@ -72,7 +72,7 @@ void CompressorSnappy::decompress( const void* const* inData,
                                    const eq_uint64_t* const inSizes,
                                    const unsigned nInputs,
                                    void* const outData,
-                                   eq_uint64_t* const outDims,
+                                   eq_uint64_t* const /*outDims*/,
                                    const eq_uint64_t, void* const )
 {
     if( nInputs == 0 )

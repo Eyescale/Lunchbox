@@ -24,7 +24,7 @@ using lunchbox::MemoryMap;
 #define MAP_SIZE LB_10MB
 #define STRIDE 23721
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     MemoryMap map( "foo.mmap", MAP_SIZE );
     TESTINFO( map.getSize() == MAP_SIZE, map.getSize( ));

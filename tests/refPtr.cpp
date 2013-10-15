@@ -39,12 +39,10 @@ public:
     Foo() {}
 
 private:
-    friend class boost::serialization::access;
-    template< class Archive >
-    void serialize( Archive& ar, unsigned int version )
-    {
-    }
     virtual ~Foo() {}
+
+    friend class boost::serialization::access;
+    template< class Archive > void serialize( Archive&, unsigned int ) {}
 };
 
 typedef lunchbox::RefPtr<Foo> FooPtr;
@@ -108,7 +106,7 @@ public:
         }
 };
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     foo = new Foo;
 
@@ -195,4 +193,3 @@ int main( int argc, char **argv )
 
     return EXIT_SUCCESS;
 }
-

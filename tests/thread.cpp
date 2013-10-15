@@ -4,12 +4,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -42,7 +42,7 @@ public:
             initLeft = true;
             return true;
         }
-    
+
     bool initLeft;
 };
 
@@ -57,7 +57,7 @@ public:
         }
 };
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     LoadThread loadThreads[NTHREADS];
     lunchbox::Clock clock;
@@ -69,12 +69,12 @@ int main( int argc, char **argv )
         TEST( loadThreads[i].join( ));
     const float time = clock.getTimef();
     std::cout << "Spawned and joined " << NTHREADS << " loadThreads in "
-              << time << " ms (" << (NTHREADS/time) << " threads/ms)" 
+              << time << " ms (" << (NTHREADS/time) << " threads/ms)"
               << std::endl;
 
     for( size_t i=0; i<NTHREADS; ++i )
         TEST( loadThreads[i].isStopped( ));
-    
+
     InitThread initThreads[NTHREADS];
 
     clock.reset();
@@ -95,4 +95,3 @@ int main( int argc, char **argv )
 
     return EXIT_SUCCESS;
 }
-

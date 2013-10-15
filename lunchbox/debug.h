@@ -81,7 +81,15 @@ template< class T > inline std::string className( const T& object )
 #  pragma warning( default: 4100 )
 #endif
 
-/** Format the given array in a human-readable form. @version 1.9.1 */
+/**
+ * Format the given array in a human-readable form.
+ * Depending on the data type, a different formatting may be used.
+ *
+ * @param data The pointer to the data to print.
+ * @param num The number of elements of T to print, for T==void the number of
+ *            bytes.
+ * @version 1.9.1
+ */
 template< class T > inline std::string format( const T* data, const size_t num )
 {
     std::ostringstream os;

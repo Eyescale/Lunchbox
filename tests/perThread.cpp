@@ -4,12 +4,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -27,7 +27,7 @@
 
 lunchbox::a_int32_t _threads;
 
-void destructor( size_t* data ) { --_threads; }
+void destructor( size_t* ) { --_threads; }
 
 lunchbox::PerThread< size_t, &destructor > _tls1;
 lunchbox::PerThread< size_t > _tls2;
@@ -56,7 +56,7 @@ public:
             TEST( *_tls2 == i );
             TEST( *_tls1 == *_tls2 );
             TEST( *_tls1 == *_tls3 );
-           
+
             _tls3 = 0;
             TEST( _tls3 == 0 );
         }
@@ -80,4 +80,3 @@ int main( int argc, char **argv )
     TEST( lunchbox::exit( ));
     return EXIT_SUCCESS;
 }
-

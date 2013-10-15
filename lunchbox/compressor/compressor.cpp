@@ -126,17 +126,15 @@ void EqCompressorDeleteDecompressor( void* const decompressor )
     delete reinterpret_cast< lunchbox::plugin::Compressor* >( decompressor );
 }
 
-void EqCompressorCompress( void* const ptr, const unsigned name,
-                           void* const in, const eq_uint64_t* inDims,
-                           const eq_uint64_t flags )
+void EqCompressorCompress( void* const ptr, const unsigned, void* const in,
+                           const eq_uint64_t* inDims, const eq_uint64_t flags )
 {
     assert( ptr );
     reinterpret_cast< lunchbox::plugin::Compressor* >( ptr )->
         compress( in, inDims, flags );
 }
 
-unsigned EqCompressorGetNumResults( void* const ptr,
-                                    const unsigned name )
+unsigned EqCompressorGetNumResults( void* const ptr, const unsigned )
 {
     assert( ptr );
     lunchbox::plugin::Compressor* compressor =
@@ -144,9 +142,8 @@ unsigned EqCompressorGetNumResults( void* const ptr,
     return compressor->getNResults();
 }
 
-void EqCompressorGetResult( void* const ptr, const unsigned name,
-                            const unsigned i, void** const out,
-                            eq_uint64_t* const outSize )
+void EqCompressorGetResult( void* const ptr, const unsigned, const unsigned i,
+                            void** const out, eq_uint64_t* const outSize )
 {
     assert( ptr );
     lunchbox::plugin::Compressor* compressor =
@@ -188,14 +185,11 @@ bool EqCompressorIsCompatible( const unsigned     name,
     return functions.isCompatible( glewContext );
 }
 
-void EqCompressorDownload( void* const        ptr,
-                           const unsigned     name,
+void EqCompressorDownload( void* const ptr, const unsigned,
                            const GLEWContext* glewContext,
-                           const eq_uint64_t  inDims[4],
-                           const unsigned     source,
-                           const eq_uint64_t  flags,
-                           eq_uint64_t        outDims[4],
-                           void**             out )
+                           const eq_uint64_t inDims[4], const unsigned source,
+                           const eq_uint64_t flags, eq_uint64_t outDims[4],
+                           void** out )
 {
     assert( ptr );
     lunchbox::plugin::Compressor* compressor =
@@ -204,14 +198,11 @@ void EqCompressorDownload( void* const        ptr,
 }
 
 
-void EqCompressorUpload( void* const        ptr,
-                         const unsigned     name,
-                         const GLEWContext* glewContext,
-                         const void*        buffer,
-                         const eq_uint64_t  inDims[4],
-                         const eq_uint64_t  flags,
-                         const eq_uint64_t  outDims[4],
-                         const unsigned     destination )
+void EqCompressorUpload( void* const ptr, const unsigned,
+                         const GLEWContext* glewContext, const void* buffer,
+                         const eq_uint64_t inDims[4], const eq_uint64_t flags,
+                         const eq_uint64_t outDims[4],
+                         const unsigned destination )
 {
     assert( ptr );
     lunchbox::plugin::Compressor* compressor =
@@ -221,12 +212,10 @@ void EqCompressorUpload( void* const        ptr,
 }
 
 
-void EqCompressorStartDownload( void* const        ptr,
-                                const unsigned     name,
+void EqCompressorStartDownload( void* const ptr, const unsigned /*name*/,
                                 const GLEWContext* glewContext,
-                                const eq_uint64_t  inDims[4],
-                                const unsigned     source,
-                                const eq_uint64_t  flags )
+                                const eq_uint64_t inDims[4],
+                                const unsigned source, const eq_uint64_t flags )
 {
     assert( ptr );
     lunchbox::plugin::Compressor* compressor =
@@ -234,15 +223,11 @@ void EqCompressorStartDownload( void* const        ptr,
     compressor->startDownload( glewContext, inDims, source, flags );
 }
 
-
-void EqCompressorFinishDownload( void* const        ptr,
-                                 const unsigned     name,
+void EqCompressorFinishDownload( void* const ptr, const unsigned /*name*/,
                                  const GLEWContext* glewContext,
-                                 const eq_uint64_t  inDims[4],
-                                 const unsigned     source,
-                                 const eq_uint64_t  flags,
-                                 eq_uint64_t        outDims[4],
-                                 void**             out )
+                                 const eq_uint64_t inDims[4],
+                                 const unsigned source, const eq_uint64_t flags,
+                                 eq_uint64_t outDims[4], void** out )
 {
     assert( ptr );
     lunchbox::plugin::Compressor* compressor =

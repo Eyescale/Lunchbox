@@ -33,7 +33,7 @@ public:
     virtual ~CompressorRLE565() {}
 
     /** Get a new instance of this compressor */
-    static Compressor* getNewCompressor( const unsigned name )
+    static Compressor* getNewCompressor( const unsigned /*name*/ )
         { return new CompressorRLE565; }
 
     void compress( const void* const inData, const eq_uint64_t nPixels,

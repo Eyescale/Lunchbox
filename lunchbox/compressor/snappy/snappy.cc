@@ -1072,11 +1072,11 @@ class SnappyDecompressionValidator {
   inline bool CheckLength() const {
     return expected_ == produced_;
   }
-  inline bool Append(const char* ip, size_t len) {
+  inline bool Append(const char*, size_t len) {
     produced_ += len;
     return produced_ <= expected_;
   }
-  inline bool TryFastAppend(const char* ip, size_t available, size_t length) {
+  inline bool TryFastAppend(const char*, size_t, size_t) {
     return false;
   }
   inline bool AppendFromSelf(size_t offset, size_t len) {
@@ -1117,4 +1117,3 @@ size_t Compress(const char* input, size_t input_length, string* compressed) {
 
 
 } // end namespace snappy
-

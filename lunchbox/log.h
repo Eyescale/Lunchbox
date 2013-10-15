@@ -224,6 +224,13 @@ namespace lunchbox
     LUNCHBOX_API std::ostream& disableHeader( std::ostream& os );
     /** Re-enable printing of the Log header. @version 1.0 */
     LUNCHBOX_API std::ostream& enableHeader( std::ostream& os );
+
+    /** Indent, disable flush and header for block printing. @version 1.9.1 */
+    inline std::ostream& startBlock( std::ostream& os )
+        { return os << indent << disableFlush << disableHeader; }
+    /** Exdent, denable flush and header to stop block print. @version 1.9.1 */
+    inline std::ostream& stopBlock( std::ostream& os )
+        { return os << enableHeader << enableFlush << exdent; }
 }
 
 /** Output an error message to the per-thread Log stream. @version 1.0 */

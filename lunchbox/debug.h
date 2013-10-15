@@ -77,10 +77,45 @@ template< class T > inline std::string className( const T* object )
 /** Print the RTTI name of the given class. @version 1.0 */
 template< class T > inline std::string className( const T& object )
     { return demangleTypeID( typeid( object ).name( )); }
-}
 #ifdef _WIN32
 #  pragma warning( default: 4100 )
 #endif
+
+/** Format the given array in a human-readable form. @version 1.9.1 */
+template< class T > inline std::string format( const T* data, const size_t num )
+{
+    std::ostringstream os;
+    os << num << " " << className( data ) << " @ " << std::hex
+       << (const void*)data << ": 0x";
+    for( size_t i = 0; i < num; ++i )
+    {
+        if( (i % 8) == 0 )
+            os << "   " << std::endl;
+        os << ' ' << data[i];
+    }
+    return os.str();
+}
+
+template<> inline std::string format( const uint8_t* data, const size_t num )
+{
+    std::ostringstream os;
+    os << num << " bytes @ " << std::hex << (const void*)data << ": 0x";
+    os.precision( 2 );
+    for( size_t i = 0; i < num; ++i )
+    {
+        if( (i % 32) == 0 )
+            os << "   " << std::endl;
+        else if( (i % 8) == 0 )
+            os << ' ';
+        os << ' ' << std::setw(2) << int( data[i] );
+    }
+    return os.str();
+}
+
+template<> inline std::string format( const void* data, const size_t num )
+    { return format( reinterpret_cast< const uint8_t* >( data ), num ); }
+
+} // namespace lunchbox
 
 #ifdef NDEBUG
 #  ifdef LB_RELEASE_ASSERT

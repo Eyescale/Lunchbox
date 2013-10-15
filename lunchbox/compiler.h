@@ -33,6 +33,8 @@
 #endif
 
 #ifdef __GNUC__
+#  define LB_UNUSED __attribute__((unused))
+
 #  if (( __GNUC__ > 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 0)) )
 #    define LB_GCC_4_0_OR_LATER
 #  endif
@@ -68,6 +70,10 @@
 #    define LB_GCC_4_3_OR_OLDER
 #  endif
 #endif // GCC
+
+#ifndef LB_UNUSED
+#  define LB_UNUSED
+#endif
 
 // C++11 feature 'backported' to C++03
 #ifdef BOOST_NO_CXX11_NULLPTR

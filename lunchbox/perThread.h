@@ -28,7 +28,7 @@ namespace detail { class PerThread; }
 template< class T > void perThreadDelete( T* object ) { delete object; }
 
 /** Empty PerThread destructor. @version 1.1.2 */
-template< class T > void perThreadNoDelete( T* object ) {}
+template< class T > void perThreadNoDelete( T* ) {}
 
 /**
  * Implements thread-specific storage for C++ objects.

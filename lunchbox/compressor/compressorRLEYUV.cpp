@@ -87,8 +87,7 @@ public:
                           LB_BIT10 | LB_BIT9 ))>>6 )),
                                   one, two, three, four );
     }
-    static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three )
+    static inline void swizzle( const uint32_t, uint8_t&, uint8_t&, uint8_t& )
         { assert( 0 ); }
 
     static inline uint32_t deswizzle( const uint8_t one, const uint8_t two,
@@ -107,17 +106,16 @@ public:
                              LB_BIT13 | LB_BIT4  | LB_BIT3 ))<<6 ));
     }
 
-    static inline uint32_t deswizzle( const uint8_t one, const uint8_t two,
-                                      const uint8_t three )
+    static inline uint32_t deswizzle( const uint8_t, const uint8_t,
+                                      const uint8_t )
         { assert( 0 ); return 0; }
 };
 
 class SwizzleUInt24
 {
 public:
-    static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three, uint8_t& four )
-        { assert( 0 ); }
+    static inline void swizzle( const uint32_t, uint8_t&, uint8_t&, uint8_t&,
+                                uint8_t& ) { assert( 0 ); }
 
     static inline void swizzle( const uint32_t input, uint8_t& one,
                                 uint8_t& two, uint8_t& three )
@@ -133,8 +131,8 @@ public:
                           LB_BIT17 )) >> 10 )),
                                   one, two, three );
     }
-    static inline uint32_t deswizzle( const uint8_t one, const uint8_t two,
-                                      const uint8_t three, const uint8_t four )
+    static inline uint32_t deswizzle( const uint8_t, const uint8_t,
+                                      const uint8_t, const uint8_t )
         { assert( 0 ); return 0; }
 
     static inline uint32_t deswizzle( const uint8_t one, const uint8_t two,

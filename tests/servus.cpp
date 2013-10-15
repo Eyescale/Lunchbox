@@ -23,7 +23,7 @@
 #include <lunchbox/servus.h>
 #include <lunchbox/rng.h>
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
 #ifdef LUNCHBOX_USE_DNSSD
     lunchbox::RNG rng;
@@ -37,7 +37,7 @@ int main( int argc, char **argv )
     service.set( "foo", "bar" );
     TEST( service.announce( port, os.str( )));
 
-    const lunchbox::Strings& hosts = 
+    const lunchbox::Strings& hosts =
         service.discover( lunchbox::Servus::IF_LOCAL, 500 );
     TESTINFO( hosts.size() == 1, hosts.size( ));
     TESTINFO( hosts.front() == os.str(), hosts.front( ));

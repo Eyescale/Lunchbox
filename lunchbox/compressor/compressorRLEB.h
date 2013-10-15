@@ -42,7 +42,7 @@ public:
                             void* const );
 
 
-    static Compressor* getNewCompressor( const unsigned name )
+    static Compressor* getNewCompressor( const unsigned /*name*/ )
         { return new CompressorRLEB; }
 };
 }

@@ -95,8 +95,7 @@ static uint64_t _compress( const uint64_t* data, const uint64_t nWords,
 }
 
 void CompressorRLE4BU::compress( const void* const inData,
-                                  const eq_uint64_t nPixels,
-                                  const bool        useAlpha )
+                                 const eq_uint64_t nPixels, const bool/*alpha*/)
 {
     const uint64_t size = nPixels * sizeof( uint32_t );
     LBASSERT( size > 0 );
@@ -129,7 +128,7 @@ void CompressorRLE4BU::compress( const void* const inData,
 
 
 void CompressorRLE4BU::decompress( const void* const* inData,
-                                   const eq_uint64_t* const inSizes,
+                                   const eq_uint64_t* const /*inSizes*/,
                                    const unsigned nInputs, void* const outData,
                                    eq_uint64_t* const outDims,
                                    const eq_uint64_t flags, void* const )
@@ -143,7 +142,6 @@ void CompressorRLE4BU::decompress( const void* const* inData,
     //   Needed since decompress loop is parallelized
     uint64_t** outTable = static_cast< uint64_t** >(
         alloca( nInputs * sizeof( uint64_t* )));
-
     {
         uint8_t* out = reinterpret_cast< uint8_t* >( outData );
         for( unsigned i = 0; i < nInputs; ++i )

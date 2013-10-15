@@ -51,7 +51,8 @@ static const bool _initialized = _register();
 }
 
 void CompressorFastLZ::compress( const void* const inData,
-                              const eq_uint64_t nPixels, const bool useAlpha )
+                                 const eq_uint64_t nPixels,
+                                 const bool /*alpha*/ )
 {
     _nResults = 1;
     if( _results.size() < _nResults )

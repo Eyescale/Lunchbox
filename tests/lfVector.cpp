@@ -279,10 +279,8 @@ template< class V, class T > void _runSerialTest()
     TEST( vector[9] == 17 );
 }
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
-    //lunchbox::sleep( 5000 );
-
 #ifdef LUNCHBOX_USE_OPENMP
     const size_t nThreads = lunchbox::OMP::getNThreads() * 3;
 #else

@@ -19,7 +19,7 @@
 
 #include <lunchbox/any.h>
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     lunchbox::Any any;
     lunchbox::Any otherAny;

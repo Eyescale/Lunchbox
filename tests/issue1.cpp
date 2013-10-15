@@ -51,7 +51,7 @@ public:
         }
 };
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     int64_t nOps = NLOOPS;
     const uint128_t valid1( 1, 0 );

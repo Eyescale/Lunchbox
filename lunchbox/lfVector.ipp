@@ -388,7 +388,7 @@ LFVector< T, nSlots >::iterator LFVector< T, nSlots >::end()
 /** @cond IGNORE */
 template< class T, int32_t nSlots > template< class Archive >
 inline void LFVector< T, nSlots >::save( Archive& ar,
-                                         const unsigned int version ) const
+                                         const unsigned int /*version*/ ) const
 {
     ar << size_;
     for( size_t i = 0; i < size_; ++i )
@@ -397,7 +397,7 @@ inline void LFVector< T, nSlots >::save( Archive& ar,
 
 template< class T, int32_t nSlots > template< class Archive >
 inline void LFVector< T, nSlots >::load( Archive& ar,
-                                         const unsigned int version )
+                                         const unsigned int /*version*/ )
 {
     size_t newSize;
     ar >> newSize;

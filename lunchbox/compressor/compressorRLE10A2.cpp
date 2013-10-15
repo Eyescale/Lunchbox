@@ -60,8 +60,7 @@ public:
                 (( input &( LB_BIT10 | LB_BIT9 )) >> 8 );
     }
 
-    static inline void swizzle( const uint32_t input, uint8_t& one,
-                                uint8_t& two, uint8_t& three )
+    static inline void swizzle( const uint32_t, uint8_t&, uint8_t&, uint8_t& )
         { assert( 0 ); }
 
     static inline uint32_t deswizzle( const uint8_t one, const uint8_t two,
@@ -83,9 +82,8 @@ public:
                (( four &( LB_BIT2 | LB_BIT1 )) << 8 );
     }
 
-    static inline uint32_t deswizzle( const uint8_t one, const uint8_t two,
-                                  const uint8_t three )
-        { assert( 0 ); return 0; }
+    static inline uint32_t deswizzle( const uint8_t, const uint8_t,
+                                      const uint8_t ) { assert( 0 ); return 0; }
 };
 
 
@@ -93,7 +91,7 @@ public:
 
 void CompressorRLE10A2::compress( const void* const inData,
                                   const eq_uint64_t nPixels,
-                                  const bool useAlpha )
+                                  const bool /*alpha*/ )
 {
     _nResults = _compress< uint32_t, uint8_t, SwizzleUInt32,
                            UseAlpha >( inData, nPixels, _results );

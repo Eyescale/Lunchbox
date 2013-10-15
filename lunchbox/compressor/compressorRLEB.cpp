@@ -94,7 +94,7 @@ ssize_t _compress( const void* const inData, const eq_uint64_t nPixels,
 
 
 void CompressorRLEB::compress( const void* const inData,
-                               const eq_uint64_t nPixels, const bool useAlpha )
+                               const eq_uint64_t nPixels, const bool /*alpha*/ )
 {
     if( (nPixels & 0x7) == 0 )
         _nResults = _compress< eq_uint64_t >( inData, nPixels>>3, _results );
@@ -161,9 +161,8 @@ void _decompress( const void* const* inData, const unsigned nInputs,
 }
 
 void CompressorRLEB::decompress( const void* const* inData,
-                                 const eq_uint64_t* const inSizes,
-                                 const unsigned nInputs,
-                                 void* const outData,
+                                 const eq_uint64_t* const /*inSizes*/,
+                                 const unsigned nInputs, void* const outData,
                                  eq_uint64_t* const outDims,
                                  const eq_uint64_t flags, void* const )
 {

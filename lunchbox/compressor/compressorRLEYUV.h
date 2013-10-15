@@ -41,7 +41,7 @@ public:
                             eq_uint64_t* const outDims, const eq_uint64_t flags,
                             void* const );
 
-    static Compressor* getNewCompressor( const unsigned name )
+    static Compressor* getNewCompressor( const unsigned /*name*/ )
         { return new CompressorRLEYUV; }
 };
 
@@ -51,7 +51,7 @@ public:
     CompressorDiffRLEYUV() : CompressorRLEYUV() {}
     virtual ~CompressorDiffRLEYUV() {}
 
-    static Compressor* getNewCompressor( const unsigned name  )
+    static Compressor* getNewCompressor( const unsigned /*name*/ )
         { return new CompressorDiffRLEYUV; }
 
     void compress( const void* const inData, const eq_uint64_t nPixels,

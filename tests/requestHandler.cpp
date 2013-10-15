@@ -54,7 +54,7 @@ public:
     }
 };
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     uint8_t* payload = (uint8_t*)42;
     Thread thread;

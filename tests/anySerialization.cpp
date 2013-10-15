@@ -21,7 +21,7 @@
 #include <boost/foreach.hpp>
 
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     std::list< lunchbox::Any > testValues;
     testValues.push_back( int8_t( -1 ));

@@ -40,7 +40,7 @@ public:
                             eq_uint64_t* const outDims, const eq_uint64_t flags,
                             void* const );
 
-    static Compressor* getNewCompressor( const unsigned name )
+    static Compressor* getNewCompressor( const unsigned /*name*/ )
         { return new CompressorLZF; }
 };
 }

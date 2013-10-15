@@ -35,10 +35,10 @@ public:
     virtual ~PluginVisitorT(){} //!< Desctruct this visitor @version 1.7.1
 
     /** Visit a plugin. @version 1.7.1 */
-    virtual VisitorResult visit( P& plugin ) { return TRAVERSE_CONTINUE; }
+    virtual VisitorResult visit( P& /*plugin*/ ) { return TRAVERSE_CONTINUE; }
 
     /** Visit a compressor of a plugin. @version 1.7.1 */
-    virtual VisitorResult visit( P& plugin, I& compressorInfo )
+    virtual VisitorResult visit( P& /*plugin*/, I& /*compressorInfo*/ )
         { return TRAVERSE_CONTINUE; }
 };
 }

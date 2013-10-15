@@ -396,7 +396,7 @@ private:
         return true;
     }
 
-    static void registerCBS_( DNSServiceRef serviceRef, DNSServiceFlags flags,
+    static void registerCBS_( DNSServiceRef, DNSServiceFlags,
                               DNSServiceErrorType error, const char* name,
                               const char* type, const char* domain,
                               Servus* servus )
@@ -418,7 +418,7 @@ private:
         handled_ = true;
     }
 
-    static void browseCBS_( DNSServiceRef serviceRef, DNSServiceFlags flags,
+    static void browseCBS_( DNSServiceRef, DNSServiceFlags flags,
                             uint32_t interfaceIdx, DNSServiceErrorType error,
                             const char* name, const char* type,
                             const char* domain, Servus* servus )
@@ -455,19 +455,20 @@ private:
         }
     }
 
-    static void resolveCBS_( DNSServiceRef serviceRef, DNSServiceFlags flags,
-                             uint32_t interfaceIdx, DNSServiceErrorType error,
-                             const char* name, const char* host, uint16_t port,
+    static void resolveCBS_( DNSServiceRef, DNSServiceFlags,
+                             uint32_t /*interfaceIdx*/,
+                             DNSServiceErrorType error,
+                             const char* /*name*/, const char* host,
+                             uint16_t /*port*/,
                              uint16_t txtLen, const unsigned char* txt,
                              Servus* servus )
     {
-        servus->resolveCB_( error, name, host, txtLen, txt );
+        servus->resolveCB_( error, host, txtLen, txt );
         servus->handled_ = true;
     }
 
-    void resolveCB_( DNSServiceErrorType error, const char* name,
-                     const char* host, uint16_t txtLen,
-                     const unsigned char* txt )
+    void resolveCB_( DNSServiceErrorType error, const char* host,
+                     uint16_t txtLen, const unsigned char* txt )
     {
         if( error != kDNSServiceErr_NoError)
         {
@@ -490,7 +491,6 @@ private:
 
             values[ key ] = std::string( value, valueLen );
             ++i;
-            //LBINFO << browsedName_ << key << "=" << values[ key ] << std::endl;
         }
     }
 #endif

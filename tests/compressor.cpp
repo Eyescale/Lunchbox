@@ -51,7 +51,7 @@ float _compressionTime = 0;
 float _decompressionTime = 0;
 float _baseTime = 0.f;
 
-int main( int argc, char **argv )
+int main( int, char** )
 {
     registry.addDirectory( std::string( LUNCHBOX_BUILD_DIR ) + "/lib" );
     TEST( registry.addLunchboxPlugins( ));

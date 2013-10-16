@@ -69,13 +69,15 @@ namespace detail
 class Servus
 {
 public:
-    explicit Servus( const std::string& name )
 #ifdef LUNCHBOX_USE_DNSSD
-            : name_( name )
-            , service_( 0 )
-            , handled_( false )
+    explicit Servus( const std::string& name )
+        : name_( name )
+        , service_( 0 )
+        , handled_( false )
+    {}
+#else
+    explicit Servus( const std::string& ) {}
 #endif
-        {}
 
     ~Servus()
     {
@@ -84,37 +86,44 @@ public:
 #endif
     }
 
-    void set( const std::string& key, const std::string& value )
-        {
 #ifdef LUNCHBOX_USE_DNSSD
-            data_[ key ] = value;
-            updateRecord_();
+    void set( const std::string& key, const std::string& value )
+    {
+        data_[ key ] = value;
+        updateRecord_();
+    }
+#else
+    void set( const std::string&, const std::string& ) {}
 #endif
-        }
 
     Strings getKeys() const
-        {
-            Strings keys;
+    {
+        Strings keys;
 #ifdef LUNCHBOX_USE_DNSSD
-            for( ValueMapCIter i = data_.begin(); i != data_.end(); ++i )
-                keys.push_back( i->first );
+        for( ValueMapCIter i = data_.begin(); i != data_.end(); ++i )
+            keys.push_back( i->first );
 #endif
-            return keys;
-        }
+        return keys;
+    }
 
+#ifdef LUNCHBOX_USE_DNSSD
     const std::string& get( const std::string& key ) const
-        {
-#ifdef LUNCHBOX_USE_DNSSD
-            ValueMapCIter i = data_.find( key );
-            if( i != data_.end( ))
-                return i->second;
+    {
+        ValueMapCIter i = data_.find( key );
+        if( i != data_.end( ))
+            return i->second;
+        return empty_;
+    }
+#else
+    const std::string& get( const std::string& ) const
+    {
+        return empty_;
+    }
 #endif
-            return empty_;
-        }
 
+#ifdef LUNCHBOX_USE_DNSSD
     bool announce( const unsigned short port, const std::string& instance )
     {
-#ifdef LUNCHBOX_USE_DNSSD
         if( service_ )
             return false;
 
@@ -141,9 +150,14 @@ public:
         }
 
         LBWARN << "DNSServiceRegister returned: " << error << std::endl;
-#endif
         return false;
     }
+#else
+    bool announce( const unsigned short, const std::string& )
+    {
+        return false;
+    }
+#endif
 
     void withdraw()
     {
@@ -164,10 +178,10 @@ public:
             return false;
         }
 
+#ifdef LUNCHBOX_USE_DNSSD
     Strings discover( const lunchbox::Servus::Interface interface_,
                       const unsigned browseTime )
     {
-#ifdef LUNCHBOX_USE_DNSSD
         instanceMap_.clear();
 
 #   ifdef SERVUS_BONJOUR
@@ -225,9 +239,14 @@ public:
             instanceMap_.swap( localData );
         }
 #   endif
-#endif
         return getInstances();
     }
+#else
+    Strings discover( const lunchbox::Servus::Interface, const unsigned )
+    {
+        return getInstances();
+    }
+#endif
 
     Strings getInstances() const
     {
@@ -242,10 +261,10 @@ public:
         return instances;
     }
 
+#ifdef LUNCHBOX_USE_DNSSD
     Strings getKeys( const std::string& instance ) const
     {
         Strings keys;
-#ifdef LUNCHBOX_USE_DNSSD
         InstanceMapCIter i = instanceMap_.find( instance );
         if( i == instanceMap_.end( ))
             return keys;
@@ -253,14 +272,19 @@ public:
         const ValueMap& values = i->second;
         for( ValueMapCIter j = values.begin(); j != values.end(); ++j )
             keys.push_back( j->first );
-#endif
         return keys;
     }
+#else
+    Strings getKeys( const std::string& ) const
+    {
+        return Strings();
+    }
+#endif
 
+#ifdef LUNCHBOX_USE_DNSSD
     bool containsKey( const std::string& instance,
                       const std::string& key ) const
     {
-#ifdef LUNCHBOX_USE_DNSSD
         InstanceMapCIter i = instanceMap_.find( instance );
         if( i == instanceMap_.end( ))
             return false;
@@ -270,14 +294,18 @@ public:
         if( j == values.end( ))
             return false;
         return true;
-#endif
+    }
+#else
+    bool containsKey( const std::string&, const std::string& ) const
+    {
         return false;
     }
+#endif
 
+#ifdef LUNCHBOX_USE_DNSSD
     const std::string& get( const std::string& instance,
                             const std::string& key ) const
     {
-#ifdef LUNCHBOX_USE_DNSSD
         InstanceMapCIter i = instanceMap_.find( instance );
         if( i == instanceMap_.end( ))
             return empty_;
@@ -287,16 +315,22 @@ public:
         if( j == values.end( ))
             return empty_;
         return j->second;
-#endif
+    }
+#else
+    const std::string& get( const std::string&, const std::string& ) const
+    {
         return empty_;
     }
-
-    void getData( lunchbox::Servus::Data& data )
-        {
-#ifdef LUNCHBOX_USE_DNSSD
-            data = instanceMap_;
 #endif
-        }
+
+#ifdef LUNCHBOX_USE_DNSSD
+    void getData( lunchbox::Servus::Data& data )
+    {
+        data = instanceMap_;
+    }
+#else
+    void getData( lunchbox::Servus::Data& ) {}
+#endif
 
 private:
 #ifdef LUNCHBOX_USE_DNSSD
@@ -577,9 +611,9 @@ void Servus::getData( Data& data )
     impl_->getData( data );
 }
 
+#ifdef LUNCHBOX_USE_DNSSD
 std::ostream& operator << ( std::ostream& os, const Servus& servus )
 {
-#ifdef LUNCHBOX_USE_DNSSD
     os << disableFlush << disableHeader << "Servus instance"
        << (servus.isAnnounced() ? " " : " not ") << "announced" << indent;
 
@@ -588,9 +622,12 @@ std::ostream& operator << ( std::ostream& os, const Servus& servus )
         os << std::endl << *i << " = " << servus.get( *i );
 
     return os << exdent << enableHeader << enableFlush;
-#else
-    return os << "No dnssd support, empty Servus implementation";
-#endif
 }
+#else
+std::ostream& operator << ( std::ostream& os, const Servus& )
+{
+    return os << "No dnssd support, empty Servus implementation";
+}
+#endif
 
 }

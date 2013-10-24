@@ -4,6 +4,7 @@ notifications:
     on_success: never
 language: cpp
 script:
+ - ls /usr/lib/x86_64-linux-gnu/libturbojpeg*
  - mkdir Debug
  - cd Debug
  - cmake .. -DCI_BUILD_COMMIT=$TRAVIS_COMMIT -DCMAKE_BUILD_TYPE=Debug

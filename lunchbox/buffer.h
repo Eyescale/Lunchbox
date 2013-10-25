@@ -20,6 +20,7 @@
 #define LUNCHBOX_BUFFER_H
 
 #include <lunchbox/debug.h>       // LBASSERT macro
+#include <lunchbox/os.h>          // setZero used inline
 #include <lunchbox/types.h>
 
 #include <cstdlib>      // for malloc
@@ -154,6 +155,9 @@ public:
             setSize( newSize );
             return _data;
         }
+
+    /** Set the buffer content to 0. @version 1.9.1 */
+    void setZero() { ::lunchbox::setZero( _data, _size ); }
 
     /** Append elements to the buffer, increasing the size. @version 1.0 */
     void append( const T* data, const uint64_t size )

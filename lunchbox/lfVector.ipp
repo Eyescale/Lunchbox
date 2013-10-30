@@ -140,9 +140,10 @@ bool LFVector< T, nSlots >::operator == ( const LFVector& rhs ) const
     return true;
 }
 
-// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=51721
-#ifdef LB_GCC_4_6_OR_LATER
-#  pragma GCC diagnostic push
+#ifdef LB_GCC_4_6_OR_LATER // http://gcc.gnu.org/bugzilla/show_bug.cgi?id=51721
+#  ifndef LB_GCC_4_8 // http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56824
+#    pragma GCC diagnostic push
+#  endif
 #  pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
 
@@ -176,7 +177,9 @@ const T& LFVector< T, nSlots >::operator[]( size_t i ) const
 }
 
 #ifdef LB_GCC_4_6_OR_LATER
-#  pragma GCC diagnostic pop
+#  ifndef LB_GCC_4_8
+#    pragma GCC diagnostic pop
+#  endif
 #endif
 
 template< class T, int32_t nSlots >
@@ -341,7 +344,11 @@ void LFVector< T, nSlots >::push_back_unlocked_( const T& item )
 {
     const size_t i = size_ + 1;
     const int32_t slot = getIndexOfLastBit( i );
-    const size_t sz = ( size_t( 1 )<<slot );
+    const size_t sz = ( size_t( 1 ) << slot );
+
+    LBASSERTINFO( slot >= 0 && slot < nSlots, slot );
+    LBASSERTINFO( sz >= 0, sz );
+
     if( !slots_[ slot ] )
         slots_[ slot ] = new T[ sz ];
 

@@ -91,27 +91,28 @@ public:
     Writer& operator=( const Writer& ) { return *this; }
 
     virtual void run()
+    {
+        size_t stage = 0;
+        while( true )
         {
-            size_t stage = 0;
-            while( true )
-            {
-                stage += STAGESIZE;
-                stage_.waitGE( stage );
-                if( stage_ == std::numeric_limits< size_t >::max( ))
-                    return;
+            stage += STAGESIZE;
+            stage_.waitGE( stage );
+            if( stage_ == std::numeric_limits< size_t >::max( ))
+                return;
 
-                if( vector )
+            if( vector )
+            {
+                for( size_t i = 0; i < LOOPSIZE; ++i )
                 {
-                    for( size_t i = 0; i < LOOPSIZE; ++i )
-                    {
-                        if( i < vector->size( ))
-                            (*vector)[ i ] = i;
-                    }
-                    wTime_ = _clock.getTimef();
+                    if( i < vector->size( ))
+                        (*vector)[ i ] = i;
                 }
-                ++stage_;
+                wTime_ = _clock.getTimef();
             }
+            ++stage_;
         }
+    }
+
     Vector_t* vector;
 };
 
@@ -123,24 +124,25 @@ public:
     Pusher& operator=( const Pusher& ) { return *this; }
 
     virtual void run()
+    {
+        size_t stage = 0;
+        while( true )
         {
-            size_t stage = 0;
-            while( true )
-            {
-                stage += STAGESIZE;
-                stage_.waitGE( stage );
-                if( stage_ == std::numeric_limits< size_t >::max( ))
-                    return;
+            stage += STAGESIZE;
+            stage_.waitGE( stage );
+            if( stage_ == std::numeric_limits< size_t >::max( ))
+                return;
 
-                if( vector )
-                {
-                    while( vector->size() < LOOPSIZE )
-                        vector->push_back( 0 );
-                    pTime_ = _clock.getTimef();
-                }
-                ++stage_;
+            if( vector )
+            {
+                while( vector->size() < LOOPSIZE )
+                    vector->push_back( 0 );
+                pTime_ = _clock.getTimef();
             }
+            ++stage_;
         }
+    }
+
     Vector_t* vector;
 };
 

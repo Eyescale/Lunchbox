@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2010-2013, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -80,6 +80,31 @@
 
 #  if (( __GNUC__ < 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ < 3)) )
 #    define LB_GCC_4_3_OR_OLDER
+#  endif
+
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 2))
+#    define LB_GCC_4_2
+#  endif
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 3))
+#    define LB_GCC_4_3
+#  endif
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 4))
+#    define LB_GCC_4_4
+#  endif
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 5))
+#    define LB_GCC_4_5
+#  endif
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
+#    define LB_GCC_4_6
+#  endif
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 7))
+#    define LB_GCC_4_7
+#  endif
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 8))
+#    define LB_GCC_4_8
+#  endif
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 9))
+#    define LB_GCC_4_9
 #  endif
 #endif // GCC
 

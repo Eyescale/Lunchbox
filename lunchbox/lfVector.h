@@ -31,7 +31,6 @@
 
 namespace lunchbox
 {
-
 /**
  * STL-like vector implementation providing certain thread-safety guarantees.
  *

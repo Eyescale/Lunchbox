@@ -35,9 +35,10 @@ class Downloader : public PluginInstance
 public:
     Downloader() {}
 
-    Downloader( lunchbox::PluginRegistry& from, const uint32_t name )
+    Downloader( lunchbox::PluginRegistry& from, const uint32_t name,
+                const GLEWContext* gl )
     {
-        setup( from, name );
+        LBCHECK( setup( from, name, gl ));
     }
 
     ~Downloader()
@@ -52,7 +53,8 @@ public:
         PluginInstance::clear();
     }
 
-    bool setup( lunchbox::PluginRegistry& from, const uint32_t name )
+    bool setup( lunchbox::PluginRegistry& from, const uint32_t name,
+                const GLEWContext* gl )
     {
         if( name == info.name )
         {
@@ -77,6 +79,16 @@ public:
             return false;
         }
 
+        if( !gl )
+            LBWARN << "Can't verify plugin compatibility, no GLEWContext given"
+                   << std::endl;
+        else if( !plugin->isCompatible( name, gl ))
+        {
+            LBWARN << "Plugin for downloader 0x" << std::hex << name << std::dec
+                   << " not compatible with OpenGL implementation" << std::endl;
+            return false;
+        }
+
         instance = plugin->newDecompressor( name );
         info = plugin->findInfo( name );
         LBASSERT( isGood( ));
@@ -95,8 +107,9 @@ Downloader::Downloader()
     LB_TS_THREAD( _thread );
 }
 
-Downloader::Downloader( PluginRegistry& from, const uint32_t name )
-    : impl_( new detail::Downloader( from, name ))
+Downloader::Downloader( PluginRegistry& from, const uint32_t name,
+                        const GLEWContext* gl )
+    : impl_( new detail::Downloader( from, name, gl ))
 {
     LB_TS_THREAD( _thread );
 }
@@ -192,9 +205,10 @@ const EqCompressorInfo& Downloader::getInfo() const
     return impl_->info;
 }
 
-bool Downloader::setup( PluginRegistry& from, const uint32_t name )
+bool Downloader::setup( PluginRegistry& from, const uint32_t name,
+                        const GLEWContext* gl )
 {
-    return impl_->setup( from, name );
+    return impl_->setup( from, name, gl );
 }
 
 bool Downloader::setup( PluginRegistry& from,const uint32_t internalFormat,
@@ -202,7 +216,7 @@ bool Downloader::setup( PluginRegistry& from,const uint32_t internalFormat,
                         const uint64_t capabilities,const GLEWContext* gl)
 {
     return impl_->setup( from, choose( from, internalFormat, minQuality,
-                                       ignoreAlpha, capabilities, gl ));
+                                       ignoreAlpha, capabilities, gl ), gl );
 }
 
 void Downloader::clear()

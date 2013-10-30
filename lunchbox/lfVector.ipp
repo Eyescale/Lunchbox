@@ -347,8 +347,6 @@ void LFVector< T, nSlots >::push_back_unlocked_( const T& item )
     const size_t sz = ( size_t( 1 ) << slot );
 
     LBASSERTINFO( slot >= 0 && slot < nSlots, slot );
-    LBASSERTINFO( sz >= 0, sz );
-
     if( !slots_[ slot ] )
         slots_[ slot ] = new T[ sz ];
 

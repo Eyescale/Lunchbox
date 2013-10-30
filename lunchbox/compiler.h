@@ -18,7 +18,19 @@
 #ifndef LUNCHBOX_COMPILER_H
 #define LUNCHBOX_COMPILER_H
 
-#include <boost/config.hpp>
+#ifdef __cplusplus
+#  include <boost/config.hpp>
+
+// C++11 feature 'backported' to C++03
+#  ifdef BOOST_NO_CXX11_NULLPTR
+#    define nullptr 0
+#  endif
+
+#  ifndef CXX_FINAL_OVERRIDE_SUPPORTED
+#    define final
+#    define override
+#  endif
+#endif
 
 #ifdef _MSC_VER
 /** Declare and align a variable to a 8-byte boundary. */
@@ -73,16 +85,6 @@
 
 #ifndef LB_UNUSED
 #  define LB_UNUSED
-#endif
-
-// C++11 feature 'backported' to C++03
-#ifdef BOOST_NO_CXX11_NULLPTR
-#  define nullptr 0
-#endif
-
-#ifndef CXX_FINAL_OVERRIDE_SUPPORTED
-#  define final
-#  define override
 #endif
 
 #endif //LUNCHBOX_COMPILER_H

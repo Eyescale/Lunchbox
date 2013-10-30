@@ -40,9 +40,12 @@ public:
      *
      * @param from the plugin registry.
      * @param name the name of the downloader.
+     * @param gl the OpenGL function table to verify that the plugin is
+     *           compatible with this GL implementation.
      * @version 1.7.1
      */
-    LUNCHBOX_API Downloader( PluginRegistry& from, const uint32_t name );
+    LUNCHBOX_API Downloader( PluginRegistry& from, const uint32_t name,
+                             const GLEWContext* gl = 0 );
 
     /** Destruct this downloader. @version 1.7.1 */
     LUNCHBOX_API virtual ~Downloader();
@@ -94,10 +97,13 @@ public:
      *
      * @param from the plugin registry.
      * @param name the name of the downloader.
+     * @param gl the OpenGL function table to verify that the plugin is
+     *           compatible with this GL implementation.
      * @return true on success, false otherwise.
      * @version 1.7.1
      */
-    LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name );
+    LUNCHBOX_API bool setup( PluginRegistry& from, const uint32_t name,
+                             const GLEWContext* gl = 0 );
 
     /**
      * Set up a new, auto-selected downloader instance.
@@ -106,7 +112,8 @@ public:
      */
     LUNCHBOX_API bool setup( PluginRegistry& from,const uint32_t internalFormat,
                              const float minQuality, const bool ignoreAlpha,
-                             const uint64_t capabilities,const GLEWContext* gl);
+                             const uint64_t capabilities,
+                             const GLEWContext* gl );
 
     /** Reset to EQ_COMPRESSOR_NONE. @version 1.7.1 */
     LUNCHBOX_API void clear();

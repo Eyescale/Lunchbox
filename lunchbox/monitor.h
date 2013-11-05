@@ -40,6 +40,9 @@ namespace lunchbox
  */
 template< class T > class Monitor
 {
+    typedef void (Monitor< T >::*bool_t)() const;
+    void bool_true() const {}
+
 public:
     /** Construct a new monitor with a default value of 0. @version 1.0 */
     Monitor() : _value( T( 0 )) {}
@@ -340,6 +343,12 @@ public:
         {
             ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
             return _value >= rhs._value;
+        }
+    /** @return a bool conversion of the result. @version 1.9.1 */
+    operator bool_t()
+        {
+            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+            return _value ? &Monitor< T >::bool_true : 0;
         }
     //@}
 

@@ -28,6 +28,7 @@
 using lunchbox::uint128_t;
 
 lunchbox::Monitor< int64_t > monitor;
+lunchbox::Monitor< bool > boolMonitor;
 
 class Thread : public lunchbox::Thread
 {
@@ -51,6 +52,10 @@ public:
 
 int main( int, char** )
 {
+    TEST( !boolMonitor );
+    boolMonitor = true;
+    TEST( boolMonitor );
+
     int64_t nOps = NLOOPS;
     Thread waiter;
 

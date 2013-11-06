@@ -53,6 +53,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   referenced.h
   requestFuture.h
   requestHandler.h
+  result.h
   rng.h
   scopedMutex.h
   serializable.h

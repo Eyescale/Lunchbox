@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2012-2013, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -21,6 +21,7 @@
 #define LUNCHBOX_SERVUS_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/result.h> // nested base class
 #include <lunchbox/types.h>
 #include <lunchbox/nonCopyable.h>
 #include <map>
@@ -46,6 +47,25 @@ public:
         IF_ALL = 0, //!< use all interfaces
         // (uint32_t) -1 == kDNSServiceInterfaceIndexLocalOnly
         IF_LOCAL = (unsigned)(-1) //!< only local interfaces
+    };
+
+    /**
+     * The ZeroConf operation result code.
+     *
+     * The result code is either one of kDNSServiceErr_ or one of static
+     * constants defined by this class
+     */
+    class Result : public lunchbox::Result
+    {
+    public:
+        explicit Result( const int32_t code ) : lunchbox::Result( code ){}
+        virtual ~Result(){}
+        LUNCHBOX_API virtual std::string getString() const;
+
+        /** operation did not complete. */
+        static const int32_t PENDING = -1;
+        /** Lunchbox compiled without ZeroConf support. */
+        static const int32_t NOT_SUPPORTED = -2;
     };
 
     /**
@@ -84,10 +104,11 @@ public:
      *
      * @param port the service IP port in host byte order.
      * @param instance a host-unique instance name, hostname is used if empty.
+     * @return the success status of the operation.
      * @version 0.9
      */
-    LUNCHBOX_API bool announce( const unsigned short port,
-                                const std::string& instance );
+    LUNCHBOX_API Result announce( const unsigned short port,
+                                 const std::string& instance );
 
     /** Stop announcing the registered key/value pairs. @version 0.9 */
     LUNCHBOX_API void withdraw();

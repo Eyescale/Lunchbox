@@ -60,7 +60,7 @@ public:
     public:
         explicit Result( const int32_t code ) : lunchbox::Result( code ){}
         virtual ~Result(){}
-        LUNCHBOX_API virtual std::string getString() const;
+        LUNCHBOX_API std::string getString() const override;
 
         /** operation did not complete. */
         static const int32_t PENDING = -1;

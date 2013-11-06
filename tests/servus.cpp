@@ -34,7 +34,7 @@ int main( int, char** )
     std::ostringstream os;
     os << port;
 
-    lunchbox::Servus::Result result = service.announce( port, os.str( ));
+    const lunchbox::Servus::Result& result = service.announce( port, os.str( ));
 
 #ifdef LUNCHBOX_USE_DNSSD
     TEST( lunchbox::Result::SUCCESS == kDNSServiceErr_NoError );

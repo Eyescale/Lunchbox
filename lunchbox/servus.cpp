@@ -588,7 +588,7 @@ const std::string& Servus::get( const std::string& key ) const
 }
 
 Servus::Result Servus::announce( const unsigned short port,
-                                const std::string& instance )
+                                 const std::string& instance )
 {
 #ifdef SERVUS_AVAHI
     ScopedWrite mutex( lock_ );

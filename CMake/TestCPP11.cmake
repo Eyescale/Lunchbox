@@ -1,10 +1,11 @@
 # Copyright (c) 2013 ahmet.bilgili@epfl.ch
 #               2013 Stefan.Eilemann@epfl.ch
 
-# Test std::shared_ptr feature
-set(TEST_SRC ${CMAKE_BINARY_DIR}/cpp11_stdsharedptr_test.cpp)
-file(WRITE ${TEST_SRC} "
-#include <memory>
+set(TESTS_CPP11 sharedptr tuple auto nullptr array final_override unordered_map
+  template_alias)
+
+file(WRITE ${CMAKE_BINARY_DIR}/cpp11_sharedptr.cpp
+"#include <memory>
 int main()
 {
    std::shared_ptr< int > a( new int );
@@ -58,10 +59,45 @@ class Bar : public Foo
     virtual ~Bar();
 };
 
-int main() {}
-")
-try_compile(CXX_FINAL_OVERRIDE_SUPPORTED ${CMAKE_BINARY_DIR}/override_test
-  ${TEST_SRC} OUTPUT_VARIABLE output)
+int main() {}")
+
+file(WRITE ${CMAKE_BINARY_DIR}/cpp11_unordered_map.cpp
+"#include <unordered_map>
+int main()
+{
+   std::unordered_map< int, int > test;
+   test[ 42 ] = 17;
+   return 0;
+}")
+
+file(WRITE ${CMAKE_BINARY_DIR}/cpp11_template_alias.cpp
+"#include <vector>
+template <typename T> using FooVector = std::vector< T >;
+int main()
+{
+    FooVector< int > foo;
+    return 0;
+}")
+
+set(TEST_CPP11_PASSED)
+set(TEST_CPP11_FAILED)
+while(TESTS_CPP11)
+  list(GET TESTS_CPP11 0 TEST_CPP11_name)
+  list(REMOVE_AT TESTS_CPP11 0)
+  string(TOUPPER ${TEST_CPP11_name} TEST_CPP11_NAME)
+
+  try_compile(CXX_${TEST_CPP11_NAME}_SUPPORTED
+    ${CMAKE_BINARY_DIR}/cpp11_${TEST_CPP11_name}
+    ${CMAKE_BINARY_DIR}/cpp11_${TEST_CPP11_name}.cpp OUTPUT_VARIABLE output)
+
+  if(CXX_${TEST_CPP11_NAME}_SUPPORTED)
+    set(TEST_CPP11_PASSED "${TEST_CPP11_PASSED} ${TEST_CPP11_name}")
+    add_definitions(-DCXX_${TEST_CPP11_NAME}_SUPPORTED)
+  else()
+    set(TEST_CPP11_FAILED "${TEST_CPP11_FAILED} ${TEST_CPP11_name}")
+    #message("${TEST_CPP11_name} failed: ${output}")
+  endif()
+endwhile()
 
 if(CXX_FINAL_OVERRIDE_SUPPORTED)
   add_definitions(-DCXX_FINAL_OVERRIDE_SUPPORTED)

@@ -10,42 +10,44 @@ int main()
 {
    std::shared_ptr< int > a( new int );
    return 0;
-}
-")
-try_compile(CXX_STDSHAREDPTR_SUPPORTED
-  ${CMAKE_BINARY_DIR}/cpp11_stdsharedptr_test ${TEST_SRC}
-  OUTPUT_VARIABLE output)
+}")
 
-# Test tuple class feature
-set(TEST_SRC ${CMAKE_BINARY_DIR}/cpp11_tuple_test.cpp)
-file(WRITE ${TEST_SRC} "
-#include <tuple>
+file(WRITE ${CMAKE_BINARY_DIR}/cpp11_tuple.cpp
+"#include <tuple>
 int main()
 {
    std::tuple< int, char> foo(10,'x');
    return 0;
-}
-")
-try_compile(CXX_TUPLE_SUPPORTED ${CMAKE_BINARY_DIR}/cpp11_tuple_test
-  ${TEST_SRC} OUTPUT_VARIABLE output)
+}")
 
-# Test auto keyword feature
-set(TEST_SRC ${CMAKE_BINARY_DIR}/cpp11_auto_test.cpp)
-file(WRITE ${TEST_SRC} "int main()
+file(WRITE ${CMAKE_BINARY_DIR}/cpp11_auto.cpp
+"int main()
 {
    int a = 2;
    auto foo = a;
-   foo
+   foo++;
    return 0;
-}
-")
-try_compile(CXX_AUTO_SUPPORTED ${CMAKE_BINARY_DIR}/cpp11_auto_test
-  ${TEST_SRC} OUTPUT_VARIABLE output)
+}")
 
-# Test for final and override
-set(TEST_SRC ${CMAKE_BINARY_DIR}/override_test.cpp)
-file(WRITE ${TEST_SRC} "
-class Foo
+file(WRITE ${CMAKE_BINARY_DIR}/cpp11_nullptr.cpp
+"int main()
+{
+   int *ptr = nullptr;
+   ptr++;
+   return 0;
+}")
+
+file(WRITE ${CMAKE_BINARY_DIR}/cpp11_array.cpp
+"#include <array>
+int main()
+{
+   std::array<int, 3> a2 = {{1, 2, 3}};
+   a2[ 0 ] = 1;
+   return 0;
+}")
+
+file(WRITE ${CMAKE_BINARY_DIR}/cpp11_final_override.cpp
+"class Foo
 {
 public:
     virtual void one();
@@ -99,6 +101,5 @@ while(TESTS_CPP11)
   endif()
 endwhile()
 
-if(CXX_FINAL_OVERRIDE_SUPPORTED)
-  add_definitions(-DCXX_FINAL_OVERRIDE_SUPPORTED)
-endif()
+message(STATUS
+  "C++11 features PASSED:${TEST_CPP11_PASSED}, FAILED:${TEST_CPP11_FAILED}")

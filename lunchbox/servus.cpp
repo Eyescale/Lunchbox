@@ -73,7 +73,7 @@ public:
     explicit Servus( const std::string& name )
         : name_( name )
         , service_( 0 )
-        , handled_( false )
+        , result_( lunchbox::Servus::Result::PENDING )
     {}
 #else
     explicit Servus( const std::string& ) {}
@@ -122,15 +122,16 @@ public:
 #endif
 
 #ifdef LUNCHBOX_USE_DNSSD
-    bool announce( const unsigned short port, const std::string& instance )
+    lunchbox::Servus::Result announce( const unsigned short port,
+                                      const std::string& instance )
     {
         if( service_ )
-            return false;
+            return lunchbox::Servus::Result( kDNSServiceErr_NotInitialized );
 
         TXTRecordRef record;
         createTXTRecord_( record );
 
-        const DNSServiceErrorType error =
+        const lunchbox::Servus::Result result(
             DNSServiceRegister( &service_, 0 /* flags */,
                                 0 /* all interfaces */,
                                 instance.empty() ? 0 : instance.c_str(),
@@ -139,23 +140,19 @@ public:
                                 TXTRecordGetLength( &record ),
                                 TXTRecordGetBytesPtr( &record ),
                                 (DNSServiceRegisterReply)registerCBS_,
-                                this );
+                                this ));
         TXTRecordDeallocate( &record );
 
-        if( error == kDNSServiceErr_NoError )
-        {
-            if( handleEvents_( service_, ANNOUNCE_TIMEOUT ))
-                return service_ != 0;
-            LBWARN << "Service registration timed out" << std::endl;
-        }
+        if( result )
+            return handleEvents_( service_, ANNOUNCE_TIMEOUT );
 
-        LBWARN << "DNSServiceRegister returned: " << error << std::endl;
-        return false;
+        LBWARN << "DNSServiceRegister returned: " << result << std::endl;
+        return result;
     }
 #else
-    bool announce( const unsigned short, const std::string& )
+    lunchbox::Servus::Result announce( const unsigned short, const std::string&)
     {
-        return false;
+        return lunchbox::Servus::Result( lunchbox::Servus::Result::UNSUPPORTED);
     }
 #endif
 
@@ -338,7 +335,7 @@ private:
     InstanceMap instanceMap_; //!< last discovered data
     ValueMap data_;   //!< self data to announce
     DNSServiceRef service_; //!< used for announce()
-    bool handled_;
+    int32_t result_;
     std::string browsedName_;
 
     void updateRecord_()
@@ -371,16 +368,17 @@ private:
         }
     }
 
-    bool handleEvents_( DNSServiceRef service, const int32_t timeout = -1 )
+    lunchbox::Servus::Result handleEvents_( DNSServiceRef service,
+                                           const int32_t timeout = -1 )
     {
         assert( service );
         if( !service )
-            return false;
+            return lunchbox::Servus::Result( kDNSServiceErr_Unknown );
 
         const int fd = DNSServiceRefSockFD( service );
         const int nfds = fd + 1;
 
-        while( !handled_ )
+        while( result_ == lunchbox::Servus::Result::PENDING )
         {
             fd_set fdSet;
             FD_ZERO( &fdSet );
@@ -395,7 +393,7 @@ private:
             switch( result )
             {
               case 0: // timeout
-                return false;
+                return lunchbox::Servus::Result( result_ );
 
               case -1: // error
                 LBWARN << "Select error: " << strerror( errno ) << " ("
@@ -403,7 +401,7 @@ private:
                 if( errno != EINTR )
                 {
                     withdraw();
-                    handled_ = true;
+                    result_ = errno;
                 }
                 break;
 
@@ -418,16 +416,16 @@ private:
                         LBWARN << "DNSServiceProcessResult error: " << error
                                << std::endl;
                         withdraw();
-                        handled_ = true;
+                        result_ = error;
                     }
                 }
                 break;
             }
         }
-        if( !handled_ )
-            return false;
-        handled_ = false;
-        return true;
+
+        lunchbox::Servus::Result result( result_ );
+        result_ = lunchbox::Servus::Result::PENDING; // reset for next operation
+        return result;
     }
 
     static void registerCBS_( DNSServiceRef, DNSServiceFlags,
@@ -441,15 +439,15 @@ private:
     void registerCB_( const char* name, const char* type, const char* domain,
                       DNSServiceErrorType error )
     {
-        if( error != kDNSServiceErr_NoError)
+        if( error == kDNSServiceErr_NoError)
+            LBINFO << "Registered " << name << "." << type << "." << domain
+                      << std::endl;
+        else
         {
             LBWARN << "Register callback error: " << error << std::endl;
             withdraw();
         }
-        else
-            LBINFO << "Registered " << name << "." << type << "." << domain
-                      << std::endl;
-        handled_ = true;
+        result_ = error;
     }
 
     static void browseCBS_( DNSServiceRef, DNSServiceFlags flags,
@@ -497,19 +495,14 @@ private:
                              uint16_t txtLen, const unsigned char* txt,
                              Servus* servus )
     {
-        servus->resolveCB_( error, host, txtLen, txt );
-        servus->handled_ = true;
+        if( error == kDNSServiceErr_NoError)
+            servus->resolveCB_( host, txtLen, txt );
+        servus->result_ = error;
     }
 
-    void resolveCB_( DNSServiceErrorType error, const char* host,
-                     uint16_t txtLen, const unsigned char* txt )
+    void resolveCB_( const char* host, uint16_t txtLen,
+                     const unsigned char* txt )
     {
-        if( error != kDNSServiceErr_NoError)
-        {
-            LBWARN << "Resolve callback error: " << error << std::endl;
-            return;
-        }
-
         ValueMap& values = instanceMap_[ browsedName_ ];
         values[ "servus_host" ] = host;
 
@@ -540,6 +533,45 @@ Servus::~Servus()
     delete impl_;
 }
 
+std::string Servus::Result::getString() const
+{
+    const int32_t code = getCode();
+    switch( code )
+    {
+    case kDNSServiceErr_Unknown:           return "unknown error";
+    case kDNSServiceErr_NoSuchName:        return "name not found";
+    case kDNSServiceErr_NoMemory:          return "out of memory";
+    case kDNSServiceErr_BadParam:          return "bad parameter";
+    case kDNSServiceErr_BadReference:      return "bad reference";
+    case kDNSServiceErr_BadState:          return "bad state";
+    case kDNSServiceErr_BadFlags:          return "bad flags";
+    case kDNSServiceErr_Unsupported:       return "unsupported";
+    case kDNSServiceErr_NotInitialized:    return "not initialized";
+    case kDNSServiceErr_AlreadyRegistered: return "already registered";
+    case kDNSServiceErr_NameConflict:      return "name conflict";
+    case kDNSServiceErr_Invalid:           return "invalid value";
+    case kDNSServiceErr_Firewall:          return "firewall";
+    case kDNSServiceErr_Incompatible:
+        return "client library incompatible with daemon";
+    case kDNSServiceErr_BadInterfaceIndex: return "bad interface index";
+    case kDNSServiceErr_Refused:           return "refused";
+    case kDNSServiceErr_NoSuchRecord:      return "no such record";
+    case kDNSServiceErr_NoAuth:            return "no authentication";
+    case kDNSServiceErr_NoSuchKey:         return "no such key";
+    case kDNSServiceErr_NATTraversal:      return "NAT traversal";
+    case kDNSServiceErr_DoubleNAT:         return "double NAT";
+    case kDNSServiceErr_BadTime:           return "bad time";
+
+    case PENDING:          return "operation did not complete";
+    case NOT_SUPPORTED:    return "Lunchbox compiled without ZeroConf support";
+
+    default:
+        if( code > 0 )
+            return ::strerror( code );
+        return lunchbox::Result::getString();
+    }
+}
+
 void Servus::set( const std::string& key, const std::string& value )
 {
     impl_->set( key, value );
@@ -555,7 +587,8 @@ const std::string& Servus::get( const std::string& key ) const
     return impl_->get( key );
 }
 
-bool Servus::announce( const unsigned short port, const std::string& instance )
+Servus::Result Servus::announce( const unsigned short port,
+                                 const std::string& instance )
 {
 #ifdef SERVUS_AVAHI
     ScopedWrite mutex( lock_ );

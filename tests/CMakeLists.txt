@@ -18,10 +18,6 @@ file(GLOB_RECURSE TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 list(SORT TEST_FILES)
 install_files(share/Lunchbox/tests FILES ${TEST_FILES} COMPONENT examples)
 
-if($ENV{TRAVIS})
-  list(REMOVE_ITEM TEST_FILES "servus.cpp")
-endif()
-
 set(ALL_TESTS)
 foreach(FILE ${TEST_FILES})
   string(REGEX REPLACE ".cpp" "" NAME ${FILE})

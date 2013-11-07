@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define TEST_RUNTIME 300 // seconds
+#define TEST_RUNTIME 600 // seconds
 #include "test.h"
 
 #pragma warning (push)

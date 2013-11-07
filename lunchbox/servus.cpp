@@ -152,7 +152,7 @@ public:
 #else
     lunchbox::Servus::Result announce( const unsigned short, const std::string&)
     {
-        return lunchbox::Servus::Result( lunchbox::Servus::Result::UNSUPPORTED);
+        return lunchbox::Servus::Result( lunchbox::Servus::Result::NOT_SUPPORTED);
     }
 #endif
 
@@ -538,6 +538,7 @@ std::string Servus::Result::getString() const
     const int32_t code = getCode();
     switch( code )
     {
+#ifdef LUNCHBOX_USE_DNSSD
     case kDNSServiceErr_Unknown:           return "unknown error";
     case kDNSServiceErr_NoSuchName:        return "name not found";
     case kDNSServiceErr_NoMemory:          return "out of memory";
@@ -561,6 +562,7 @@ std::string Servus::Result::getString() const
     case kDNSServiceErr_NATTraversal:      return "NAT traversal";
     case kDNSServiceErr_DoubleNAT:         return "double NAT";
     case kDNSServiceErr_BadTime:           return "bad time";
+#endif
 
     case PENDING:          return "operation did not complete";
     case NOT_SUPPORTED:    return "Lunchbox compiled without ZeroConf support";

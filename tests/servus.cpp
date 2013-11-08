@@ -68,7 +68,7 @@ int main( int, char** )
     service.discover( lunchbox::Servus::IF_LOCAL, 500 );
     TEST( service.get( hosts.front(), "foobar" ) == "42" );
 #else
-    TESTINFO( result == lunchbox::Servus::Result::UNSUPPORTED, result );
+    TESTINFO( result == lunchbox::Servus::Result::NOT_SUPPORTED, result );
 #endif
     return EXIT_SUCCESS;
 }

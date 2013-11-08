@@ -37,36 +37,36 @@ namespace lunchbox
 
         /** @return a reusable or new item. @version 1.0 */
         T* alloc()
-            {
-                ScopedFastWrite mutex( _lock );
-                LB_TS_SCOPED( _thread );
-                if( _cache.empty( ))
-                    return new T;
+        {
+            ScopedFastWrite mutex( _lock );
+            LB_TS_SCOPED( _thread );
+            if( _cache.empty( ))
+                return new T;
 
-                T* item = _cache.back();
-                _cache.pop_back();
-                return item;
-            }
+            T* item = _cache.back();
+            _cache.pop_back();
+            return item;
+        }
 
         /** Release an item for reuse. @version 1.0 */
         void release( T* item )
-            {
-                ScopedFastWrite mutex( _lock );
-                LB_TS_SCOPED( _thread );
-                _cache.push_back( item );
-            }
+        {
+            ScopedFastWrite mutex( _lock );
+            LB_TS_SCOPED( _thread );
+            _cache.push_back( item );
+        }
 
         /** Delete all cached items. @version 1.0 */
         void flush()
+        {
+            ScopedFastWrite mutex( _lock );
+            LB_TS_SCOPED( _thread );
+            while( !_cache.empty( ))
             {
-                ScopedFastWrite mutex( _lock );
-                LB_TS_SCOPED( _thread );
-                while( !_cache.empty( ))
-                {
-                    delete _cache.back();
-                    _cache.pop_back();
-                }
+                delete _cache.back();
+                _cache.pop_back();
             }
+        }
 
     private:
         SpinLock* const _lock;

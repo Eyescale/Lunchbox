@@ -25,33 +25,24 @@
 
 namespace lunchbox
 {
-    /** The result code from any visit operation. */
-    enum VisitorResult
-    {
-        TRAVERSE_CONTINUE,   //!< continue the traversal
-        TRAVERSE_TERMINATE,  //!< abort the traversal
-        TRAVERSE_PRUNE       //!< do not traverse current entity downwards
-    };
+/** The result code from any visit operation. */
+enum VisitorResult
+{
+    TRAVERSE_CONTINUE,   //!< continue the traversal
+    TRAVERSE_TERMINATE,  //!< abort the traversal
+    TRAVERSE_PRUNE       //!< do not traverse current entity downwards
+};
 
-    inline std::ostream& operator << ( std::ostream& os,
-                                       const VisitorResult& result )
+inline std::ostream& operator << ( std::ostream& os,
+                                   const VisitorResult& result )
+{
+    switch( result )
     {
-        switch( result )
-        {
-            case TRAVERSE_CONTINUE:
-                os << "continue";
-                break;
-            case TRAVERSE_TERMINATE:
-                os << "terminate";
-                break;
-            case TRAVERSE_PRUNE:
-                os << "prune";
-                break;
-            default:
-                os << "ERROR";
-                break;
-        }
-        return os;
+    case TRAVERSE_CONTINUE:  return os << "continue";
+    case TRAVERSE_TERMINATE: return os << "terminate";
+    case TRAVERSE_PRUNE:     return os << "prune";
+    default:                 return os << "ERROR";
     }
+}
 }
 #endif // LUNCHBOX_VISITORRESULT_H

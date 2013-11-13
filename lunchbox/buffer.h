@@ -31,12 +31,14 @@ namespace lunchbox
 /**
  * A simple memory buffer with some helper functions.
  *
- * For bigger data (>100k) using a std::vector< uint8_t > has a high
- * overhead when resizing (>1ms). This buffer just memcpy's elements, i.e.,
- * it should only be used for PODs since the copy constructor or assignment
- * operator is not called on the copied elements. Primarily used for binary
- * data, e.g., in eq::Image. The implementation works like a pool, that is,
- * data is only released when the buffer is deleted or clear() is called.
+ * std::vector does not implement optimizations for growing bitwise-movable
+ * vectors, i.e., it copy-constructs each element on growth.
+ *
+ * This buffer just memcpy's elements, i.e., it should only be used for PODs
+ * since the copy constructor or assignment operator is not called on the copied
+ * elements. Primarily used for binary data, e.g., in eq::Image. The
+ * implementation works like a pool, that is, data is only released when the
+ * buffer is deleted or clear() is called.
  */
 template< class T > class Buffer
 {

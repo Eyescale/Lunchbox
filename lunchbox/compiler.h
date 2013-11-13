@@ -33,14 +33,18 @@
 #endif
 
 #ifdef _MSC_VER
-/** Declare and align a variable to a 8-byte boundary. */
 #  define LB_ALIGN8( var )  __declspec (align (8)) var;
-/** Declare and align a variable to a 16-byte boundary. */
 #  define LB_ALIGN16( var ) __declspec (align (16)) var;
 #else
-/** Declare and align a variable to a 8-byte boundary. */
+/**
+ * Declare and align a variable to a 8-byte boundary.
+ * @deprecated Use boost::aligned_storage
+ */
 #  define LB_ALIGN8( var )  var __attribute__ ((aligned (8)));
-/** Declare and align a variable to a 16-byte boundary. */
+/**
+ * Declare and align a variable to a 16-byte boundary.
+ * @deprecated Use boost::aligned_storage
+ */
 #  define LB_ALIGN16( var ) var __attribute__ ((aligned (16)));
 #endif
 

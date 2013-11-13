@@ -7,7 +7,7 @@
 
 //  Disclaimer: Not a Boost library.
 
-/* Copyright (c) 2008-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2008-2012, Stefan Eilemann <eile@equalizergraphics.com>
    Modifications to use within lunchbox namespace and naming conventions.
    Original at http://tim.klingt.org/git?p=boost_lockfree.git;a=tree
 */
@@ -74,6 +74,8 @@ inline void memoryBarrierRelease()
 
 /**
  * A variable with atomic semantics and standalone atomic operations.
+ *
+ * Use the C++11 equivalent if you can.
  *
  * Atomic variables can be modified safely from multiple threads
  * concurrently. They are useful to implement lock-free algorithms.
@@ -196,7 +198,7 @@ template< class T > T Atomic< T >::decAndGet( T& value )
     return subAndGet( value, 1 );
 }
 
-template< class T > 
+template< class T >
 bool Atomic< T >::compareAndSwap( T* value, const T expected, const T newValue )
 {
     return __sync_bool_compare_and_swap( value, expected, newValue );
@@ -217,7 +219,7 @@ template< class T > T Atomic< T >::subAndGet( T& value, const T increment )
 
 #else
 #  ifdef __xlC__
-template< class T > 
+template< class T >
 bool Atomic< T >::compareAndSwap( T* value, const T expected, const T newValue )
 {
     return __compare_and_swap( value, const_cast< T* >( &expected ), newValue );

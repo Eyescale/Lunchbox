@@ -30,6 +30,7 @@ namespace lunchbox
  * A smart reference pointer, aka boost::intrusive_ptr.
  *
  * Relies on the held object to implement ref() and unref() correctly.
+ * @deprecated Use boost::intrusive_ptr
  */
 template< class T > class RefPtr
 {
@@ -57,43 +58,43 @@ public:
 
     /** Assign another RefPtr to this reference pointer. @version 1.0 */
     RefPtr& operator = ( const RefPtr& rhs )
-        {
-            if( _ptr == rhs._ptr )
-                return *this;
-
-            T* tmp = _ptr;
-            _ptr = rhs._ptr;
-            _ref();
-            if( tmp ) tmp->unref( this );
+    {
+        if( _ptr == rhs._ptr )
             return *this;
-        }
+
+        T* tmp = _ptr;
+        _ptr = rhs._ptr;
+        _ref();
+        if( tmp ) tmp->unref( this );
+        return *this;
+    }
 
     /** Assign a C pointer to this reference pointer. @version 1.0 */
     RefPtr& operator = ( T* ptr )
-        {
-            if( _ptr == ptr )
-                return *this;
-
-            T* tmp = _ptr;
-            _ptr = ptr;
-            _ref();
-            if( tmp ) tmp->unref( this );
+    {
+        if( _ptr == ptr )
             return *this;
-        }
+
+        T* tmp = _ptr;
+        _ptr = ptr;
+        _ref();
+        if( tmp ) tmp->unref( this );
+        return *this;
+    }
 
     /**
      * @return true if both reference pointers hold the same C pointer.
      * @version 1.0
      */
     bool operator == ( const RefPtr& rhs ) const
-        { return ( _ptr == rhs._ptr ); }
+    { return ( _ptr == rhs._ptr ); }
 
     /**
      * @return true if both reference pointer hold different C pointer.
      * @version 1.0
      */
     bool operator != ( const RefPtr& rhs ) const
-        { return ( _ptr != rhs._ptr ); }
+    { return ( _ptr != rhs._ptr ); }
 
     /**
      * @return true if a pointer is held, false otherwise.
@@ -130,16 +131,16 @@ public:
 
     /** Access the held object. @version 1.0 */
     T*       operator->()
-        { LBASSERTINFO( _ptr, className( this )); return _ptr; }
+    { LBASSERTINFO( _ptr, className( this )); return _ptr; }
     /** Access the held object. @version 1.0 */
     const T* operator->() const
-        { LBASSERTINFO( _ptr, className( this )); return _ptr; }
+    { LBASSERTINFO( _ptr, className( this )); return _ptr; }
     /** Access the held object. @version 1.0 */
     T&       operator*()
-        { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
+    { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
     /** Access the held object. @version 1.0 */
     const T& operator*() const
-        { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
+    { LBASSERTINFO( _ptr, className( this )); return *_ptr; }
 
     /** @return the C pointer. @version 1.0 */
     T*       get()                { return _ptr; }
@@ -157,17 +158,17 @@ private:
 
     /** Artificially dereference the held object. */
     void _unref()
+    {
+        if(_ptr)
         {
-            if(_ptr)
-            {
 #ifdef NDEBUG
-                _ptr->unref( this );
+            _ptr->unref( this );
 #else
-                if( _ptr->unref( this ))
-                    _ptr = 0;
+            if( _ptr->unref( this ))
+                _ptr = 0;
 #endif
-            }
         }
+    }
 };
 
 /** Print the reference pointer to the given output stream. */

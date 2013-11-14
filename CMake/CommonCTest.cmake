@@ -22,7 +22,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
   endif()
   if($ENV{TRAVIS})
     message(STATUS "Disable code coverage on Travis, causes build timeouts")
-  endif()
   elseif(LCOV AND GENHTML)
     set(COVERAGE ON)
     add_custom_target(lcov-clean

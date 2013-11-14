@@ -25,15 +25,15 @@
  * Welcome to Lunchbox, a C++ library for multi-threaded programming. Lunchbox
  * provides the following functionality:
  *
- * - Operating System Abstraction: lunchbox::Atomic, lunchbox::Clock,
- *   lunchbox::Condition, lunchbox::DSO, lunchbox::Lock, lunchbox::MemoryMap,
- *   lunchbox::PerThread, lunchbox::RNG, lunchbox::Thread, lunchbox::TimedLock
+ * - Operating System Abstraction: lunchbox::Atomic, lunchbox::Condition,
+ *   lunchbox::DSO, (lunchbox::Clock, lunchbox::MemoryMap, lunchbox::PerThread,
+ *   lunchbox::RNG, lunchbox::Thread, lunchbox::TimedLock)
  * - High-Performance Threading Primitives: lunchbox::Buffer, lunchbox::LFQueue,
  *   lunchbox::LFVector, lunchbox::Monitor, lunchbox::MTQueue,
- *   lunchbox::RequestHandler, lunchbox::SpinLock
+ *   lunchbox::RequestHandler, lunchbox::SpinLock (lunchbox::Lock)
  * - Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
- *   lunchbox::ScopedMutex, lunchbox::uint128_t, lunchbox::UnorderedIntervalSet,
- *   lunchbox::UUID, lunchbox::Future
+ *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::UUID,
+ *   lunchbox::Future, (lunchbox::ScopedMutex)
  * - Compression and CPU-GPU transfer plugin handling: lunchbox::Compressor,
  *   lunchbox::Decompressor, lunchbox::Downloader, lunchbox::Plugin,
  *   lunchbox::PluginRegistry, lunchbox::Uploader

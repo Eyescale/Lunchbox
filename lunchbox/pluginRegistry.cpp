@@ -20,16 +20,16 @@
 
 #include "pluginRegistry.h"
 
+#include "algorithm.h"
 #include "compressorInfo.h"
 #include "debug.h"
 #include "file.h"
 #include "log.h"
 #include "plugin.h"
 #include "pluginVisitor.h"
-#include "stdExt.h"
 
 #ifdef _MSC_VER
-#  include <lunchbox/os.h> // GetModuleFileName
+#  include "os.h" // GetModuleFileName
 #  include <direct.h>
 #  define getcwd _getcwd
 #else
@@ -125,7 +125,7 @@ void  PluginRegistry::addDirectory( const std::string& path )
 
 void PluginRegistry::removeDirectory( const std::string& path )
 {
-    Strings::iterator i = stde::find( impl_->directories, path );
+    Strings::iterator i = find( impl_->directories, path );
     if( i != impl_->directories.end( ))
         impl_->directories.erase( i );
 }

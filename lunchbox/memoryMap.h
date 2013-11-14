@@ -26,7 +26,10 @@
 
 namespace lunchbox
 {
-/** Helper to map a file to a memory address (mmap) */
+/**
+ * Helper to map a file to a memory address (mmap).
+ * @deprecated Use boost::iostreams::mapped_file_source
+ */
 class MemoryMap : public NonCopyable
 {
 public:

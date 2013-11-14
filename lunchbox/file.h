@@ -31,14 +31,21 @@ namespace lunchbox
  * @return all file names matching the given pattern in the given directory.
  * @version 1.0
  * @version 1.7.1 using boost::regex for matching
+ * @deprecated Use Boost.Filesystem
  */
 LUNCHBOX_API Strings searchDirectory( const std::string& directory,
                                       const std::string& pattern );
 
-/** @return the file name part of a path. @version 1.0 */
+/**
+ * @return the file name part of a path. @version 1.0
+ * @deprecated Use Boost.Filesystem
+ */
 LUNCHBOX_API std::string getFilename( const std::string& filename );
 
-/** @return the directory name part of a path. @version 1.0 */
+/**
+ * @return the directory name part of a path. @version 1.0
+ * @deprecated Use Boost.Filesystem
+ */
 LUNCHBOX_API std::string getDirname( const std::string& filename );
 
 }

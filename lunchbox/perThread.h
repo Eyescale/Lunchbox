@@ -37,6 +37,7 @@ template< class T > void perThreadNoDelete( T* ) {}
  *
  * @param T the type of data to store in thread-local storage
  * @param D the destructor callback function.
+ * @deprecated Use boost::thread_specific_ptr
  */
 template< class T, void (*D)( T* ) = &perThreadDelete< T > >
 class PerThread : public NonCopyable

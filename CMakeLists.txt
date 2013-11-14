@@ -56,6 +56,7 @@ include(pthreads/CMakeLists.txt)
 add_subdirectory(lunchbox)
 add_subdirectory(tests)
 add_subdirectory(doc)
+
 include(DoxygenRule) # must be after all targets
 include(CPackConfig)
 include(PackageConfig)

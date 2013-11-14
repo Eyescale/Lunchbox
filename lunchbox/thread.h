@@ -32,7 +32,10 @@ namespace lunchbox
 {
 namespace detail { class Thread; }
 
-/** An utility class to execute code in a separate execution thread. */
+/**
+ * Utility class to execute code in a separate execution thread.
+ * @deprecated Use Boost.Thread
+ */
 class Thread
 {
 public:
@@ -57,8 +60,8 @@ public:
     /**
      * Start the thread.
      *
-     * @return <code>true</code> if the thread was launched and initialized
-     *         successfully, <code>false</code> otherwise.
+     * @return true if the thread was launched and initialized successfully,
+     *         false otherwise.
      * @sa init(), run()
      * @version 1.0
      */
@@ -68,9 +71,9 @@ public:
      * The init function for the child thread.
      *
      * The parent thread will not be unlocked before this function has been
-     * executed. If the thread initialization fails, that is, this method
-     * does return false, the thread will be stopped and the start() method
-     * will return false.
+     * executed. If the thread initialization fails, that is, this method does
+     * return false, the thread will be stopped and the start() method will
+     * return false.
      *
      * @return the success value of the thread initialization.
      * @version 1.0
@@ -80,8 +83,8 @@ public:
     /**
      * The entry function for the child thread.
      *
-     * This method should contain the main execution routine for the thread
-     * and is called after a successful init().
+     * This method should contain the main execution routine for the thread and
+     * is called after a successful init().
      *
      * @version 1.0
      */
@@ -158,9 +161,9 @@ public:
      * Set the affinity of the calling thread.
      *
      * If given a value greater or equal than CORE, this method binds the
-     * calling thread to core affinity - CORE. If set to a value greater
-     * than CPU and smaller than 0, this method binds the calling thread to
-     * all cores of the given processor (affinity - CPU).
+     * calling thread to core affinity - CORE. If set to a value greater than
+     * CPU and smaller than 0, this method binds the calling thread to all cores
+     * of the given processor (affinity - CPU).
      *
      * @param affinity the affinity value (see above).
      */
@@ -178,11 +181,10 @@ private:
 /** Output the affinity setting in human-readable form. @version 1.7.1 */
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const Thread::Affinity );
 
-// thread-safety checks
-// These checks are for development purposes, to check that certain objects are
-// properly used within the framework. Leaving them enabled during application
-// development may cause false positives, e.g., when threadsafety is ensured
-// outside of the objects by the application.
+// These thread-safety checks are for development purposes, to check that
+// certain objects are properly used within the framework. Leaving them enabled
+// during application development may cause false positives, e.g., when
+// threadsafety is ensured outside of the objects by the application.
 
 #ifndef NDEBUG
 #  define LB_CHECK_THREADSAFETY
@@ -246,21 +248,21 @@ template< typename T > class ScopedThreadCheck : public NonCopyable
 {
 public:
     explicit ScopedThreadCheck( const T& data )
-    : _data( data )
-        {
-            LBASSERTINFO( data.inRegion == lunchbox::ThreadID() ||
-                          data.inRegion == lunchbox::Thread::getSelfThreadID(),
-                          "Another thread already in critical region" );
-            data.inRegion = lunchbox::Thread::getSelfThreadID();
-        }
+        : _data( data )
+    {
+        LBASSERTINFO( data.inRegion == lunchbox::ThreadID() ||
+                      data.inRegion == lunchbox::Thread::getSelfThreadID(),
+                      "Another thread already in critical region" );
+        data.inRegion = lunchbox::Thread::getSelfThreadID();
+    }
 
     ~ScopedThreadCheck()
-        {
-            LBASSERTINFO( _data.inRegion == lunchbox::ThreadID() ||
-                          _data.inRegion == lunchbox::Thread::getSelfThreadID(),
-                          "Another thread entered critical region" );
-            _data.inRegion = lunchbox::ThreadID();
-        }
+    {
+        LBASSERTINFO( _data.inRegion == lunchbox::ThreadID() ||
+                      _data.inRegion == lunchbox::Thread::getSelfThreadID(),
+                      "Another thread entered critical region" );
+        _data.inRegion = lunchbox::ThreadID();
+    }
 private:
     const T& _data;
 };

@@ -55,8 +55,7 @@ namespace lunchbox
  * A class which can hold instances of any type.
  *
  * This class is based on boost.any with the extension to support serialization
- * through boost.serialization if the the ValueType supports this type of
- * serialization.
+ * if the ValueType supports boost.serialization.
  */
 class Any
 {

@@ -25,53 +25,53 @@
 
 namespace lunchbox
 {
-    /** An object allocation pool. */
-    template< typename T, bool locked = false > class Pool : public NonCopyable
+/** An object allocation pool. */
+template< typename T, bool locked = false > class Pool : public NonCopyable
+{
+public:
+    /** Construct a new pool. @version 1.0 */
+    Pool() : _lock( locked ? new SpinLock : 0 ) {}
+
+    /** Destruct this pool. @version 1.0 */
+    virtual ~Pool() { flush(); delete _lock; }
+
+    /** @return a reusable or new item. @version 1.0 */
+    T* alloc()
     {
-    public:
-        /** Construct a new pool. @version 1.0 */
-        Pool() : _lock( locked ? new SpinLock : 0 ) {}
+        ScopedFastWrite mutex( _lock );
+        LB_TS_SCOPED( _thread );
+        if( _cache.empty( ))
+            return new T;
 
-        /** Destruct this pool. @version 1.0 */
-        virtual ~Pool() { flush(); delete _lock; }
+        T* item = _cache.back();
+        _cache.pop_back();
+        return item;
+    }
 
-        /** @return a reusable or new item. @version 1.0 */
-        T* alloc()
+    /** Release an item for reuse. @version 1.0 */
+    void release( T* item )
+    {
+        ScopedFastWrite mutex( _lock );
+        LB_TS_SCOPED( _thread );
+        _cache.push_back( item );
+    }
+
+    /** Delete all cached items. @version 1.0 */
+    void flush()
+    {
+        ScopedFastWrite mutex( _lock );
+        LB_TS_SCOPED( _thread );
+        while( !_cache.empty( ))
         {
-            ScopedFastWrite mutex( _lock );
-            LB_TS_SCOPED( _thread );
-            if( _cache.empty( ))
-                return new T;
-
-            T* item = _cache.back();
+            delete _cache.back();
             _cache.pop_back();
-            return item;
         }
+    }
 
-        /** Release an item for reuse. @version 1.0 */
-        void release( T* item )
-        {
-            ScopedFastWrite mutex( _lock );
-            LB_TS_SCOPED( _thread );
-            _cache.push_back( item );
-        }
-
-        /** Delete all cached items. @version 1.0 */
-        void flush()
-        {
-            ScopedFastWrite mutex( _lock );
-            LB_TS_SCOPED( _thread );
-            while( !_cache.empty( ))
-            {
-                delete _cache.back();
-                _cache.pop_back();
-            }
-        }
-
-    private:
-        SpinLock* const _lock;
-        std::vector< T* > _cache;
-        LB_TS_VAR( _thread );
-    };
+private:
+    SpinLock* const _lock;
+    std::vector< T* > _cache;
+    LB_TS_VAR( _thread );
+};
 }
 #endif // LUNCHBOX_POOL_H

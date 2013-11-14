@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -33,11 +33,10 @@ namespace detail { class RequestHandler; }
  * thread registers a request, and later waits for the request to be
  * served. Another thread can serve the request, providing a result value.
  *
- * A note on thread-safety: Unless threadSafe is set in the constructor, the
- * functions registerRequest(), unregisterRequest() and waitRequest() are
- * supposed to be called from one 'waiting' thread, and the functions
- * serveRequest() and deleteRequest() are supposed to be called only from one
- * 'serving' thread.
+ * Thread-safety: The methods registerRequest(), unregisterRequest() and
+ * waitRequest() are supposed to be called from one 'waiting' thread, and the
+ * functions serveRequest() and deleteRequest() are supposed to be called only
+ * from one 'serving' thread.
  */
 class RequestHandler : public NonCopyable
 {

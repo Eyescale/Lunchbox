@@ -38,199 +38,201 @@
 
 namespace lunchbox
 {
-    /** The logging levels. @version 1.0 */
-    enum LogLevel
-    {
-        LOG_ERROR = 1, //!< Output critical errors
-        LOG_WARN,      //!< Output potentially critical warnings
-        LOG_INFO,      //!< Output informational messages
-        LOG_VERB,      //!< Be noisy
-        LOG_ALL
-    };
+
+/** The logging levels. @version 1.0 */
+enum LogLevel
+{
+    LOG_ERROR = 1, //!< Output critical errors
+    LOG_WARN,      //!< Output potentially critical warnings
+    LOG_INFO,      //!< Output informational messages
+    LOG_VERB,      //!< Be noisy
+    LOG_ALL
+};
+
+/**
+ * The logging topics.
+ *
+ * @sa net/log.h, client/log.h
+ * @version 1.0
+ */
+enum LogTopic
+{
+    LOG_EXCEPTION = 0x01,    //!< Log exception within LBTHROW
+    LOG_PLUGIN    = 0x02,    //!< Log plugin handling
+    LOG_CUSTOM    = 0x10,    //!< Log topics for other namespaces start here
+    LOG_ANY       = 0xffffu  //!< Log all Lunchbox topics
+};
+
+/** @internal The string buffer used for logging. */
+class LogBuffer : public std::streambuf
+{
+public:
+    explicit LogBuffer( std::ostream& stream )
+            : _indent(0), _blocked(0), _noHeader(0),
+              _newLine(true), _stream(stream)
+        { _thread[0] = 0; _file[0] = 0; }
+    virtual ~LogBuffer() {}
+
+    void indent() { ++_indent; }
+    void exdent() { --_indent; }
+
+    void disableFlush() { ++_blocked; assert( _blocked < 100 ); }
+    void enableFlush()
+        {
+            assert( _blocked );// Too many enableFlush on log stream
+            --_blocked;
+        }
+
+    void disableHeader() { ++_noHeader; } // use counted variable to allow
+    void enableHeader()  { --_noHeader; } //   nested enable/disable calls
+
+    LUNCHBOX_API void setThreadName( const std::string& name );
+    const char* getThreadName() const { return _thread; }
+
+    LUNCHBOX_API void setLogInfo( const char* file, const int line );
+
+protected:
+    virtual int_type overflow( LogBuffer::int_type c ) override;
+    virtual int sync() override;
+
+private:
+    LogBuffer( const LogBuffer& );
+    LogBuffer& operator = ( const LogBuffer& );
+
+    /** Short thread name. */
+    char _thread[12];
+
+    /** The current file logging. */
+    char _file[35];
+
+    /** The current indentation level. */
+    int _indent;
+
+    /** Flush reference counter. */
+    int _blocked;
+
+    /** The header disable counter. */
+    int _noHeader;
+
+    /** The flag that a new line has started. */
+    bool _newLine;
+
+    /** The temporary buffer. */
+    std::ostringstream _stringStream;
+
+    /** The wrapped ostream. */
+    std::ostream& _stream;
+
+    /** The write lock. */
+    static Lock _lock;
+};
+
+/** The logging class. @internal */
+class Log : public std::ostream
+{
+public:
+
+    Log() : std::ostream( &_logBuffer ), _logBuffer( getOutput( )){}
+    virtual ~Log() { _logBuffer.pubsync(); }
+
+    void indent() { _logBuffer.indent(); }
+    void exdent() { _logBuffer.exdent(); }
+    void disableFlush() { _logBuffer.disableFlush(); }
+    void enableFlush()  { _logBuffer.enableFlush();  }
+    void forceFlush()  { _logBuffer.pubsync();  }
+    void disableHeader() { _logBuffer.disableHeader(); }
+    void enableHeader()  { _logBuffer.enableHeader();  }
+
+    /** The current log level. */
+    static LUNCHBOX_API int level;
+
+    /** The current log topics. */
+    static LUNCHBOX_API unsigned topics;
+
+    /** The per-thread logger. */
+    static LUNCHBOX_API Log& instance();
+
+    /** The per-thread logger. */
+    static LUNCHBOX_API Log& instance( const char* file, const int line );
+
+    /** Exit the log instance for the current thread. */
+    static LUNCHBOX_API void exit();
+
+    /** @internal */
+    static LUNCHBOX_API void reset();
+
+    /** The string representation of the current log level. */
+    static std::string& getLogLevelString();
+
+    /** @return the log level of a string representation. @version 1.3.2 */
+    static LUNCHBOX_API int getLogLevel( const char* level );
+
+    /** Change the output stream. @version 1.4*/
+    static LUNCHBOX_API void setOutput( std::ostream& stream );
+
+    /** Change the output stream to the given file. @version 1.5.1 */
+    static LUNCHBOX_API bool setOutput( const std::string& file );
+
+    /** Get the current output stream. @internal */
+    static LUNCHBOX_API std::ostream& getOutput ();
 
     /**
-     * The logging topics.
+     * Set the reference clock.
      *
-     * @sa net/log.h, client/log.h
-     * @version 1.0
+     * The clock will be used instantly by all log outputs. Use 0 to reset
+     * the clock to the default clock.
+     *
+     * @param clock the reference clock.
      */
-    enum LogTopic
-    {
-        LOG_EXCEPTION = 0x01,    //!< Log exception within LBTHROW
-        LOG_PLUGIN    = 0x02,    //!< Log plugin handling
-        LOG_CUSTOM    = 0x10,    //!< Log topics for other namespaces start here
-        LOG_ANY       = 0xffffu  //!< Log all Lunchbox topics
-    };
+    static LUNCHBOX_API void setClock( Clock* clock );
 
-    /** @internal The string buffer used for logging. */
-    class LogBuffer : public std::streambuf
-    {
-    public:
-        explicit LogBuffer( std::ostream& stream )
-                : _indent(0), _blocked(0), _noHeader(0),
-                  _newLine(true), _stream(stream)
-            { _thread[0] = 0; _file[0] = 0; }
-        virtual ~LogBuffer() {}
+    static const Clock& getClock(); //!< @internal
 
-        void indent() { ++_indent; }
-        void exdent() { --_indent; }
+    /** @internal */
+    void setThreadName( const std::string& name )
+        { _logBuffer.setThreadName( name ); }
 
-        void disableFlush() { ++_blocked; assert( _blocked < 100 ); }
-        void enableFlush()
-            {
-                assert( _blocked );// Too many enableFlush on log stream
-                --_blocked;
-            }
+    /** @internal */
+    const char* getThreadName() const { return _logBuffer.getThreadName(); }
 
-        void disableHeader() { ++_noHeader; } // use counted variable to allow
-        void enableHeader()  { --_noHeader; } //   nested enable/disable calls
+private:
+    LogBuffer _logBuffer;
 
-        LUNCHBOX_API void setThreadName( const std::string& name );
-        const char* getThreadName() const { return _thread; }
+    Log( const Log& );
+    Log& operator = ( const Log& );
 
-        LUNCHBOX_API void setLogInfo( const char* file, const int line );
+    void setLogInfo( const char* file, const int line )
+        { _logBuffer.setLogInfo( file, line ); }
+};
 
-    protected:
-        virtual int_type overflow( LogBuffer::int_type c ) override;
-        virtual int sync() override;
+/**
+ * Increases the indentation level of the Log stream, causing subsequent
+ * lines to be intended by four characters.
+ * @version 1.0
+ */
+LUNCHBOX_API std::ostream& indent( std::ostream& os );
+/** Decrease the indent of the Log stream. @version 1.0 */
+LUNCHBOX_API std::ostream& exdent( std::ostream& os );
 
-    private:
-        LogBuffer( const LogBuffer& );
-        LogBuffer& operator = ( const LogBuffer& );
+/** Disable flushing of the Log stream. @version 1.0 */
+LUNCHBOX_API std::ostream& disableFlush( std::ostream& os );
+/** Re-enable flushing of the Log stream. @version 1.0 */
+LUNCHBOX_API std::ostream& enableFlush( std::ostream& os );
+/** Flush the Log stream regardless of the auto-flush state. @version 1.0 */
+LUNCHBOX_API std::ostream& forceFlush( std::ostream& os );
 
-        /** Short thread name. */
-        char _thread[12];
+/** Disable printing of the Log header for subsequent lines. @version 1.0 */
+LUNCHBOX_API std::ostream& disableHeader( std::ostream& os );
+/** Re-enable printing of the Log header. @version 1.0 */
+LUNCHBOX_API std::ostream& enableHeader( std::ostream& os );
 
-        /** The current file logging. */
-        char _file[35];
+/** Indent, disable flush and header for block printing. @version 1.9.1 */
+inline std::ostream& startBlock( std::ostream& os )
+    { return os << indent << disableFlush << disableHeader; }
+/** Exdent, denable flush and header to stop block print. @version 1.9.1 */
+inline std::ostream& stopBlock( std::ostream& os )
+    { return os << enableHeader << enableFlush << exdent; }
 
-        /** The current indentation level. */
-        int _indent;
-
-        /** Flush reference counter. */
-        int _blocked;
-
-        /** The header disable counter. */
-        int _noHeader;
-
-        /** The flag that a new line has started. */
-        bool _newLine;
-
-        /** The temporary buffer. */
-        std::ostringstream _stringStream;
-
-        /** The wrapped ostream. */
-        std::ostream& _stream;
-
-        /** The write lock. */
-        static Lock _lock;
-    };
-
-    /** The logging class. @internal */
-    class Log : public std::ostream
-    {
-    public:
-
-        Log() : std::ostream( &_logBuffer ), _logBuffer( getOutput( )){}
-        virtual ~Log() { _logBuffer.pubsync(); }
-
-        void indent() { _logBuffer.indent(); }
-        void exdent() { _logBuffer.exdent(); }
-        void disableFlush() { _logBuffer.disableFlush(); }
-        void enableFlush()  { _logBuffer.enableFlush();  }
-        void forceFlush()  { _logBuffer.pubsync();  }
-        void disableHeader() { _logBuffer.disableHeader(); }
-        void enableHeader()  { _logBuffer.enableHeader();  }
-
-        /** The current log level. */
-        static LUNCHBOX_API int level;
-
-        /** The current log topics. */
-        static LUNCHBOX_API unsigned topics;
-
-        /** The per-thread logger. */
-        static LUNCHBOX_API Log& instance();
-
-        /** The per-thread logger. */
-        static LUNCHBOX_API Log& instance( const char* file, const int line );
-
-        /** Exit the log instance for the current thread. */
-        static LUNCHBOX_API void exit();
-
-        /** @internal */
-        static LUNCHBOX_API void reset();
-
-        /** The string representation of the current log level. */
-        static std::string& getLogLevelString();
-
-        /** @return the log level of a string representation. @version 1.3.2 */
-        static LUNCHBOX_API int getLogLevel( const char* level );
-
-        /** Change the output stream. @version 1.4*/
-        static LUNCHBOX_API void setOutput( std::ostream& stream );
-
-        /** Change the output stream to the given file. @version 1.5.1 */
-        static LUNCHBOX_API bool setOutput( const std::string& file );
-
-        /** Get the current output stream. @internal */
-        static LUNCHBOX_API std::ostream& getOutput ();
-
-        /**
-         * Set the reference clock.
-         *
-         * The clock will be used instantly by all log outputs. Use 0 to reset
-         * the clock to the default clock.
-         *
-         * @param clock the reference clock.
-         */
-        static LUNCHBOX_API void setClock( Clock* clock );
-
-        static const Clock& getClock(); //!< @internal
-
-        /** @internal */
-        void setThreadName( const std::string& name )
-            { _logBuffer.setThreadName( name ); }
-
-        /** @internal */
-        const char* getThreadName() const { return _logBuffer.getThreadName(); }
-
-    private:
-        LogBuffer _logBuffer;
-
-        Log( const Log& );
-        Log& operator = ( const Log& );
-
-        void setLogInfo( const char* file, const int line )
-            { _logBuffer.setLogInfo( file, line ); }
-    };
-
-    /**
-     * Increases the indentation level of the Log stream, causing subsequent
-     * lines to be intended by four characters.
-     * @version 1.0
-     */
-    LUNCHBOX_API std::ostream& indent( std::ostream& os );
-    /** Decrease the indent of the Log stream. @version 1.0 */
-    LUNCHBOX_API std::ostream& exdent( std::ostream& os );
-
-    /** Disable flushing of the Log stream. @version 1.0 */
-    LUNCHBOX_API std::ostream& disableFlush( std::ostream& os );
-    /** Re-enable flushing of the Log stream. @version 1.0 */
-    LUNCHBOX_API std::ostream& enableFlush( std::ostream& os );
-    /** Flush the Log stream regardless of the auto-flush state. @version 1.0 */
-    LUNCHBOX_API std::ostream& forceFlush( std::ostream& os );
-
-    /** Disable printing of the Log header for subsequent lines. @version 1.0 */
-    LUNCHBOX_API std::ostream& disableHeader( std::ostream& os );
-    /** Re-enable printing of the Log header. @version 1.0 */
-    LUNCHBOX_API std::ostream& enableHeader( std::ostream& os );
-
-    /** Indent, disable flush and header for block printing. @version 1.9.1 */
-    inline std::ostream& startBlock( std::ostream& os )
-        { return os << indent << disableFlush << disableHeader; }
-    /** Exdent, denable flush and header to stop block print. @version 1.9.1 */
-    inline std::ostream& stopBlock( std::ostream& os )
-        { return os << enableHeader << enableFlush << exdent; }
 }
 
 /** Output an error message to the per-thread Log stream. @version 1.0 */

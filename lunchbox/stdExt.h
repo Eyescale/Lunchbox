@@ -20,6 +20,7 @@
  * @file lunchbox/stdExt.h
  *
  * Include extensions to the STL and define a uniform interface to them.
+ * @deprecated For containers and most functionality use boost classes.
  */
 
 #ifndef LUNCHBOX_STDEXT_H

@@ -30,10 +30,10 @@
  *   lunchbox::RNG, lunchbox::Thread, lunchbox::TimedLock)
  * - High-Performance Threading Primitives: lunchbox::Buffer, lunchbox::LFQueue,
  *   lunchbox::LFVector, lunchbox::Monitor, lunchbox::MTQueue,
- *   lunchbox::RequestHandler, lunchbox::SpinLock (lunchbox::Lock)
+ *   lunchbox::RequestHandler, lunchbox::SpinLock, (lunchbox::Lock)
  * - Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
- *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::UUID,
- *   lunchbox::Future, (lunchbox::ScopedMutex)
+ *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::Future,
+ *   (lunchbox::ScopedMutex)
  * - Compression and CPU-GPU transfer plugin handling: lunchbox::Compressor,
  *   lunchbox::Decompressor, lunchbox::Downloader, lunchbox::Plugin,
  *   lunchbox::PluginRegistry, lunchbox::Uploader

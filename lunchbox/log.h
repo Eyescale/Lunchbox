@@ -63,7 +63,7 @@ enum LogTopic
     LOG_ANY       = 0xffffu  //!< Log all Lunchbox topics
 };
 
-namespace detail{ class Log; }
+namespace detail { class Log; }
 
 /**
  * The logging class.
@@ -74,12 +74,25 @@ namespace detail{ class Log; }
 class Log : public std::ostream
 {
 public:
+    /** Indent subsequent log output by one level. @version 1.0 */
     LUNCHBOX_API void indent();
+
+    /** Un-indent subsequent log output by one level. @version 1.0 */
     LUNCHBOX_API void exdent();
+
+    /** Disable flushing of the log on endl. @version 1.0 */
     LUNCHBOX_API void disableFlush();
+
+    /** Re-enable flushing of the log on endl. @version 1.0 */
     LUNCHBOX_API void enableFlush();
+
+    /** Flush all buffered log data. @version 1.0 */
     LUNCHBOX_API void forceFlush();
+
+    /** Disable prefix printing for subsequent new lines. @version 1.0 */
     LUNCHBOX_API void disableHeader();
+
+    /** Re-enable prefix printing for subsequent new lines. @version 1.0 */
     LUNCHBOX_API void enableHeader();
 
     /** The current log level. */

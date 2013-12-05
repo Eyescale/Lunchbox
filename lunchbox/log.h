@@ -63,85 +63,24 @@ enum LogTopic
     LOG_ANY       = 0xffffu  //!< Log all Lunchbox topics
 };
 
-/** @internal The string buffer used for logging. */
-class LogBuffer : public std::streambuf
-{
-public:
-    explicit LogBuffer( std::ostream& stream )
-            : _indent(0), _blocked(0), _noHeader(0),
-              _newLine(true), _stream(stream)
-        { _thread[0] = 0; _file[0] = 0; }
-    virtual ~LogBuffer() {}
+namespace detail{ class Log; }
 
-    void indent() { ++_indent; }
-    void exdent() { --_indent; }
-
-    void disableFlush() { ++_blocked; assert( _blocked < 100 ); }
-    void enableFlush()
-        {
-            assert( _blocked );// Too many enableFlush on log stream
-            --_blocked;
-        }
-
-    void disableHeader() { ++_noHeader; } // use counted variable to allow
-    void enableHeader()  { --_noHeader; } //   nested enable/disable calls
-
-    LUNCHBOX_API void setThreadName( const std::string& name );
-    const char* getThreadName() const { return _thread; }
-
-    LUNCHBOX_API void setLogInfo( const char* file, const int line );
-
-protected:
-    virtual int_type overflow( LogBuffer::int_type c ) override;
-    virtual int sync() override;
-
-private:
-    LogBuffer( const LogBuffer& );
-    LogBuffer& operator = ( const LogBuffer& );
-
-    /** Short thread name. */
-    char _thread[12];
-
-    /** The current file logging. */
-    char _file[35];
-
-    /** The current indentation level. */
-    int _indent;
-
-    /** Flush reference counter. */
-    int _blocked;
-
-    /** The header disable counter. */
-    int _noHeader;
-
-    /** The flag that a new line has started. */
-    bool _newLine;
-
-    /** The temporary buffer. */
-    std::ostringstream _stringStream;
-
-    /** The wrapped ostream. */
-    std::ostream& _stream;
-
-    /** The write lock. */
-    static Lock _lock;
-};
-
-/** The logging class. @internal */
+/**
+ * The logging class.
+ *
+ * Should be accessed through the LBVERB, LBINFO, LBWARN, LBERROR and LBLOG
+ * macros, which manage per-thread instances and their invocation state.
+ */
 class Log : public std::ostream
 {
 public:
-
-    Log() : std::ostream( &_logBuffer ), _logBuffer( getOutput( )){}
-    virtual ~Log() { _logBuffer.pubsync(); }
-
-    void indent() { _logBuffer.indent(); }
-    void exdent() { _logBuffer.exdent(); }
-    void disableFlush() { _logBuffer.disableFlush(); }
-    void enableFlush()  { _logBuffer.enableFlush();  }
-    void forceFlush()  { _logBuffer.pubsync();  }
-    void disableHeader() { _logBuffer.disableHeader(); }
-    void enableHeader()  { _logBuffer.enableHeader();  }
+    LUNCHBOX_API void indent();
+    LUNCHBOX_API void exdent();
+    LUNCHBOX_API void disableFlush();
+    LUNCHBOX_API void enableFlush();
+    LUNCHBOX_API void forceFlush();
+    LUNCHBOX_API void disableHeader();
+    LUNCHBOX_API void enableHeader();
 
     /** The current log level. */
     static LUNCHBOX_API int level;
@@ -188,21 +127,21 @@ public:
 
     static const Clock& getClock(); //!< @internal
 
-    /** @internal */
-    void setThreadName( const std::string& name )
-        { _logBuffer.setThreadName( name ); }
-
-    /** @internal */
-    const char* getThreadName() const { return _logBuffer.getThreadName(); }
+    void setThreadName( const std::string& name ); //!< @internal
+    const char* getThreadName() const; //!< @internal
 
 private:
-    LogBuffer _logBuffer;
+    detail::Log* const impl_;
+
+    Log();
+
+    template< class T > friend void perThreadDelete( T* );
+    virtual ~Log();
 
     Log( const Log& );
     Log& operator = ( const Log& );
 
-    void setLogInfo( const char* file, const int line )
-        { _logBuffer.setLogInfo( file, line ); }
+    void setLogInfo( const char* file, const int line );
 };
 
 /**

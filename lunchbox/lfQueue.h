@@ -52,12 +52,7 @@ public:
     bool isEmpty() const { return _readPos == _writePos; }
 
     /** Reset (empty) the queue. @version 1.0 */
-    void clear()
-    {
-        LB_TS_SCOPED( _reader );
-        _readPos = 0;
-        _writePos = 0;
-    }
+    void clear();
 
     /**
      * Resize and reset the queue.
@@ -65,13 +60,7 @@ public:
      * This method is not thread-safe. The queue has to be empty.
      * @version 1.0
      */
-    void resize( const int32_t size )
-    {
-        LBASSERT( isEmpty( ));
-        _readPos = 0;
-        _writePos = 0;
-        _data.resize( size + 1 );
-    }
+    void resize( const int32_t size );
 
     /**
      * Retrieve and pop the front element from the queue.
@@ -81,16 +70,7 @@ public:
      *         is empty.
      * @version 1.0
      */
-    bool pop( T& result )
-    {
-        LB_TS_SCOPED( _reader );
-        if( _readPos == _writePos )
-            return false;
-
-        result = _data[ _readPos ];
-        _readPos = (_readPos + 1) % _data.size();
-        return true;
-    }
+    bool pop( T& result );
 
     /**
      * Retrieve the front element from the queue.
@@ -100,15 +80,7 @@ public:
      *         is empty.
      * @version 1.0
      */
-    bool getFront( T& result )
-    {
-        LB_TS_SCOPED( _reader );
-        if( _readPos == _writePos )
-            return false;
-
-        result = _data[ _readPos ];
-        return true;
-    }
+    bool getFront( T& result );
 
     /**
      * Push a new element to the back of the queue.
@@ -117,17 +89,7 @@ public:
      * @return true if the element was placed, false if the queue is full
      * @version 1.0
      */
-    bool push( const T& element )
-    {
-        LB_TS_SCOPED( _writer );
-        int32_t nextPos = (_writePos + 1) % _data.size();
-        if( nextPos == _readPos )
-            return false;
-
-        _data[ _writePos ] = element;
-        _writePos = nextPos;
-        return true;
-    }
+    bool push( const T& element );
 
     /**
      * @return the maximum number of elements held by the queue.
@@ -144,4 +106,7 @@ private:
     LB_TS_VAR( _writer );
 };
 }
+
+#include "lfQueue.ipp" // template implementation
+
 #endif // LUNCHBOX_LFQUEUE_H

@@ -3,7 +3,7 @@
  *               2012-2013, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License version 2.1q as published
+ * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
@@ -29,7 +29,9 @@ namespace lunchbox
 /**
  * A smart reference pointer, aka boost::intrusive_ptr.
  *
- * Relies on the held object to implement ref() and unref() correctly.
+ * Relies on the held object to implement ref() and unref()
+ * correctly. Serializable using boost.serialization.
+ *
  * @deprecated Use boost::intrusive_ptr
  */
 template< class T > class RefPtr

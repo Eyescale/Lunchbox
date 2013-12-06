@@ -69,7 +69,7 @@ int main( int, char** )
     lunchbox::RequestFuture< uint32_t > future =
         handler_.registerRequest< uint32_t >( ++payload );
     requestQ_.push( future.getID( ));
-    TEST( future == 0xC0FFEE );
+    TEST( future.get() == 0xC0FFEE );
 
     request = handler_.registerRequest( ++payload );
     requestQ_.push( request );

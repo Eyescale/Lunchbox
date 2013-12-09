@@ -101,7 +101,7 @@ private:
         DWORD highSize;
         const DWORD lowSize = ::GetFileSize( file, &highSize );
         size = lowSize | ( static_cast< uint64_t >( highSize ) << 32 );
-        LBASSERT( size == 0 || size_ == size );
+        LBASSERT( size_ == 0 || size_ == size );
 
         ::CloseHandle( file );
     }
@@ -141,7 +141,7 @@ private:
 
         // create memory mapped file
         size = status.st_size;
-        LBASSERT( size == 0 || size_ == size );
+        LBASSERTINFO( size_ == 0 || size_ == size, size << " ? " << size_ );
 
         const int mapFlags = size_ ? PROT_READ | PROT_WRITE : PROT_READ;
         ptr = ::mmap( 0, size, mapFlags, MAP_SHARED, map_, 0 );

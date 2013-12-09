@@ -25,7 +25,7 @@
 namespace lunchbox
 {
 
-/** @internal subclass to implement the wait method fulfilling the future. */
+/** Base class to implement the wait method fulfilling the future. */
 template< class T > class FutureImpl : public Referenced, public NonCopyable
 {
 public:

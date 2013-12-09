@@ -44,7 +44,8 @@ namespace lunchbox
  * 2^nSlots-1. Each slot needs one pointer additional storage. Naturally it
  * should never be set higher than 64.
  *
- * Not all std::vector methods are implemented.
+ * Not all std::vector methods are implemented. Serializable using
+ * boost.serialization.
  */
 template< class T, int32_t nSlots = 32 > class LFVector
 {

@@ -43,6 +43,125 @@
 namespace lunchbox
 {
 static unsigned getLogTopics();
+static Clock    _defaultClock;
+static Clock*   _clock = &_defaultClock;
+static Lock     _lock; // The write lock
+
+namespace detail
+{
+/** @internal The string buffer used for logging. */
+class Log : public std::streambuf
+{
+public:
+    explicit Log( std::ostream& stream )
+        : _indent(0), _blocked(0), _noHeader(0),
+          _newLine(true), _stream(stream)
+    { _thread[0] = 0; _file[0] = 0; }
+
+    virtual ~Log() {}
+
+    void indent() { ++_indent; }
+    void exdent() { --_indent; }
+
+    void disableFlush() { ++_blocked; assert( _blocked < 100 ); }
+    void enableFlush()
+    {
+        assert( _blocked );// Too many enableFlush on log stream
+        --_blocked;
+    }
+
+    void disableHeader() { ++_noHeader; } // use counted variable to allow
+    void enableHeader()  { --_noHeader; } //   nested enable/disable calls
+
+    void setThreadName( const std::string& name )
+    {
+        LBASSERT( !name.empty( ));
+        snprintf( _thread, 12, "%-11s", name.c_str( ));
+    }
+
+    const char* getThreadName() const { return _thread; }
+
+    void setLogInfo( const char* f, const int line )
+    {
+        LBASSERT( f );
+        std::string file( f );
+        const size_t length = file.length();
+
+        if( length > 29 )
+            file = file.substr( length - 29, length );
+
+        snprintf( _file, 35, "%29s:%-4d", file.c_str(), line );
+    }
+
+protected:
+    virtual int_type overflow( Log::int_type c ) override
+    {
+        if( c == EOF )
+            return EOF;
+
+        if( _newLine )
+        {
+            if( !_noHeader )
+            {
+                //assert( _thread[0] );
+                _stringStream << getpid()  << " " << _thread << " " << _file
+                              << " " << _clock->getTime64() << " ";
+            }
+
+            for( int i=0; i<_indent; ++i )
+                _stringStream << "    ";
+            _newLine = false;
+        }
+
+        _stringStream << (char)c;
+        return c;
+    }
+
+    virtual int sync() override
+    {
+        if( !_blocked )
+        {
+            const std::string& string = _stringStream.str();
+            {
+                ScopedMutex< lunchbox::Lock > mutex( _lock );
+                _stream.write( string.c_str(), string.length( ));
+                _stream.rdbuf()->pubsync();
+            }
+            _stringStream.str( "" );
+        }
+        _newLine = true;
+        return 0;
+    }
+
+private:
+    Log( const Log& );
+    Log& operator = ( const Log& );
+
+    /** Short thread name. */
+    char _thread[12];
+
+    /** The current file logging. */
+    char _file[35];
+
+    /** The current indentation level. */
+    int _indent;
+
+    /** Flush reference counter. */
+    int _blocked;
+
+    /** The header disable counter. */
+    int _noHeader;
+
+    /** The flag that a new line has started. */
+    bool _newLine;
+
+    /** The temporary buffer. */
+    std::ostringstream _stringStream;
+
+    /** The wrapped ostream. */
+    std::ostream& _stream;
+};
+}
 
 namespace
 {
@@ -71,9 +190,6 @@ static LogTable _logTable[ LOG_TABLE_SIZE ] =
 
 int      Log::level  = Log::getLogLevel( getenv( "LB_LOG_LEVEL" ));
 unsigned Log::topics = getLogTopics();
-Clock    _defaultClock;
-Clock*   _clock = &_defaultClock;
-Lock     LogBuffer::_lock;
 
 static PerThread< Log > _logInstance;
 
@@ -83,6 +199,67 @@ static std::ostream* _logStream = &std::cout;
 static std::ostream* _logStream = &std::cerr;
 #endif
 static std::ostream* _logFile = 0;
+
+Log::Log()
+    : std::ostream( new detail::Log( getOutput( )))
+    , impl_( dynamic_cast< detail::Log* >( rdbuf( )))
+{}
+
+Log::~Log()
+{
+    impl_->pubsync();
+    delete impl_;
+}
+
+void Log::indent()
+{
+    impl_->indent();
+}
+
+void Log::exdent()
+{
+    impl_->exdent();
+}
+
+void Log::disableFlush()
+{
+    impl_->disableFlush();
+}
+
+void Log::enableFlush()
+{
+    impl_->enableFlush();
+}
+
+void Log::forceFlush()
+{
+    impl_->pubsync();
+}
+
+void Log::disableHeader()
+{
+    impl_->disableHeader();
+}
+
+void Log::enableHeader()
+{
+    impl_->enableHeader();
+}
+
+void Log::setLogInfo( const char* file, const int line )
+{
+    impl_->setLogInfo( file, line );
+}
+
+void Log::setThreadName( const std::string& name )
+{
+    impl_->setThreadName( name );
+}
+
+const char* Log::getThreadName() const
+{
+    return impl_->getThreadName();
+}
 
 int Log::getLogLevel( const char* text )
 {
@@ -210,65 +387,6 @@ std::ostream& Log::getOutput()
 {
     return *_logStream;
 }
-
-
-void LogBuffer::setThreadName( const std::string& name )
-{
-    LBASSERT( !name.empty( ));
-    snprintf( _thread, 12, "%-11s", name.c_str( ));
-}
-
-void LogBuffer::setLogInfo( const char* f, const int line )
-{
-    LBASSERT( f );
-    std::string file( f );
-    const size_t length = file.length();
-
-    if( length > 29 )
-        file = file.substr( length - 29, length );
-
-    snprintf( _file, 35, "%29s:%-4d", file.c_str(), line );
-}
-
-LogBuffer::int_type LogBuffer::overflow( LogBuffer::int_type c )
-{
-    if( c == EOF )
-        return EOF;
-
-    if( _newLine )
-    {
-        if( !_noHeader )
-        {
-            //assert( _thread[0] );
-            _stringStream << getpid()  << " " << _thread << " " << _file << " "
-                          << _clock->getTime64() << " ";
-        }
-
-        for( int i=0; i<_indent; ++i )
-            _stringStream << "    ";
-        _newLine = false;
-    }
-
-    _stringStream << (char)c;
-    return c;
-}
-
-int LogBuffer::sync()
-{
-    if( !_blocked )
-    {
-        const std::string& string = _stringStream.str();
-        {
-            ScopedMutex< Lock > mutex( _lock );
-            _stream.write( string.c_str(), string.length( ));
-            _stream.rdbuf()->pubsync();
-        }
-        _stringStream.str( "" );
-    }
-    _newLine = true;
-    return 0;
-}
-
 
 std::ostream& indent( std::ostream& os )
 {

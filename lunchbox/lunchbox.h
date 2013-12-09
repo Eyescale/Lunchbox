@@ -26,14 +26,15 @@
  * provides the following functionality:
  *
  * - Operating System Abstraction: lunchbox::Atomic, lunchbox::Condition,
- *   lunchbox::DSO, (lunchbox::Clock, lunchbox::MemoryMap, lunchbox::PerThread,
- *   lunchbox::RNG, lunchbox::Thread, lunchbox::TimedLock)
+ *   lunchbox::DSO, @ref bitops "bit operations", lunchbox::daemonize(),
+ *   (lunchbox::Clock, lunchbox::MemoryMap, lunchbox::PerThread, lunchbox::RNG,
+ *   lunchbox::Thread, lunchbox::TimedLock)
  * - High-Performance Threading Primitives: lunchbox::Buffer, lunchbox::LFQueue,
  *   lunchbox::LFVector, lunchbox::Monitor, lunchbox::MTQueue,
  *   lunchbox::RequestHandler, lunchbox::SpinLock, (lunchbox::Lock)
  * - Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
  *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::Future,
- *   (lunchbox::ScopedMutex)
+ *   lunchbox::Servus, (lunchbox::ScopedMutex)
  * - Compression and CPU-GPU transfer plugin handling: lunchbox::Compressor,
  *   lunchbox::Decompressor, lunchbox::Downloader, lunchbox::Plugin,
  *   lunchbox::PluginRegistry, lunchbox::Uploader

@@ -29,6 +29,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   init.h
   launcher.h
   lfQueue.h
+  lfQueue.ipp
   lfVector.h
   lfVector.ipp
   lfVectorIterator.h

@@ -81,7 +81,8 @@ inline void memoryBarrierRelease()
  * concurrently. They are useful to implement lock-free algorithms.
  *
  * For implementation reasons, only signed atomic variables are supported, of
- * which only int32_t is implemented right now.
+ * which int32_t and ssize_t are implemented and typedef'd as a_int32_t and
+ * a_ssize_t.
  */
 template< class T > class Atomic
 {

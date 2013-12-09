@@ -186,6 +186,7 @@ void Compressor::compress( void* const in, const uint64_t pvpIn[4],
 {
     LBASSERT( impl_->plugin );
     LBASSERT( impl_->instance );
+    LBASSERT( in );
     if( !isGood( ))
         return;
 
@@ -197,6 +198,7 @@ void Compressor::compress( void* const in, const uint64_t inDims[2] )
 {
     LBASSERT( impl_->plugin );
     LBASSERT( impl_->instance );
+    LBASSERT( in );
     if( !isGood( ))
         return;
 
@@ -214,9 +216,8 @@ unsigned Compressor::getNumResults() const
     return impl_->plugin->getNumResults( impl_->instance, impl_->info.name );
 }
 
-void Compressor::getResult( const unsigned i,
-                                   void** const out,
-                                   uint64_t* const outSize ) const
+void Compressor::getResult( const unsigned i, void** const out,
+                            uint64_t* const outSize ) const
 {
     LBASSERT( impl_->plugin );
     LBASSERT( impl_->instance );

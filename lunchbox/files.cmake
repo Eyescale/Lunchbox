@@ -11,6 +11,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   atomic.h
   bitOperation.h
   buffer.h
+  buffer.ipp
   clock.h
   compiler.h
   compressor.h
@@ -45,6 +46,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   omp.h
   os.h
   perThread.h
+  perThread.ipp
   perThreadRef.h
   plugin.h
   pluginRegistry.h
@@ -105,6 +107,7 @@ set(LUNCHBOX_SOURCES
   thread.cpp
   threadID.cpp
   tls.cpp
+  time.h
   timedLock.cpp
   uint128_t.cpp
   uploader.cpp

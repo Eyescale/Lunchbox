@@ -163,7 +163,7 @@ private:
  * @version 1.0
  */
 LUNCHBOX_API std::ostream& indent( std::ostream& os );
-/** Decrease the indent of the Log stream. @version 1.0 */
+/** Decrease the indentation level of the Log stream. @version 1.0 */
 LUNCHBOX_API std::ostream& exdent( std::ostream& os );
 
 /** Disable flushing of the Log stream. @version 1.0 */

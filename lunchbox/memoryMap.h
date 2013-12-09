@@ -26,6 +26,8 @@
 
 namespace lunchbox
 {
+namespace detail { class MemoryMap; }
+
 /**
  * Helper to map a file to a memory address (mmap).
  * @deprecated Use boost::iostreams::mapped_file_source
@@ -104,32 +106,24 @@ public:
     LUNCHBOX_API void unmap();
 
     /** @return the pointer to the memory map. @version 1.0 */
-    const void* getAddress() const { return _ptr; }
+    LUNCHBOX_API const void* getAddress() const;
 
     /** @return the pointer to the memory map. @version 1.9.1 */
-    void* getAddress() { return _ptr; }
+    LUNCHBOX_API void* getAddress();
 
     /** @return the pointer to the memory map. @version 1.9.1 */
     template< class T > const T* getAddress() const
-        { return static_cast< const T* >( _ptr ); }
+        { return static_cast< const T* >( getAddress( )); }
 
     /** @return the pointer to the memory map. @version 1.9.1 */
-    template< class T > T* getAddress() { return static_cast< T* >( _ptr ); }
+    template< class T > T* getAddress()
+        { return static_cast< T* >( getAddress( )); }
 
     /** @return the size of the memory map. @version 1.0 */
-    size_t getSize() const { return _size; }
+    LUNCHBOX_API size_t getSize() const;
 
 private:
-#ifdef _WIN32
-    void* _map;
-#else
-    int _fd;
-#endif
-
-    void* _ptr;
-    size_t _size;
-
-    void* _init( const std::string& filename, const size_t size );
+    detail::MemoryMap* const impl_;
 };
 
 inline std::ostream& operator << ( std::ostream& os, const MemoryMap& m )

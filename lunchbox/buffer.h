@@ -51,40 +51,23 @@ public:
         { reset( size ); }
 
     /** "Move" constructor, transfers ownership to new Buffer. @version 1.0 */
-    explicit Buffer( Buffer& from )
-    {
-        _data = from._data; _size = from._size; _maxSize = from._maxSize;
-        from._data = 0; from._size = 0; from._maxSize = 0;
-    }
+    explicit Buffer( Buffer& from );
 
     /** Destruct the buffer. @version 1.0 */
     ~Buffer() { clear(); }
 
     /** Flush the buffer, deleting all data. @version 1.0 */
-    void clear()
-        { if( _data ) free( _data ); _data=0; _size=0; _maxSize=0; }
+    void clear() { if( _data ) free( _data ); _data=0; _size=0; _maxSize=0; }
 
     /**
      * Tighten the allocated memory to the size of the buffer.
      * @return the new pointer to the first element.
      * @version 1.0
      */
-    T* pack()
-    {
-        if( _maxSize != _size )
-        {
-            _data = static_cast< T* >( realloc( _data, _size * sizeof( T )));
-            _maxSize = _size;
-        }
-        return _data;
-    }
+    T* pack();
 
     /** Assignment operator, copies data from Buffer. @version 1.0 */
-    const Buffer& operator = ( const Buffer& from )
-        {
-            replace( from );
-            return *this;
-        }
+    const Buffer& operator = ( const Buffer& from );
 
     /** Direct access to the element at the given index. @version 1.0 */
     T& operator [] ( const uint64_t position )
@@ -101,19 +84,7 @@ public:
      * @return the new pointer to the first element.
      * @version 1.0
      */
-    T* resize( const uint64_t newSize )
-        {
-            _size = newSize;
-            if( newSize <= _maxSize )
-                return _data;
-
-            // avoid excessive reallocs
-            const uint64_t nElems = newSize + (newSize >> 3);
-            const uint64_t nBytes = nElems * sizeof( T );
-            _data = static_cast< T* >( realloc( _data, nBytes ));
-            _maxSize = nElems;
-            return _data;
-        }
+    T* resize( const uint64_t newSize );
 
     /**
      * Ensure that the buffer contains at least newSize elements.
@@ -121,11 +92,7 @@ public:
      * Existing data is retained. The size is increased, if necessary.
      * @version 1.0
      */
-    void grow( const uint64_t newSize )
-        {
-            if( newSize > _size )
-                resize( newSize );
-        }
+    void grow( const uint64_t newSize );
 
     /**
      * Ensure that the buffer contains at least newSize elements.
@@ -134,15 +101,7 @@ public:
      * @return the new pointer to the first element.
      * @version 1.0
      */
-    T* reserve( const uint64_t newSize )
-    {
-        if( newSize <= _maxSize )
-            return _data;
-
-        _data = static_cast< T* >( realloc( _data, newSize * sizeof( T )));
-        _maxSize = newSize;
-        return _data;
-    }
+    T* reserve( const uint64_t newSize );
 
     /**
      * Set the buffer size and malloc enough memory.
@@ -151,64 +110,25 @@ public:
      * @return the new pointer to the first element.
      * @version 1.0
      */
-    T* reset( const uint64_t newSize )
-        {
-            reserve( newSize );
-            setSize( newSize );
-            return _data;
-        }
+    T* reset( const uint64_t newSize );
 
     /** Set the buffer content to 0. @version 1.9.1 */
     void setZero() { ::lunchbox::setZero( _data, _size ); }
 
     /** Append elements to the buffer, increasing the size. @version 1.0 */
-    void append( const T* data, const uint64_t size )
-        {
-            LBASSERT( data );
-            LBASSERT( size );
-
-            const uint64_t oldSize = _size;
-            resize( oldSize + size );
-            memcpy( _data + oldSize, data, size * sizeof( T ));
-        }
+    void append( const T* data, const uint64_t size );
 
     /** Append one element to the buffer. @version 1.0 */
-    void append( const T& element )
-        {
-            resize( _size + 1 );
-            _data[ _size - 1 ] = element;
-        }
+    void append( const T& element );
 
     /** Replace the existing data with new data. @version 1.0 */
-    void replace( const void* data, const uint64_t size )
-        {
-            LBASSERT( data );
-            LBASSERT( size );
-
-            reserve( size );
-            memcpy( _data, data, size * sizeof( T ));
-            _size = size;
-        }
+    void replace( const void* data, const uint64_t size );
 
     /** Replace the existing data. @version 1.5.1 */
-    void replace( const Buffer& from )
-        { replace( from._data, from._size ); }
+    void replace( const Buffer& from ) { replace( from._data, from._size ); }
 
     /** Swap the buffer contents with another Buffer. @version 1.0 */
-    void swap( Buffer& buffer )
-        {
-            T*             tmpData    = buffer._data;
-            const uint64_t tmpSize    = buffer._size;
-            const uint64_t tmpMaxSize = buffer._maxSize;
-
-            buffer._data = _data;
-            buffer._size = _size;
-            buffer._maxSize = _maxSize;
-
-            _data     = tmpData;
-            _size     = tmpSize;
-            _maxSize = tmpMaxSize;
-        }
+    void swap( Buffer& buffer );
 
     /** @return a pointer to the data. @version 1.0 */
     T* getData() { return _data; }
@@ -224,15 +144,7 @@ public:
      * does not change the size.
      * @version 1.0
      */
-    bool setSize( const uint64_t size )
-        {
-            LBASSERT( size <= _maxSize );
-            if( size > _maxSize )
-                return false;
-
-            _size = size;
-            return true;
-        }
+    bool setSize( const uint64_t size );
 
     /** @return the current number of elements. @version 1.0 */
     uint64_t getSize() const { return _size; }
@@ -257,4 +169,7 @@ private:
     uint64_t _maxSize;
 };
 }
+
+#include "buffer.ipp" // template implementation
+
 #endif //LUNCHBOX_BUFFER_H

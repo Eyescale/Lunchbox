@@ -113,19 +113,18 @@ public:
     /** @internal print holders of this if debugging is enabled. */
 #ifdef LUNCHBOX_REFERENCED_DEBUG
     void printHolders( std::ostream& os ) const
+    {
+        os << disableFlush << disableHeader << std::endl;
         {
-            os << disableFlush << disableHeader << std::endl;
+            ScopedFastRead mutex( _holders );
+            for( HolderHash::const_iterator i = _holders->begin();
+                 i != _holders->end(); ++i )
             {
-                ScopedFastRead mutex( _holders );
-                for( HolderHash::const_iterator i = _holders->begin();
-                     i != _holders->end(); ++i )
-                {
-                    os << "Holder " << i->first << ": " << i->second
-                       << std::endl;
-                }
+                os << "Holder " << i->first << ": " << i->second << std::endl;
             }
-            os << enableHeader << enableFlush;
         }
+        os << enableHeader << enableFlush;
+    }
 #else
     void printHolders( std::ostream& ) const {}
 #endif

@@ -104,57 +104,8 @@ private:
     TLS tls_;
 };
 
-template< class T, void (*D)( T* ) > PerThread<T, D>::PerThread()
-    : tls_( (TLS::ThreadDestructor_t)D )
-{}
-
-template< class T, void (*D)( T* ) > PerThread<T, D>::~PerThread()
-{}
-
-template< class T, void (*D)( T* ) >
-PerThread<T, D>& PerThread<T, D>::operator = ( const T* data )
-{
-    tls_.set( static_cast< const void* >( data ));
-    return *this;
 }
 
-template< class T, void (*D)( T* ) >
-PerThread<T, D>& PerThread<T, D>::operator = ( const PerThread<T, D>& rhs )
-{
-    tls_.set( rhs.tls_.get( ));
-    return *this;
-}
+#include "perThread.ipp" // template implementation
 
-template< class T, void (*D)( T* ) > T* PerThread<T, D>::get()
-{
-    return static_cast< T* >( tls_.get( ));
-}
-
-template< class T, void (*D)( T* ) > const T* PerThread<T, D>::get() const
-{
-    return static_cast< const T* >( tls_.get( ));
-}
-
-template< class T, void (*D)( T* ) > T* PerThread<T, D>::operator->()
-{
-    return static_cast< T* >( tls_.get( ));
-}
-
-template< class T, void (*D)( T* ) >
-const T* PerThread<T, D>::operator->() const
-{
-    return static_cast< T* >( tls_.get( ));
-}
-
-template< class T, void (*D)( T* ) > bool PerThread<T, D>::operator ! () const
-{
-    return tls_.get() == 0;
-}
-
-template< class T, void (*D)( T* ) > bool PerThread<T, D>::isValid() const
-{
-    return tls_.get() != 0;
-}
-
-}
 #endif //LUNCHBOX_PERTHREAD_H

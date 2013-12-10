@@ -9,11 +9,11 @@ Welcome to Lunchbox, a C++ library for multi-threaded programming.
 Lunchbox 1.8 adds major new features, most notably runtime-loadable
 compression plugins and an UnorderedIntervalSet container.
 
-Lunchbox 1.8 is a feature release based on the 1.6 Lunchbox API. It is
+Lunchbox 1.8.1 is a bgufix release based in the 1.8 series. It is
 intended for all application developers creating high-preformance
 multi-threaded programs. Lunchbox 1.8 can be retrieved by downloading
 the
-[source code](http://www.equalizergraphics.com/downloads/Lunchbox-1.8.0.tar.gz)
+[source code](http://www.equalizergraphics.com/downloads/Lunchbox-1.8.1.tar.gz)
 or any of the
 [precompiled packages](http://www.equalizergraphics.com/downloads/major.html).
 
@@ -64,6 +64,10 @@ since the last release:
   of the public Lunchbox API
 
 ## Bug Fixes {#Fixes}
+
+Lunchbox 1.8.1 fixes the following bugs over the 1.8.0 release:
+
+* Compilation on Mac OS X 10.8
 
 Lunchbox 1.8 includes various bugfixes over the 1.6 release, including
 the following:

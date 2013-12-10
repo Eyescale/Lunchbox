@@ -140,7 +140,7 @@ public:
 
     static const Clock& getClock(); //!< @internal
 
-    void setThreadName( const std::string& name ); //!< @internal
+    LUNCHBOX_API void setThreadName( const std::string& name ); //!< @internal
     const char* getThreadName() const; //!< @internal
 
 private:

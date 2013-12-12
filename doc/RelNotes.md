@@ -9,7 +9,7 @@ Welcome to Lunchbox, a C++ library for multi-threaded programming.
 Lunchbox 1.8 adds major new features, most notably runtime-loadable
 compression plugins and an UnorderedIntervalSet container.
 
-Lunchbox 1.8.1 is a bgufix release based in the 1.8 series. It is
+Lunchbox 1.8.1 is a bugfix release based in the 1.8 series. It is
 intended for all application developers creating high-preformance
 multi-threaded programs. Lunchbox 1.8 can be retrieved by downloading
 the

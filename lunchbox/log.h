@@ -141,7 +141,7 @@ public:
     static const Clock& getClock(); //!< @internal
 
     LUNCHBOX_API void setThreadName( const std::string& name ); //!< @internal
-    const char* getThreadName() const; //!< @internal
+    LUNCHBOX_API const char* getThreadName() const; //!< @internal
 
 private:
     detail::Log* const impl_;

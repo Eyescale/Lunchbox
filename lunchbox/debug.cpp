@@ -36,8 +36,6 @@
 #  include <string.h>
 #endif
 
-#include <boost/numeric/conversion/cast.hpp>
-
 namespace lunchbox
 {
 
@@ -90,14 +88,14 @@ static void backtrace_( std::ostream& os, const size_t skipFrames )
         return;
 
     void* stack[ LB_BACKTRACE_DEPTH ];
-    unsigned short frames = (backtraceFunc)( 0, LB_BACKTRACE_DEPTH, stack, 0 );
+    const size_t frames = (backtraceFunc)( 0, LB_BACKTRACE_DEPTH, stack, 0 );
 
     SYMBOL_INFO* symbol = (SYMBOL_INFO*)calloc( sizeof(SYMBOL_INFO) +
                                         (LB_SYMBOL_LENGTH+-1)*sizeof(char), 1 );
     symbol->MaxNameLen   = LB_SYMBOL_LENGTH;
     symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
 
-    for( unsigned short i = boost::numeric_cast<unsigned short>(skipFrames); i < frames; ++i )
+    for( size_t i = skipFrames; i < frames; ++i )
     {
         os << "\n  " << frames-i-1 << ": ";
         if ( !SymFromAddr( hProcess, (DWORD64)stack[i], 0, symbol ))

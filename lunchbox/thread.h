@@ -35,6 +35,8 @@ namespace detail { class Thread; }
 /**
  * Utility class to execute code in a separate execution thread.
  * @deprecated Use Boost.Thread
+ *
+ * Example: @include tests/thread.cpp
  */
 class Thread
 {
@@ -176,7 +178,7 @@ private:
 
     static void* runChild( void* arg );
     void        _runChild();
-};
+} LB_DEPRECATED;
 
 /** Output the affinity setting in human-readable form. @version 1.7.1 */
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const Thread::Affinity );

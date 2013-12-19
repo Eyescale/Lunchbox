@@ -31,6 +31,8 @@ namespace detail { class MemoryMap; }
 /**
  * Helper to map a file to a memory address (mmap).
  * @deprecated Use boost::iostreams::mapped_file_source
+ *
+ * Example: @include tests/memoryMap.cpp
  */
 class MemoryMap : public NonCopyable
 {
@@ -124,7 +126,7 @@ public:
 
 private:
     detail::MemoryMap* const impl_;
-};
+} LB_DEPRECATED;
 
 inline std::ostream& operator << ( std::ostream& os, const MemoryMap& m )
 {

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,24 +19,25 @@
 #define LUNCHBOX_NONCOPYABLE_H
 
 #include <lunchbox/api.h> // for LUNCHBOX_API
+#include <lunchbox/compiler.h>
 
 namespace lunchbox
 {
-    /**
-     * Base class to make objects non-copyable.
-     * @deprecated Use boost::noncopyable
-     */
-    class NonCopyable
-    {
-    protected:
-        NonCopyable() {}
+/**
+ * Base class to make objects non-copyable.
+ * @deprecated Use boost::noncopyable
+ */
+class NonCopyable
+{
+protected:
+    NonCopyable() {}
 
-    private:
-        /** Disable copy constructor. */
-        NonCopyable( const NonCopyable& );
+private:
+    /** Disable copy constructor. */
+    NonCopyable( const NonCopyable& );
 
-        /** Disable assignment operator. */
-        const NonCopyable& operator = ( const NonCopyable& );
-    };
+    /** Disable assignment operator. */
+    const NonCopyable& operator = ( const NonCopyable& );
+} LB_DEPRECATED;
 }
 #endif //LUNCHBOX_NONCOPYABLE_H

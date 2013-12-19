@@ -38,6 +38,8 @@ namespace detail { class Servus; }
  * and/or to browse a ZeroConf service. If the Lunchbox library is compiled
  * without zeroconf support (LUNCHBOX_USE_DNSSD is not set), this class does not
  * do anything useful.
+ *
+ * Example: @include tests/servus.cpp
  */
 class Servus : public NonCopyable
 {

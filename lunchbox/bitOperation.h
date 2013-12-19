@@ -39,7 +39,11 @@
 
 namespace lunchbox
 {
-/** @defgroup bitops Bit Operations. */
+/**
+ * @defgroup bitops Bit Operations.
+ *
+ * Example: @include tests/bitOperation.cpp
+ */
 //@{
 /**
  * @return the position of the last (most significant) set bit, or -1.

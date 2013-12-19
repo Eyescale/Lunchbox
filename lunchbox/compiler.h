@@ -50,7 +50,9 @@
 
 #ifdef __GNUC__
 #  define LB_UNUSED __attribute__((unused))
-
+#  ifdef WARN_DEPRECATED // Set CMake option ENABLE_WARN_DEPRECATED
+#    define LB_DEPRECATED __attribute__((deprecated))
+#  endif
 #  if (( __GNUC__ > 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 0)) )
 #    define LB_GCC_4_0_OR_LATER
 #  endif
@@ -114,6 +116,9 @@
 
 #ifndef LB_UNUSED
 #  define LB_UNUSED
+#endif
+#ifndef LB_DEPRECATED
+#  define LB_DEPRECATED
 #endif
 
 #endif //LUNCHBOX_COMPILER_H

@@ -33,6 +33,8 @@ namespace detail { class SpinLock; }
  * a read-write lock, readers or writers will starve on high contention.
  *
  * @sa ScopedMutex
+ *
+ * Example: @include tests/lock.cpp
  */
 class SpinLock : public NonCopyable
 {

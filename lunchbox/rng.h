@@ -35,6 +35,8 @@ namespace detail { class RNG; }
  * Generates a set of random, or if not supported by the operating system,
  * pseudo-random numbers. Each instance creates its own series of numbers.
  * @deprecated Use Boost.Random
+ *
+ * Example: @include tests/rng.cpp
  */
 class RNG : public NonCopyable
 {
@@ -71,7 +73,7 @@ private:
     static void _exit();
     friend LUNCHBOX_API bool init( const int argc, char** argv );
     LUNCHBOX_API bool _get( void* data, size_t size );
-};
+} LB_DEPRECATED;
 
 template<> inline float RNG::get()
 {

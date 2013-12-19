@@ -21,8 +21,9 @@
 #define LUNCHBOX_UINT128_H
 
 #include <lunchbox/api.h>
-#include <sstream>
+#include <lunchbox/compiler.h>
 
+#include <sstream>
 #ifdef _MSC_VER
 // Don't include <lunchbox/types.h> to be minimally intrusive for apps
 // using uint128_t
@@ -37,7 +38,11 @@ namespace lunchbox
 class uint128_t;
 std::ostream& operator << ( std::ostream& os, const uint128_t& id );
 
-/** A base type for 128 bit unsigned integer values. */
+/**
+ * A base type for 128 bit unsigned integer values.
+ *
+ * Example: @include tests/uuid.cpp
+ */
 class uint128_t
 {
 public:
@@ -69,7 +74,7 @@ public:
      * @version 1.9.1
      * @deprecated
      */
-    LUNCHBOX_API explicit uint128_t( const bool generate );
+    LUNCHBOX_API explicit uint128_t( const bool generate ) LB_DEPRECATED;
 #endif
 
     /**
@@ -273,10 +278,10 @@ public:
     /** @return true if the uint128_t was generated.
      *  @deprecated
      */
-    bool isGenerated() const { return high() != 0; }
+    bool isGenerated() const LB_DEPRECATED { return high() != 0; }
 
     /** @deprecated Don't use, static initializer fiasco. Use 0/uint128_t()*/
-    static LUNCHBOX_API const uint128_t ZERO;
+    static LUNCHBOX_API const uint128_t ZERO LB_DEPRECATED;
 #endif
 
 private:

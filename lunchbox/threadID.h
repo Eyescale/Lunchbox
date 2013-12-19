@@ -20,6 +20,7 @@
 #define LUNCHBOX_THREADID_H
 
 #include <lunchbox/api.h>     // LUNCHBOX_API definition
+#include <lunchbox/compiler.h>
 
 #include <ostream>
 
@@ -61,7 +62,7 @@ private:
 
     friend LUNCHBOX_API
     std::ostream& operator << ( std::ostream& os, const ThreadID& );
-};
+} LB_DEPRECATED;
 
 /** Print the thread to the given output stream. */
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const ThreadID& );

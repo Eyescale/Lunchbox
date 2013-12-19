@@ -34,9 +34,11 @@ namespace lunchbox
  *
  * Typically used to communicate between two execution threads.
  *
- * S is deprecated, and defines the initial maximum capacity of the Queue<T>.
- * When the capacity is reached, pushing new values blocks until items have been
- * consumed.
+ * S is deprecated by the ctor param maxSize, and defines the initial maximum
+ * capacity of the Queue<T>.  When the capacity is reached, pushing new values
+ * blocks until items have been consumed.
+ *
+ * Example: @include tests/mtQueue.cpp
  */
 template< typename T, size_t S = ULONG_MAX > class MTQueue
 // S = std::numeric_limits< size_t >::max() does not work:

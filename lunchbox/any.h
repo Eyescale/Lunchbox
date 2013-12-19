@@ -56,6 +56,8 @@ namespace lunchbox
  *
  * This class is based on boost.any with the extension to support serialization
  * if the ValueType supports boost.serialization.
+ *
+ * Example: @include tests/any.cpp
  */
 class Any
 {

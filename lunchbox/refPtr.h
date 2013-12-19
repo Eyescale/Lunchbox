@@ -33,6 +33,8 @@ namespace lunchbox
  * correctly. Serializable using boost.serialization.
  *
  * @deprecated Use boost::intrusive_ptr
+ *
+ * Example: @include tests/refPtr.cpp
  */
 template< class T > class RefPtr
 {
@@ -171,7 +173,7 @@ private:
 #endif
         }
     }
-};
+} LB_DEPRECATED;
 
 /** Print the reference pointer to the given output stream. */
 template< class T >

@@ -37,6 +37,8 @@ namespace lunchbox
  * * One writer thread
  * * Fixed maximum size (writes may fail)
  * * Not copyable
+ *
+ * Example: @include tests/lfQueue.cpp
  */
 template< typename T > class LFQueue : public NonCopyable
 {

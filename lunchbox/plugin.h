@@ -30,7 +30,11 @@ namespace lunchbox
 {
 namespace detail { class Plugin; }
 
-/** Holder for all functions and information of one compression plugin DSO. */
+/**
+ * Holder for all functions and information of one compression plugin DSO.
+ *
+ * Example: @include tests/compressor.cpp
+ */
 class Plugin : public DSO
 {
 public:

@@ -29,7 +29,11 @@ namespace lunchbox
 {
 namespace detail { class Compressor; }
 
-/** A C++ class to handle one compressor plugin instance. */
+/**
+ * A C++ class to handle one compressor plugin instance.
+ *
+ * Example: @include tests/compressor.cpp
+ */
 class Compressor : public NonCopyable
 {
 public:

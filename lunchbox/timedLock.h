@@ -26,7 +26,12 @@ namespace lunchbox
 {
 namespace detail { class TimedLock; }
 
-/** A mutex with timeout capabilities. @deprecated Use boost::timed_lock */
+/**
+ * A mutex with timeout capabilities.
+ * @deprecated Use boost::timed_lock
+ *
+ * Example: @include tests/timedLock.cpp
+ */
 class TimedLock : public NonCopyable
 {
 public:
@@ -67,6 +72,6 @@ public:
 
 private:
     detail::TimedLock* const _impl;
-};
+} LB_DEPRECATED;
 }
 #endif //LUNCHBOX_TIMEDLOCK_H

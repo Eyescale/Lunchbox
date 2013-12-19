@@ -46,6 +46,8 @@ namespace lunchbox
  *
  * Not all std::vector methods are implemented. Serializable using
  * boost.serialization.
+ *
+ * Example: @include tests/lfVector.cpp
  */
 template< class T, int32_t nSlots = 32 > class LFVector
 {

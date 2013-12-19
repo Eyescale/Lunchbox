@@ -1,2 +1,3 @@
 Makefile
 CMakeLists.txt.user*
+CMake/common

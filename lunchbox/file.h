@@ -20,6 +20,7 @@
 #define LUNCHBOX_FILE_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/compiler.h>
 #include <lunchbox/types.h>
 
 namespace lunchbox
@@ -34,19 +35,21 @@ namespace lunchbox
  * @deprecated Use Boost.Filesystem
  */
 LUNCHBOX_API Strings searchDirectory( const std::string& directory,
-                                      const std::string& pattern );
+                                      const std::string& pattern )
+    LB_DEPRECATED;
 
 /**
  * @return the file name part of a path. @version 1.0
  * @deprecated Use Boost.Filesystem
  */
-LUNCHBOX_API std::string getFilename( const std::string& filename );
+LUNCHBOX_API std::string getFilename( const std::string& filename )
+    LB_DEPRECATED;
 
 /**
  * @return the directory name part of a path. @version 1.0
  * @deprecated Use Boost.Filesystem
  */
-LUNCHBOX_API std::string getDirname( const std::string& filename );
-
+LUNCHBOX_API std::string getDirname( const std::string& filename )
+    LB_DEPRECATED;
 }
 #endif //LUNCHBOX_FILE_H

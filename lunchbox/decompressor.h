@@ -28,7 +28,11 @@ namespace lunchbox
 {
 namespace detail { class Decompressor; }
 
-/** A C++ class to handle one decompressor plugin instance. */
+/**
+ * A C++ class to handle one decompressor plugin instance.
+ *
+ * Example: @include tests/compressor.cpp
+ */
 class Decompressor : public NonCopyable
 {
 public:

@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2006-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -44,18 +44,18 @@ public:
     size_t ops;
 
     virtual void run()
+    {
+        ops = 0;
+        while( LB_LIKELY( _running ))
         {
-            ops = 0;
-            while( LB_LIKELY( _running ))
-            {
-                lock->set();
+            lock->set();
 #ifndef _MSC_VER
-                TEST( lock->isSet( ));
+            TEST( lock->isSet( ));
 #endif
-                lock->unset();
-                ++ops;
-            }
+            lock->unset();
+            ++ops;
         }
+    }
 };
 
 template< class T > void _test()
@@ -64,7 +64,8 @@ template< class T > void _test()
     lock->set();
 
 #ifdef LUNCHBOX_USE_OPENMP
-    const size_t nThreads = LB_MIN( lunchbox::OMP::getNThreads()*3, MAXTHREADS );
+    const size_t nThreads = LB_MIN( lunchbox::OMP::getNThreads() * 3,
+                                    MAXTHREADS );
 #else
     const size_t nThreads = 16;
 #endif

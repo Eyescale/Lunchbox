@@ -20,6 +20,7 @@
 #define LUNCHBOX_CLOCK_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/compiler.h>
 #include <lunchbox/types.h>
 
 namespace lunchbox
@@ -90,6 +91,6 @@ public :
 
 private:
     detail::Clock* const _impl;
-};
+} LB_DEPRECATED;
 }
 #endif  // LUNCHBOX_CLOCK_H

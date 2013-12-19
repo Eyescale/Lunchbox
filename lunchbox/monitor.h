@@ -37,6 +37,8 @@ namespace lunchbox
  * A monitor has a value, which can be monitored to reach a certain state. The
  * caller is blocked until the condition is fulfilled. The concept is similar to
  * a pthread condition, with more usage convenience.
+ *
+ * Example: @include tests/monitor.cpp
  */
 template< class T > class Monitor
 {

@@ -28,10 +28,11 @@
  * - Operating System Abstraction: lunchbox::Atomic, lunchbox::Condition,
  *   lunchbox::DSO, @ref bitops "bit operations", lunchbox::daemonize(),
  *   (lunchbox::Clock, lunchbox::MemoryMap, lunchbox::PerThread, lunchbox::RNG,
- *   lunchbox::Thread, lunchbox::TimedLock)
+ *   lunchbox::Thread)
  * - High-Performance Threading Primitives: lunchbox::Buffer, lunchbox::LFQueue,
  *   lunchbox::LFVector, lunchbox::Monitor, lunchbox::MTQueue,
- *   lunchbox::RequestHandler, lunchbox::SpinLock, (lunchbox::Lock)
+ *   lunchbox::RequestHandler, lunchbox::SpinLock, (lunchbox::Lock,
+ *   lunchbox::TimedLock)
  * - Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
  *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::Future,
  *   lunchbox::Servus, (lunchbox::ScopedMutex)

@@ -38,6 +38,8 @@ namespace detail { class PluginRegistry; }
  * plugin registry in their respective initialization calls by adding
  * directories in co::init(). This internal plugin registry can be obtained
  * using co::Global::getPluginRegistry().
+ *
+ * Example: @include tests/compressor.cpp
  */
 class PluginRegistry : public NonCopyable
 {

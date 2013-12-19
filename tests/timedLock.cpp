@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2009, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2013, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -22,16 +22,13 @@
 
 #include <iostream>
 
-using namespace lunchbox;
-using namespace std;
-
 int main( int, char** )
 {
-    TimedLock lock;
+    lunchbox::TimedLock lock;
 
     TEST( lock.set( ));
 
-    Clock clock;
+    lunchbox::Clock clock;
     TEST( !lock.set( 1000 ));
     float time = clock.getTimef();
 

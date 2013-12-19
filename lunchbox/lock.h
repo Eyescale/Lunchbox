@@ -19,6 +19,7 @@
 #define LUNCHBOX_LOCK_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/compiler.h>
 #include <lunchbox/nonCopyable.h>
 
 namespace lunchbox
@@ -29,6 +30,8 @@ namespace detail { class Lock; }
  * A lock (mutex) primitive.
  * @sa ScopedMutex
  * @deprecated Use boost::mutex
+ *
+ * Example: @include tests/lock.cpp
  */
 class Lock : public NonCopyable
 {
@@ -73,6 +76,6 @@ public:
 
 private:
     detail::Lock* const _impl;
-};
+} LB_DEPRECATED;
 }
 #endif //LUNCHBOX_LOCK_H

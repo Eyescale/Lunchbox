@@ -19,6 +19,7 @@
 #define LUNCHBOX_SLEEP_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/compiler.h>
 #include <lunchbox/types.h>
 
 namespace lunchbox
@@ -28,6 +29,6 @@ namespace lunchbox
  * @version 1.0
  * @deprecated Use boost::this_thread::sleep()
  */
-LUNCHBOX_API void sleep( const uint32_t milliSeconds );
+LUNCHBOX_API void sleep( const uint32_t milliSeconds ) LB_DEPRECATED;
 }
 #endif  // LUNCHBOX_SLEEP_H

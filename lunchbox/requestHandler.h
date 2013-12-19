@@ -37,6 +37,8 @@ namespace detail { class RequestHandler; }
  * waitRequest() are supposed to be called from one 'waiting' thread, and the
  * functions serveRequest() and deleteRequest() are supposed to be called only
  * from one 'serving' thread.
+ *
+ * Example: @include tests/requestHandler.cpp
  */
 class RequestHandler : public NonCopyable
 {
@@ -64,8 +66,9 @@ public:
      *             0.
      * @return the request identifier.
      * @version 1.0
+     * @deprecated
      */
-    LUNCHBOX_API uint32_t registerRequest( void* data = 0 ); //!< @deprecated
+    LUNCHBOX_API uint32_t registerRequest( void* data = 0 ) LB_DEPRECATED;
 
     /**
      * Unregister a request.

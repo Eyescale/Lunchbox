@@ -1,15 +1,15 @@
-// MD5.CC - source code for the C++/object oriented translation and 
+// MD5.CC - source code for the C++/object oriented translation and
 //          modification of MD5.
 
-// Translation and modification (c) 1995 by Mordechai T. Abzug 
+// Translation and modification (c) 1995 by Mordechai T. Abzug
 //                                  2012, Stefan Eilemann <eile@eyescale.ch>
 
-// This translation/ modification is provided "as is," without express or 
+// This translation/ modification is provided "as is," without express or
 // implied warranty of any kind.
 
-// The translator/ modifier does not claim (1) that MD5 will do what you think 
-// it does; (2) that this translation/ modification is accurate; or (3) that 
-// this software is "merchantible."  (Language for this disclaimer partially 
+// The translator/ modifier does not claim (1) that MD5 will do what you think
+// it does; (2) that this translation/ modification is accurate; or (3) that
+// this software is "merchantible."  (Language for this disclaimer partially
 // copied from the disclaimer below).
 
 /* based on:
@@ -95,7 +95,7 @@ void MD5::update (uint1 *input, size_t input_length) {
     transform (buffer);
 
     // now, transform each 64-byte piece of the input, bypassing the buffer
-    for (input_index = buffer_space; input_index + 63 < input_length; 
+    for (input_index = buffer_space; input_index + 63 < input_length;
 	 input_index += 64)
       transform (input+input_index);
 
@@ -253,14 +253,13 @@ MD5::MD5(std::ifstream& stream){
 
 unsigned char *MD5::raw_digest(){
 
-  uint1 *s = new uint1[16];
-
   if (!finalized){
     LBERROR << "MD5::raw_digest:  Can't get digest if you haven't "<<
       "finalized the digest!" <<std::endl;
     return ( (unsigned char*) "");
   }
 
+  uint1 *s = new uint1[16];
   memcpy(s, digest, 16);
   return s;
 }
@@ -269,16 +268,14 @@ unsigned char *MD5::raw_digest(){
 
 const char *MD5::hex_digest(){
 
-  int i;
-  char *s= new char[33];
-
   if (!finalized){
     LBERROR << "MD5::hex_digest:  Can't get digest if you haven't "<<
       "finalized the digest!" <<std::endl;
     return "";
   }
 
-  for (i=0; i<16; i++)
+  char *s= new char[33];
+  for (int i=0; i<16; i++)
     sprintf(s+i*2, "%02x", digest[i]);
 
   s[32]='\0';
@@ -523,25 +520,25 @@ inline unsigned int MD5::I            (uint4 x, uint4 y, uint4 z){
 // Rotation is separate from addition to prevent recomputation.
 
 
-inline void MD5::FF(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, 
+inline void MD5::FF(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x,
 		    uint4  s, uint4 ac){
  a += F(b, c, d) + x + ac;
  a = rotate_left (a, s) +b;
 }
 
-inline void MD5::GG(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, 
+inline void MD5::GG(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x,
 		    uint4 s, uint4 ac){
  a += G(b, c, d) + x + ac;
  a = rotate_left (a, s) +b;
 }
 
-inline void MD5::HH(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, 
+inline void MD5::HH(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x,
 		    uint4 s, uint4 ac){
  a += H(b, c, d) + x + ac;
  a = rotate_left (a, s) +b;
 }
 
-inline void MD5::II(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, 
+inline void MD5::II(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x,
 			     uint4 s, uint4 ac){
  a += I(b, c, d) + x + ac;
  a = rotate_left (a, s) +b;

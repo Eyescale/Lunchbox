@@ -404,7 +404,7 @@ template< class T, int32_t nSlots > template< class Archive >
 inline void LFVector< T, nSlots >::load( Archive& ar,
                                          const unsigned int /*version*/ )
 {
-    size_t newSize;
+    size_t newSize = 0;
     ar >> newSize;
     expand( newSize );
     LBASSERT( size_ == newSize );

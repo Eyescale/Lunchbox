@@ -211,7 +211,7 @@ template< class Archive, class T >
 inline void load( Archive& ar, lunchbox::RefPtr< T >& t,
                   const unsigned int /*version*/ )
 {
-    T* obj;
+    T* obj = 0;
     ar >> obj;
     t = obj;
 }

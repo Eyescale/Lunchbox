@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -37,6 +37,9 @@ class Clock
 public :
     /** Construct a new clock. @version 1.0 */
     LUNCHBOX_API Clock();
+
+    /** Copy-construct a new clock. @version 1.0 */
+    LUNCHBOX_API Clock( const Clock& from );
 
     /** Destroy the clock. @version 1.0 */
     LUNCHBOX_API ~Clock();

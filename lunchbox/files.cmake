@@ -1,5 +1,5 @@
 
-# Copyright (c) 2012-2013 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2014 Stefan Eilemann <eile@eyescale.ch>
 
 set(LUNCHBOX_PUBLIC_HEADERS
   ${OUTPUT_INCLUDE_DIR}/lunchbox/version.h

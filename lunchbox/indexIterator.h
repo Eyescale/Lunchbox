@@ -1,6 +1,5 @@
 
-/* Copyright (c) 2011-2012, EPFL/Blue Brain Project
- *                          Stefan Eilemann <stefan.eilemann@epfl.ch>
+/* Copyright (c) 2011-2014, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -54,6 +53,7 @@ public:
             : container_( from.container_ ), i_( from.i_ ) {}
 
     /** Assign the container and position from another iterator. @version 1.8 */
+    // cppcheck-suppress operatorEq
     S& operator = ( const IndexIterator& rhs )
         {
             container_ = rhs.container_;

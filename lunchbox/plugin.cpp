@@ -74,8 +74,7 @@ Plugin::Plugin( const std::string& libraryName )
         getFunctionPointer< GetInfo_t >( "EqCompressorGetInfo" );
 
     const bool hasBase = newDecompressor && newCompressor && deleteCompressor &&
-                         deleteDecompressor && getInfo && getNumCompressors &&
-                         getInfo;
+                         deleteDecompressor && getInfo && getNumCompressors;
     const bool hasCPU = getResult && getNumResults && decompress && compress;
     const bool hasGPU = isCompatible && download && upload;
     if( !hasBase || ( !hasCPU && !hasGPU ))

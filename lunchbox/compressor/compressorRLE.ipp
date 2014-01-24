@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
- *               2009-2012, Stefan Eilemann <eile@equalizergraphics.com>
+ *               2009-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * Template functions used by all compression routines
  *
@@ -241,6 +241,7 @@ static inline void _decompress( const void* const* inData,
         const ComponentType* oneIn   = in[ i + 0 ];
         const ComponentType* twoIn   = in[ i + 1 ];
         const ComponentType* threeIn = in[ i + 2 ];
+        // cppcheck-suppress unreadVariable
         const ComponentType* fourIn  = in[ i + 3 ];
 
         ComponentType one(0), two(0), three(0), four(0);

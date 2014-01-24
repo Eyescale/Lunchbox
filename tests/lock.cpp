@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -38,7 +38,7 @@ bool _running = false;
 template< class T > class Thread : public lunchbox::Thread
 {
 public:
-    Thread() : ops( 0 ) {}
+    Thread() : lock( 0 ), ops( 0 ) {}
 
     T* lock;
     size_t ops;

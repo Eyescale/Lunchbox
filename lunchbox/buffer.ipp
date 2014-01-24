@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -35,7 +35,7 @@ template< class T > T* Buffer< T >::pack()
 }
 
 template< class T >
-const Buffer< T >& Buffer< T >::operator = ( const Buffer< T >& from )
+Buffer< T >& Buffer< T >::operator = ( const Buffer< T >& from )
 {
     replace( from );
     return *this;

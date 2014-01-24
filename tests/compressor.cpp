@@ -40,9 +40,8 @@ void _testData( const uint32_t nameCompressor, const std::string& name,
                 const uint8_t* data, const uint64_t size );
 
 std::vector< uint32_t > getCompressorNames( const uint32_t tokenType );
-std::vector< std::string > getFiles( const std::string path,
-                                     std::vector< std::string >& files,
-                                     const std::string& ext );
+Strings getFiles( const std::string& path, Strings& files,
+                  const std::string& ext );
 
 PluginRegistry registry;
 uint64_t _result = 0;
@@ -250,9 +249,8 @@ void _testRandom()
     delete [] data;
 }
 
-std::vector< std::string > getFiles( const std::string path,
-                                     std::vector< std::string >& files,
-                                     const std::string& ext )
+Strings getFiles( const std::string& path, Strings& files,
+                  const std::string& ext )
 {
     Strings paths = registry.getDirectories();
     if( !path.empty( ))
@@ -260,7 +258,7 @@ std::vector< std::string > getFiles( const std::string path,
 
     for( uint64_t j = 0; j < paths.size(); ++j )
     {
-        const Strings& candidates = searchDirectory( paths[j], ext.c_str( ));
+        const Strings& candidates = searchDirectory( paths[j], ext );
         for( StringsCIter i = candidates.begin(); i != candidates.end(); ++i )
         {
             const std::string& filename = *i;

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -67,7 +67,7 @@ public:
     T* pack();
 
     /** Assignment operator, copies data from Buffer. @version 1.0 */
-    const Buffer& operator = ( const Buffer& from );
+    Buffer& operator = ( const Buffer& from );
 
     /** Direct access to the element at the given index. @version 1.0 */
     T& operator [] ( const uint64_t position )

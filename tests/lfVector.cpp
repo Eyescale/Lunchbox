@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2013, Stefan Eilemann <stefan.eilemann@epfl.ch>
+/* Copyright (c) 2011-2014, Stefan Eilemann <stefan.eilemann@epfl.ch>
  *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -48,9 +48,8 @@ lunchbox::Monitor< size_t > stage_;
 class Reader : public lunchbox::Thread
 {
 public:
-    Reader() {}
+    Reader() : vector( 0 ) {}
     virtual ~Reader() {}
-    Reader& operator=( const Reader& ) { return *this; }
 
     virtual void run()
     {
@@ -86,9 +85,8 @@ public:
 class Writer : public lunchbox::Thread
 {
 public:
-    Writer() {}
+    Writer() : vector( 0 ) {}
     virtual ~Writer() {}
-    Writer& operator=( const Writer& ) { return *this; }
 
     virtual void run()
     {
@@ -119,9 +117,8 @@ public:
 class Pusher : public lunchbox::Thread
 {
 public:
-    Pusher() {}
+    Pusher() : vector( 0 ) {}
     virtual ~Pusher() {}
-    Pusher& operator=( const Pusher& ) { return *this; }
 
     virtual void run()
     {
@@ -149,9 +146,8 @@ public:
 class Copier : public lunchbox::Thread
 {
 public:
-    Copier() {}
+    Copier() : vector( 0 ) {}
     virtual ~Copier() {}
-    Copier& operator=( const Copier& ) { return *this; }
 
     virtual void run()
         {
@@ -167,9 +163,8 @@ public:
 class Eraser : public lunchbox::Thread
 {
 public:
-    Eraser() {}
+    Eraser() : vector( 0 ) {}
     virtual ~Eraser() {}
-    Eraser& operator=( const Eraser& ) { return *this; }
 
     virtual void run()
         {
@@ -186,9 +181,8 @@ public:
 class Flusher : public lunchbox::Thread
 {
 public:
-    Flusher() {}
+    Flusher() : vector( 0 ) {}
     virtual ~Flusher() {}
-    Flusher& operator=( const Flusher& ) { return *this; }
 
     virtual void run()
         {

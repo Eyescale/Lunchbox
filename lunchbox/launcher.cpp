@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -150,7 +150,7 @@ void Launcher::_buildCommandLine( const std::string& command,
                     buffer[bufferPos++] = c;
                 else
                 {
-                    buffer[bufferPos++] = '\0';
+                    buffer[bufferPos + 1] = '\0';
                     commandLine.push_back( buffer );
                     bufferPos = 0;
                 }

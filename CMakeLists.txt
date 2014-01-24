@@ -28,6 +28,7 @@ set(VERSION_PATCH "0")
 include(Common)
 include(GitTargets)
 include(UpdateFile)
+list(APPEND CPPCHECK_EXTRA_ARGS -DLB_GCC_4_1_OR_LATER=1)
 
 if(LUNCHBOX_BUILD_V2_API)
   list(APPEND FIND_PACKAGES_DEFINES LUNCHBOX_USE_V2_API)

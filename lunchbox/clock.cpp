@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2010-2013, Stefan Eilemann <eile@eyescale.ch> 
+/* Copyright (c) 2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -59,6 +59,10 @@ Clock::Clock()
 #endif
 }
 
+Clock::Clock( const Clock& from )
+    : _impl( new detail::Clock( *from._impl ))
+{}
+
 Clock & Clock::operator= ( const Clock& ref )
 {
     *_impl = *ref._impl;
@@ -89,7 +93,7 @@ void Clock::set( const int64_t time )
         time * _impl->timebaseInfo.denom / _impl->timebaseInfo.numer *
                                      1000000 );
 #elif defined (_WIN32)
-    _impl->start.QuadPart -= static_cast<long long>( 
+    _impl->start.QuadPart -= static_cast<long long>(
         time * _impl->frequency.QuadPart / 1000 );
 #else
     const int sec   = static_cast< int >( time / 1000 ) + 1;
@@ -113,7 +117,7 @@ float Clock::getTimef() const
 #elif defined (_WIN32)
     LARGE_INTEGER now;
     QueryPerformanceCounter( &now );
-    return 1000.0f * (now.QuadPart - _impl->start.QuadPart) / 
+    return 1000.0f * (now.QuadPart - _impl->start.QuadPart) /
         _impl->frequency.QuadPart;
 #else
     struct timespec now;
@@ -133,7 +137,7 @@ float Clock::resetTimef()
 #elif defined (_WIN32)
     LARGE_INTEGER now;
     QueryPerformanceCounter( &now );
-    const float time = 1000.0f * (now.QuadPart - _impl->start.QuadPart) / 
+    const float time = 1000.0f * (now.QuadPart - _impl->start.QuadPart) /
         _impl->frequency.QuadPart;
 #else
     struct timespec now;
@@ -195,7 +199,7 @@ float Clock::getMilliSecondsf() const
 
     if( now.tv_nsec < _impl->start.tv_nsec )
         return ( 1000.f + 0.000001f*(now.tv_nsec - _impl->start.tv_nsec));
-                
+
     return ( 0.000001f * ( now.tv_nsec - _impl->start.tv_nsec ));
 #endif
 }

@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2011-2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2011-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -43,7 +43,7 @@ bool _running = false;
 template< class T, uint32_t hold > class WriteThread : public lunchbox::Thread
 {
 public:
-    WriteThread() : ops( 0 ) {}
+    WriteThread() : lock( 0 ), ops( 0 ), sTime( 0. ) {}
 
     T* lock;
     size_t ops;
@@ -73,7 +73,7 @@ public:
 template< class T, uint32_t hold > class ReadThread : public lunchbox::Thread
 {
 public:
-    ReadThread() : ops( 0 ) {}
+    ReadThread() : lock( 0 ), ops( 0 ), sTime( 0. ) {}
 
     T* lock;
     size_t ops;
@@ -179,7 +179,7 @@ template< class T, uint32_t hold > void _test()
 
             std::cout << std::setw(20)<< lunchbox::className( lock ) << ", "
                       << std::setw(12) << 3 * nWriteOps / wTime << ", "
-                      << std::setw(12) << 3 * nReadOps / rTime << ", " 
+                      << std::setw(12) << 3 * nReadOps / rTime << ", "
                       << std::setw(9) << nWrite << ", " << std::setw(9) << nRead
                       << std::endl;
         }

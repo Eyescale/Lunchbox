@@ -2,7 +2,7 @@
 //          modification of MD5.
 
 // Translation and modification (c) 1995 by Mordechai T. Abzug
-//                                  2012, Stefan Eilemann <eile@eyescale.ch>
+//                                  2012-2014, Stefan Eilemann <eile@eyescale.ch>
 
 // This translation/ modification is provided "as is," without express or
 // implied warranty of any kind.
@@ -53,6 +53,7 @@ documentation and/or software.
 
 // MD5 simple initialization method
 
+// cppcheck-suppress uninitMemberVar
 MD5::MD5(){
 
   init();
@@ -136,12 +137,10 @@ void MD5::update(FILE *file){
 
 void MD5::update(std::istream& stream){
 
-  unsigned char buf[1024];
-  int len;
-
   while (stream.good()){
-      stream.read((char*)buf, 1024); // note that return value of read is unusable.
-    len=stream.gcount();
+    unsigned char buf[1024];
+    stream.read((char*)buf, 1024); // note that return value of read is unusable.
+    const int len=stream.gcount();
     update(buf, len);
   }
 
@@ -157,12 +156,10 @@ void MD5::update(std::istream& stream){
 
 void MD5::update(std::ifstream& stream){
 
-  unsigned char buf[1024];
-  int len;
-
   while (stream.good()){
-      stream.read((char*)buf, 1024); // note that return value of read is unusable.
-    len=stream.gcount();
+    unsigned char buf[1024];
+    stream.read((char*)buf, 1024); // note that return value of read is unusable.
+    const int len=stream.gcount();
     update(buf, len);
   }
 

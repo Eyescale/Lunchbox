@@ -25,6 +25,7 @@
 
 #include <lunchbox/defines.h>
 
+#include <boost/foreach.hpp>
 #include <string>
 #include <vector>
 #include <sys/types.h>

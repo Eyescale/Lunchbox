@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *               2009-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -179,11 +179,12 @@ std::string demangleTypeID( const char* mangled )
 #else
     int status;
     char* name = abi::__cxa_demangle( mangled, 0, 0, &status );
-    const std::string result = name;
-    if( name )
-        free( name );
+    if( !name || status == 0 )
+        return mangled;
 
-    return (status==0) ? result : mangled;
+    const std::string result = name;
+    free( name );
+    return result;
 #endif
 }
 

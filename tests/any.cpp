@@ -25,14 +25,12 @@ int main( int, char** )
     lunchbox::Any otherAny;
     TEST( any.empty( ));
     TEST( any.type() == typeid(void));
-    TEST( any == any );
     TEST( any == otherAny );
 
     any = 5;
     otherAny = 5;
     TEST( lunchbox::any_cast< int >( any ) == 5 );
     TEST( any.type() == typeid(int));
-    TEST( any == any );
     TEST( any == otherAny );
 
     any = std::string( "blablub" );

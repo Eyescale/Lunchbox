@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -134,7 +134,7 @@ protected:
     Referenced()
         : _refCount( 0 )
         , _hasBeenDeleted( false )
-        {}
+    {}
 
     /** Construct a new copy of a reference-counted object. @version 1.0 */
     Referenced( const Referenced& )
@@ -152,6 +152,7 @@ protected:
     }
 
     /** Assign another object to this object. @version 1.1.3 */
+    // cppcheck-suppress operatorEqVarError
     Referenced& operator = ( const Referenced& /*rhs*/ ) { return *this; }
 
     LUNCHBOX_API virtual void notifyFree();

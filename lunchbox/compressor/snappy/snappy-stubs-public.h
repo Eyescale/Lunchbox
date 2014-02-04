@@ -59,6 +59,7 @@
 namespace snappy {
 
 #ifdef _MSC_VER
+#include <basetsd.h>
 typedef signed char int8;
 typedef unsigned char uint8;
 typedef short int16;
@@ -67,6 +68,7 @@ typedef int int32;
 typedef unsigned int uint32;
 typedef long long int64;
 typedef unsigned long long uint64;
+typedef SSIZE_T ssize_t;
 #else
 typedef int8_t int8;
 typedef uint8_t uint8;
@@ -84,7 +86,7 @@ typedef std::string string;
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
 // Windows does not have an iovec type, yet the concept is universally useful.
 // It is simple to define it ourselves, so we put it inside our own namespace.
 struct iovec {

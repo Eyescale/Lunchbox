@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
@@ -150,7 +149,7 @@ void Launcher::_buildCommandLine( const std::string& command,
                     buffer[bufferPos++] = c;
                 else
                 {
-                    buffer[bufferPos + 1] = '\0';
+                    buffer[bufferPos] = '\0';
                     commandLine.push_back( buffer );
                     bufferPos = 0;
                 }

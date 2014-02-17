@@ -23,6 +23,12 @@
 #include <lunchbox/compiler.h>
 
 #ifdef _WIN32
+#  ifndef WIN32
+#    define WIN32
+#  endif
+#  ifndef WIN32_API
+#    define WIN32_API
+#  endif
 #  ifndef _MSC_VER
 #    define USE_SYS_TYPES_FD_SET
 #  endif

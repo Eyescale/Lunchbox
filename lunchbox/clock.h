@@ -38,7 +38,7 @@ public :
     /** Construct a new clock. @version 1.0 */
     LUNCHBOX_API Clock();
 
-    /** Copy-construct a new clock. @version 1.0 */
+    /** Copy-construct a new clock with the same start time . @version 1.0 */
     LUNCHBOX_API Clock( const Clock& from );
 
     /** Destroy the clock. @version 1.0 */

@@ -28,15 +28,23 @@ int main( int, char** )
     TEST( any == otherAny );
 
     any = 5;
-    otherAny = 5;
+    otherAny = any;
     TEST( lunchbox::any_cast< int >( any ) == 5 );
     TEST( any.type() == typeid(int));
+    TEST( any == otherAny );
+
+    any = 42;
+    otherAny = 42;
+    TEST( lunchbox::any_cast< int >( any ) == 42 );
     TEST( any == otherAny );
 
     any = std::string( "blablub" );
     TEST( lunchbox::any_cast< std::string >( any ) == "blablub" );
     TEST( any.type() == typeid(std::string));
     TEST( any != otherAny );
+
+    try { TEST( lunchbox::any_cast< int >( any ) != 42 ); }
+    catch( lunchbox::bad_any_cast& e ) {}
 
     return EXIT_SUCCESS;
 }

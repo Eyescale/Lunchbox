@@ -180,7 +180,10 @@ std::string demangleTypeID( const char* mangled )
     int status;
     char* name = abi::__cxa_demangle( mangled, 0, 0, &status );
     if( !name || status == 0 )
+    {
+        free( name );
         return mangled;
+    }
 
     const std::string result = name;
     free( name );

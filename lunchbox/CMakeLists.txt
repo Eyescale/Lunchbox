@@ -1,58 +1,31 @@
 
-# Copyright (c) 2012 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2014 Stefan Eilemann <eile@eyescale.ch>
 
-include(configure.cmake)
 include(files.cmake)
 
-add_definitions(-DEQ_PLUGIN_BUILD)
-
-list(APPEND LUNCHBOX_LINKLIBS ${PTHREAD_LIBRARIES} ${Boost_LIBRARIES})
-
+list(APPEND LUNCHBOX_LINK_LIBRARIES ${PTHREAD_LIBRARIES} ${Boost_LIBRARIES})
 if(WIN32)
-  list(APPEND LUNCHBOX_LINKLIBS ws2_32 mswsock)
+  list(APPEND LUNCHBOX_LINK_LIBRARIES ws2_32 mswsock)
 endif(WIN32)
 if(LINUX)
-  list(APPEND LUNCHBOX_LINKLIBS dl rt)
+  list(APPEND LUNCHBOX_LINK_LIBRARIES dl rt)
 endif()
 if(HWLOC_FOUND)
-  list(APPEND LUNCHBOX_LINKLIBS ${HWLOC_LIBRARIES})
+  list(APPEND LUNCHBOX_LINK_LIBRARIES ${HWLOC_LIBRARIES})
 endif(HWLOC_FOUND)
 if(DNSSD_FOUND)
-  list(APPEND LUNCHBOX_LINKLIBS ${DNSSD_LIBRARIES})
+  list(APPEND LUNCHBOX_LINK_LIBRARIES ${DNSSD_LIBRARIES})
 endif()
+
+add_definitions(-DEQ_PLUGIN_BUILD -DHAVE_BYTESWAP_H)
+if(NOT WIN32 AND NOT CMAKE_COMPILER_IS_XLCXX)
+  add_definitions(-DHAVE_BUILTIN_CTZ -DHAVE_BUILTIN_EXPECT)
+endif()
+
+common_library(Lunchbox)
 
 source_group(\\ FILES CMakeLists.txt)
 source_group(plugin FILES ${PLUGIN_HEADERS})
 source_group(compressor FILES ${LUNCHBOX_COMPRESSORS})
 source_group(lunchbox FILES ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_HEADERS}
   ${LUNCHBOX_SOURCES})
-
-set(LIBRARY Lunchbox)
-
-if(NOT WIN32 AND NOT CMAKE_COMPILER_IS_XLCXX)
-  add_definitions(-DHAVE_BUILTIN_CTZ -DHAVE_BUILTIN_EXPECT)
-endif()
-add_definitions(-DHAVE_BYTESWAP_H)
-add_library(${LIBRARY} SHARED ${LUNCHBOX_ALL})
-target_link_libraries(${LIBRARY} ${LUNCHBOX_LINKLIBS})
-set_target_properties(${LIBRARY}
-  PROPERTIES VERSION ${VERSION} SOVERSION ${VERSION_ABI})
-
-install(FILES ${LUNCHBOX_PUBLIC_HEADERS} DESTINATION include/lunchbox
-  COMPONENT dev)
-install(FILES ${PLUGIN_HEADERS} DESTINATION include/lunchbox/plugins
-  COMPONENT dev)
-
-if (MSVC)
-  install(FILES ${CMAKE_BINARY_DIR}/bin/Debug/${LIBRARY}.pdb DESTINATION bin COMPONENT lib CONFIGURATIONS Debug)
-  install(FILES ${CMAKE_BINARY_DIR}/bin/Debug/pthread.pdb DESTINATION bin COMPONENT lib CONFIGURATIONS Debug)
-  install(FILES ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/${LIBRARY}.pdb DESTINATION bin COMPONENT lib CONFIGURATIONS RelWithDebInfo)
-  install(FILES ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/pthread.pdb DESTINATION bin COMPONENT lib CONFIGURATIONS RelWithDebInfo)
-endif()
-
-install(TARGETS ${LIBRARY}
-        ARCHIVE DESTINATION ${LIBRARY_DIR} COMPONENT dev
-        RUNTIME DESTINATION bin COMPONENT lib
-        LIBRARY DESTINATION ${LIBRARY_DIR} COMPONENT lib)
-
-install(FILES ${OPTIONS_CMAKE} DESTINATION ${CMAKE_MODULE_INSTALL_PATH} COMPONENT dev)

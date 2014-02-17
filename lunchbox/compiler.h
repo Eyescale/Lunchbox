@@ -121,4 +121,12 @@
 #  define LB_DEPRECATED
 #endif
 
+#ifdef __GNUC__
+#  define LB_LIKELY(x)       __builtin_expect( (x), 1 )
+#  define LB_UNLIKELY(x)     __builtin_expect( (x), 0 )
+#else
+#  define LB_LIKELY(x)       x
+#  define LB_UNLIKELY(x)     x
+#endif
+
 #endif //LUNCHBOX_COMPILER_H

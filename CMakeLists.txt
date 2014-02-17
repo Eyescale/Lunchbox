@@ -6,7 +6,7 @@ project(Lunchbox)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake
   ${CMAKE_SOURCE_DIR}/CMake/common)
-include(.gitexternals)
+include(GitExternal)
 
 include(Buildyard)
 if(BUILDYARD_STOP)
@@ -26,8 +26,7 @@ set(VERSION_MINOR "9")
 set(VERSION_PATCH "0")
 
 include(Common)
-include(GitTargets)
-include(UpdateFile)
+
 list(APPEND CPPCHECK_EXTRA_ARGS -DLB_GCC_4_1_OR_LATER=1)
 
 if(LUNCHBOX_BUILD_V2_API)

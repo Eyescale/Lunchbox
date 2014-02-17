@@ -1,13 +1,18 @@
 
 # Copyright (c) 2012-2014 Stefan Eilemann <eile@eyescale.ch>
 
+set(PLUGIN_HEADERS
+  plugins/compressor.h
+  plugins/compressorTokens.h
+  plugins/compressorTypes.h
+  )
+
 set(LUNCHBOX_PUBLIC_HEADERS
-  ${OUTPUT_INCLUDE_DIR}/lunchbox/version.h
-  ${DEFINES_FILE}
+  ${PLUGIN_HEADERS}
+  ${COMMON_INCLUDES}
   algorithm.h
   any.h
   anySerialization.h
-  api.h
   atomic.h
   bitOperation.h
   buffer.h
@@ -19,7 +24,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   daemon.h
   debug.h
   decompressor.h
-  defines.h
   downloader.h
   dso.h
   file.h
@@ -37,7 +41,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   lock.h
   lockable.h
   log.h
-  lunchbox.h
   memoryMap.h
   monitor.h
   mtQueue.h
@@ -76,51 +79,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   visitorResult.h
   )
 
-set(LUNCHBOX_SOURCES
-  any.cpp
-  atomic.cpp
-  clock.cpp
-  compressor.cpp
-  compressorInfo.h
-  condition.cpp
-  condition_w32.ipp
-  debug.cpp
-  decompressor.cpp
-  downloader.cpp
-  dso.cpp
-  file.cpp
-  init.cpp
-  launcher.cpp
-  lock.cpp
-  log.cpp
-  memoryMap.cpp
-  omp.cpp
-  plugin.cpp
-  pluginInstance.h
-  pluginRegistry.cpp
-  referenced.cpp
-  requestHandler.cpp
-  rng.cpp
-  servus.cpp
-  sleep.cpp
-  spinLock.cpp
-  thread.cpp
-  threadID.cpp
-  tls.cpp
-  time.h
-  timedLock.cpp
-  uint128_t.cpp
-  uploader.cpp
-  version.cpp
-  md5/md5.cc
-  )
-
-set(PLUGIN_HEADERS
-  plugins/compressor.h
-  plugins/compressorTokens.h
-  plugins/compressorTypes.h
-  )
-
 set(LUNCHBOX_COMPRESSORS
   compressor/compressor.cpp
   compressor/compressor.h
@@ -156,11 +114,47 @@ set(LUNCHBOX_COMPRESSORS
   )
 
 if(LibJpegTurbo_FOUND)
-  list(APPEND LUNCHBOX_LINKLIBS ${LibJpegTurbo_LIBRARIES})
+  list(APPEND LUNCHBOX_LINK_LIBRARIES ${LibJpegTurbo_LIBRARIES})
   list(APPEND LUNCHBOX_COMPRESSORS
     compressor/compressorTurboJPEG.h compressor/compressorTurboJPEG.cpp)
 endif()
 
-set(LUNCHBOX_ALL ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_SOURCES}
-  ${PLUGIN_HEADERS} ${LUNCHBOX_COMPRESSORS})
-list(SORT LUNCHBOX_ALL)
+set(LUNCHBOX_SOURCES
+  ${LUNCHBOX_COMPRESSORS}
+  ${COMMON_SOURCES}
+  any.cpp
+  atomic.cpp
+  clock.cpp
+  compressor.cpp
+  compressorInfo.h
+  condition.cpp
+  condition_w32.ipp
+  debug.cpp
+  decompressor.cpp
+  downloader.cpp
+  dso.cpp
+  file.cpp
+  init.cpp
+  launcher.cpp
+  lock.cpp
+  log.cpp
+  memoryMap.cpp
+  omp.cpp
+  plugin.cpp
+  pluginInstance.h
+  pluginRegistry.cpp
+  referenced.cpp
+  requestHandler.cpp
+  rng.cpp
+  servus.cpp
+  sleep.cpp
+  spinLock.cpp
+  thread.cpp
+  threadID.cpp
+  tls.cpp
+  time.h
+  timedLock.cpp
+  uint128_t.cpp
+  uploader.cpp
+  md5/md5.cc
+  )

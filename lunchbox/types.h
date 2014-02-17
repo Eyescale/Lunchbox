@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,6 +18,38 @@
 /**
  * @file lunchbox/types.h
  * Basic type definitions not provided by the operating system.
+ */
+
+/** @mainpage Lunchbox API Documentation
+ *
+ * Welcome to Lunchbox, a C++ library for multi-threaded programming. Lunchbox
+ * provides the following functionality:
+ *
+ * - Operating System Abstraction: lunchbox::Atomic, lunchbox::Condition,
+ *   lunchbox::DSO, @ref bitops "bit operations", lunchbox::daemonize(),
+ *   (lunchbox::Clock, lunchbox::MemoryMap, lunchbox::PerThread, lunchbox::RNG,
+ *   lunchbox::Thread)
+ * - High-Performance Threading Primitives: lunchbox::Buffer, lunchbox::LFQueue,
+ *   lunchbox::LFVector, lunchbox::Monitor, lunchbox::MTQueue,
+ *   lunchbox::RequestHandler, lunchbox::SpinLock, (lunchbox::Lock,
+ *   lunchbox::TimedLock)
+ * - Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
+ *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::Future,
+ *   lunchbox::Servus, (lunchbox::ScopedMutex)
+ * - Compression and CPU-GPU transfer plugin handling: lunchbox::Compressor,
+ *   lunchbox::Decompressor, lunchbox::Downloader, lunchbox::Plugin,
+ *   lunchbox::PluginRegistry, lunchbox::Uploader
+ *
+ * @ref RelNotes
+ */
+
+/**
+ * @namespace lunchbox
+ * @brief Abstraction layer and common utilities for multi-threaded programming.
+ *
+ * Lunchbox provides C++ classes to abstract the underlying operating system and
+ * to implement common utilities for multi-threaded C++ programs. Classes with
+ * non-virtual destructors are not intended to be subclassed.
  */
 
 #ifndef LUNCHBOX_TYPES_H
@@ -54,6 +86,29 @@ typedef SSIZE_T    ssize_t;
 #    endif
 #  endif // Win32, Visual C++
 #endif // Win32
+
+/** A 'NULL' value for an uint16.*/
+#define LB_UNDEFINED_UINT16   (0xffffu)
+
+/** A 'NULL' value for an uint32.*/
+#define LB_UNDEFINED_UINT32   (0xffffffffu)
+
+/** A 'NULL' value for an uint64.*/
+#define LB_UNDEFINED_UINT64   (0xffffffffffffffffull)
+
+/** The biggest usable value when using special uint32 values.*/
+#define LB_MAX_UINT32         (0xfffffff0u)
+
+/** Constant defining 'wait forever' in methods with wait parameters. */
+#define LB_TIMEOUT_INDEFINITE 0xffffffffu // Attn: identical to Win32 INFINITE!
+
+/** Constant defining use global default in methods with wait parameters. */
+#define LB_TIMEOUT_DEFAULT 0xfffffffeu
+
+// Defining our own min/max macros seems to be the only sane way to get this
+// functionality across platforms thanks to some screwup in the MS header files.
+#define LB_MAX(a,b) ((a)>(b)?(a):(b)) //!< returns the maximum of two values
+#define LB_MIN(a,b) ((a)<(b)?(a):(b)) //!< returns the minimum of two values
 
 #define LB_BIT1  (0x00000001u)
 #define LB_BIT2  (0x00000002u)
@@ -153,6 +208,8 @@ struct GLEWContextStruct;
 struct WGLEWContextStruct;
 typedef struct GLEWContextStruct GLEWContext;
 typedef struct WGLEWContextStruct WGLEWContext;
+#define LB_DLLEXPORT LUNCHBOX_DLLEXPORT
+#define LB_DLLIMPORT LUNCHBOX_DLLIMPORT
 /** @endcond */
 
 namespace lunchbox

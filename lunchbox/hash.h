@@ -23,50 +23,50 @@
 
 namespace lunchbox
 {
-    /** A hash for pointer keys. @version 1.0 */
-    template<class K, class T> class PtrHash
+/** A hash for pointer keys. @version 1.0 */
+template<class K, class T> class PtrHash
 #ifdef _MSC_VER
         : public stde::hash_map< K, T, stde::hash_compare< const void* > >
 #else
         : public stde::hash_map< K, T, stde::hash< const void* > >
 #endif
-    {};
+{};
 
-    /** A hash function for RefPtr keys. @version 1.0 */
+/** A hash function for RefPtr keys. @version 1.0 */
 #ifdef _MSC_VER
-    template< typename T >
-    class hashRefPtr : public stde::hash_compare< RefPtr< T > >
+template< typename T >
+class hashRefPtr : public stde::hash_compare< RefPtr< T > >
+{
+public:
+    size_t operator() ( const RefPtr< T >& key ) const
     {
-    public:
-        size_t operator() ( const RefPtr< T >& key ) const
-        {
-            stde::hash_compare< const void* > comp;
-            return comp( key.get( ));
-        }
+        stde::hash_compare< const void* > comp;
+        return comp( key.get( ));
+    }
 
-        bool operator() ( const RefPtr< T >& k1, const RefPtr< T >& k2 ) const
-        {
-            return k1 < k2;
-        }
-    };
+    bool operator() ( const RefPtr< T >& k1, const RefPtr< T >& k2 ) const
+    {
+        return k1 < k2;
+    }
+};
 
-    template< class K, class T > class RefPtrHash
+template< class K, class T > class RefPtrHash
         : public stde::hash_map< RefPtr< K >, T, hashRefPtr< K > >
-    {};
+{};
 
 #else
-    template< typename T > struct hashRefPtr
+template< typename T > struct hashRefPtr
+{
+    size_t operator()( RefPtr< T > key ) const
     {
-        size_t operator()( RefPtr< T > key ) const
-        {
-            return stde::hash< const void* >()( key.get() );
-        }
-    };
+        return stde::hash< const void* >()( key.get() );
+    }
+};
 
-    /** A hash for RefPtr keys. @version 1.0 */
-    template< class K, class T > class RefPtrHash
+/** A hash for RefPtr keys. @version 1.0 */
+template< class K, class T > class RefPtrHash
         : public stde::hash_map< RefPtr< K >, T, hashRefPtr< K > >
-    {};
+{};
 #endif
 
 #ifdef LUNCHBOX_USE_V1_API

@@ -41,6 +41,8 @@
  *   lunchbox::PluginRegistry, lunchbox::Uploader
  *
  * @ref RelNotes
+ * <br><a class="el" href="CoverageReport/index.html">Test Code Coverage
+ * Report</a> (may be missing from documentation)
  */
 
 /**

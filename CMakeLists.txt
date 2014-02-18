@@ -1,5 +1,5 @@
 
-# Copyright (c) 2012-2013 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2014 Stefan Eilemann <eile@eyescale.ch>
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
@@ -25,6 +25,7 @@ set(VERSION_MAJOR "1")
 set(VERSION_MINOR "9")
 set(VERSION_PATCH "0")
 
+set(COMMON_PROJECT_DOMAIN ch.eyescale)
 include(Common)
 
 list(APPEND CPPCHECK_EXTRA_ARGS -DLB_GCC_4_1_OR_LATER=1)

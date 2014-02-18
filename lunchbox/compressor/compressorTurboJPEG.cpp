@@ -32,7 +32,6 @@ namespace plugin
 namespace
 {
     static int _version; // Eq plugin API version
-    static bool _init = tjInitCompress();
     typedef const char* ( *GetKey_t ) ();
 
 #define REGISTER_ENGINE( token_, name_, quality_, ratio_, speed_, alpha )    \

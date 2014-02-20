@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2012, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2010-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-// Tests the functionality of universally unique identifiers
+// Tests the functionality of universally unique identifiers and 128 bit ints
 
 #include <test.h>
 #include <lunchbox/clock.h>
@@ -61,10 +61,16 @@ int main( int argc, char **argv )
 
     // basic tests
     lunchbox::uint128_t id1( true );
-    lunchbox::uint128_t id2( true );
+    lunchbox::uint128_t id2;
 
     TEST( id1 != lunchbox::uint128_t( ));
     TEST( id1 != id2 );
+    TEST( id1.isUUID( ));
+    TEST( !id2.isUUID( ));
+
+    id2 = lunchbox::make_UUID();
+    TEST( id1 != id2 );
+    TEST( id2.isUUID( ));
 
     id1 = id2;
     TEST( id1 == id2 );
@@ -96,11 +102,23 @@ int main( int argc, char **argv )
               fox );
 
     lunchbox::RNG rng;
-    uint16_t high = rng.get< uint16_t >();
-    int32_t low = rng.get< int32_t >();
-    lunchbox::uint128_t id7( high, low );
-    TEST( id7.high() == high );
-    TEST( id7.low() == uint64_t( low ));
+    const uint16_t high = rng.get< uint16_t >();
+    const int32_t low = rng.get< int32_t >();
+    id6 = lunchbox::uint128_t( high, low );
+    TEST( id6.high() == high );
+    TEST( id6.low() == uint64_t( low ));
+
+    id6 = lunchbox::uint128_t( low );
+    TEST( id6.high() == 0 );
+    TEST( id6.low() == uint64_t( low ));
+
+    id6 = std::string( "0xD41D8CD98F00B204" );
+    TEST( id6.high() == 0 );
+    TEST( id6.low() == 0xD41D8CD98F00B204ull );
+
+    id6 = std::string( "0xD41D8CD98F00B204:0xE9800998ECF8427E" );
+    TESTINFO( id6.high() == 0xD41D8CD98F00B204ull, id6 );
+    TEST( id6.low() == 0xE9800998ECF8427Eull );
 
     // Load tests
     Thread threads[ N_THREADS ];

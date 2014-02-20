@@ -45,7 +45,7 @@
 #endif
 
 #ifndef _MSC_VER
-#include <sys/uio.h>
+#  include <sys/uio.h>
 #endif
 
 #define SNAPPY_MAJOR 1

@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
- *               2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
+ *               2009-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -72,6 +72,18 @@ public:
 
     /** @return true if the DSO is loaded. @version 1.0 */
     LUNCHBOX_API bool isOpen() const;
+
+    /**
+     * @return true if both instances manage the same shared object.
+     * @version 1.9.1
+     */
+    LUNCHBOX_API bool operator == ( const DSO& rhs );
+
+    /**
+     * @return true if both instances manage different shared objects.
+     * @version 1.9.1
+     */
+    bool operator != ( const DSO& rhs ) { return !( *this == rhs ); }
 
 private:
     detail::DSO* const _impl;

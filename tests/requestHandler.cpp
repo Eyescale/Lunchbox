@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2014, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -21,9 +21,13 @@
 #include <lunchbox/requestHandler.h>
 #include <lunchbox/sleep.h>
 #include <lunchbox/thread.h>
+#include <lunchbox/uint128_t.h>
+
+using lunchbox::uint128_t;
 
 lunchbox::RequestHandler handler_;
 lunchbox::MTQueue< uint32_t > requestQ_;
+const uint128_t uuid( true );
 
 class Thread : public lunchbox::Thread
 {
@@ -51,6 +55,10 @@ public:
                   (size_t)handler_.getRequestData( request ) << " for " <<
                   request );
         handler_.serveRequest( request );
+
+        request = requestQ_.pop();
+        TEST( handler_.getRequestData( request ) == ++payload );
+        handler_.serveRequest( request, uuid );
     }
 };
 
@@ -69,7 +77,6 @@ int main( int, char** )
     lunchbox::RequestFuture< uint32_t > future =
         handler_.registerRequest< uint32_t >( ++payload );
     requestQ_.push( future.getID( ));
-    TEST( future.get() == 0xC0FFEE );
 
     request = handler_.registerRequest( ++payload );
     requestQ_.push( request );
@@ -77,8 +84,16 @@ int main( int, char** )
 
     lunchbox::RequestFuture< void > voidFuture =
         handler_.registerRequest< void >( ++payload );
+    lunchbox::RequestFuture< uint128_t > uint128Future =
+        handler_.registerRequest< uint128_t >( ++payload );
+
     requestQ_.push( voidFuture.getID( ));
+    requestQ_.push( uint128Future.getID( ));
+
+    TEST( future.get() == 0xC0FFEE );
     TEST( future.wait( ));
+    TEST( uint128Future.get() == uuid );
+    TEST( handler_.isRequestServed( voidFuture.getID( )));
 
     TEST( thread.join( ));
     return EXIT_SUCCESS;

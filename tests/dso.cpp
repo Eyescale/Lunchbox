@@ -19,6 +19,9 @@
 
 #include <lunchbox/dso.h>
 #include <boost/filesystem.hpp>
+#ifdef __linux__
+#  include <gnu/lib-names.h>
+#endif
 
 namespace fs = boost::filesystem;
 
@@ -31,20 +34,9 @@ int main( int, char** )
     libraries.push_back( "/usr/lib/libc.dylib" );
     libraries.push_back( "/usr/lib/libtermcap.dylib" );
 #else
-    const fs::path lib1 ( "/usr/lib/libc.so" );
-    if( is_regular_file( lib1 ))
-        libraries.push_back( lib1.string( ));
-    const fs::path lib2 ( "/lib/x86_64-linux-gnu/libpthread.so.0" );
-    if( is_regular_file( lib2 ))
-        libraries.push_back( lib2.string( ));
-    const fs::path lib3 ("/usr/lib/libtermcap.so" );
-    if( is_regular_file( lib3 ))
-        libraries.push_back( lib3.string( ));
-    const fs::path lib4 ( "/usr/lib/x86_64-linux-gnu/libtinfo.so" );
-    if( is_regular_file( lib4 ))
-        libraries.push_back( lib4.string( ));
+    libraries.push_back( LIBPTHREAD_SO );
+    libraries.push_back( LIBM_SO );
 #endif
-    TEST( libraries.size() > 1 )
 
     lunchbox::DSO one( libraries[0] );
     lunchbox::DSO two( libraries[1] );

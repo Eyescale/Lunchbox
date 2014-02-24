@@ -42,7 +42,7 @@ else()
 endif()
 
 if(PKG_CONFIG_EXECUTABLE)
-  find_package(Boost 1.41.0 COMPONENTS regex serialization)
+  find_package(Boost 1.41.0 COMPONENTS regex serialization filesystem system)
   if((NOT Boost_FOUND) AND (NOT BOOST_FOUND))
     pkg_check_modules(Boost Boost>=1.41.0)
   endif()
@@ -50,7 +50,7 @@ if(PKG_CONFIG_EXECUTABLE)
     message(FATAL_ERROR "Could not find Boost")
   endif()
 else()
-  find_package(Boost 1.41.0  REQUIRED regex serialization)
+  find_package(Boost 1.41.0  REQUIRED regex serialization filesystem system)
 endif()
 
 
@@ -138,7 +138,7 @@ if(Boost_name)
   endif()
 endif()
 
-set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;cppcheck;doxygen;git;git-review;git-svn;lcov;libavahi-compat-libdnssd-dev;libboost-regex-dev;libboost-serialization-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;ninja-build;pkg-config;subversion)
+set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;cppcheck;doxygen;git;git-review;git-svn;lcov;libavahi-compat-libdnssd-dev;libboost-filesystem-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;ninja-build;pkg-config;subversion)
 
 set(LUNCHBOX_DEPENDS hwloc;DNSSD;LibJpegTurbo;OpenMP;Boost)
 

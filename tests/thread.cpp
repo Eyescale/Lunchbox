@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2011, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -37,11 +37,17 @@ public:
     virtual ~InitThread() {}
 
     virtual bool init()
-        {
-            lunchbox::sleep( 10 );
-            initLeft = true;
-            return true;
-        }
+    {
+        lunchbox::sleep( 10 );
+        initLeft = true;
+        return true;
+    }
+
+    virtual void run()
+    {
+        TEST( !join( ));
+        exit();
+    }
 
     bool initLeft;
 };
@@ -52,9 +58,9 @@ public:
     virtual ~FailThread() {}
 
     virtual bool init()
-        {
-            return false;
-        }
+    {
+        return false;
+    }
 };
 
 int main( int, char** )
@@ -92,6 +98,7 @@ int main( int, char** )
     TEST( !failThread.start( ));
     TEST( !failThread.isRunning( ));
     TEST( failThread.isStopped( ));
+    TEST( !failThread.join( ));
 
     return EXIT_SUCCESS;
 }

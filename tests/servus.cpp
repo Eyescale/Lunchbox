@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012-2013, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2012-2014, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -67,6 +67,7 @@ int main( int, char** )
     lunchbox::sleep( 500 );
     service.discover( lunchbox::Servus::IF_LOCAL, 500 );
     TEST( service.get( hosts.front(), "foobar" ) == "42" );
+    TEST( service.getKeys().size() == 2 );
 #else
     TESTINFO( result == lunchbox::Servus::Result::NOT_SUPPORTED, result );
 #endif

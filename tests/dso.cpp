@@ -23,13 +23,22 @@
 #  include <gnu/lib-names.h>
 #endif
 
+#ifdef _WIN32
+#  include <lunchbox/os.h>
+#  define fork CreateThread
+   const std::string forkFun( "CreateThread" );
+#else
+   const std::string forkFun( "fork" );
+#endif
+
 namespace fs = boost::filesystem;
 
 int main( int, char** )
 {
     lunchbox::Strings libraries;
 #ifdef _WIN32
-    libraries.push_back( "TODO" );
+    libraries.push_back( "Kernel32.dll" );
+    libraries.push_back( "Ws2_32.dll" );
 #elif defined (Darwin)
     libraries.push_back( "/usr/lib/libc.dylib" );
     libraries.push_back( "/usr/lib/libtermcap.dylib" );
@@ -53,14 +62,14 @@ int main( int, char** )
     TEST( !three.open( libraries[0] ));
     TEST( one == three );
 
-    TEST( one.getFunctionPointer( "fork" ));
-    TEST( one.getFunctionPointer( "fork" ) == &fork );
+    TEST( one.getFunctionPointer( forkFun ));
+    TEST( one.getFunctionPointer( forkFun ) == &fork );
     TEST( !one.getFunctionPointer( "fooBar" ));
 
     one.close();
     TEST( one != two );
     TEST( one != three );
-    TEST( !one.getFunctionPointer( "fork" ));
+    TEST( !one.getFunctionPointer( forkFun ));
 
     two.close();
     TEST( one == two );

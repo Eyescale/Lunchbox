@@ -44,7 +44,7 @@ int main( int, char** )
     TEST( any != otherAny );
 
     try { TEST( lunchbox::any_cast< int >( any ) != 42 ); }
-    catch( lunchbox::bad_any_cast& e ) {}
+    catch( const lunchbox::bad_any_cast& ) {}
 
     return EXIT_SUCCESS;
 }

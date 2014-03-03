@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,6 +23,9 @@
 #ifndef LUNCHBOX_TYPES_H
 #define LUNCHBOX_TYPES_H
 
+#include <lunchbox/defines.h>
+
+#include <boost/foreach.hpp>
 #include <string>
 #include <vector>
 #include <sys/types.h>
@@ -51,6 +54,29 @@ typedef SSIZE_T    ssize_t;
 #    endif
 #  endif // Win32, Visual C++
 #endif // Win32
+
+/** A 'NULL' value for an uint16.*/
+#define LB_UNDEFINED_UINT16   (0xffffu)
+
+/** A 'NULL' value for an uint32.*/
+#define LB_UNDEFINED_UINT32   (0xffffffffu)
+
+/** A 'NULL' value for an uint64.*/
+#define LB_UNDEFINED_UINT64   (0xffffffffffffffffull)
+
+/** The biggest usable value when using special uint32 values.*/
+#define LB_MAX_UINT32         (0xfffffff0u)
+
+/** Constant defining 'wait forever' in methods with wait parameters. */
+#define LB_TIMEOUT_INDEFINITE 0xffffffffu // Attn: identical to Win32 INFINITE!
+
+/** Constant defining use global default in methods with wait parameters. */
+#define LB_TIMEOUT_DEFAULT 0xfffffffeu
+
+// Defining our own min/max macros seems to be the only sane way to get this
+// functionality across platforms thanks to some screwup in the MS header files.
+#define LB_MAX(a,b) ((a)>(b)?(a):(b)) //!< returns the maximum of two values
+#define LB_MIN(a,b) ((a)<(b)?(a):(b)) //!< returns the minimum of two values
 
 #define LB_BIT1  (0x00000001u)
 #define LB_BIT2  (0x00000002u)
@@ -157,6 +183,7 @@ namespace lunchbox
 /** A vector of std::strings @version 1.0 */
 typedef std::vector< std::string > Strings;
 typedef Strings::const_iterator StringsCIter;
+typedef Strings::iterator StringsIter;
 
 class Clock;
 class Lock;

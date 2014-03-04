@@ -10,7 +10,7 @@ Lunchbox 1.8 adds major new features, most notably runtime-loadable
 compression plugins and an UnorderedIntervalSet container.
 
 Lunchbox 1.8.1 is a bugfix release based in the 1.8 series. It is
-intended for all application developers creating high-preformance
+intended for all application developers creating high-performance
 multi-threaded programs. Lunchbox 1.8 can be retrieved by downloading
 the
 [source code](http://www.equalizergraphics.com/downloads/Lunchbox-1.8.1.tar.gz)
@@ -68,6 +68,7 @@ since the last release:
 Lunchbox 1.8.1 fixes the following bugs over the 1.8.0 release:
 
 * Compilation on Mac OS X 10.8
+* Backported final, override, LB_UNUSED, LB_DEPRECATED, LB_LIKELY from master
 
 Lunchbox 1.8 includes various bugfixes over the 1.6 release, including
 the following:

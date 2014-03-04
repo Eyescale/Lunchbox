@@ -60,14 +60,15 @@ public:
      *         exported by the DSO.
      * @version 1.0
      */
-    LUNCHBOX_API void* getFunctionPointer( const std::string& functionName);
+    LUNCHBOX_API
+    void* getFunctionPointer( const std::string& functionName ) const;
 
     /**
      * @return a typed function pointer in the DSO, or 0 if the function is
      *         not exported by the DSO.
      * @version 1.7.1
      */
-    template< class F > F getFunctionPointer( const std::string& func )
+    template< class F > F getFunctionPointer( const std::string& func ) const
         { return (F)(getFunctionPointer( func )); }
 
     /** @return true if the DSO is loaded. @version 1.0 */
@@ -77,13 +78,13 @@ public:
      * @return true if both instances manage the same shared object.
      * @version 1.9.1
      */
-    LUNCHBOX_API bool operator == ( const DSO& rhs );
+    LUNCHBOX_API bool operator == ( const DSO& rhs ) const;
 
     /**
      * @return true if both instances manage different shared objects.
      * @version 1.9.1
      */
-    bool operator != ( const DSO& rhs ) { return !( *this == rhs ); }
+    bool operator != ( const DSO& rhs ) const { return !( *this == rhs ); }
 
 private:
     detail::DSO* const _impl;

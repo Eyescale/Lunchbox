@@ -115,15 +115,15 @@ void DSO::close()
     _impl->dso = 0;
 }
 
-void* DSO::getFunctionPointer( const std::string& name )
+void* DSO::getFunctionPointer( const std::string& name ) const
 {
     if( !_impl->dso )
         return 0;
 
 #ifdef _WIN32 //_MSC_VER
-    return (void*)GetProcAddress( _impl->dso, name.c_str() );
+    return (void*)GetProcAddress( _impl->dso, name.c_str( ));
 #else
-    return dlsym( _impl->dso, name.c_str() );
+    return dlsym( _impl->dso, name.c_str( ));
 #endif
 }
 
@@ -132,7 +132,7 @@ bool DSO::isOpen() const
     return _impl->dso != 0;
 }
 
-bool DSO::operator == ( const DSO& rhs )
+bool DSO::operator == ( const DSO& rhs ) const
 {
     return _impl->dso == rhs._impl->dso;
 }

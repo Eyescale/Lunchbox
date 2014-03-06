@@ -138,7 +138,7 @@ if(Boost_name)
   endif()
 endif()
 
-set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;cppcheck;doxygen;git;git-review;git-svn;lcov;libavahi-compat-libdnssd-dev;libboost-filesystem-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;ninja-build;pkg-config;subversion)
+set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;doxygen;git;git-review;libavahi-compat-libdnssd-dev;libboost-filesystem-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;pkg-config;subversion)
 
 set(LUNCHBOX_DEPENDS hwloc;DNSSD;LibJpegTurbo;OpenMP;Boost)
 

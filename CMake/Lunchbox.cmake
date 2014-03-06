@@ -10,6 +10,7 @@ set(LUNCHBOX_DEB_DEPENDS libboost-regex-dev libboost-serialization-dev
   libboost-system-dev libjpeg-turbo8-dev libturbojpeg)
 set(LUNCHBOX_PORT_DEPENDS boost)
 set(LUNCHBOX_BOOST_COMPONENTS "regex serialization filesystem system")
+set(LUNCHBOX_MATURITY RD)
 set(LUNCHBOX_FORCE_BUILD ${CI_BUILD})
 
 if(CI_BUILD_COMMIT)

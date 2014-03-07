@@ -24,8 +24,9 @@ set(LAST_RELEASE 1.8.0) # tarball, MacPorts, ...
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "9")
 set(VERSION_PATCH "0")
-
+set(LUNCHBOX_DESCRIPTION "Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.")
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
+
 include(Common)
 
 list(APPEND CPPCHECK_EXTRA_ARGS -DLB_GCC_4_1_OR_LATER=1)

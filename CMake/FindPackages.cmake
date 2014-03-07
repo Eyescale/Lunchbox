@@ -138,7 +138,7 @@ if(Boost_name)
   endif()
 endif()
 
-set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;cppcheck;doxygen;git;git-review;git-svn;lcov;libavahi-compat-libdnssd-dev;libboost-filesystem-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;ninja-build;pkg-config;subversion)
+set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;doxygen;git;git-review;libavahi-compat-libdnssd-dev;libboost-filesystem-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libjpeg-turbo8-dev;libturbojpeg;pkg-config;subversion)
 
 set(LUNCHBOX_DEPENDS hwloc;DNSSD;LibJpegTurbo;OpenMP;Boost)
 
@@ -178,7 +178,7 @@ file(APPEND ${DEFINES_FILE_IN}
   "\n#endif\n")
 
 include(UpdateFile)
-update_file(${DEFINES_FILE_IN} ${DEFINES_FILE})
+configure_file(${DEFINES_FILE_IN} ${DEFINES_FILE} COPYONLY)
 if(Boost_FOUND) # another WAR for broken boost stuff...
   set(Boost_VERSION ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION})
 endif()

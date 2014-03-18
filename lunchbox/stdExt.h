@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2006-2013, Stefan Eilemann <eile@equalizergraphics.com>
- *               2010-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+ *               2010-2014, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -112,12 +112,12 @@ LB_STDEXT_NAMESPACE_OPEN
 #if defined LB_STDEXT_TR1 || defined LB_STDEXT_STD11
 #  ifndef LB_HAVE_HASH_MAP
 #    ifdef CXX_TEMPLATE_ALIAS_SUPPORTED
-template< class K, class T, class H = hash< K >,
-          class P = std::equal_to< K >, class A = std::allocator< K > >
+template< class K, class T, class H = hash< K >, class P = std::equal_to< K >,
+          class A = std::allocator< std::pair< const K, T > > >
 using hash_map = unordered_map< K, T, H, P, A >;
 #    else
-template< class K, class T, class H = hash< K >,
-          class P = std::equal_to< K >, class A = std::allocator< K > >
+template< class K, class T, class H = hash< K >, class P = std::equal_to< K >,
+          class A = std::allocator< std::pair< const K, T > > >
 class hash_map : public unordered_map< K, T, H, P, A > {};
 #    endif
 #  endif // LB_HAVE_HASH_MAP

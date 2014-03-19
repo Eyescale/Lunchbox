@@ -54,7 +54,7 @@ public:
     explicit Log( std::ostream& stream )
         : _indent(0), _blocked(0), _noHeader(0),
           _newLine(true), _stream(stream)
-    { _thread[0] = 0; _file[0] = 0; }
+    { _file[0] = 0; }
 
     virtual ~Log() {}
 
@@ -74,10 +74,10 @@ public:
     void setThreadName( const std::string& name )
     {
         LBASSERT( !name.empty( ));
-        snprintf( _thread, 12, "%-11s", name.c_str( ));
+        _thread = name;
     }
 
-    const char* getThreadName() const { return _thread; }
+    const std::string& getThreadName() const { return _thread; }
 
     void setLogInfo( const char* f, const int line )
     {
@@ -101,8 +101,7 @@ protected:
         {
             if( !_noHeader )
             {
-                //assert( _thread[0] );
-                _stringStream << getpid()  << " " << _thread << " " << _file
+                _stringStream << getpid()  << "." << _thread << " " << _file
                               << " " << _clock->getTime64() << " ";
             }
 
@@ -136,7 +135,7 @@ private:
     Log& operator = ( const Log& );
 
     /** Short thread name. */
-    char _thread[12];
+    std::string _thread;
 
     /** The current file logging. */
     char _file[35];
@@ -254,7 +253,7 @@ void Log::setThreadName( const std::string& name )
     impl_->setThreadName( name );
 }
 
-const char* Log::getThreadName() const
+const std::string& Log::getThreadName() const
 {
     return impl_->getThreadName();
 }

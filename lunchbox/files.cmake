@@ -131,6 +131,7 @@ set(LUNCHBOX_SOURCES
   condition_w32.ipp
   debug.cpp
   decompressor.cpp
+  detail/threadID.h
   downloader.cpp
   dso.cpp
   file.cpp

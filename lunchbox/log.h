@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *                    2011, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -141,7 +141,7 @@ public:
     static const Clock& getClock(); //!< @internal
 
     LUNCHBOX_API void setThreadName( const std::string& name ); //!< @internal
-    LUNCHBOX_API const char* getThreadName() const; //!< @internal
+    LUNCHBOX_API const std::string& getThreadName() const; //!< @internal
 
 private:
     detail::Log* const impl_;

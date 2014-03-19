@@ -22,17 +22,10 @@
 #include <pthread.h>
 #include <cstring>   // for memset
 
+#include "detail/threadID.h"
+
 namespace lunchbox
 {
-namespace detail
-{
-class ThreadID
-{
-public:
-    pthread_t pthread;
-};
-}
-
 ThreadID::ThreadID()
         : _impl( new detail::ThreadID )
 {

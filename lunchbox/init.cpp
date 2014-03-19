@@ -54,7 +54,7 @@ bool init( const int argc, char** argv )
     if( ++_initialized > 1 ) // not first
         return true;
 
-    Log::instance().setThreadName( "Main" );
+    Log::instance().setThreadName( "0" );
 
     const time_t now = ::time(0);
 #ifdef _WIN32

@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
- *               2012, Marwan Abdellah <marwan.abdellah@epfl.ch>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
+ *                    2012, Marwan Abdellah <marwan.abdellah@epfl.ch>
  *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -29,8 +29,7 @@
 #include "sleep.h"
 #include "spinLock.h"
 
-#include <lunchbox/lock.h>
-
+#include <boost/lexical_cast.hpp>
 #include <errno.h>
 #include <pthread.h>
 #include <algorithm>
@@ -50,10 +49,14 @@
 #  include <hwloc.h>
 #endif
 
+#include "detail/threadID.h"
+
 namespace lunchbox
 {
 namespace
 {
+a_int32_t _threadIDs;
+
 enum ThreadState //!< The current state of a thread.
 {
     STATE_STOPPED,
@@ -61,26 +64,18 @@ enum ThreadState //!< The current state of a thread.
     STATE_RUNNING,
     STATE_STOPPING  // child no longer active, join() not yet called
 };
-
-typedef std::map< std::string, a_int32_t > NameMap;
-static Lockable< NameMap, SpinLock > _names;
 }
 
 namespace detail
 {
-class ThreadID
-{
-public:
-    pthread_t pthread;
-};
-
 class Thread
 {
 public:
-    Thread() : state( STATE_STOPPED ) {}
+    Thread() : state( STATE_STOPPED ), index( ++_threadIDs ) {}
 
     lunchbox::ThreadID id;
     Monitor< ThreadState > state;
+    int32_t index;
 };
 }
 
@@ -118,7 +113,7 @@ void* Thread::runChild( void* arg )
 
 void Thread::_runChild()
 {
-    setName( className( this ));
+    setName( boost::lexical_cast< std::string >( _impl->index ));
     pinCurrentThread();
     _impl->id._impl->pthread = pthread_self();
 
@@ -132,8 +127,8 @@ void Thread::_runChild()
     }
 
     _impl->state = STATE_RUNNING;
-    LBVERB << "Thread " << className( this ) << " successfully initialized"
-           << std::endl;
+    LBINFO << "Thread #" << _impl->index << " type " << className( *this )
+           << " successfully initialized" << std::endl;
 
     run();
     LBVERB << "Thread " << className( this ) << " finished" << std::endl;
@@ -331,30 +326,19 @@ static void _setVCName( const char* name )
 
 void Thread::setName( const std::string& name )
 {
-    std::string uniqueName = name;
-    std::ostringstream stream;
-    {
-        ScopedFastWrite mutex( _names );
-        if( _names.data[ name ] > 0 )
-            stream << _names.data[ name ];
-        ++_names.data[ name ];
-    }
-    uniqueName += stream.str();
-
-    Log::instance().setThreadName( uniqueName );
+    Log::instance().setThreadName( name );
 
 #ifdef _MSC_VER
 #  ifndef NDEBUG
-    _setVCName( uniqueName.c_str( ));
+    _setVCName( name.c_str( ));
 #  endif
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-    pthread_setname_np( uniqueName.c_str( ));
+    pthread_setname_np( name.c_str( ));
 #elif defined(__linux__)
-    prctl( PR_SET_NAME, uniqueName.c_str(), 0, 0, 0 );
+    prctl( PR_SET_NAME, name.c_str(), 0, 0, 0 );
 #else
     // Not implemented
-    LBVERB << "Thread::setName( " << uniqueName << " ) not implemented"
-           << std::endl;
+    LBVERB << "Thread::setName() not implemented" << std::endl;
 #endif
 }
 

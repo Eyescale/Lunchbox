@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,9 +20,8 @@
 
 #include <lunchbox/debug.h> // for LBASSERT
 #include <lunchbox/init.h>  // friend function
-#include <lunchbox/nonCopyable.h>
 #include <lunchbox/types.h>
-
+#include <boost/noncopyable.hpp>
 #include <limits>
 
 namespace lunchbox
@@ -38,7 +37,7 @@ namespace detail { class RNG; }
  *
  * Example: @include tests/rng.cpp
  */
-class RNG : public NonCopyable
+class RNG : public boost::noncopyable
 {
 public:
     /** Construct a new random number generator. @version 1.0 */
@@ -73,7 +72,7 @@ private:
     static void _exit();
     friend LUNCHBOX_API bool init( const int argc, char** argv );
     LUNCHBOX_API bool _get( void* data, size_t size );
-} LB_DEPRECATED;
+}; // LB_DEPRECATED;
 
 template<> inline float RNG::get()
 {

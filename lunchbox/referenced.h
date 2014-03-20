@@ -46,11 +46,7 @@ class Referenced
 {
 public:
     /** Increase the reference count. @version 1.0 .*/
-#ifdef LUNCHBOX_REFERENCED_DEBUG
-    void ref( const void* holder = 0 ) const
-#else
-    void ref ( const void* = 0 ) const
-#endif
+    void ref( const void* holder LB_UNUSED = 0 ) const
     {
 #ifndef NDEBUG
         LBASSERT( !_hasBeenDeleted );
@@ -79,33 +75,29 @@ public:
      * @version 1.0
      * @return true if the reference count went to 0, false otherwise.
      */
-#ifdef LUNCHBOX_REFERENCED_DEBUG
-    bool unref( const void* holder = 0 ) const
-#else
-    bool unref ( const void* = 0 ) const
-#endif
-        {
+    bool unref( const void* holder LB_UNUSED = 0 ) const
+    {
 #ifndef NDEBUG
-            LBASSERT( !_hasBeenDeleted );
+        LBASSERT( !_hasBeenDeleted );
 #endif
-            LBASSERT( _refCount > 0 );
-            const bool last = (--_refCount==0);
+        LBASSERT( _refCount > 0 );
+        const bool last = (--_refCount==0);
 
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-            if( holder )
-            {
-                ScopedFastWrite mutex( _holders );
-                HolderHash::iterator i = _holders->find( holder );
-                LBASSERT( i != _holders->end( ));
-                _holders->erase( i );
-                LBASSERT( _holders->find( holder ) == _holders->end( ));
-            }
+        if( holder )
+        {
+            ScopedFastWrite mutex( _holders );
+            HolderHash::iterator i = _holders->find( holder );
+            LBASSERT( i != _holders->end( ));
+            _holders->erase( i );
+            LBASSERT( _holders->find( holder ) == _holders->end( ));
+        }
 #endif
 
-            if( last )
-                const_cast< Referenced* >( this )->notifyFree();
-            return last;
-        }
+        if( last )
+            const_cast< Referenced* >( this )->notifyFree();
+        return last;
+    }
 
     /** @return the current reference count. @version 1.0 */
     int32_t getRefCount() const { return _refCount; }

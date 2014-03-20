@@ -28,8 +28,7 @@
 #define N_UUIDS 10000
 #define N_THREADS 10
 
-using lunchbox::uint128_t;
-typedef stde::hash_map< uint128_t, bool > TestHash;
+typedef stde::hash_map< lunchbox::uint128_t, bool > TestHash;
 
 void testConvertUint128ToUUID();
 void testIncrement();
@@ -43,7 +42,7 @@ public:
 
             while( i-- )
             {
-                lunchbox::uint128_t uuid( true );
+                const lunchbox::uint128_t uuid = lunchbox::make_UUID();
                 TEST( uuid.isUUID( ));
 
                 TESTINFO( hash.find( uuid ) == hash.end(),
@@ -60,7 +59,7 @@ int main( int argc, char **argv )
     TEST( lunchbox::init( argc, argv ));
 
     // basic tests
-    lunchbox::uint128_t id1( true );
+    lunchbox::uint128_t id1 = lunchbox::make_UUID();
     lunchbox::uint128_t id2;
 
     TEST( id1 != lunchbox::uint128_t( ));
@@ -76,7 +75,7 @@ int main( int argc, char **argv )
     TEST( id1 == id2 );
 
     lunchbox::uint128_t* id3 = new lunchbox::uint128_t( id1 );
-    lunchbox::uint128_t* id4 = new lunchbox::uint128_t( true );
+    lunchbox::uint128_t* id4 = new lunchbox::uint128_t( lunchbox::make_UUID( ));
 
     TEST( id1 == *id3 );
     TEST( *id4 != *id3 );
@@ -96,9 +95,11 @@ int main( int argc, char **argv )
                                "The quick brown fox jumps over the lazy dog." );
     // Values from http://en.wikipedia.org/wiki/MD5#MD5_hashes
     TEST( empty != fox );
-    TESTINFO( empty == uint128_t(0xD41D8CD98F00B204ull, 0xE9800998ECF8427Eull),
+    TESTINFO( empty == lunchbox::uint128_t( 0xD41D8CD98F00B204ull,
+                                            0xE9800998ECF8427Eull ),
               empty );
-    TESTINFO( fox == uint128_t(0xE4D909C290D0FB1Cull, 0xA068FFADDF22CBD0ull),
+    TESTINFO( fox == lunchbox::uint128_t( 0xE4D909C290D0FB1Cull,
+                                          0xA068FFADDF22CBD0ull ),
               fox );
 
     lunchbox::RNG rng;
@@ -165,19 +166,19 @@ void testConvertUint128ToUUID()
     const uint64_t low = 1212;
     const uint64_t high = 2314;
 
-    uint128_t test128( high, low );
+    lunchbox::uint128_t test128( high, low );
     TEST( test128.low() == low && test128.high() == high );
 
     lunchbox::uint128_t testUUID;
     testUUID = test128;
-    const uint128_t compare128 = testUUID;
+    const lunchbox::uint128_t compare128 = testUUID;
     TEST( compare128 == test128 );
 }
 
 void testIncrement()
 {
     {
-        uint128_t test128( 0, 0 );
+        lunchbox::uint128_t test128( 0, 0 );
         ++test128;
         TEST( test128.high() == 0 && test128.low() == 1 );
         --test128;
@@ -189,7 +190,7 @@ void testIncrement()
     }
 
     {
-        uint128_t test128( 0, std::numeric_limits< uint64_t >::max() );
+        lunchbox::uint128_t test128( 0, std::numeric_limits<uint64_t>::max() );
         ++test128;
         TEST( test128.high() == 1 && test128.low() == 0 );
         --test128;

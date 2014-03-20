@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *               2012, Marwan Abdellah <marwan.abdellah@epfl.ch>
  *               2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
@@ -22,10 +22,10 @@
 
 #include <lunchbox/api.h>         // LUNCHBOX_API definition
 #include <lunchbox/debug.h>       // debug macros in thread-safety checks
-#include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/threadID.h>    // member
 #include <lunchbox/types.h>
 
+#include <boost/noncopyable.hpp>
 #include <ostream>
 
 namespace lunchbox
@@ -178,7 +178,7 @@ private:
 
     static void* runChild( void* arg );
     void        _runChild();
-} LB_DEPRECATED;
+};// LB_DEPRECATED;
 
 /** Output the affinity setting in human-readable form. @version 1.7.1 */
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const Thread::Affinity );
@@ -246,7 +246,7 @@ private:
     }
 
 /** @cond IGNORE */
-template< typename T > class ScopedThreadCheck : public NonCopyable
+template< typename T > class ScopedThreadCheck : public boost::noncopyable
 {
 public:
     explicit ScopedThreadCheck( const T& data )

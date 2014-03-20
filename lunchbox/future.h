@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2014, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,7 +18,6 @@
 #ifndef LUNCHBOX_FUTURE_H
 #define LUNCHBOX_FUTURE_H
 
-#include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/refPtr.h>      // used inline
 #include <lunchbox/referenced.h>  // base class
 
@@ -26,7 +25,8 @@ namespace lunchbox
 {
 
 /** Base class to implement the wait method fulfilling the future. */
-template< class T > class FutureImpl : public Referenced, public NonCopyable
+template< class T >
+class FutureImpl : public Referenced, public boost::noncopyable
 {
 public:
     /** Destruct the future. @version 1.9.1 */

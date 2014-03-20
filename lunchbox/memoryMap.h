@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,8 +19,7 @@
 #define LUNCHBOX_MEMORYMAP_H
 
 #include <lunchbox/api.h>
-#include <lunchbox/nonCopyable.h>
-
+#include <boost/noncopyable.hpp>
 #include <iostream>
 #include <string>
 
@@ -34,7 +33,7 @@ namespace detail { class MemoryMap; }
  *
  * Example: @include tests/memoryMap.cpp
  */
-class MemoryMap : public NonCopyable
+class MemoryMap : public boost::noncopyable
 {
 public:
     /** Construct a new memory map. @version 1.0 */
@@ -126,7 +125,7 @@ public:
 
 private:
     detail::MemoryMap* const impl_;
-} LB_DEPRECATED;
+};// LB_DEPRECATED;
 
 inline std::ostream& operator << ( std::ostream& os, const MemoryMap& m )
 {

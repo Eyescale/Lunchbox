@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,6 +18,7 @@
 #ifndef LUNCHBOX_PERTHREAD_H
 #define LUNCHBOX_PERTHREAD_H
 
+#include <lunchbox/compiler.h> // deprecated macro
 #include <lunchbox/tls.h> // member
 
 namespace lunchbox
@@ -42,7 +43,7 @@ template< class T > void perThreadNoDelete( T* ) {}
  * Example: @include tests/perThread.cpp
  */
 template< class T, void (*D)( T* ) = &perThreadDelete< T > >
-class PerThread : public NonCopyable
+class PerThread : public boost::noncopyable
 {
 public:
     /** Construct a new per-thread variable. @version 1.0 */

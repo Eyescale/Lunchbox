@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -62,6 +62,25 @@ class RequestHandler
 public:
     RequestHandler() : requestID( 1 ) {}
 
+    uint32_t registerRequest( void* data )
+    {
+        ScopedFastWrite mutex( lock );
+
+        Request* request;
+        if( freeRequests.empty( ))
+            request = new Request;
+        else
+        {
+            request = freeRequests.front();
+            freeRequests.pop_front();
+        }
+
+        request->data = data;
+        requestID = ( requestID + 1 ) % LB_MAX_UINT32;
+        requests[ requestID ] = request;
+        return requestID;
+    }
+
     bool waitRequest( const uint32_t requestID_, Request::Result& result,
                       const uint32_t timeout )
     {
@@ -120,23 +139,9 @@ RequestHandler::~RequestHandler()
     delete _impl;
 }
 
-uint32_t RequestHandler::registerRequest( void* data )
+uint32_t RequestHandler::_register( void* data )
 {
-    ScopedFastWrite mutex( _impl->lock );
-
-    Request* request;
-    if( _impl->freeRequests.empty( ))
-        request = new Request;
-    else
-    {
-        request = _impl->freeRequests.front();
-        _impl->freeRequests.pop_front();
-    }
-
-    request->data = data;
-    _impl->requestID = ( _impl->requestID + 1 ) % LB_MAX_UINT32;
-    _impl->requests[ _impl->requestID ] = request;
-    return _impl->requestID;
+    return _impl->registerRequest( data );
 }
 
 void RequestHandler::unregisterRequest( const uint32_t requestID )

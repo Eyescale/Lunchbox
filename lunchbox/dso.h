@@ -20,7 +20,7 @@
 #define LUNCHBOX_DSO_H
 
 #include <lunchbox/api.h>
-#include <lunchbox/nonCopyable.h>
+#include <boost/noncopyable.hpp>
 #include <string>
 
 namespace lunchbox
@@ -28,7 +28,7 @@ namespace lunchbox
 namespace detail { class DSO; }
 
 /** Helper to access dynamic shared objects (DSO) */
-class DSO : public NonCopyable
+class DSO : public boost::noncopyable
 {
 public:
     /** Construct a new dynamic shared object. @version 1.0 */

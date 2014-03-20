@@ -23,7 +23,7 @@
 #include <lunchbox/api.h>
 #include <lunchbox/result.h> // nested base class
 #include <lunchbox/types.h>
-#include <lunchbox/nonCopyable.h>
+#include <boost/noncopyable.hpp>
 #include <map>
 
 namespace lunchbox
@@ -41,7 +41,7 @@ namespace detail { class Servus; }
  *
  * Example: @include tests/servus.cpp
  */
-class Servus : public NonCopyable
+class Servus : public boost::noncopyable
 {
 public:
     enum Interface

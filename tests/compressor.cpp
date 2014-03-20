@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010-2013, Stefan Eilemann <eile@eyescale.ch>
+ *               2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,6 +23,7 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/compressor.h>
 #include <lunchbox/compressorInfo.h>
+#include <lunchbox/compressorResult.h>
 #include <lunchbox/decompressor.h>
 #include <lunchbox/file.h>
 #include <lunchbox/memoryMap.h>
@@ -59,6 +60,14 @@ int main( int, char** )
     _testFile();
     _testRandom();
     registry.exit();
+
+    Compressor compressor;
+    TEST( !compressor.isGood( ));
+    TEST( !compressor );
+
+    Decompressor decompressor;
+    TEST( !decompressor.isGood( ));
+    TEST( !decompressor );
     return EXIT_SUCCESS;
 }
 
@@ -87,7 +96,9 @@ void _testData( const uint32_t compressorName, const std::string& name,
     Compressor compressor( registry, compressorName );
     Decompressor decompressor( registry, compressorName );
     TEST( compressor.isGood( ));
+    TEST( compressor );
     TESTINFO( decompressor.isGood(), compressorName );
+    TESTINFO( decompressor, compressorName );
 
     const uint64_t flags = EQ_COMPRESSOR_DATA_1D;
     uint64_t inDims[2]  = { 0, size };
@@ -97,31 +108,29 @@ void _testData( const uint32_t compressorName, const std::string& name,
     compressor.compress( const_cast<uint8_t*>(data), inDims, flags );
     const float compressTime = clock.getTimef();
 
-    const unsigned numResults = compressor.getNumResults( );
+    const CompressorResult& compressed = compressor.getResult();
+    const uint64_t compressedSize = compressed.getSize();
+    std::vector< void * > chunks;
+    std::vector< uint64_t > chunkSizes;
+    chunks.resize( compressed.chunks.size( ));
+    chunkSizes.resize( chunks.size( ));
 
-    std::vector< void * > vectorVoid;
-    vectorVoid.resize( numResults );
-
-    std::vector< uint64_t > vectorSize;
-    vectorSize.resize(numResults);
-
-    uint64_t compressedSize = 0;
-    for( unsigned i = 0; i < numResults ; i++ )
+    for( unsigned i = 0; i < chunks.size(); ++i )
     {
-        compressor.getResult( i, &vectorVoid[i], &vectorSize[i] );
-        compressedSize += vectorSize[i];
+        chunks[ i ] = compressed.chunks[i].data;
+        chunkSizes[ i ] =  compressed.chunks[i].getNumBytes();
     }
 
     Bufferb result;
     result.resize( size );
     uint8_t* outData = result.getData();
 
-    decompressor.decompress( &vectorVoid.front(), &vectorSize.front(),
-                             numResults, outData, inDims );
+    decompressor.decompress( &chunks.front(), &chunkSizes.front(),
+                             chunks.size(), outData, inDims );
 
     clock.reset();
-    decompressor.decompress( &vectorVoid.front(), &vectorSize.front(),
-                             numResults, outData, inDims );
+    decompressor.decompress( &chunks.front(), &chunkSizes.front(),
+                             chunks.size(), outData, inDims );
     const float decompressTime = clock.getTimef();
 
     TEST( memcmp( outData, data, size ) == 0 );

@@ -15,6 +15,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifdef WARN_DEPRECATED
+#  undef WARN_DEPRECATED
+#endif
+
 #include "test.h"
 
 #include <lunchbox/mtQueue.h>
@@ -27,7 +31,7 @@ using lunchbox::uint128_t;
 
 lunchbox::RequestHandler handler_;
 lunchbox::MTQueue< uint32_t > requestQ_;
-const uint128_t uuid( true );
+const uint128_t uuid = lunchbox::make_UUID();
 
 class Thread : public lunchbox::Thread
 {

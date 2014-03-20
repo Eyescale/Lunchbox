@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2014, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -33,8 +33,10 @@ namespace detail { class Decompressor; }
  *
  * Example: @include tests/compressor.cpp
  */
-class Decompressor : public NonCopyable
+class Decompressor : public boost::noncopyable
 {
+    typedef detail::Decompressor* const Decompressor::*bool_t;
+
 public:
     /** Construct a new, invalid decompressor instance. @version 1.7.1 */
     LUNCHBOX_API Decompressor();
@@ -53,6 +55,15 @@ public:
 
      /** @return true if the instance is usable. @version 1.7.1 */
     LUNCHBOX_API bool isGood() const;
+
+    /**
+     * @return true if the instance is usable, false otherwise.
+     * @version 1.9.1
+     */
+    operator bool_t() const { return isGood() ? &Decompressor::impl_ : 0; }
+
+    /** @return true if the instance is not usable. @version 1.9.1 */
+    bool operator ! () const { return !isGood(); }
 
     /**
      * @return true if the instance is usable for the given name.

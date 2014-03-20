@@ -233,6 +233,9 @@ class SpinLock;
 class Uploader;
 class uint128_t;
 
+struct CompressorResult;
+
+template< class > class Array;
 template< class > class Atomic;
 template< class > class Buffer;
 template< class > class Future;
@@ -252,6 +255,8 @@ typedef Future< uint32_t > f_uint32_t; //!< A future 32 bit unsigned promise
 typedef Future< ssize_t > f_ssize_t; //!< A future signed size promise
 typedef Future< void > f_void_t; //!< A future signed size promise
 
+typedef Array< void > CompressorChunk;
+typedef std::vector< CompressorChunk > CompressorChunks;
 typedef std::vector< Plugin* > Plugins;
 typedef Plugins::const_iterator PluginsCIter;
 

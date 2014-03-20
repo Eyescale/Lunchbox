@@ -19,7 +19,6 @@
 #ifndef LUNCHBOX_MONITOR_H
 #define LUNCHBOX_MONITOR_H
 
-#include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/condition.h>   // member
 #include <lunchbox/scopedMutex.h> // used inline
 #include <lunchbox/types.h>

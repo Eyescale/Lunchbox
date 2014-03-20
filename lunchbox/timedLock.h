@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,8 +19,8 @@
 #define LUNCHBOX_TIMEDLOCK_H
 
 #include <lunchbox/api.h>
-#include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/types.h>
+#include <boost/noncopyable.hpp>
 
 namespace lunchbox
 {
@@ -32,7 +32,7 @@ namespace detail { class TimedLock; }
  *
  * Example: @include tests/timedLock.cpp
  */
-class TimedLock : public NonCopyable
+class TimedLock : public boost::noncopyable
 {
 public:
     /** Construct a new timed lock. @version 1.0 */
@@ -72,6 +72,6 @@ public:
 
 private:
     detail::TimedLock* const _impl;
-} LB_DEPRECATED;
+}; // LB_DEPRECATED;
 }
 #endif //LUNCHBOX_TIMEDLOCK_H

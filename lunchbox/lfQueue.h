@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2010-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,7 +20,6 @@
 
 #include <lunchbox/atomic.h> // member
 #include <lunchbox/debug.h>  // used in inline method
-#include <lunchbox/nonCopyable.h>  // base class
 #include <lunchbox/thread.h> // thread-safety checks
 
 #include <vector>
@@ -40,7 +39,7 @@ namespace lunchbox
  *
  * Example: @include tests/lfQueue.cpp
  */
-template< typename T > class LFQueue : public NonCopyable
+template< typename T > class LFQueue : public boost::noncopyable
 {
 public:
     /** Construct a new queue. @version 1.0 */

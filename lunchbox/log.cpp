@@ -40,6 +40,8 @@
 
 namespace lunchbox
 {
+static const size_t threadNameLength = 8;
+
 static unsigned getLogTopics();
 static Clock    _defaultClock;
 static Clock*   _clock = &_defaultClock;
@@ -74,7 +76,9 @@ public:
     void setThreadName( const std::string& name )
     {
         LBASSERT( !name.empty( ));
-        _thread = name;
+        _thread = name.substr( 0, threadNameLength );
+        while( _thread.size() < threadNameLength )
+            _thread += std::string( " " );
     }
 
     const std::string& getThreadName() const { return _thread; }

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -40,7 +40,7 @@ namespace detail { class RequestHandler; }
  *
  * Example: @include tests/requestHandler.cpp
  */
-class RequestHandler : public NonCopyable
+class RequestHandler : public boost::noncopyable
 {
 public:
     /** Construct a new request handler.  @version 1.0 */
@@ -68,7 +68,8 @@ public:
      * @version 1.0
      * @deprecated
      */
-    LUNCHBOX_API uint32_t registerRequest( void* data = 0 ) LB_DEPRECATED;
+    LUNCHBOX_API uint32_t registerRequest( void* data = 0 ) LB_DEPRECATED
+        { return _register( data ); }
 
     /**
      * Unregister a request.
@@ -158,6 +159,7 @@ private:
     detail::RequestHandler* const _impl;
     friend LUNCHBOX_API std::ostream& operator << ( std::ostream&,
                                                     const RequestHandler& );
+    LUNCHBOX_API uint32_t _register( void* data );
     LB_TS_VAR( _thread );
 };
 
@@ -171,7 +173,7 @@ namespace lunchbox
 template< class T > inline
 RequestFuture< T > RequestHandler::registerRequest( void* data )
 {
-    return RequestFuture< T >( *this, registerRequest( data ));
+    return RequestFuture< T >( *this, _register( data ));
 }
 }
 

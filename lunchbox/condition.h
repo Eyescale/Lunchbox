@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2013, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,58 +20,58 @@
 
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
-#include <lunchbox/nonCopyable.h>
+#include <boost/noncopyable.hpp>
 
 namespace lunchbox
 {
 namespace detail { class Condition; }
 
+/**
+ * A condition variable and associated lock.
+ * Semantics follow closely pthread_condition and mutex.
+ */
+class Condition : public boost::noncopyable
+{
+public:
+    /** Construct a new condition variable. @version 1.0 */
+    LUNCHBOX_API Condition();
+
+    /** Destruct this condition variable. @version 1.0 */
+    LUNCHBOX_API ~Condition();
+
+    /** Lock the mutex. @version 1.0 */
+    LUNCHBOX_API void lock();
+
+    /** Unlock the mutex. @version 1.0 */
+    LUNCHBOX_API void unlock();
+
+    /** Signal the condition. @version 1.0 */
+    LUNCHBOX_API void signal();
+
+    /** Broadcast the condition. @version 1.0 */
+    LUNCHBOX_API void broadcast();
+
     /**
-     * A condition variable and associated lock.
-     * Semantics follow closely pthread_condition and mutex.
+     * Atomically unlock the mutex, wait for a signal and relock the mutex.
+     * @version 1.0
      */
-    class Condition : public NonCopyable
-    {
-    public:
-        /** Construct a new condition variable. @version 1.0 */
-        LUNCHBOX_API Condition();
+    LUNCHBOX_API void wait();
 
-        /** Destruct this condition variable. @version 1.0 */
-        LUNCHBOX_API ~Condition();
+    /**
+     * Atomically unlock the mutex, wait for a signal and relock the mutex.
+     *
+     * The operation is aborted after the given timeout and false is
+     * returned.
+     *
+     * @param timeout the timeout in milliseconds to wait for the signal.
+     * @return true on success, false on timeout.
+     * @version 1.0
+     */
+    LUNCHBOX_API bool timedWait( const uint32_t timeout );
 
-        /** Lock the mutex. @version 1.0 */
-        LUNCHBOX_API void lock();
-
-        /** Unlock the mutex. @version 1.0 */
-        LUNCHBOX_API void unlock();
-
-        /** Signal the condition. @version 1.0 */
-        LUNCHBOX_API void signal();
-
-        /** Broadcast the condition. @version 1.0 */
-        LUNCHBOX_API void broadcast();
-
-        /**
-         * Atomically unlock the mutex, wait for a signal and relock the mutex.
-         * @version 1.0
-         */
-        LUNCHBOX_API void wait();
-
-        /**
-         * Atomically unlock the mutex, wait for a signal and relock the mutex.
-         *
-         * The operation is aborted after the given timeout and false is
-         * returned.
-         *
-         * @param timeout the timeout in milliseconds to wait for the signal.
-         * @return true on success, false on timeout.
-         * @version 1.0
-         */
-        LUNCHBOX_API bool timedWait( const uint32_t timeout );
-
-    private:
-        detail::Condition* const _impl;
-    };
+private:
+    detail::Condition* const _impl;
+};
 }
 
 #endif //LUNCHBOX_CONDITION_H

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,7 +20,7 @@
 
 #include <lunchbox/api.h>
 #include <lunchbox/compiler.h>
-#include <lunchbox/nonCopyable.h>
+#include <boost/noncopyable.hpp>
 
 namespace lunchbox
 {
@@ -33,7 +33,7 @@ namespace detail { class Lock; }
  *
  * Example: @include tests/lock.cpp
  */
-class Lock : public NonCopyable
+class Lock : public boost::noncopyable
 {
 public:
     /** Construct a new lock. @version 1.0 */
@@ -76,6 +76,6 @@ public:
 
 private:
     detail::Lock* const _impl;
-} LB_DEPRECATED;
+};// LB_DEPRECATED;
 }
 #endif //LUNCHBOX_LOCK_H

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2008-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2008-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -29,6 +29,6 @@ namespace lunchbox
  * @version 1.0
  * @deprecated Use boost::this_thread::sleep()
  */
-LUNCHBOX_API void sleep( const uint32_t milliSeconds ) LB_DEPRECATED;
+LUNCHBOX_API void sleep( const uint32_t milliSeconds );// LB_DEPRECATED;
 }
 #endif  // LUNCHBOX_SLEEP_H

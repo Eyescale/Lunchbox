@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010-2013, Stefan Eilemann <eile@eyescale.ch>
+ *               2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -22,9 +22,9 @@
 #define LUNCHBOX_PLUGINREGISTRY_H
 
 #include <lunchbox/api.h>
-#include <lunchbox/nonCopyable.h> // base class
 #include <lunchbox/types.h>
 #include <lunchbox/visitorResult.h> // enum
+#include <boost/noncopyable.hpp>
 #include <string>
 
 namespace lunchbox
@@ -41,7 +41,7 @@ namespace detail { class PluginRegistry; }
  *
  * Example: @include tests/compressor.cpp
  */
-class PluginRegistry : public NonCopyable
+class PluginRegistry : public boost::noncopyable
 {
 public:
     /** Construct a new plugin registry. @version 1.7.1 */

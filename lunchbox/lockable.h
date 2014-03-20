@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,7 +19,7 @@
 #define LUNCHBOX_LOCKABLE_H
 
 #include <lunchbox/log.h> // used inline
-#include <lunchbox/nonCopyable.h> // base class
+#include <boost/noncopyable.hpp>
 #include <iostream>
 
 namespace lunchbox
@@ -29,7 +29,7 @@ namespace lunchbox
  *
  * Locking the data still has to be done manually, e.g, using a ScopedMutex.
  */
-template< class D, class L = Lock > class Lockable : public NonCopyable
+template< class D, class L = Lock > class Lockable : public boost::noncopyable
 {
 public:
     /** Construct a new lockable data structure. @version 1.0 */

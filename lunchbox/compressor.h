@@ -34,7 +34,7 @@ namespace detail { class Compressor; }
  *
  * Example: @include tests/compressor.cpp
  */
-class Compressor : public NonCopyable
+class Compressor : public boost::noncopyable
 {
     typedef detail::Compressor* const Compressor::*bool_t;
 
@@ -139,11 +139,11 @@ public:
     LUNCHBOX_API void compress( void* const in, const uint64_t pvp[4],
                                 const uint64_t flags );
 
-    /**
+    /** @deprecated use new getResult()
      * @return the number of compressed chunks of the last compression.
      * @version 1.7.1
      */
-    LUNCHBOX_API unsigned getNumResults() const;
+    LUNCHBOX_API unsigned getNumResults() const LB_DEPRECATED;
 
     /**
      * @return the result of the last compression.

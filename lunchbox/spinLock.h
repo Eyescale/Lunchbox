@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2010-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,7 +19,6 @@
 #define LUNCHBOX_SPINLOCK_H
 
 #include <lunchbox/atomic.h>         // member
-#include <lunchbox/nonCopyable.h>    // base class
 #include <lunchbox/thread.h>         // used in inline method
 
 namespace lunchbox
@@ -36,7 +35,7 @@ namespace detail { class SpinLock; }
  *
  * Example: @include tests/lock.cpp
  */
-class SpinLock : public NonCopyable
+class SpinLock : public boost::noncopyable
 {
 public:
     /** Construct a new lock. @version 1.0 */

@@ -93,7 +93,7 @@ public:
 
     /**
      * @return true if the uint128_t is a generated universally unique
-     * identifier.
+     *         identifier.
      * @version 1.9.1
      */
     bool isUUID() const { return high() != 0; }

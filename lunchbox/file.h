@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
- *               2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
+ *               2009-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -35,15 +35,15 @@ namespace lunchbox
  * @deprecated Use Boost.Filesystem
  */
 LUNCHBOX_API Strings searchDirectory( const std::string& directory,
-                                      const std::string& pattern )
-    LB_DEPRECATED;
+                                      const std::string& pattern );
+//    LB_DEPRECATED;
 
 /**
  * @return the file name part of a path. @version 1.0
  * @deprecated Use Boost.Filesystem
  */
-LUNCHBOX_API std::string getFilename( const std::string& filename )
-    LB_DEPRECATED;
+LUNCHBOX_API std::string getFilename( const std::string& filename );
+//    LB_DEPRECATED;
 
 /**
  * @return the directory name part of a path. @version 1.0

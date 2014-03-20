@@ -33,7 +33,7 @@ namespace detail { class Decompressor; }
  *
  * Example: @include tests/compressor.cpp
  */
-class Decompressor : public NonCopyable
+class Decompressor : public boost::noncopyable
 {
     typedef detail::Decompressor* const Decompressor::*bool_t;
 

@@ -62,7 +62,7 @@ private:
 
     friend LUNCHBOX_API
     std::ostream& operator << ( std::ostream& os, const ThreadID& );
-} LB_DEPRECATED;
+};// LB_DEPRECATED;
 
 /** Print the thread to the given output stream. */
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const ThreadID& );

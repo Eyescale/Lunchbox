@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2014, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -29,7 +29,7 @@ namespace lunchbox
 namespace detail { class Uploader; }
 
 /** A C++ class to handle one uploader plugin instance. */
-class Uploader : public NonCopyable
+class Uploader : public boost::noncopyable
 {
 public:
     /** Construct a new, invalid uploader instance. @version 1.7.1 */

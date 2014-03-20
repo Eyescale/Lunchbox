@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2013, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,7 +18,6 @@
 #ifndef LUNCHBOX_POOL_H
 #define LUNCHBOX_POOL_H
 
-#include <lunchbox/nonCopyable.h>  // base class
 #include <lunchbox/scopedMutex.h>  // member
 #include <lunchbox/spinLock.h>     // member
 #include <lunchbox/thread.h>       // thread-safety checks
@@ -26,7 +25,8 @@
 namespace lunchbox
 {
 /** An object allocation pool. */
-template< typename T, bool locked = false > class Pool : public NonCopyable
+template< typename T, bool locked = false >
+class Pool : public boost::noncopyable
 {
 public:
     /** Construct a new pool. @version 1.0 */

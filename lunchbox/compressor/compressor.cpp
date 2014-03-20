@@ -24,22 +24,18 @@ namespace plugin
 {
 namespace
 {
-    typedef std::vector< Compressor::Functions > Compressors;
-    static Compressors* _functions;
+typedef std::vector< Compressor::Functions > Compressors;
+static Compressors* _functions;
 
-    const Compressor::Functions& _findFunctions( const unsigned name )
-    {
-        for( Compressors::const_iterator i = _functions->begin();
-             i != _functions->end(); ++i )
-        {
-            const Compressor::Functions& functions = *i;
-            if( functions.name == name )
-                return functions;
-        }
+const Compressor::Functions& _findFunctions( const unsigned name )
+{
+    BOOST_FOREACH( const Compressor::Functions& functions, *_functions )
+        if( functions.name == name )
+            return functions;
 
-        assert( 0 ); // UNREACHABLE
-        return _functions->front();
-    }
+    assert( 0 ); // UNREACHABLE
+    return _functions->front();
+}
 }
 
 Compressor::Compressor()

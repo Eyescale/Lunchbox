@@ -106,6 +106,9 @@ public:
      */
     operator bool_t() const { return _ptr == 0 ? 0 : &RefPtr::_ptr; }
 
+    /** @return true if the RefPtr is empty. @version 1.0 */
+    bool operator ! () const               { return ( _ptr==0 ); }
+
     /**
      * @return true if the left RefPtr is smaller then the right.
      * @version 1.0
@@ -117,9 +120,6 @@ public:
      * @version 1.0
      */
     bool operator > ( const RefPtr& rhs ) const { return ( _ptr > rhs._ptr ); }
-
-    /** @return true if the RefPtr is empty. @version 1.0 */
-    bool operator ! () const               { return ( _ptr==0 ); }
 
     /**
      * @return true if the reference pointers holds the C pointer.

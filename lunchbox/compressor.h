@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010-2013, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c)      2010, Cedric Stalder <cedric.stalder@gmail.com>
+ *               2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -36,6 +36,8 @@ namespace detail { class Compressor; }
  */
 class Compressor : public NonCopyable
 {
+    typedef detail::Compressor* const Compressor::*bool_t;
+
 public:
     /** Construct a new, invalid compressor instance. @version 1.7.1 */
     LUNCHBOX_API Compressor();
@@ -54,6 +56,15 @@ public:
 
     /** @return true if the instance is usable. @version 1.7.1 */
     LUNCHBOX_API bool isGood() const;
+
+    /**
+     * @return true if the instance is usable, false otherwise.
+     * @version 1.9.1
+     */
+    operator bool_t() const { return isGood() ? &Compressor::impl_ : 0; }
+
+    /** @return true if the instance is not usable. @version 1.9.1 */
+    bool operator ! () const { return !isGood(); }
 
     /**
      * @return true if the instance is usable for the given name.
@@ -135,15 +146,15 @@ public:
     LUNCHBOX_API unsigned getNumResults() const;
 
     /**
-     * Get one compressed chunk of the last compression.
-     *
-     * @param i the result index to return.
-     * @param out the return value to store the result pointer
-     * @param outSize the return value to store the result size in bytes
-     * @version 1.7.1
+     * @return the result of the last compression.
+     * @version 1.9.1
      */
+    LUNCHBOX_API CompressorResult getResult() const;
+
+    /** @deprecated use new getResult() */
     LUNCHBOX_API void getResult( const unsigned i, void** const out,
-                                 uint64_t* const outSize ) const;
+                                 uint64_t* const outSize ) const LB_DEPRECATED;
+
 private:
     detail::Compressor* const impl_;
     LB_TS_VAR( _thread );

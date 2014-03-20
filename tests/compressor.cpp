@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010-2013, Stefan Eilemann <eile@eyescale.ch>
+ *               2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -59,6 +59,10 @@ int main( int, char** )
     _testFile();
     _testRandom();
     registry.exit();
+
+    Compressor compressor;
+    TEST( !compressor.isGood( ));
+    TEST( !compressor );
     return EXIT_SUCCESS;
 }
 
@@ -87,7 +91,9 @@ void _testData( const uint32_t compressorName, const std::string& name,
     Compressor compressor( registry, compressorName );
     Decompressor decompressor( registry, compressorName );
     TEST( compressor.isGood( ));
+    TEST( compressor );
     TESTINFO( decompressor.isGood(), compressorName );
+    TESTINFO( decompressor, compressorName );
 
     const uint64_t flags = EQ_COMPRESSOR_DATA_1D;
     uint64_t inDims[2]  = { 0, size };

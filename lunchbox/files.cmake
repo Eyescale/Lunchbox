@@ -13,6 +13,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   algorithm.h
   any.h
   anySerialization.h
+  array.h
   atomic.h
   bitOperation.h
   buffer.h
@@ -20,6 +21,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   clock.h
   compiler.h
   compressor.h
+  compressorResult.h
   condition.h
   daemon.h
   debug.h

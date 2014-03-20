@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010-2013, Stefan Eilemann <eile@eyescale.ch>
+ *               2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -21,6 +21,7 @@
 #include "compressor.h"
 
 #include "compressorInfo.h"
+#include "compressorResult.h"
 #include "plugin.h"
 #include "pluginInstance.h"
 #include "pluginRegistry.h"
@@ -224,7 +225,32 @@ void Compressor::getResult( const unsigned i, void** const out,
     if( !isGood( ))
         return;
 
-    return impl_->plugin->getResult( impl_->instance, impl_->info.name, i, out,
-                                     outSize );
+    impl_->plugin->getResult( impl_->instance, impl_->info.name, i,
+                              out, outSize );
 }
+
+CompressorResult Compressor::getResult() const
+{
+    LBASSERT( impl_->plugin );
+    LBASSERT( impl_->instance );
+    if( !isGood( ))
+        return CompressorResult();
+
+    const unsigned num = impl_->plugin->getNumResults( impl_->instance,
+                                                       impl_->info.name );
+    CompressorChunks chunks;
+    chunks.reserve( num );
+
+    for( unsigned i = 0; i < num; ++i )
+    {
+        void* data;
+        uint64_t size;
+        impl_->plugin->getResult( impl_->instance, impl_->info.name, i,
+                                  &data, &size );
+        chunks.push_back( CompressorChunk( data, size ));
+    }
+
+    return CompressorResult( impl_->info.name, chunks );
+}
+
 }

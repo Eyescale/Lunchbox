@@ -151,6 +151,11 @@ template<> inline void byteswap( uint16_t& value )
 template<> inline void byteswap( int16_t& value )
 { byteswap( reinterpret_cast< uint16_t& >( value )); }
 
+#ifdef __APPLE__
+template<> inline void byteswap( unsigned long& value )
+{ byteswap( reinterpret_cast< unsigned long& >( value )); }
+#endif
+
 template<> inline void byteswap( uint64_t& value )
 {
 #ifdef _MSC_VER

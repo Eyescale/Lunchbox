@@ -64,6 +64,10 @@ int main( int, char** )
     Compressor compressor;
     TEST( !compressor.isGood( ));
     TEST( !compressor );
+
+    Decompressor decompressor;
+    TEST( !decompressor.isGood( ));
+    TEST( !decompressor );
     return EXIT_SUCCESS;
 }
 

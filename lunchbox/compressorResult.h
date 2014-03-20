@@ -26,7 +26,7 @@
 namespace lunchbox
 {
 /**
- * A structure to hold one compression results.
+ * A structure to hold the results from one compress operation.
  *
  * Valid as long as the associated Compressor is valid and has not been used
  * again.

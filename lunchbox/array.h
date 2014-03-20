@@ -29,11 +29,10 @@ namespace lunchbox
 template< class T > class Array
 {
 public:
-    /** Create a new array wrapper for the given data. @version 1.0 */
-    explicit Array( T* data_, const size_t num_ )
-        : data( data_ ), num( num_ ) {}
+    /** Create a new array wrapper for the given data. @version 1.9.1 */
+    Array( T* data_, const size_t num_ ) : data( data_ ), num( num_ ) {}
 
-    /** @return the number of bytes stored in the pointer. @version 1.0 */
+    /** @return the number of bytes stored in the pointer. @version 1.9.1 */
     size_t getNumBytes() const { return num * sizeof( T ); }
 
     T* data; //!< The data
@@ -43,7 +42,7 @@ public:
 template<> inline size_t Array< void >::getNumBytes() const { return num; }
 template<> inline size_t Array< const void >::getNumBytes() const { return num;}
 
-/** Pretty-print all members of the array. @version 1.1.1 */
+/** Pretty-print all members of the array. @version 1.9.1 */
 template< class T >
 inline std::ostream& operator << ( std::ostream& os, const Array< T >& array )
 {

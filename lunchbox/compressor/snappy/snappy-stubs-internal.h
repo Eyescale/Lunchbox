@@ -61,6 +61,7 @@
 
 // Pull in std::min, std::ostream, and the likes. This is safe because this
 // header file is never used from any public header files.
+#pragma clang diagnostic ignored "-Wheader-hygiene"
 using namespace std;
 
 // The size of an array, if known at compile-time.

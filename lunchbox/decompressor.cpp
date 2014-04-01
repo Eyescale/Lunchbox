@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2014, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -19,6 +19,7 @@
 
 #include "decompressor.h"
 
+#include "compressorResult.h"
 #include "plugin.h"
 #include "pluginInstance.h"
 #include "pluginRegistry.h"
@@ -119,6 +120,32 @@ const EqCompressorInfo& Decompressor::getInfo() const
 {
     return impl_->info;
 }
+
+bool Decompressor::decompress( const CompressorResult& input, void* const out,
+                               uint64_t pvpOut[4], const uint64_t flags )
+{
+    LBASSERT( uses( input.compressor ));
+    LBASSERT( !input.chunks.empty( ));
+
+    if( !uses( input.compressor ) || input.chunks.empty( ))
+        return false;
+
+    const size_t num = input.chunks.size();
+    const void** in = static_cast< const void** >( alloca( num *
+                                                           sizeof( void* )));
+    uint64_t* inSizes = static_cast< uint64_t* >( alloca( num *
+                                                          sizeof( uint64_t )));
+    for( size_t i = 0; i < num; ++i )
+    {
+        in[i] = input.chunks[i].data;
+        inSizes[i] = input.chunks[i].getNumBytes();
+    }
+
+    impl_->plugin->decompress( impl_->instance, impl_->info.name, in, inSizes,
+                               num, out, pvpOut, flags );
+    return true;
+}
+
 
 void Decompressor::decompress( const void* const* in,
                                const uint64_t* const inSizes,

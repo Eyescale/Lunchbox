@@ -105,19 +105,24 @@ public:
     /**
      * Decompress two-dimensional data.
      *
-     * @param in the pointer to an array of input data pointers
-     * @param inSizes the array of input data sizes in bytes
-     * @param numInputs the number of input data elements
+     * The output is not modified on error.
+     *
+     * @param input the compressed data
      * @param out the pointer to a pre-allocated buffer for the
      *            uncompressed output result.
      * @param pvpOut the dimensions of the output data.
      * @param flags capability flags for the decompression.
-     * @version 1.7.1
+     * @return true on success, false otherwise
+     * @version 1.9.1
      */
+    LUNCHBOX_API bool decompress( const CompressorResult& input,
+                                  void* const out, uint64_t pvpOut[4],
+                                  const uint64_t flags );
     LUNCHBOX_API void decompress( const void* const* in,
                                   const uint64_t* const inSizes,
                                   const unsigned numInputs, void* const out,
-                                  uint64_t pvpOut[4], const uint64_t flags );
+                                  uint64_t pvpOut[4], const uint64_t flags )
+        LB_DEPRECATED;
 
 private:
     detail::Decompressor* const impl_;

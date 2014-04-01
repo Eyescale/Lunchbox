@@ -1,7 +1,7 @@
 Name:		Lunchbox
 Version:	1.9.0
 Release:	1%{?dist}
-Summary:	Multi-threaded toolbox library
+Summary:	Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.
 
 Group:		Development/Libraries
 License:	

@@ -217,7 +217,7 @@ private:
             NAME.id = lunchbox::Thread::getSelfThreadID();              \
             NAME.name = lunchbox::Log::instance().getThreadName();      \
             LBVERB << "Functions for " << #NAME                         \
-                   << " locked to this thread" << std::endl;            \
+                   << " locked from" << lunchbox::backtrace <<  std::endl; \
         }                                                               \
         if( !NAME.extMutex && NAME.id != lunchbox::Thread::getSelfThreadID( )) \
         {                                                               \

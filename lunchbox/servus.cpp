@@ -369,7 +369,7 @@ private:
     }
 
     lunchbox::Servus::Result handleEvents_( DNSServiceRef service,
-                                           const int32_t timeout = -1 )
+                                            const int32_t timeout = -1 )
     {
         assert( service );
         if( !service )

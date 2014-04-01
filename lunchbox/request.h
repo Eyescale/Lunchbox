@@ -15,8 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef LUNCHBOX_REQUESTFUTURE_H
-#define LUNCHBOX_REQUESTFUTURE_H
+#ifndef LUNCHBOX_REQUEST_H
+#define LUNCHBOX_REQUEST_H
 
 #include <lunchbox/futureFunction.h>
 #include <boost/bind.hpp>
@@ -30,39 +30,41 @@ namespace lunchbox
  * A Future implementation for a RequestHandler request.
  * @version 1.9.1
  */
-template< class T > class RequestFuture : public Future< bool >
+template< class T > class Request : public Future< bool >
 {
-    class Impl : public FutureFunction< bool >
+    class Impl : public FutureImpl< bool >
     {
         typedef typename boost::mpl::if_< boost::is_same< T, void >,
                                           void*, T >::type value_t;
     public:
         Impl( RequestHandler& handler, const uint32_t req )
-            : FutureFunction< bool >(
-#pragma warning(push)
-#pragma warning(disable : 4355)
-                          boost::bind( &RequestFuture< T >::Impl::wait_, this ))
-#pragma warning(pop)
-            , request( req )
+            : request( req )
             , result( 0 )
             , handler_( handler )
+            , done_( false )
+            , success_( false )
         {}
+        virtual ~Impl() { wait(); }
 
         const uint32_t request;
         value_t result;
 
+    protected:
+        bool wait() final;
+        bool isReady() const final;
+
     private:
         RequestHandler& handler_;
-
-        bool wait_();
+        bool done_; //!< waitRequest called
+        bool success_; //!< waitRequest return value
     };
 
 public:
-    RequestFuture( RequestHandler& handler, const uint32_t request )
+    Request( RequestHandler& handler, const uint32_t request )
         : Future< bool >( new Impl( handler, request ))
     {}
 
-    virtual ~RequestFuture() { wait(); }
+    virtual ~Request() { wait(); }
 
     uint32_t getID() const
         { return static_cast< const Impl* >( impl_.get( ))->request; }
@@ -79,10 +81,21 @@ public:
 #include <lunchbox/requestHandler.h>
 namespace lunchbox
 {
-template< class T > inline bool RequestFuture< T >::Impl::wait_()
+template< class T > inline bool Request< T >::Impl::wait()
 {
-    return handler_.waitRequest( request, result );
-}
+    if( !done_ )
+    {
+        success_ = handler_.waitRequest( request, result );
+        done_ = true;
+    }
+    return success_;
 }
 
-#endif //LUNCHBOX_REQUESTFUTURE_H
+template< class T > inline bool Request< T >::Impl::isReady() const
+{
+    return done_ || handler_.isRequestReady( request );
+}
+
+}
+
+#endif //LUNCHBOX_REQUEST_H

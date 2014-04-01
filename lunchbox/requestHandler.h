@@ -57,7 +57,7 @@ public:
      * @return A Future which will be fulfilled on serveRequest().
      * @version 1.9.1
      */
-    template< class T > RequestFuture< T > registerRequest( void* data = 0 );
+    template< class T > Request< T > registerRequest( void* data = 0 );
 
     /**
      * Register a request.
@@ -66,7 +66,7 @@ public:
      *             0.
      * @return the request identifier.
      * @version 1.0
-     * @deprecated
+     * @deprecated use the future-based registerRequest()
      */
     LUNCHBOX_API uint32_t registerRequest( void* data = 0 ) LB_DEPRECATED
         { return _register( data ); }
@@ -115,13 +115,11 @@ public:
     /**
      * Poll for the completion of a request.
      *
-     * Does not unregister the request.
-     *
-     * @param requestID the request identifier.
-     * @return true if the request has been served, false if it is pending.
      * @version 1.0
+     * @deprecated use Request::isReady()
      */
-    LUNCHBOX_API bool isRequestServed( const uint32_t requestID ) const;
+    bool isRequestServed( const uint32_t id ) const LB_DEPRECATED
+        { return isRequestReady( id ); }
 
     /**
      * Retrieve the user-specific data for a request.
@@ -155,6 +153,8 @@ public:
      */
     LUNCHBOX_API bool hasPendingRequests() const;
 
+    LUNCHBOX_API bool isRequestReady( const uint32_t ) const; //!< @internal
+
 private:
     detail::RequestHandler* const _impl;
     friend LUNCHBOX_API std::ostream& operator << ( std::ostream&,
@@ -166,14 +166,14 @@ private:
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const RequestHandler& );
 }
 
-#include <lunchbox/requestFuture.h>
+#include <lunchbox/request.h>
 
 namespace lunchbox
 {
 template< class T > inline
-RequestFuture< T > RequestHandler::registerRequest( void* data )
+Request< T > RequestHandler::registerRequest( void* data )
 {
-    return RequestFuture< T >( *this, _register( data ));
+    return Request< T >( *this, _register( data ));
 }
 }
 

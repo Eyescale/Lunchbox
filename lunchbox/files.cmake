@@ -59,7 +59,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   pool.h
   refPtr.h
   referenced.h
-  requestFuture.h
+  request.h
   requestHandler.h
   result.h
   rng.h

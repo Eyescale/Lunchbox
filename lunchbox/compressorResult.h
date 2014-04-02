@@ -37,12 +37,21 @@ struct CompressorResult
     CompressorResult( const unsigned n, const CompressorChunks& c )
         : compressor( n ), chunks( c ) {}
 
-    uint64_t getSize() const //!< @return the aggregate size of all chunks
+    /** @return the aggregate size of all chunks @version 1.9.1 */
+    uint64_t getSize() const
     {
         uint64_t size = 0;
         BOOST_FOREACH( const CompressorChunk& chunk, chunks )
             size += chunk.getNumBytes();
         return size;
+    }
+
+    /** @return true if the result contains compressed data. @version 1.9.1 */
+    bool isCompressed() const
+    {
+        return compressor != EQ_COMPRESSOR_INVALID &&
+               compressor != EQ_COMPRESSOR_NONE &&
+               compressor != EQ_COMPRESSOR_AUTO;
     }
 
     unsigned compressor;

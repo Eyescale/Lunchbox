@@ -31,10 +31,10 @@ namespace lunchbox
 //! @cond IGNORE
 namespace
 {
-struct Request
+struct Record
 {
-    Request() { lock.set(); }
-    ~Request(){}
+    Record() { lock.set(); }
+    ~Record(){}
 
     TimedLock lock;
     void*     data;
@@ -51,8 +51,8 @@ struct Request
         } rUint128;
     } result;
 };
-typedef stde::hash_map< uint32_t, Request* > RequestHash;
-typedef RequestHash::const_iterator RequestHashCIter;
+typedef stde::hash_map< uint32_t, Record* > RecordHash;
+typedef RecordHash::const_iterator RecordHashCIter;
 }
 
 namespace detail
@@ -66,13 +66,13 @@ public:
     {
         ScopedFastWrite mutex( lock );
 
-        Request* request;
-        if( freeRequests.empty( ))
-            request = new Request;
+        Record* request;
+        if( freeRecords.empty( ))
+            request = new Record;
         else
         {
-            request = freeRequests.front();
-            freeRequests.pop_front();
+            request = freeRecords.front();
+            freeRecords.pop_front();
         }
 
         request->data = data;
@@ -81,15 +81,15 @@ public:
         return requestID;
     }
 
-    bool waitRequest( const uint32_t requestID_, Request::Result& result,
+    bool waitRequest( const uint32_t requestID_, Record::Result& result,
                       const uint32_t timeout )
     {
         result.rUint128.low = 0;
         result.rUint128.high = 0;
-        Request* request = 0;
+        Record* request = 0;
         {
             ScopedFastWrite mutex( lock );
-            RequestHashCIter i = requests.find( requestID_ );
+            RecordHashCIter i = requests.find( requestID_ );
             if( i == requests.end( ))
                 return false;
 
@@ -107,19 +107,19 @@ public:
     void unregisterRequest( const uint32_t requestID_ )
     {
         ScopedFastWrite mutex( lock );
-        RequestHash::iterator i = requests.find( requestID_ );
+        RecordHash::iterator i = requests.find( requestID_ );
         if( i == requests.end( ))
             return;
 
-        Request* request = i->second;
+        Record* request = i->second;
         requests.erase( i );
-        freeRequests.push_front( request );
+        freeRecords.push_front( request );
     }
 
     mutable lunchbox::SpinLock lock;
     uint32_t requestID;
-    RequestHash requests;
-    std::list<Request*> freeRequests;
+    RecordHash requests;
+    std::list<Record*> freeRecords;
 };
 }
 // @endcond
@@ -130,10 +130,10 @@ RequestHandler::RequestHandler()
 
 RequestHandler::~RequestHandler()
 {
-    while( !_impl->freeRequests.empty( ))
+    while( !_impl->freeRecords.empty( ))
     {
-        Request* request = _impl->freeRequests.front();
-        _impl->freeRequests.pop_front();
+        Record* request = _impl->freeRecords.front();
+        _impl->freeRecords.pop_front();
         delete request;
     }
     delete _impl;
@@ -152,7 +152,7 @@ void RequestHandler::unregisterRequest( const uint32_t requestID )
 bool RequestHandler::waitRequest( const uint32_t requestID, void*& rPointer,
                                   const uint32_t timeout )
 {
-    Request::Result result;
+    Record::Result result;
     if( !_impl->waitRequest( requestID, result, timeout ))
         return false;
 
@@ -162,7 +162,7 @@ bool RequestHandler::waitRequest( const uint32_t requestID, void*& rPointer,
 bool RequestHandler::waitRequest( const uint32_t requestID, uint32_t& rUint32,
                                   const uint32_t timeout )
 {
-    Request::Result result;
+    Record::Result result;
     if( !_impl->waitRequest( requestID, result, timeout ))
         return false;
 
@@ -173,7 +173,7 @@ bool RequestHandler::waitRequest( const uint32_t requestID, uint32_t& rUint32,
 bool RequestHandler::waitRequest( const uint32_t requestID, uint128_t& rUint128,
                                   const uint32_t timeout )
 {
-    Request::Result result;
+    Record::Result result;
     if( !_impl->waitRequest( requestID, result, timeout ))
         return false;
 
@@ -185,7 +185,7 @@ bool RequestHandler::waitRequest( const uint32_t requestID, uint128_t& rUint128,
 bool RequestHandler::waitRequest( const uint32_t requestID, bool& rBool,
                                   const uint32_t timeout )
 {
-    Request::Result result;
+    Record::Result result;
     if( !_impl->waitRequest( requestID, result, timeout ))
         return false;
 
@@ -194,14 +194,14 @@ bool RequestHandler::waitRequest( const uint32_t requestID, bool& rBool,
 }
 bool RequestHandler::waitRequest( const uint32_t requestID )
 {
-    Request::Result result;
+    Record::Result result;
     return _impl->waitRequest( requestID, result, LB_TIMEOUT_INDEFINITE );
 }
 
 void* RequestHandler::getRequestData( const uint32_t requestID )
 {
     ScopedFastWrite mutex( _impl->lock );
-    RequestHashCIter i = _impl->requests.find( requestID );
+    RecordHashCIter i = _impl->requests.find( requestID );
     if( i == _impl->requests.end( ))
         return 0;
 
@@ -210,10 +210,10 @@ void* RequestHandler::getRequestData( const uint32_t requestID )
 
 void RequestHandler::serveRequest( const uint32_t requestID, void* result )
 {
-    Request* request = 0;
+    Record* request = 0;
     {
         ScopedFastWrite mutex( _impl->lock );
-        RequestHashCIter i = _impl->requests.find( requestID );
+        RecordHashCIter i = _impl->requests.find( requestID );
 
         if( i != _impl->requests.end( ))
             request = i->second;
@@ -227,10 +227,10 @@ void RequestHandler::serveRequest( const uint32_t requestID, void* result )
 
 void RequestHandler::serveRequest( const uint32_t requestID, uint32_t result )
 {
-    Request* request = 0;
+    Record* request = 0;
     {
         ScopedFastWrite mutex( _impl->lock );
-        RequestHashCIter i = _impl->requests.find( requestID );
+        RecordHashCIter i = _impl->requests.find( requestID );
 
         if( i != _impl->requests.end( ))
             request = i->second;
@@ -244,10 +244,10 @@ void RequestHandler::serveRequest( const uint32_t requestID, uint32_t result )
 
 void RequestHandler::serveRequest( const uint32_t requestID, bool result )
 {
-    Request* request = 0;
+    Record* request = 0;
     {
         ScopedFastWrite mutex( _impl->lock );
-        RequestHashCIter i = _impl->requests.find( requestID );
+        RecordHashCIter i = _impl->requests.find( requestID );
 
         if( i != _impl->requests.end( ))
             request = i->second;
@@ -262,10 +262,10 @@ void RequestHandler::serveRequest( const uint32_t requestID, bool result )
 void RequestHandler::serveRequest( const uint32_t requestID,
                                    const uint128_t& result )
 {
-    Request* request = 0;
+    Record* request = 0;
     {
         ScopedFastWrite mutex( _impl->lock );
-        RequestHashCIter i = _impl->requests.find( requestID );
+        RecordHashCIter i = _impl->requests.find( requestID );
 
         if( i != _impl->requests.end( ))
             request = i->second;
@@ -279,18 +279,15 @@ void RequestHandler::serveRequest( const uint32_t requestID,
     }
 }
 
-bool RequestHandler::isRequestServed( const uint32_t requestID ) const
+bool RequestHandler::isRequestReady( const uint32_t requestID ) const
 {
     ScopedFastWrite mutex( _impl->lock );
-    RequestHashCIter i = _impl->requests.find( requestID );
+    RecordHashCIter i = _impl->requests.find( requestID );
     if( i == _impl->requests.end( ))
         return false;
 
-    Request* request = i->second;
-    if( !request->lock.isSet( ))
-        return true;
-
-    return false;
+    Record* request = i->second;
+    return !request->lock.isSet();
 }
 
 bool RequestHandler::hasPendingRequests() const
@@ -301,7 +298,7 @@ bool RequestHandler::hasPendingRequests() const
 std::ostream& operator << ( std::ostream& os, const detail::RequestHandler& rh )
 {
     ScopedFastWrite mutex( rh.lock );
-    for( RequestHashCIter i = rh.requests.begin(); i != rh.requests.end(); ++i )
+    for( RecordHashCIter i = rh.requests.begin(); i != rh.requests.end(); ++i )
     {
         os << "request " << i->first << " served " << i->second->lock.isSet()
            << std::endl;

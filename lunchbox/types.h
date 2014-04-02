@@ -240,7 +240,7 @@ template< class > class Atomic;
 template< class > class Buffer;
 template< class > class Future;
 template< class > class Monitor;
-template< class > class RequestFuture;
+template< class > class Request;
 template< class, class > class LFVectorIterator;
 template< class, class > class Lockable;
 template< class, class > class PluginVisitorT;

@@ -78,7 +78,7 @@ int main( int, char** )
     TEST( handler_.waitRequest( request, boolOut ));
     TEST( boolOut == true );
 
-    lunchbox::RequestFuture< uint32_t > future =
+    lunchbox::Request< uint32_t > future =
         handler_.registerRequest< uint32_t >( ++payload );
     requestQ_.push( future.getID( ));
 
@@ -86,9 +86,9 @@ int main( int, char** )
     requestQ_.push( request );
     TEST( handler_.waitRequest( request ));
 
-    lunchbox::RequestFuture< void > voidFuture =
+    lunchbox::Request< void > voidFuture =
         handler_.registerRequest< void >( ++payload );
-    lunchbox::RequestFuture< uint128_t > uint128Future =
+    lunchbox::Request< uint128_t > uint128Future =
         handler_.registerRequest< uint128_t >( ++payload );
 
     requestQ_.push( voidFuture.getID( ));

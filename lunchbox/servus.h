@@ -122,7 +122,8 @@ public:
      * Discover all announced key/value pairs.
      *
      * @param addr the scope of the discovery
-     * @param browseTime the browse time, in millisecond, for discovery.
+     * @param browseTime the browse time, in milliseconds, to wait for new
+     *                   records.
      * @return all instance names found during discovery.
      * @version 0.9
      */

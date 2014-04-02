@@ -46,7 +46,7 @@ public:
 protected:
     virtual ~FutureFunction() { wait(); }
 
-    virtual T wait() final
+    T wait() final
     {
         if( !func_.empty( ))
         {

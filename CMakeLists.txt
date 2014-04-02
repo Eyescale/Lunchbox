@@ -13,11 +13,8 @@ if(BUILDYARD_STOP)
   return()
 endif()
 
-option(LUNCHBOX_USE_OPENMP "Test for OpenMP support" ON)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
-option(LUNCHBOX_FORCE_OPENMP "Force usage of buggy OpenMP implementation" OFF)
-mark_as_advanced(LUNCHBOX_FORCE_OPENMP)
 
 set(RELEASE_VERSION OFF) # OFF or ABI version
 set(LAST_RELEASE 1.8.0) # tarball, MacPorts, ...

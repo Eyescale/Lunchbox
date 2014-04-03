@@ -21,6 +21,11 @@
 #include <lunchbox/refPtr.h>      // used inline
 #include <lunchbox/referenced.h>  // base class
 
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_same.hpp>
+
+#include <stdexcept>
+
 namespace lunchbox
 {
 
@@ -36,9 +41,12 @@ public:
      * Wait for the promise to be fullfilled.
      *
      * May be called multiple times.
-     *
-     * @version 1.9.1 */
-    virtual T wait() = 0;
+     * @param timeout optional timeout in milliseconds. If the future is
+     *                not ready when the timer goes off a timeout exception
+     *                is thrown.
+     * @version 1.9.1
+     */
+    virtual T wait( const uint32_t timeout = LB_TIMEOUT_INDEFINITE ) = 0;
 
     /**
      * @return true if the future has been fulfilled, false if it is pending.
@@ -50,6 +58,14 @@ public:
 /** A future represents a asynchronous operation. Do not subclass. */
 template< class T > class Future
 {
+public:
+    class timeout : public std::runtime_error
+    {
+    public:
+        timeout() : std::runtime_error("") {}
+    };
+
+private:
     typedef void (Future< T >::*bool_t)() const;
     void bool_true() const {}
 
@@ -62,8 +78,18 @@ public:
     /** Destruct the future. @version 1.9.1 */
      ~Future(){}
 
-    /** Wait for the promise to be fullfilled. @version 1.9.1 */
-    T wait() { return impl_->wait(); }
+    /**
+     * Wait for the promise to be fullfilled.
+     *
+     * @param timeout_ optional timeout in milliseconds. If the future is
+     *                 not ready when the timer goes off a timeout exception
+     *                 is thrown.
+     * @version 1.9.1
+     */
+    T wait( const uint32_t timeout_ = LB_TIMEOUT_INDEFINITE )
+    {
+        return impl_->wait( timeout_ );
+    }
 
     /**
      * @return true if the future has been fulfilled, false if it is pending.
@@ -97,6 +123,52 @@ public:
     /** @return true if the result is bigger or equal. @version 1.9.1 */
     bool operator >= ( const T& rhs ) { return wait() >= rhs; }
     //@}
+
+protected:
+    Impl impl_;
+};
+
+/** Future template specialiaztion for void */
+template<> class Future< void >
+{
+public:
+    class timeout : public std::runtime_error
+    {
+    public:
+        timeout() : std::runtime_error("") {}
+    };
+
+private:
+    typedef void (Future< void >::*bool_t)() const;
+    void bool_true() const {}
+
+public:
+    typedef RefPtr< FutureImpl< void > > Impl; //!< The wait implementation
+
+    /** Construct a new future. @version 1.9.1 */
+    explicit Future( Impl impl ) : impl_( impl ){}
+
+    /** Destruct the future. @version 1.9.1 */
+     ~Future(){}
+
+    /**
+     * Wait for the promise to be fullfilled.
+     *
+     * @param timeout_ optional timeout in milliseconds. If the future is
+     *                 not ready when the timer goes off a timeout exception
+     *                 is thrown.
+     * @version 1.9.1
+     */
+    void wait( const uint32_t timeout_ = LB_TIMEOUT_INDEFINITE )
+    {
+        impl_->wait( timeout_ );
+    }
+
+    /**
+     * @return true if the future has been fulfilled, false if it is pending.
+     * @version 1.9.1
+     */
+    bool isReady() const { return impl_->isReady(); }
 
 protected:
     Impl impl_;

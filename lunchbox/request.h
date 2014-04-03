@@ -30,9 +30,9 @@ namespace lunchbox
  * A Future implementation for a RequestHandler request.
  * @version 1.9.1
  */
-template< class T > class Request : public Future< bool >
+template< class T > class Request : public Future< T >
 {
-    class Impl : public FutureImpl< bool >
+    class Impl : public FutureImpl< T >
     {
         typedef typename boost::mpl::if_< boost::is_same< T, void >,
                                           void*, T >::type value_t;
@@ -42,37 +42,34 @@ template< class T > class Request : public Future< bool >
             , result( 0 )
             , handler_( handler )
             , done_( false )
-            , success_( false )
         {}
-        virtual ~Impl() { wait(); }
+        virtual ~Impl() {}
 
         const uint32_t request;
         value_t result;
 
     protected:
-        bool wait() final;
+        T wait( const uint32_t timeout ) final;
         bool isReady() const final;
 
     private:
         RequestHandler& handler_;
-        bool done_; //!< waitRequest called
-        bool success_; //!< waitRequest return value
+        bool done_; //!< waitRequest finished
     };
 
 public:
     Request( RequestHandler& handler, const uint32_t request )
-        : Future< bool >( new Impl( handler, request ))
+        : Future< T >( new Impl( handler, request ))
     {}
 
     virtual ~Request() { wait(); }
 
     uint32_t getID() const
-        { return static_cast< const Impl* >( impl_.get( ))->request; }
+        { return static_cast< const Impl* >( this->impl_.get( ))->request; }
 
-    T get()
+    T get( boost::enable_if< boost::is_same< T, void > >* = 0)
     {
-        LBCHECK( wait( ));
-        return static_cast< Impl* >( impl_.get( ))->result;
+        return this->wait();
     }
 };
 
@@ -81,14 +78,27 @@ public:
 #include <lunchbox/requestHandler.h>
 namespace lunchbox
 {
-template< class T > inline bool Request< T >::Impl::wait()
+template< class T > inline T Request< T >::Impl::wait(
+    const uint32_t timeout )
 {
     if( !done_ )
     {
-        success_ = handler_.waitRequest( request, result );
+        if ( !handler_.waitRequest( request, result, timeout ))
+            throw typename Future< T >::timeout();
         done_ = true;
     }
-    return success_;
+    return result;
+}
+
+template<> inline void Request< void >::Impl::wait(
+    const uint32_t timeout )
+{
+    if( !done_ )
+    {
+        if ( !handler_.waitRequest( request, result, timeout ))
+            throw typename Future< void >::timeout();
+        done_ = true;
+    }
 }
 
 template< class T > inline bool Request< T >::Impl::isReady() const

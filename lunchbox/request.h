@@ -91,7 +91,7 @@ public:
     uint32_t getID() const
         { return static_cast< const Impl* >( this->impl_.get( ))->request; }
 
-    T get( boost::enable_if< boost::is_same< T, void > >* = 0 )
+    T get()
     {
         return this->wait();
     }

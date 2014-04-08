@@ -154,7 +154,6 @@ uint32_t Compressor::choose( const PluginRegistry& registry,
 
 bool Compressor::setup( PluginRegistry& registry, const uint32_t name )
 {
-    LB_TS_THREAD( _thread );
     return impl_->setup( registry, name );
 }
 

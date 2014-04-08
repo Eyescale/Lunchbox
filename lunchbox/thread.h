@@ -227,7 +227,7 @@ private:
                     << lunchbox::Thread::getSelfThreadID() << " ("      \
                     << lunchbox::Log::instance().getThreadName() << ") != " \
                     << NAME.id << " (" << NAME.name << ")" << std::endl; \
-            LBABORT( "Non-threadsave code called from two threads" );   \
+            LBABORT( "Non-threadsafe code called from two threads" );   \
         }                                                               \
     }
 

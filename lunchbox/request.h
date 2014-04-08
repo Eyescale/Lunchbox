@@ -85,7 +85,7 @@ public:
     virtual ~Request()
     {
         if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
-            wait();
+            this->wait();
     }
 
     uint32_t getID() const
@@ -125,8 +125,7 @@ template< class T > inline T Request< T >::Impl::wait(
     return result;
 }
 
-template<> inline void Request< void >::Impl::wait(
-    const uint32_t timeout )
+template<> inline void Request< void >::Impl::wait( const uint32_t timeout )
 {
     if( !done_ )
     {

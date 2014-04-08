@@ -42,11 +42,22 @@ template< class T > class Request : public Future< T >
             , result( 0 )
             , handler_( handler )
             , done_( false )
+            , relinquished_( false )
         {}
         virtual ~Impl() {}
 
         const uint32_t request;
         value_t result;
+
+        void relinquish()
+        {
+            relinquished_ = true;
+        }
+
+        bool isRelinquished() const
+        {
+            return relinquished_;
+        }
 
     protected:
         T wait( const uint32_t timeout ) final;
@@ -55,21 +66,42 @@ template< class T > class Request : public Future< T >
     private:
         RequestHandler& handler_;
         bool done_; //!< waitRequest finished
+        bool relinquished_;
     };
 
 public:
+    /** Exception throw by operations that invoke wait once the request has
+        been relinquished */
+    class relinquished : public std::runtime_error
+    {
+    public:
+        relinquished() : std::runtime_error("") {}
+    };
+
     Request( RequestHandler& handler, const uint32_t request )
         : Future< T >( new Impl( handler, request ))
     {}
 
-    virtual ~Request() { wait(); }
+    virtual ~Request()
+    {
+        if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
+            wait();
+    }
 
     uint32_t getID() const
         { return static_cast< const Impl* >( this->impl_.get( ))->request; }
 
-    T get( boost::enable_if< boost::is_same< T, void > >* = 0)
+    T get( boost::enable_if< boost::is_same< T, void > >* = 0 )
     {
         return this->wait();
+    }
+
+    /** If called, wait will not be called at destruction and get will throw
+        an the relinquished exception. If the future has already been
+        resolved this function has no effect. */
+    void relinquish()
+    {
+        static_cast< Impl* >( this->impl_.get( ))->relinquish();
     }
 };
 
@@ -83,6 +115,9 @@ template< class T > inline T Request< T >::Impl::wait(
 {
     if( !done_ )
     {
+        if( relinquished_ )
+            throw relinquished();
+
         if ( !handler_.waitRequest( request, result, timeout ))
             throw typename Future< T >::timeout();
         done_ = true;
@@ -95,6 +130,9 @@ template<> inline void Request< void >::Impl::wait(
 {
     if( !done_ )
     {
+        if( relinquished_ )
+            throw relinquished();
+
         if ( !handler_.waitRequest( request, result, timeout ))
             throw typename Future< void >::timeout();
         done_ = true;
@@ -103,7 +141,7 @@ template<> inline void Request< void >::Impl::wait(
 
 template< class T > inline bool Request< T >::Impl::isReady() const
 {
-    return done_ || handler_.isRequestReady( request );
+    return done_ || ( !relinquished_ && handler_.isRequestReady( request ));
 }
 
 }

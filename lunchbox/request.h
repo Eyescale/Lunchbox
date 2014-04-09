@@ -19,7 +19,6 @@
 #define LUNCHBOX_REQUEST_H
 
 #include <lunchbox/future.h>
-#include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
 
@@ -30,9 +29,9 @@ namespace lunchbox
  * A Future implementation for a RequestHandler request.
  * @version 1.9.1
  */
-template< class T > class Request : public Future< bool >
+template< class T > class Request : public Future< T >
 {
-    class Impl : public FutureImpl< bool >
+    class Impl : public FutureImpl< T >
     {
         typedef typename boost::mpl::if_< boost::is_same< T, void >,
                                           void*, T >::type value_t;
@@ -42,38 +41,54 @@ template< class T > class Request : public Future< bool >
             , result( 0 )
             , handler_( handler )
             , done_( false )
-            , success_( false )
+            , relinquished_( false )
         {}
-        virtual ~Impl() { wait(); }
+        virtual ~Impl() {}
 
         const uint32_t request;
         value_t result;
 
+        void relinquish() { relinquished_ = true; }
+        bool isRelinquished() const { return relinquished_; }
+
     protected:
-        bool wait() final;
+        T wait( const uint32_t timeout ) final;
         bool isReady() const final;
 
     private:
         RequestHandler& handler_;
-        bool done_; //!< waitRequest called
-        bool success_; //!< waitRequest return value
+        bool done_; //!< waitRequest finished
+        bool relinquished_;
     };
 
 public:
     Request( RequestHandler& handler, const uint32_t request )
-        : Future< bool >( new Impl( handler, request ))
+        : Future< T >( new Impl( handler, request ))
     {}
 
-    virtual ~Request() { wait(); }
-
-    uint32_t getID() const
-        { return static_cast< const Impl* >( impl_.get( ))->request; }
-
-    T get()
+    /**
+     * Destruct and wait for completion of the request, unless relinquished.
+     * @version 1.9.1
+     */
+    virtual ~Request()
     {
-        LBCHECK( wait( ));
-        return static_cast< Impl* >( impl_.get( ))->result;
+        if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
+            this->wait();
     }
+
+    /** @return the identifier of the request. @version 1.9.1 */
+    uint32_t getID() const
+        { return static_cast< const Impl* >( this->impl_.get( ))->request; }
+
+    /**
+     * Abandon the request.
+     *
+     * If called, wait will not be called at destruction and wait() will throw.
+     * If the future has already been resolved this function has no effect.
+     * @version 1.9.1
+     */
+    void relinquish()
+        { static_cast< Impl* >( this->impl_.get( ))->relinquish(); }
 };
 
 }
@@ -81,19 +96,37 @@ public:
 #include <lunchbox/requestHandler.h>
 namespace lunchbox
 {
-template< class T > inline bool Request< T >::Impl::wait()
+template< class T > inline T Request< T >::Impl::wait(
+    const uint32_t timeout )
 {
     if( !done_ )
     {
-        success_ = handler_.waitRequest( request, result );
+        if( relinquished_ )
+            LBUNREACHABLE;
+
+        if ( !handler_.waitRequest( request, result, timeout ))
+            throw FutureTimeout();
         done_ = true;
     }
-    return success_;
+    return result;
+}
+
+template<> inline void Request< void >::Impl::wait( const uint32_t timeout )
+{
+    if( !done_ )
+    {
+        if( relinquished_ )
+            LBUNREACHABLE;
+
+        if ( !handler_.waitRequest( request, result, timeout ))
+            throw FutureTimeout();
+        done_ = true;
+    }
 }
 
 template< class T > inline bool Request< T >::Impl::isReady() const
 {
-    return done_ || handler_.isRequestReady( request );
+    return done_ || ( !relinquished_ && handler_.isRequestReady( request ));
 }
 
 }

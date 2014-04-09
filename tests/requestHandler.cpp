@@ -94,9 +94,9 @@ int main( int, char** )
     requestQ_.push( voidFuture.getID( ));
     requestQ_.push( uint128Future.getID( ));
 
-    TEST( future.get() == 0xC0FFEE );
+    TEST( future.wait( ) == 0xC0FFEE );
     TEST( future.wait( ));
-    TEST( uint128Future.get() == uuid );
+    TEST( uint128Future.wait() == uuid );
     TEST( handler_.isRequestServed( voidFuture.getID( )));
 
     TEST( thread.join( ));

@@ -49,15 +49,8 @@ template< class T > class Request : public Future< T >
         const uint32_t request;
         value_t result;
 
-        void relinquish()
-        {
-            relinquished_ = true;
-        }
-
-        bool isRelinquished() const
-        {
-            return relinquished_;
-        }
+        void relinquish() { relinquished_ = true; }
+        bool isRelinquished() const { return relinquished_; }
 
     protected:
         T wait( const uint32_t timeout ) final;
@@ -70,39 +63,45 @@ template< class T > class Request : public Future< T >
     };
 
 public:
-    /** Exception throw by operations that invoke wait once the request has
-        been relinquished */
+    /**
+     * Exception thrown by wait() if the request has been relinquished.
+     * @version 1.9.1
+     */
     class relinquished : public std::runtime_error
     {
     public:
         relinquished() : std::runtime_error("") {}
     };
 
+    /** @internal */
     Request( RequestHandler& handler, const uint32_t request )
         : Future< T >( new Impl( handler, request ))
     {}
 
+    /**
+     * Destruct and wait for completion of the request, unless relinquished.
+     * @version 1.9.1
+     */
     virtual ~Request()
     {
-        if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
+        if( !static_cast< const Impl* >( impl_.get( ))->isRelinquished( ))
             this->wait();
     }
 
+    /** @return the identifier of the request. @version 1.9.1 */
     uint32_t getID() const
-        { return static_cast< const Impl* >( this->impl_.get( ))->request; }
+        { return static_cast< const Impl* >( impl_.get( ))->request; }
 
-    T get()
-    {
-        return this->wait();
-    }
-
-    /** If called, wait will not be called at destruction and get will throw
-        an the relinquished exception. If the future has already been
-        resolved this function has no effect. */
+    /**
+     * Abandon the request.
+     *
+     * If called, wait will not be called at destruction and wait() will throw
+     * the relinquished exception. If the future has already been resolved this
+     * function has no effect.
+     * @version 1.9.1
+     */
     void relinquish()
-    {
-        static_cast< Impl* >( this->impl_.get( ))->relinquish();
-    }
+        { static_cast< Impl* >( impl_.get( ))->relinquish(); }
 };
 
 }

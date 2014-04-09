@@ -125,7 +125,7 @@ protected:
     Impl impl_;
 };
 
-/** Future template specialiaztion for void */
+/** Future template specialization for void */
 template<> class Future< void >
 {
 public:

@@ -27,11 +27,7 @@ namespace lunchbox
 {
 namespace detail { class Clock; }
 
-/**
- * A class for time measurements.
- *
- * @deprecated Use Boost.Chrono
- */
+/** A class for time measurements. */
 class Clock
 {
 public :
@@ -94,6 +90,6 @@ public :
 
 private:
     detail::Clock* const _impl;
-};// LB_DEPRECATED;
+};
 }
 #endif  // LUNCHBOX_CLOCK_H

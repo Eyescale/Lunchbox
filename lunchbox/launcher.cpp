@@ -98,7 +98,7 @@ bool Launcher::run( const std::string& command )
 
     // child
     const size_t  argc         = commandLine.size();
-    char*         argv[argc+1];
+    std::vector<char*> argv( argc + 1 );
     std::ostringstream stringStream;
 
     for( size_t i=0; i<argc; i++ )
@@ -114,7 +114,7 @@ bool Launcher::run( const std::string& command )
     int nTries = 10;
     while( nTries-- )
     {
-        execvp( argv[0], argv );
+        execvp( argv[0], &argv[0] );
         LBWARN << "Error executing '" << argv[0] << "': " << sysError
                << std::endl;
         if( errno != ETXTBSY )
@@ -134,7 +134,7 @@ void Launcher::_buildCommandLine( const std::string& command,
     const char*  string    = command.c_str();
     bool         inTicks   = false;
     size_t       bufferPos = 0;
-    char         buffer[length+1];
+    std::vector<char> buffer( length + 1 );
 
     commandLine.clear();
 
@@ -150,7 +150,7 @@ void Launcher::_buildCommandLine( const std::string& command,
                 else
                 {
                     buffer[bufferPos] = '\0';
-                    commandLine.push_back( buffer );
+                    commandLine.push_back( &buffer[0] );
                     bufferPos = 0;
                 }
                 break;
@@ -173,7 +173,7 @@ void Launcher::_buildCommandLine( const std::string& command,
     if( bufferPos > 0 )
     {
         buffer[bufferPos++] = '\0';
-        commandLine.push_back( buffer );
+        commandLine.push_back( &buffer[0] );
     }
 }
 #endif

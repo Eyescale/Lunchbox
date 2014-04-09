@@ -26,6 +26,12 @@
 namespace lunchbox
 {
 
+class FutureTimeout : public std::runtime_error
+{
+public:
+    FutureTimeout() : std::runtime_error("") {}
+};
+
 /** Base class to implement the wait method fulfilling the future. */
 template< class T >
 class FutureImpl : public Referenced, public boost::noncopyable
@@ -55,13 +61,6 @@ public:
 /** A future represents a asynchronous operation. Do not subclass. */
 template< class T > class Future
 {
-public:
-    class timeout : public std::runtime_error
-    {
-    public:
-        timeout() : std::runtime_error("") {}
-    };
-
 private:
     typedef void (Future< T >::*bool_t)() const;
     void bool_true() const {}
@@ -128,13 +127,6 @@ protected:
 /** Future template specialization for void */
 template<> class Future< void >
 {
-public:
-    class timeout : public std::runtime_error
-    {
-    public:
-        timeout() : std::runtime_error("") {}
-    };
-
 private:
     typedef void (Future< void >::*bool_t)() const;
     void bool_true() const {}

@@ -19,7 +19,6 @@
 #define LUNCHBOX_REQUEST_H
 
 #include <lunchbox/future.h>
-#include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
 
@@ -63,17 +62,6 @@ template< class T > class Request : public Future< T >
     };
 
 public:
-    /**
-     * Exception thrown by wait() if the request has been relinquished.
-     * @version 1.9.1
-     */
-    class relinquished : public std::runtime_error
-    {
-    public:
-        relinquished() : std::runtime_error("") {}
-    };
-
-    /** @internal */
     Request( RequestHandler& handler, const uint32_t request )
         : Future< T >( new Impl( handler, request ))
     {}
@@ -84,24 +72,23 @@ public:
      */
     virtual ~Request()
     {
-        if( !static_cast< const Impl* >( impl_.get( ))->isRelinquished( ))
+        if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
             this->wait();
     }
 
     /** @return the identifier of the request. @version 1.9.1 */
     uint32_t getID() const
-        { return static_cast< const Impl* >( impl_.get( ))->request; }
+        { return static_cast< const Impl* >( this->impl_.get( ))->request; }
 
     /**
      * Abandon the request.
      *
-     * If called, wait will not be called at destruction and wait() will throw
-     * the relinquished exception. If the future has already been resolved this
-     * function has no effect.
+     * If called, wait will not be called at destruction and wait() will throw.
+     * If the future has already been resolved this function has no effect.
      * @version 1.9.1
      */
     void relinquish()
-        { static_cast< Impl* >( impl_.get( ))->relinquish(); }
+        { static_cast< Impl* >( this->impl_.get( ))->relinquish(); }
 };
 
 }
@@ -115,10 +102,10 @@ template< class T > inline T Request< T >::Impl::wait(
     if( !done_ )
     {
         if( relinquished_ )
-            throw relinquished();
+            LBUNREACHABLE;
 
         if ( !handler_.waitRequest( request, result, timeout ))
-            throw typename Future< T >::timeout();
+            throw FutureTimeout();
         done_ = true;
     }
     return result;
@@ -129,10 +116,10 @@ template<> inline void Request< void >::Impl::wait( const uint32_t timeout )
     if( !done_ )
     {
         if( relinquished_ )
-            throw relinquished();
+            LBUNREACHABLE;
 
         if ( !handler_.waitRequest( request, result, timeout ))
-            throw typename Future< void >::timeout();
+            throw FutureTimeout();
         done_ = true;
     }
 }

@@ -27,7 +27,7 @@ namespace lunchbox
 class FutureTrue : public FutureImpl< bool >
 {
 protected:
-    bool wait( uint32_t ) final { return true; }
+    bool wait( const uint32_t ) final { return true; }
     bool isReady() const final { return true; }
 };
 
@@ -46,7 +46,7 @@ public:
 protected:
     virtual ~FutureFunction() { wait( 0 ); }
 
-    T wait( uint32_t ) final
+    T wait( const uint32_t ) final
     {
         if( !func_.empty( ))
         {

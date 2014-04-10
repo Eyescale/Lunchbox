@@ -1,6 +1,6 @@
 
 
-set(LUNCHBOX_PACKAGE_VERSION 1.9.0)
+set(LUNCHBOX_PACKAGE_VERSION 1.9)
 set(LUNCHBOX_REPO_URL https://github.com/Eyescale/Lunchbox.git)
 set(LUNCHBOX_REPO_TAG master)
 set(LUNCHBOX_DEPENDS eyescale eyescalePorts hwloc DNSSD LibJpegTurbo OpenMP

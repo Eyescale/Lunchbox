@@ -117,8 +117,21 @@
 #ifndef LB_UNUSED
 #  define LB_UNUSED
 #endif
-#ifndef LB_DEPRECATED
+
+#ifdef LB_DEPRECATED
+#  define LB_PUSH_DEPRECATED                                          \
+    _Pragma("clang diagnostic push")                                  \
+    _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"") \
+    _Pragma("GCC diagnostic push")                                    \
+    _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+
+#  define LB_POP_DEPRECATED                                         \
+    _Pragma("clang diagnostic pop")                                 \
+    _Pragma("GCC diagnostic pop")
+#else
 #  define LB_DEPRECATED
+#  define LB_PUSH_DEPRECATED
+#  define LB_POP_DEPRECATED
 #endif
 
 #ifdef __GNUC__

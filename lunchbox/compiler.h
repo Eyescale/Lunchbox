@@ -120,6 +120,15 @@
 #ifndef LB_DEPRECATED
 #  define LB_DEPRECATED
 #endif
+#define LB_PUSH_DEPRECATED                                            \
+    _Pragma("clang diagnostic push")                                  \
+    _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"") \
+    _Pragma("GCC diagnostic push")                                    \
+    _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+
+#define LB_POP_DEPRECATED                                           \
+    _Pragma("clang diagnostic pop")                                 \
+    _Pragma("GCC diagnostic pop")
 
 #ifdef __GNUC__
 #  define LB_LIKELY(x)       __builtin_expect( (x), 1 )

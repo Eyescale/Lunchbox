@@ -99,7 +99,7 @@ public:
     bool isUUID() const { return high() != 0; }
 
     /** Assign another 128 bit value. @version 1.0 */
-    uint128_t& operator = ( const uint128_t& rhs )
+    uint128_t& operator = ( const lunchbox::uint128_t& rhs )
         {
             _high = rhs._high;
             _low = rhs._low;
@@ -129,14 +129,14 @@ public:
      * @return true if the values are equal, false if not.
      * @version 1.0
      **/
-    bool operator == ( const uint128_t& rhs ) const
+    bool operator == ( const lunchbox::uint128_t& rhs ) const
         { return _high == rhs._high && _low == rhs._low; }
 
     /**
      * @return true if the values are different, false otherwise.
      * @version 1.0
      **/
-    bool operator != ( const uint128_t& rhs ) const
+    bool operator != ( const lunchbox::uint128_t& rhs ) const
         { return _high != rhs._high || _low != rhs._low; }
 
     /**
@@ -157,7 +157,7 @@ public:
      * @return true if this value is smaller than the RHS value.
      * @version 1.0
      **/
-    bool operator < ( const uint128_t& rhs ) const
+    bool operator < ( const lunchbox::uint128_t& rhs ) const
         {
             if( _high < rhs._high )
                 return true;
@@ -170,7 +170,7 @@ public:
      * @return true if this value is bigger than the rhs value.
      * @version 1.0
      */
-    bool operator > ( const uint128_t& rhs ) const
+    bool operator > ( const lunchbox::uint128_t& rhs ) const
         {
             if( _high > rhs._high )
                 return true;
@@ -184,7 +184,7 @@ public:
      *         RHS value.
      * @version 1.0
      */
-    bool operator <= ( const uint128_t& rhs ) const
+    bool operator <= ( const lunchbox::uint128_t& rhs ) const
         {
             if( _high < rhs._high )
                 return true;
@@ -198,7 +198,7 @@ public:
      *         RHS value.
      * @version 1.0
      */
-    bool operator >= ( const uint128_t& rhs ) const
+    bool operator >= ( const lunchbox::uint128_t& rhs ) const
         {
             if( _high > rhs._high )
                 return true;
@@ -227,7 +227,7 @@ public:
         }
 
     /** Add value and return the new value. @version 1.5.1 */
-    uint128_t& operator +=( const uint128_t& rhs )
+    uint128_t& operator +=( const lunchbox::uint128_t& rhs )
         {
             const uint64_t oldLow = _low;
             _low += rhs._low;
@@ -309,7 +309,7 @@ inline std::istream& operator >> ( std::istream& is, uint128_t& id )
 }
 
 /** Add a 64 bit value to a 128 bit value. @version 1.0 */
-inline uint128_t operator+ ( const uint128_t& a, const uint64_t& b )
+inline uint128_t operator+ ( const lunchbox::uint128_t& a, const uint64_t& b )
 {
     uint128_t result = a;
     result.low() += b;
@@ -319,7 +319,8 @@ inline uint128_t operator+ ( const uint128_t& a, const uint64_t& b )
 }
 
 /** Add two 128 bit values. @version 1.5.1 */
-inline uint128_t operator+ ( const uint128_t& a, const uint128_t& b )
+inline uint128_t operator+ ( const lunchbox::uint128_t& a,
+                             const lunchbox::uint128_t& b )
 {
     uint128_t result = a;
     result += b;
@@ -327,7 +328,7 @@ inline uint128_t operator+ ( const uint128_t& a, const uint128_t& b )
 }
 
 /** Subtract a 64 bit value from a 128 bit value. @version 1.0 */
-inline uint128_t operator- ( const uint128_t& a, const uint64_t& b )
+inline uint128_t operator- ( const lunchbox::uint128_t& a, const uint64_t& b )
 {
     uint128_t result = a;
     result.low() -= b;
@@ -337,7 +338,8 @@ inline uint128_t operator- ( const uint128_t& a, const uint64_t& b )
 }
 
 /** Bitwise and operation on two 128 bit values. @version 1.1.5 */
-inline uint128_t operator & ( const uint128_t& a, const uint128_t& b )
+inline uint128_t operator & ( const lunchbox::uint128_t& a,
+                              const lunchbox::uint128_t& b )
 {
     uint128_t result = a;
     result.high() &= b.high();
@@ -346,7 +348,8 @@ inline uint128_t operator & ( const uint128_t& a, const uint128_t& b )
 }
 
 /** Bitwise or operation on two 128 bit values. @version 1.1.5 */
-inline uint128_t operator | ( const uint128_t& a, const uint128_t& b )
+inline uint128_t operator | ( const lunchbox::uint128_t& a,
+                              const lunchbox::uint128_t& b )
 {
     uint128_t result = a;
     result.high() |= b.high();

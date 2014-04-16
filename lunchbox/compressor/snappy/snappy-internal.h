@@ -38,6 +38,7 @@ namespace internal {
 
 class WorkingMemory {
  public:
+  // cppcheck-suppress uninitMemberVar
   WorkingMemory() : large_table_(NULL) { }
   ~WorkingMemory() { delete[] large_table_; }
 

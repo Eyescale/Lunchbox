@@ -24,7 +24,7 @@ namespace lunchbox
 {
 
 /** Thread-specific storage for a RefPtr. */
-template< typename T > class PerThreadRef : public NonCopyable
+template< typename T > class PerThreadRef : public boost::noncopyable
 {
 public:
     /** Construct a new per-thread RefPtr. @version 1.0 */

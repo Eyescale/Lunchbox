@@ -59,8 +59,8 @@ MPI::MPI( const int argc, const char ** argv )
     , _supportedThreads( false )
     , _init( false )
 {
-	int threadSupportProvided = -1;
-	if( MPI_SUCCESS != MPI_Init_thread( (int*) &argc, (char ***) &argv,
+    int threadSupportProvided = -1;
+    if( MPI_SUCCESS != MPI_Init_thread( (int*) &argc, (char ***) &argv,
                                             MPI_THREAD_MULTIPLE,
                                             &threadSupportProvided ) )
     {
@@ -73,21 +73,21 @@ MPI::MPI( const int argc, const char ** argv )
     switch( threadSupportProvided )
     {
     case MPI_THREAD_SINGLE:
-		LBINFO << "MPI_THREAD_SINGLE thread support" << std::endl;
+        LBINFO << "MPI_THREAD_SINGLE thread support" << std::endl;
         break;
-	case MPI_THREAD_FUNNELED:
-		LBINFO << "MPI_THREAD_FUNNELED thread support" << std::endl;
+    case MPI_THREAD_FUNNELED:
+        LBINFO << "MPI_THREAD_FUNNELED thread support" << std::endl;
         break;
     case MPI_THREAD_SERIALIZED:
-		LBINFO << "MPI_THREAD_SERIALIZED thread support" << std::endl;
+        LBINFO << "MPI_THREAD_SERIALIZED thread support" << std::endl;
         _supportedThreads = true;
         break;
     case MPI_THREAD_MULTIPLE:
-		LBINFO << "MPI_THREAD_MULTIPLE thread support" << std::endl;
+        LBINFO << "MPI_THREAD_MULTIPLE thread support" << std::endl;
         _supportedThreads = true;
         break;
     default:
-		LBERROR << "Unknown MPI thread support" << std::endl;
+        LBERROR << "Unknown MPI thread support" << std::endl;
     }
 
     if( MPI_SUCCESS != MPI_Comm_rank( MPI_COMM_WORLD, &_rank ) )

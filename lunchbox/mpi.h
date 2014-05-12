@@ -24,7 +24,7 @@
 
 namespace lunchbox 
 {
-	/* MPI library threading support is set by default to MPI_THREAD_SINGLE.
+    /* MPI library threading support is set by default to MPI_THREAD_SINGLE.
        Lunchbox is a multithreaded library, so, the required level of thread
        support should be MPI_THREAD_SERIALIZED at least.
 

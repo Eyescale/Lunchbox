@@ -15,10 +15,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <lunchbox/log.h>
-#include <lunchbox/debug.h>
+#include <lunchbox/mpi.h>
 
-#include "mpi.h"
+#include <lunchbox/debug.h>
+#include <lunchbox/log.h>
 
 namespace lunchbox
 {

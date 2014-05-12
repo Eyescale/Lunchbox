@@ -18,6 +18,8 @@
 #ifndef LUNCHBOX_MPI_H
 #define LUNCHBOX_MPI_H
 
+#include <lunchbox/api.h>
+
 #ifdef LUNCHBOX_USE_MPI
 #  include <mpi.h>
 #endif

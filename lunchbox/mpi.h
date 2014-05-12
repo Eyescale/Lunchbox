@@ -59,10 +59,10 @@ namespace lunchbox
              */
             LUNCHBOX_API bool supportsThreads() const;
 
-            /** @return the rank of the process that calls it @version 1.1.1 */
+            /** @return the rank of the process that calls it @version 1.9 */
             LUNCHBOX_API int getRank() const;
 
-            /** @return the number of processes involved @ version 1.1.1 */
+            /** @return the number of processes involved @version 1.9 */
             LUNCHBOX_API int getSize() const;
 
             /** @return the instance of MPI class. */

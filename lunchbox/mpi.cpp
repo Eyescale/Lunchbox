@@ -70,7 +70,7 @@ MPI::MPI( const int argc, const char ** argv )
 
     _init = true;
 
-	switch( threadSupportProvided )
+    switch( threadSupportProvided )
     {
     case MPI_THREAD_SINGLE:
 		LBINFO << "MPI_THREAD_SINGLE thread support" << std::endl;
@@ -88,7 +88,7 @@ MPI::MPI( const int argc, const char ** argv )
         break;
     default:
 		LBERROR << "Unknown MPI thread support" << std::endl;
-	}
+    }
 
     if( MPI_SUCCESS != MPI_Comm_rank( MPI_COMM_WORLD, &_rank ) )
     {

@@ -44,6 +44,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   lockable.h
   log.h
   memoryMap.h
+  mpi.h
   monitor.h
   mtQueue.h
   mtQueue.ipp
@@ -142,6 +143,7 @@ set(LUNCHBOX_SOURCES
   lock.cpp
   log.cpp
   memoryMap.cpp
+  mpi.cpp
   omp.cpp
   plugin.cpp
   pluginInstance.h

@@ -20,8 +20,13 @@
 
 #include <lunchbox/api.h>
 
+/* Prevent accidental inclusion of mpi c++
+ * headers when lunchbox/mpi.h is included.
+ */
 #ifdef LUNCHBOX_USE_MPI
-#  include <mpi.h>
+#  define OMPI_SKIP_MPICXX 
+#  include <mpi.h> 
+#  undef OMPI_SKIP_MPICXX 
 #endif
 
 namespace lunchbox

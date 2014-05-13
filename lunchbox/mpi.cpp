@@ -1,5 +1,6 @@
 
 /* Copyright (c) 2014, Carlos Duelo <cduelo@cesvima.upm.es>
+ *                     Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -15,132 +16,122 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "mpi.h"
+
 #include <lunchbox/log.h>
 #include <lunchbox/debug.h>
 
-#include "mpi.h"
+#ifdef LUNCHBOX_USE_MPI
+#  include <mpi.h>
+#endif
 
 namespace lunchbox
 {
+namespace
+{
+    bool _supportsThreads = false;
+}
 
-MPI * MPI::_instance = 0;
+namespace detail
+{
+class MPI
+{
+public:
+    MPI( int* argc LB_UNUSED, char*** argv LB_UNUSED )
+        : rank( -1 )
+        , size( -1 )
+        , initCalled( false )
+    {
+#ifdef LUNCHBOX_USE_MPI
+        int initialized = false;
+        MPI_Initialized( &initialized );
+        if( !initialized )
+        {
+            int threadLevel = -1;
+            if( MPI_SUCCESS != MPI_Init_thread( argc, argv,
+                                                MPI_THREAD_MULTIPLE,
+                                                &threadLevel ))
+            {
+                LBERROR << "MPI_Init_thread failed" << std::endl;
+                return;
+            }
+
+            initCalled = true;
+
+            switch( threadLevel )
+            {
+            case MPI_THREAD_SINGLE:
+                LBVERB << "MPI_THREAD_SINGLE thread support" << std::endl;
+                break;
+            case MPI_THREAD_FUNNELED:
+                LBVERB << "MPI_THREAD_FUNNELED thread support" << std::endl;
+                break;
+            case MPI_THREAD_SERIALIZED:
+                LBVERB << "MPI_THREAD_SERIALIZED thread support" << std::endl;
+                _supportsThreads = true;
+                break;
+            case MPI_THREAD_MULTIPLE:
+                LBVERB << "MPI_THREAD_MULTIPLE thread support" << std::endl;
+                _supportsThreads = true;
+                break;
+            default:
+                LBERROR << "Unknown MPI thread support" << std::endl;
+            }
+        }
+
+        if( MPI_SUCCESS != MPI_Comm_rank( MPI_COMM_WORLD, &rank ) )
+            LBERROR << "MPI_Comm_rank failed" << std::endl;
+
+        if( MPI_SUCCESS != MPI_Comm_size( MPI_COMM_WORLD, &size ) )
+            LBERROR << "MPI_Comm_size failed" << std::endl;
+#endif
+    }
+
+    ~MPI()
+    {
+#ifdef LUNCHBOX_USE_MPI
+        if( !initCalled )
+            return;
+
+        if( MPI_SUCCESS != MPI_Finalize() )
+            LBERROR << "MPI_Finalize failed" << std::endl;
+        _supportsThreads = false;
+#endif
+    }
+
+    int  rank;
+    int  size;
+    bool initCalled;
+
+};
+}
 
 MPI::MPI()
-    : _rank( -1 )
-    , _size( -1 )
-    , _supportedThreads( false )
-    , _init( false )
-{
-}
+    : _impl( new detail::MPI( 0, 0 ))
+{}
 
-#ifndef LUNCHBOX_USE_MPI
-
-/** If Lunchbox do not use MPI, set init but not support. */
-MPI::MPI( const int , const char ** )
-    : _rank( -1 )
-    , _size( -1 )
-    , _supportedThreads( false )
-    , _init( false )
-{
-
-    _init = true;
-    LBWARN << "Trying to use MPI without support." << std::endl;
-}
+MPI::MPI( int& argc, char**& argv )
+    : _impl( new detail::MPI( &argc, &argv ))
+{}
 
 MPI::~MPI()
 {
 }
 
-#else
-
-MPI::MPI( const int argc, const char ** argv )
-    : _rank( -1 )
-    , _size( -1 )
-    , _supportedThreads( false )
-    , _init( false )
-{
-    int threadSupportProvided = -1;
-    if( MPI_SUCCESS != MPI_Init_thread( (int*) &argc, (char ***) &argv,
-                                            MPI_THREAD_MULTIPLE,
-                                            &threadSupportProvided ) )
-    {
-        LBERROR << "Error at initialization MPI library" << std::endl;
-        return;
-    }
-
-    _init = true;
-
-    switch( threadSupportProvided )
-    {
-    case MPI_THREAD_SINGLE:
-        LBINFO << "MPI_THREAD_SINGLE thread support" << std::endl;
-        break;
-    case MPI_THREAD_FUNNELED:
-        LBINFO << "MPI_THREAD_FUNNELED thread support" << std::endl;
-        break;
-    case MPI_THREAD_SERIALIZED:
-        LBINFO << "MPI_THREAD_SERIALIZED thread support" << std::endl;
-        _supportedThreads = true;
-        break;
-    case MPI_THREAD_MULTIPLE:
-        LBINFO << "MPI_THREAD_MULTIPLE thread support" << std::endl;
-        _supportedThreads = true;
-        break;
-    default:
-        LBERROR << "Unknown MPI thread support" << std::endl;
-    }
-
-    if( MPI_SUCCESS != MPI_Comm_rank( MPI_COMM_WORLD, &_rank ) )
-    {
-        LBERROR << "Error determining the rank of the calling\
-                    process in the communicator." << std::endl;
-    }
-    if( MPI_SUCCESS != MPI_Comm_size( MPI_COMM_WORLD, &_size ) )
-    {
-        LBERROR << "Error determining the size of the group\
-                    associated with a communicator." << std::endl;
-    }
-
-}
-
-MPI::~MPI()
-{
-    if( _init )
-        if( MPI_SUCCESS != MPI_Finalize() )
-        {
-            LBERROR << "Error at finalizing MPI library" << std::endl;
-        }
-}
-
-#endif
 
 bool MPI::supportsThreads() const
 {
-    LBASSERT( _init );
-    return _supportedThreads;
+    return _supportsThreads;
 }
 
 int MPI::getRank() const
 {
-    LBASSERT( _supportedThreads );
-    return _rank;
+    return _impl->rank;
 }
 
 int MPI::getSize() const
 {
-    LBASSERT( _supportedThreads );
-    return _size;
-}
-
-const MPI * MPI::instance(const int argc, const char ** argv)
-{
-    if( !_instance )
-    {
-        static MPI instance = MPI( argc, argv );
-        _instance = &instance; 
-    }
-
-    return _instance;
+    return _impl->size;
 }
 
 }

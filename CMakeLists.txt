@@ -43,11 +43,6 @@ if(OPENMP_FOUND)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
-if (MPI_FOUND)                                                                   
-  list(APPEND CMAKE_C_FLAGS ${MPI_C_COMPILE_FLAGS})                              
-  list(APPEND CMAKE_CXX_FLAGS ${MPI_CXX_COMPILE_FLAGS})                          
-endif()   
-
 set(LUNCHBOX_DEFINITIONS ${LUNCHBOX_DEFINITIONS}
   -DLUNCHBOX_BUILD_DIR="${CMAKE_BINARY_DIR}/")
 add_definitions(${LUNCHBOX_DEFINITIONS})

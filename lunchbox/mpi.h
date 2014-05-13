@@ -1,5 +1,6 @@
 
 /* Copyright (c) 2014, Carlos Duelo <cduelo@cesvima.upm.es>
+ *                     Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,69 +19,66 @@
 #ifndef LUNCHBOX_MPI_H
 #define LUNCHBOX_MPI_H
 
-#ifdef LUNCHBOX_USE_MPI
-#  include <mpi.h>
-#endif
+#include <lunchbox/api.h>
+#include <boost/shared_ptr.hpp>
 
-namespace lunchbox 
+namespace lunchbox
 {
-    /* MPI library threading support is set by default to MPI_THREAD_SINGLE.
-       Lunchbox is a multithreaded library, so, the required level of thread
-       support should be MPI_THREAD_SERIALIZED at least.
+namespace detail { class MPI; }
 
-       NOTE:
-       Be aware that MPI_THREAD_MULTIPLE is only lightly tested and likely
-       still has some bugs. Please, refer the below links:
-       https://www.open-mpi.org/faq/?category=supported-systems#thread-support
-       https://www.open-mpi.org/doc/v1.4/man3/MPI_Init_thread.3.php
-
-       MPI_Init_thread and MPI_Finalize:
-       Should only be called once.
-       Should only be called by a single thread
-       Both should be called by the same thread, known as the main thread.
-
-       Here, the MPI library is initialized and requested for
-       MPI_THREAD_MULTIPLE level of thread support. To make the library safe, if
-       the thread support is not at least MPI_THREAD_SERIALIZED, MPI
-       communications will not be allowed.
-    */
-
-    /* Base class for MPI functionality.
-     * Singlenton pattern, the instance is not a pointer to force destruction.
+/** MPI functionality wrapper. */
+class MPI
+{
+public:
+    /**
+     * Construct an MPI handler with command line arguments.
+     *
+     * Calls MPI_Init_thread requesting MPI_THREAD_MULTIPLE, unless MPI is
+     * already initialized. Initialized the thread support to false depending on
+     * the obtained thread support. Will signal not to support threads if MPI
+     * was initialized externally.
+     *
+     * NOTE: Be aware that MPI_THREAD_MULTIPLE is only lightly tested and likely
+     * still has some bugs. Please, refer the below links:
+     * https://www.open-mpi.org/faq/?category=supported-systems#thread-support
+     * https://www.open-mpi.org/doc/v1.4/man3/MPI_Init_thread.3.php
+     *
+     * @version 1.1.1
      */
-    class MPI
-    {
-        public:
-            MPI();
+    MPI( int& argc, char**& argv );
 
-            /* @return true if the MPI library has multithread
-             * support, otherwise return false.
-             * @version 1.1.1
-             */
-            LUNCHBOX_API bool supportsThreads() const;
+    /** Construct a new MPI handler.
+     *
+     * See argc, argv ctor for details.
+     * @version 1.1.1
+     */
+    MPI();
 
-            /** @return the rank of the process that calls it @version 1.9 */
-            LUNCHBOX_API int getRank() const;
+    /**
+     * Destruct this handler instance.
+     *
+     * Calls MPI_Finalize if it is the last copy of an instance which has
+     * initialized MPI.
+     *
+     * @version 1.1.1
+     */
+    ~MPI();
 
-            /** @return the number of processes involved @version 1.9 */
-            LUNCHBOX_API int getSize() const;
+    /* @return true if the MPI library has multithread
+     * support, otherwise return false.
+     * @version 1.1.1
+     */
+    LUNCHBOX_API bool supportsThreads() const;
 
-            /** @return the instance of MPI class. */
-            LUNCHBOX_API static const MPI * instance( const int argc = 0,
-                                                        const char ** argv = 0);
+    /** @return the rank of the process that calls it @version 1.1.1 */
+    LUNCHBOX_API int getRank() const;
 
-        private:
-            MPI( const int argc, const char ** argv );
+    /** @return the number of processes involved @version 1.1.1 */
+    LUNCHBOX_API int getSize() const;
 
-            ~MPI();
-
-            int  _rank;
-            int  _size;
-            bool _supportedThreads;
-            bool _init;
-
-            static MPI * _instance;
-    };
+private:
+    boost::shared_ptr< detail::MPI > _impl;
+};
 
 }
 

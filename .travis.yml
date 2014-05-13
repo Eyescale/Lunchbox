@@ -6,9 +6,8 @@ language: cpp
 script:
  - mkdir Debug
  - cd Debug
- - cmake .. -DCI_BUILD_COMMIT=$TRAVIS_COMMIT -DCMAKE_BUILD_TYPE=Debug -DTRAVIS=1 -DENABLE_COVERAGE=1
+ - cmake .. -DCI_BUILD_COMMIT=$TRAVIS_COMMIT -DCMAKE_BUILD_TYPE=Debug -DTRAVIS=1
  - env TRAVIS=1 make -j2 tests ARGS=-V
- - coveralls --exclude lib --exclude tests
  - mkdir ../Release
  - git status
  - git --no-pager diff
@@ -39,4 +38,3 @@ before_install:
  - sudo apt-get install -qq ninja-build || /bin/true
  - sudo apt-get install -qq pkg-config || /bin/true
  - sudo apt-get install -qq subversion || /bin/true
- - sudo pip install cpp-coveralls

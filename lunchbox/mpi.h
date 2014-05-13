@@ -24,7 +24,7 @@
 #  include <mpi.h>
 #endif
 
-namespace lunchbox 
+namespace lunchbox
 {
     /* MPI library threading support is set by default to MPI_THREAD_SINGLE.
        Lunchbox is a multithreaded library, so, the required level of thread
@@ -57,7 +57,7 @@ namespace lunchbox
 
             /* @return true if the MPI library has multithread
              * support, otherwise return false.
-             * @version 1.1.1
+             * @version 1.9
              */
             LUNCHBOX_API bool supportsThreads() const;
 
@@ -83,7 +83,6 @@ namespace lunchbox
 
             static MPI * _instance;
     };
-
 }
 
 #endif // LUNCHBOX_MPI_H

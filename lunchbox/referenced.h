@@ -132,6 +132,9 @@ protected:
     Referenced( const Referenced& )
         : _refCount( 0 )
         , _hasBeenDeleted( false )
+#ifdef LUNCHBOX_REFERENCED_DEBUG
+        , _holders()
+#endif
     {}
 
     /** Destruct a reference-counted object. @version 1.0 */

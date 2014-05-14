@@ -57,6 +57,7 @@ public:
             {
                 lock->set();
                 TEST( lock->isSetWrite( ));
+                // cppcheck-suppress duplicateExpression
                 if( hold > 0 ) // static, optimized out
                 {
                     const double begin = _clock.getTimed();
@@ -79,25 +80,26 @@ public:
     size_t ops;
     double sTime;
 
-    virtual void run()
+    void run() override
+    {
+        ops = 0;
+        sTime = 0.;
+        while( LB_LIKELY( _running ))
         {
-            ops = 0;
-            sTime = 0.;
-            while( LB_LIKELY( _running ))
+            lock->setRead();
+            TEST( lock->isSetRead( ));
+            // cppcheck-suppress duplicateExpression
+            if( hold > 0 ) // static, optimized out
             {
-                lock->setRead();
-                TEST( lock->isSetRead( ));
-                if( hold > 0 ) // static, optimized out
-                {
-                    const double begin = _clock.getTimed();
-                    lunchbox::sleep( hold );
-                    sTime += _clock.getTimef() - begin;
-                }
-                lock->unsetRead();
-
-                ++ops;
+                const double begin = _clock.getTimed();
+                lunchbox::sleep( hold );
+                sTime += _clock.getTimef() - begin;
             }
+            lock->unsetRead();
+
+            ++ops;
         }
+    }
 };
 
 template< class T, uint32_t hold > void _test()

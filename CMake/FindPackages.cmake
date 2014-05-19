@@ -143,7 +143,7 @@ if(MPI_name)
   set(FIND_PACKAGES_FOUND "${FIND_PACKAGES_FOUND} MPI")
   link_directories(${${MPI_name}_LIBRARY_DIRS})
   if(NOT "${${MPI_name}_INCLUDE_DIRS}" MATCHES "-NOTFOUND")
-    include_directories(${${MPI_name}_INCLUDE_DIRS})
+    include_directories(SYSTEM ${${MPI_name}_INCLUDE_DIRS})
   endif()
 endif()
 

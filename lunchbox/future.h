@@ -37,7 +37,7 @@ template< class T >
 class FutureImpl : public Referenced, public boost::noncopyable
 {
 public:
-    /** Destruct the future. @version 1.9.1 */
+    /** Destruct the future. */
     virtual ~FutureImpl(){}
 
     /**
@@ -47,18 +47,18 @@ public:
      * @param timeout optional timeout in milliseconds. If the future is
      *                not ready when the timer goes off a timeout exception
      *                is thrown.
-     * @version 1.9.1
      */
     virtual T wait( const uint32_t timeout = LB_TIMEOUT_INDEFINITE ) = 0;
 
     /**
      * @return true if the future has been fulfilled, false if it is pending.
-     * @version 1.9.1
      */
     virtual bool isReady() const = 0;
 };
 
-/** A future represents a asynchronous operation. Do not subclass. */
+/** A future represents a asynchronous operation. Do not subclass.
+  * @deprecated Use boost::unique_future or boost::shared_future
+  */
 template< class T > class Future
 {
 private:
@@ -68,10 +68,10 @@ private:
 public:
     typedef RefPtr< FutureImpl< T > > Impl; //!< The wait implementation
 
-    /** Construct a new future. @version 1.9.1 */
+    /** Construct a new future. */
     explicit Future( Impl impl ) : impl_( impl ){}
 
-    /** Destruct the future. @version 1.9.1 */
+    /** Destruct the future. */
      ~Future(){}
 
     /**
@@ -80,7 +80,6 @@ public:
      * @param timeout_ optional timeout in milliseconds. If the future is
      *                 not ready when the timer goes off a timeout exception
      *                 is thrown.
-     * @version 1.9.1
      */
     T wait( const uint32_t timeout_ = LB_TIMEOUT_INDEFINITE )
     {
@@ -89,34 +88,33 @@ public:
 
     /**
      * @return true if the future has been fulfilled, false if it is pending.
-     * @version 1.9.1
      */
     bool isReady() const { return impl_->isReady(); }
 
     /** @name Blocking comparison operators. */
     //@{
-    /** @return a bool conversion of the result. @version 1.9.1 */
+    /** @return a bool conversion of the result. */
     operator bool_t() { return wait() ? &Future< T >::bool_true : 0; }
 
-    /** @return true if the result does convert to false. @version 1.9.1 */
+    /** @return true if the result does convert to false. */
     bool operator ! () { return !wait(); }
 
-    /** @return true if the result is equal to the given value. @version 1.9.1*/
+    /** @return true if the result is equal to the given value. */
     bool operator == ( const T& rhs ) { return wait() == rhs; }
 
-    /** @return true if the result is not equal to the rhs. @version 1.9.1*/
+    /** @return true if the result is not equal to the rhs. */
     bool operator != ( const T& rhs ) { return wait() != rhs; }
 
-    /** @return true if the result is smaller than the rhs. @version 1.9.1 */
+    /** @return true if the result is smaller than the rhs. */
     bool operator < ( const T& rhs ) { return wait() < rhs; }
 
-    /** @return true if the result is bigger than the rhs. @version 1.9.1 */
+    /** @return true if the result is bigger than the rhs. */
     bool operator > ( const T& rhs ) { return wait() > rhs; }
 
-    /** @return true if the result is smaller or equal. @version 1.9.1 */
+    /** @return true if the result is smaller or equal. */
     bool operator <= ( const T& rhs ) { return wait() <= rhs; }
 
-    /** @return true if the result is bigger or equal. @version 1.9.1 */
+    /** @return true if the result is bigger or equal. */
     bool operator >= ( const T& rhs ) { return wait() >= rhs; }
     //@}
 
@@ -124,7 +122,8 @@ protected:
     Impl impl_;
 };
 
-/** Future template specialization for void */
+/** Future template specialization for void
+  */
 template<> class Future< void >
 {
 private:
@@ -134,10 +133,10 @@ private:
 public:
     typedef RefPtr< FutureImpl< void > > Impl; //!< The wait implementation
 
-    /** Construct a new future. @version 1.9.1 */
+    /** Construct a new future. */
     explicit Future( Impl impl ) : impl_( impl ){}
 
-    /** Destruct the future. @version 1.9.1 */
+    /** Destruct the future. */
      ~Future(){}
 
     /**
@@ -146,7 +145,6 @@ public:
      * @param timeout_ optional timeout in milliseconds. If the future is
      *                 not ready when the timer goes off a timeout exception
      *                 is thrown.
-     * @version 1.9.1
      */
     void wait( const uint32_t timeout_ = LB_TIMEOUT_INDEFINITE )
     {
@@ -155,7 +153,6 @@ public:
 
     /**
      * @return true if the future has been fulfilled, false if it is pending.
-     * @version 1.9.1
      */
     bool isReady() const { return impl_->isReady(); }
 

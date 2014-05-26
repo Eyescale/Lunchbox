@@ -23,7 +23,7 @@
 
 namespace lunchbox
 {
-/** A boolean future always returning true. Fully thread safe. @version 1.9.1 */
+/** A boolean future always returning true. Fully thread safe. */
 class FutureTrue : public FutureImpl< bool >
 {
 protected:
@@ -34,7 +34,6 @@ protected:
 /**
  * A Future implementation using a boost::function for fulfilment.
  * Not thread safe.
- * @version 1.9.1
  */
 template< class T > class FutureFunction : public FutureImpl< T >
 {

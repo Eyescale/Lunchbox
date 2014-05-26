@@ -143,7 +143,6 @@ set(LUNCHBOX_SOURCES
   lock.cpp
   log.cpp
   memoryMap.cpp
-  mpi.cpp
   omp.cpp
   plugin.cpp
   pluginInstance.h
@@ -163,3 +162,7 @@ set(LUNCHBOX_SOURCES
   uploader.cpp
   md5/md5.cc
   )
+
+if(MPI_FOUND)
+   list(APPEND LUNCHBOX_SOURCES mpi.cpp)
+endif()

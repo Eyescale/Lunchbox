@@ -6,14 +6,14 @@ Release Notes {#RelNotes}
 # Introduction {#Introduction}
 
 Welcome to Lunchbox, a C++ library for multi-threaded programming.
-Lunchbox 1.8 adds major new features, most notably runtime-loadable
-compression plugins and an UnorderedIntervalSet container.
+Lunchbox 1.9 adds MPI support, fixes for compilation on different platforms, 
+resolves deprecation warnings and adds minor improvements over the API.
 
-Lunchbox 1.8 is a feature release based on the 1.6 Lunchbox API. It is
+Lunchbox 1.9 is a feature release based on the 1.8 Lunchbox API. It is
 intended for all application developers creating high-preformance
-multi-threaded programs. Lunchbox 1.8 can be retrieved by downloading
+multi-threaded programs. Lunchbox 1.9 can be retrieved by downloading
 the
-[source code](http://www.equalizergraphics.com/downloads/Lunchbox-1.8.0.tar.gz)
+[source code](http://www.equalizergraphics.com/downloads/Lunchbox-1.9.0.tar.gz)
 or any of the
 [precompiled packages](http://www.equalizergraphics.com/downloads/major.html).
 
@@ -33,45 +33,36 @@ development and deployment of multi-threaded applications:
 
 # New in this release {#New}
 
-Lunchbox 1.8 contains the following features, enhancements, bug fixes
-and documentation changes over Lunchbox 1.6:
+Lunchbox 1.9 contains the following features, enhancements, bug fixes
+and documentation changes over Lunchbox 1.8:
 
 ## New Features {#NewFeatures}
 
-* Runtime-loadable compression and CPU-GPU transfer plugins
-  ([18](https://github.com/Eyescale/Lunchbox/issues/18))
-* UnorderedIntervalSet container
+* MPI support added through the new MPI class.
 
 ## Enhancements {#Enhancements}
 
-* Improved DSO, MemoryMap, MTQueue, uint128_t, UUID and LFVector APIs
-* searchDirectory uses boost::regex for file matching
-* [Hide pthread.h from API](https://github.com/Eyescale/Lunchbox/issues/26)
+* Added timeout parameter for the Future::wait function
+* Improved thread logging facilities
+* Structures added to gather compression results
+* Boolean operators added for (De)compressor
+* Array has been moved from Collage to Lunchbox
 
 ## Optimizations {#Optimizations}
 
-* Increased speed and compression ratio for
-  [updated snappy compressor](https://github.com/Eyescale/Lunchbox/issues/19)
-* [Equalizer#140:](https://github.com/Eyescale/Equalizer/issues/140) Add
-  LZ-variant byte compressors
-
 ## Documentation {#Documentation}
 
-The following documentation has been added or substantially improved
-since the last release:
-
-* [API documentation](http://eyescale.github.io/Lunchbox-1.8/index.html)
+* [API documentation](http://eyescale.github.io/Lunchbox-1.9/index.html)
   of the public Lunchbox API
 
 ## Bug Fixes {#Fixes}
 
-Lunchbox 1.8 includes various bugfixes over the 1.6 release, including
+Lunchbox 1.9 includes various compilation fixes over the 1.8 release, including
 the following:
 
-* [22:](https://github.com/Eyescale/Lunchbox/issues/22) LFVector
-  iterators with non-default number of slots do not work
-* [9:](https://github.com/Eyescale/Lunchbox/issues/9) Memory leak in
-  Thread::setAffinity
+* OSX 10.9, Win32 builds fixed
+* Byteswap for unsigned long is satisfied on clang, on OSX
+* Deprecation warnings resolved
 
 ## Known Bugs {#Bugs}
 
@@ -89,7 +80,7 @@ operating system, including all Unix variants and the Windows operating
 system. Lunchbox uses CMake to create a platform-specific build
 environment. The following platforms and build environments are tested:
 
-* Linux: Ubuntu 12.04, 12.10, 13.04, RHEL 6 (Makefile, i386, x64)
+* Linux: Ubuntu 12.04, 12.10, 13.04, 13.10 RHEL 6 (Makefile, i386, x64)
 * Windows: 7 (Visual Studio 2008, i386, x64)
 * Mac OS X: 10.8 (Makefile, XCode, i386, x64)
 

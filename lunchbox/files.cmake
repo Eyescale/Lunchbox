@@ -163,3 +163,4 @@ set(LUNCHBOX_SOURCES
   uploader.cpp
   md5/md5.cc
   )
+

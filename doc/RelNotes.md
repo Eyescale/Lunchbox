@@ -6,8 +6,9 @@ Release Notes {#RelNotes}
 # Introduction {#Introduction}
 
 Welcome to Lunchbox, a C++ library for multi-threaded programming.
-Lunchbox 1.9 adds MPI support, fixes for compilation on different platforms, 
-resolves deprecation warnings and adds minor improvements over the API.
+Lunchbox 1.9 adds MPI support, compilation fixes for different
+platforms, resolves deprecation warnings and adds minor improvements of
+the API.
 
 Lunchbox 1.9 is a feature release based on the 1.8 Lunchbox API. It is
 intended for all application developers creating high-preformance
@@ -38,15 +39,15 @@ and documentation changes over Lunchbox 1.8:
 
 ## New Features {#NewFeatures}
 
-* MPI support added through the new MPI class.
+* MPI support through the new MPI class.
 
 ## Enhancements {#Enhancements}
 
 * Added timeout parameter for the Future::wait function
 * Improved thread logging facilities
-* Structures added to gather compression results
-* Boolean operators added for (De)compressor
-* Array has been moved from Collage to Lunchbox
+* Use structure to gather compression results
+* Boolean operators for (De)compressor
+* New Array class, moved from Collage
 
 ## Optimizations {#Optimizations}
 
@@ -61,7 +62,7 @@ Lunchbox 1.9 includes various compilation fixes over the 1.8 release, including
 the following:
 
 * OSX 10.9, Win32 builds fixed
-* Byteswap for unsigned long is satisfied on clang, on OSX
+* Byteswap for unsigned long is satisfied on clang on OSX
 * Deprecation warnings resolved
 
 ## Known Bugs {#Bugs}

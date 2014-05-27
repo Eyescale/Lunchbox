@@ -16,11 +16,12 @@ endif()
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 
-set(RELEASE_VERSION OFF) # OFF or ABI version
 set(LAST_RELEASE 1.8.0) # tarball, MacPorts, ...
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "9")
-set(VERSION_PATCH "0")
+set(VERSION_PATCH "1")
+set(VERSION_ABI 3)
+
 set(LUNCHBOX_DESCRIPTION "Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.")
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
 

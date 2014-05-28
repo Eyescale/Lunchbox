@@ -45,14 +45,14 @@ public:
      *
      * @version 1.1.1
      */
-    MPI( int& argc, char**& argv );
+    LUNCHBOX_API MPI( int& argc, char**& argv );
 
     /** Construct a new MPI handler.
      *
      * See argc, argv ctor for details.
      * @version 1.1.1
      */
-    MPI();
+    LUNCHBOX_API MPI();
 
     /**
      * Destruct this handler instance.
@@ -62,7 +62,7 @@ public:
      *
      * @version 1.1.1
      */
-    ~MPI();
+    LUNCHBOX_API ~MPI();
 
     /* @return true if the MPI library has multithread
      * support, otherwise return false.

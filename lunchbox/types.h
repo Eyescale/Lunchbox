@@ -231,6 +231,7 @@ class RequestHandler;
 class Servus;
 class SpinLock;
 class Uploader;
+class URI;
 class uint128_t;
 
 struct CompressorResult;

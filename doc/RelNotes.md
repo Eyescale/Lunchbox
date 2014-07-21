@@ -40,6 +40,7 @@ and documentation changes over Lunchbox 1.8:
 ## New Features {#NewFeatures}
 
 * MPI support through the new MPI class.
+* URI parsing support according to RFC3986.
 
 ## Enhancements {#Enhancements}
 

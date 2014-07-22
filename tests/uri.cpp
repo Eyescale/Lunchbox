@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2014, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2013-2014, ahmet.bilgili@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,51 +20,41 @@
 
 int main( int, char ** )
 {
+    try
     {
-        const std::string uriStr = "http://bob@www.example.com:8080/path/?key=value#fragment";
+        const std::string uriStr =
+            "http://bob@www.example.com:8080/path/?key=value#fragment";
+        const lunchbox::URI uri( uriStr );
+
+        TESTINFO( uri.getScheme() == "http", uri.getScheme() );
+        TESTINFO( uri.getHost() == "www.example.com", uri.getHost()  );
+        TESTINFO( uri.getUserinfo() == "bob", uri.getUserinfo()  );
+        TESTINFO( uri.getPort() == 8080, uri.getPort()  );
+        TESTINFO( uri.getPath() == "/path/", uri.getPath()  );
+        TESTINFO( uri.getQuery() == "key=value", uri.getQuery()  );
+        TESTINFO( uri.getFragment() == "fragment", uri.getFragment()  );
+
+        std::stringstream sstr;
+        sstr << uri;
+        TESTINFO( sstr.str() == uriStr, sstr.str() << " " <<  uriStr );
+    }
+    catch( std::exception& exception )
+    {
+        LBERROR << exception.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    bool hadException = false;
+    try
+    {
+        const std::string uriStr = "Helloworld";
         lunchbox::URI uri( uriStr );
-
-        try
-        {
-            TESTINFO( uri.getScheme() == "http", uri.getScheme() );
-            TESTINFO( uri.getHost() == "www.example.com", uri.getHost()  );
-            TESTINFO( uri.getUserinfo() == "bob", uri.getUserinfo()  );
-            TESTINFO( uri.getPort() == 8080, uri.getPort()  );
-            TESTINFO( uri.getPath() == "/path/", uri.getPath()  );
-            TESTINFO( uri.getQuery() == "key=value", uri.getQuery()  );
-            TESTINFO( uri.getFragment() == "fragment", uri.getFragment()  );
-
-            std::stringstream sstr;
-            sstr << uri;
-            TESTINFO( sstr.str() == uriStr, sstr.str() << " " <<  uriStr );
-        }
-        catch( std::exception& exception )
-        {
-            LBERROR << exception.what() << std::endl;
-            return EXIT_FAILURE;
-        }
     }
-
+    catch( std::exception& exception )
     {
-        bool errorParsing = false;
-        try
-        {
-            const std::string uriStr = "Helloworld";
-            lunchbox::URI uri( uriStr );
-        }
-        catch( std::exception& exception )
-        {
-            LBERROR << exception.what() << std::endl;
-            errorParsing = true;
-        }
-
-        TEST( errorParsing );
+        hadException = true;
     }
+    TEST( hadException );
 
     return EXIT_SUCCESS;
 }
-
-
-
-
-

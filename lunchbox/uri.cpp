@@ -33,8 +33,7 @@ namespace detail
 
 struct URIData
 {
-    URIData()
-        : port( 0 ) {}
+    URIData() : port( 0 ) {}
 
     std::string scheme;
     std::string userinfo;
@@ -45,34 +44,30 @@ struct URIData
     std::string fragment;
 };
 
-struct uri_parse : public std::exception
+class uri_parse : public std::exception
 {
 public:
-
     uri_parse( const std::string& uri )
     {
-        _uriError << "Error parsing URI string: " << uri << std::endl;
+        _error << "Error parsing URI string: " << uri << std::endl;
     }
 
     uri_parse( const uri_parse& excep )
     {
-        _uriError << excep._uriError;
+        _error << excep._error;
     }
-
-    virtual const char* what() const throw() { return _uriError.str().c_str(); }
 
     virtual ~uri_parse() throw() {}
 
-private:
+    virtual const char* what() const throw() { return _error.str().c_str(); }
 
-    std::stringstream _uriError;
+private:
+    std::stringstream _error;
 };
 
 class URI
 {
 public:
-
-
     URI( const std::string &uri )
        : _uri( uri )
     {
@@ -117,8 +112,8 @@ public:
         _uriData.fragment = std::string( results[9].first, results[9].second );
     }
 
-    const URIData& getURIData( ) const { return _uriData; }
-    const std::string& getURI( ) const { return _uri; }
+    const URIData& getData() const { return _uriData; }
+    const std::string& getURI() const { return _uri; }
 
 private:
 
@@ -140,37 +135,37 @@ lunchbox::URI::~URI()
 
 const std::string &URI::getScheme() const
 {
-    return _impl->getURIData().scheme;
+    return _impl->getData().scheme;
 }
 
 const std::string &URI::getHost() const
 {
-    return _impl->getURIData().host;
+    return _impl->getData().host;
 }
 
 uint16_t URI::getPort() const
 {
-    return _impl->getURIData().port;
+    return _impl->getData().port;
 }
 
 const std::string &URI::getUserinfo() const
 {
-    return _impl->getURIData().userinfo;
+    return _impl->getData().userinfo;
 }
 
 const std::string& URI::getPath() const
 {
-    return _impl->getURIData().path;
+    return _impl->getData().path;
 }
 
 const std::string& URI::getQuery() const
 {
-    return _impl->getURIData().query;
+    return _impl->getData().query;
 }
 
 const std::string &URI::getFragment() const
 {
-    return _impl->getURIData().fragment;
+    return _impl->getData().fragment;
 }
 
 

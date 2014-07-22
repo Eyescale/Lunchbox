@@ -45,7 +45,6 @@ namespace detail { class URI; }
 class URI
 {
 public:
-
     /**
      * @param uri URI string to parse.
      * @throws Throws std::exception for incomplete URIs, and throws
@@ -53,10 +52,9 @@ public:
      * @version 1.9.2
      */
     URI( const std::string& uri );
-
     ~URI();
 
-    /** @name URIGetters Getter methods for the uri.
+    /** @name URIGetters Getters for the uri data.
      *  @version 1.9.2
      */
     ///@{
@@ -70,11 +68,10 @@ public:
      ///@}
 
 private:
-
     detail::URI const *_impl;
 };
 
-inline std::ostream& operator<<( std::ostream& os, const URI& uri )
+inline std::ostream& operator << ( std::ostream& os, const URI& uri )
 {
      os << uri.getScheme() << "://";
      if( !uri.getUserinfo().empty( ))

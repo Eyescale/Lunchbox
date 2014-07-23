@@ -23,16 +23,24 @@ int main( int, char ** )
     try
     {
         const std::string uriStr =
-            "http://bob@www.example.com:8080/path/?key=value#fragment";
+            "http://bob@www.example.com:8080/path/?key=value,foo=bar#fragment";
         const lunchbox::URI uri( uriStr );
 
         TESTINFO( uri.getScheme() == "http", uri.getScheme() );
-        TESTINFO( uri.getHost() == "www.example.com", uri.getHost()  );
-        TESTINFO( uri.getUserinfo() == "bob", uri.getUserinfo()  );
-        TESTINFO( uri.getPort() == 8080, uri.getPort()  );
-        TESTINFO( uri.getPath() == "/path/", uri.getPath()  );
-        TESTINFO( uri.getQuery() == "key=value", uri.getQuery()  );
-        TESTINFO( uri.getFragment() == "fragment", uri.getFragment()  );
+        TESTINFO( uri.getHost() == "www.example.com", uri.getHost( ));
+        TESTINFO( uri.getUserinfo() == "bob", uri.getUserinfo( ));
+        TESTINFO( uri.getPort() == 8080, uri.getPort( ));
+        TESTINFO( uri.getPath() == "/path/", uri.getPath( ));
+        TESTINFO( uri.getQuery() == "key=value,foo=bar", uri.getQuery( ));
+        TESTINFO( uri.getFragment() == "fragment", uri.getFragment( ));
+
+        TEST( uri.findQuery( "key" ) != uri.queryEnd( ));
+        TEST( uri.findQuery( "foo" ) != uri.queryEnd( ));
+        TEST( uri.findQuery( "bar" ) == uri.queryEnd( ));
+        TESTINFO( uri.findQuery( "key" )->second == "value",
+                  uri.findQuery( "key" )->second );
+        TESTINFO( uri.findQuery( "foo" )->second == "bar",
+                  uri.findQuery( "foo" )->second );
 
         std::stringstream sstr;
         sstr << uri;

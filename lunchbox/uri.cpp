@@ -27,7 +27,6 @@
 
 namespace lunchbox
 {
-
 namespace detail
 {
 
@@ -42,6 +41,7 @@ struct URIData
     std::string path;
     std::string query;
     std::string fragment;
+    lunchbox::URI::KVMap queryMap;
 };
 
 class uri_parse : public std::exception
@@ -71,26 +71,28 @@ public:
     URI( const std::string &uri )
        : _uri( uri )
     {
+        boost::match_results< std::string::const_iterator > results;
         boost::regex expr(
             "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
-            boost::regex::perl|boost::regex::icase );
+            boost::regex::perl | boost::regex::icase );
 
-        boost::match_results< std::string::const_iterator > results;
         if( !boost::regex_search( uri, results, expr ) )
             throw uri_parse( _uri );
 
-        const std::string& schema = std::string( results[2].first, results[2].second );
+        const std::string& schema = std::string( results[2].first,
+                                                 results[2].second );
         if( schema.empty() )
             throw uri_parse( _uri );
 
         _uriData.scheme = schema;
-        const std::string& userHost = std::string( results[4].first, results[4].second );
-
+        const std::string& userHost = std::string( results[4].first,
+                                                   results[4].second );
         if( !userHost.empty() )
         {
             std::vector< std::string > splitUserHost;
             std::string hostPort;
-            boost::algorithm::split( splitUserHost, userHost, boost::is_any_of("@") );
+            boost::algorithm::split( splitUserHost, userHost,
+                                     boost::is_any_of( "@"));
             if( splitUserHost.size() == 2 ) // for ex: user:pass@hello.com:port
             {
                 _uriData.userinfo = splitUserHost[ 0 ];
@@ -100,16 +102,41 @@ public:
                 hostPort = splitUserHost[ 0 ];
 
             std::vector< std::string > splitHostPort;
-            boost::algorithm::split( splitHostPort, hostPort, boost::is_any_of(":") );
+            boost::algorithm::split( splitHostPort, hostPort,
+                                     boost::is_any_of( ":" ));
             _uriData.host = splitHostPort[ 0 ];
 
             if( splitUserHost.size() == 2 ) // for ex: user:pass@hello.com:port
-                _uriData.port = boost::lexical_cast< uint16_t > ( splitHostPort[ 1 ] );
+                _uriData.port = boost::lexical_cast< uint16_t >(
+                    splitHostPort[ 1 ] );
         }
 
         _uriData.path = std::string( results[5].first, results[5].second );
         _uriData.query = std::string( results[7].first, results[7].second );
         _uriData.fragment = std::string( results[9].first, results[9].second );
+
+        // parse query data into key-value pairs
+        std::string query = _uriData.query;
+        while( !query.empty( ))
+        {
+            const size_t nextPair = query.find( ',' );
+            if( nextPair == 0 )
+            {
+                query = query.substr( 1 );
+                continue;
+            }
+
+            const std::string pair = query.substr( 0, nextPair );
+            if( nextPair == std::string::npos )
+                query.clear();
+            else
+                query = query.substr( nextPair + 1 );
+
+            const size_t eq = pair.find( '=' );
+            if( eq == std::string::npos || eq == 0 )
+                continue;
+            _uriData.queryMap[ pair.substr( 0, eq ) ] = pair.substr( eq + 1 );
+        }
     }
 
     const URIData& getData() const { return _uriData; }
@@ -168,6 +195,19 @@ const std::string &URI::getFragment() const
     return _impl->getData().fragment;
 }
 
+URI::ConstKVIter URI::queryBegin() const
+{
+    return _impl->getData().queryMap.begin();
+}
 
+URI::ConstKVIter URI::queryEnd() const
+{
+    return _impl->getData().queryMap.end();
+}
+
+URI::ConstKVIter URI::findQuery( const std::string& key ) const
+{
+    return _impl->getData().queryMap.find( key );
+}
 
 }

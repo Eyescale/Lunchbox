@@ -49,7 +49,7 @@ namespace detail { class URI; }
  *
  * Example: @include tests/uri.cpp
  */
-class URI
+class URI : public boost::noncopyable
 {
 public:
     typedef boost::unordered_map< std::string, std::string > KVMap;

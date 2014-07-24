@@ -1,5 +1,6 @@
 
 /* Copyright (c) 2013-2014, ahmet.bilgili@epfl.ch
+ *                    2014, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -17,10 +18,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef URI_H
-#define URI_H
+#ifndef LUNCHBOX_URI_H
+#define LUNCHBOX_URI_H
 
+#include <lunchbox/api.h>
 #include <lunchbox/types.h>
+#include <boost/unordered_map.hpp> // iterator typedefs
 
 namespace lunchbox
 {
@@ -29,9 +32,9 @@ namespace detail { class URI; }
 /**
  * The URI class parses the given uri string according to the regex given in
  * RFC3986.
- * http://bob@www.example.com:8080/path/?key=value#fragment
- * ^   ^  ^  ^               ^    ^     ^         ^
- * a   b  c  d               e    f     g         h
+ * http://bob@www.example.com:8080/path/?key=value,foo=bar#fragment
+ * ^   ^  ^  ^               ^    ^     ^                 ^
+ * a   b  c  d               e    f     g                 h
  *
  * URI part	Range	String
  * scheme	[a, b)	"http"
@@ -39,12 +42,19 @@ namespace detail { class URI; }
  * host	[d, e)	"www.example.com"
  * port (e, f) 8080
  * path	[f, g)	"/path/"
- * query [g, h)	"?key=value"
+ * query (g, h)	"key=value"
  * fragment	(h,-) "fragment"
+ *
+ * Queries are parsed into key-value pairs and can be accessed using TBD.
+ *
+ * Example: @include tests/uri.cpp
  */
 class URI
 {
 public:
+    typedef boost::unordered_map< std::string, std::string > KVMap;
+    typedef KVMap::const_iterator ConstKVIter;
+
     /**
      * @param uri URI string to parse.
      * @throws Throws std::exception for incomplete URIs, and throws
@@ -54,18 +64,23 @@ public:
     URI( const std::string& uri );
     ~URI();
 
-    /** @name URIGetters Getters for the uri data.
-     *  @version 1.9.2
-     */
-    ///@{
-    const std::string& getScheme() const;
-    const std::string& getUserinfo() const;
-    uint16_t getPort() const;
-    const std::string& getHost() const;
-    const std::string& getPath() const;
-    const std::string& getQuery() const;
-    const std::string& getFragment() const;
-     ///@}
+    /** @name Getters for the uri data @version 1.9.2 */
+    //@{
+    LUNCHBOX_API const std::string& getScheme() const;
+    LUNCHBOX_API const std::string& getUserinfo() const;
+    LUNCHBOX_API uint16_t getPort() const;
+    LUNCHBOX_API const std::string& getHost() const;
+    LUNCHBOX_API const std::string& getPath() const;
+    LUNCHBOX_API const std::string& getQuery() const;
+    LUNCHBOX_API const std::string& getFragment() const;
+    //@}
+
+    /** @name Getters to query key-value data @version 1.9.2 */
+    //@{
+    LUNCHBOX_API ConstKVIter queryBegin() const;
+    LUNCHBOX_API ConstKVIter queryEnd() const;
+    LUNCHBOX_API ConstKVIter findQuery( const std::string& key ) const;
+    //@}
 
 private:
     detail::URI const *_impl;
@@ -86,4 +101,4 @@ inline std::ostream& operator << ( std::ostream& os, const URI& uri )
 }
 
 }
-#endif // URI_H
+#endif // LUNCHBOX_URI_H

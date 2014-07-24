@@ -27,7 +27,11 @@ namespace lunchbox
 {
 namespace detail { class DSO; }
 
-/** Helper to access dynamic shared objects (DSO) */
+/**
+ * Helper to access dynamic shared objects (DSO)
+ *
+ * Example: @include tests/dso.cpp
+ */
 class DSO : public boost::noncopyable
 {
 public:

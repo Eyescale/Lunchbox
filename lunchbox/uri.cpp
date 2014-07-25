@@ -154,9 +154,20 @@ URI::URI( const std::string &uri )
 {
 }
 
+URI::URI( const URI& from )
+    : _impl( new detail::URI( *from._impl ))
+{
+}
 lunchbox::URI::~URI()
 {
     delete _impl;
+}
+
+URI& URI::operator = ( const URI& rhs )
+{
+    if( this != &rhs )
+        *_impl = *rhs._impl;
+    return *this;
 }
 
 const std::string &URI::getScheme() const

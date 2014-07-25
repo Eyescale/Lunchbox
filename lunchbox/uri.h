@@ -49,7 +49,7 @@ namespace detail { class URI; }
  *
  * Example: @include tests/uri.cpp
  */
-class URI : public boost::noncopyable
+class URI
 {
 public:
     typedef boost::unordered_map< std::string, std::string > KVMap;
@@ -57,12 +57,19 @@ public:
 
     /**
      * @param uri URI string to parse.
-     * @throws Throws std::exception for incomplete URIs, and throws
-     * boost::bad_lexical_cast if port is not a number.
+     * @throw std::exception for incomplete URIs, and boost::bad_lexical_cast
+     *        if the port is not a number.
      * @version 1.9.2
      */
     URI( const std::string& uri );
+
+    /** Copy-construct an URI. @version 1.9.2 */
+    URI( const URI& from );
+
     ~URI();
+
+    /** Assign the data from another URI. @version 1.9.2 */
+    URI& operator = ( const URI& rhs );
 
     /** @name Getters for the uri data @version 1.9.2 */
     //@{
@@ -83,7 +90,7 @@ public:
     //@}
 
 private:
-    detail::URI const *_impl;
+    detail::URI* const _impl;
 };
 
 inline std::ostream& operator << ( std::ostream& os, const URI& uri )

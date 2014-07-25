@@ -31,54 +31,20 @@ namespace lunchbox
  */
 template< class T > class Request : public Future< T >
 {
-    class Impl : public FutureImpl< T >
-    {
-        typedef typename boost::mpl::if_< boost::is_same< T, void >,
-                                          void*, T >::type value_t;
-    public:
-        Impl( RequestHandler& handler, const uint32_t req )
-            : request( req )
-            , result( 0 )
-            , handler_( handler )
-            , done_( false )
-            , relinquished_( false )
-        {}
-        virtual ~Impl() {}
-
-        const uint32_t request;
-        value_t result;
-
-        void relinquish() { relinquished_ = true; }
-        bool isRelinquished() const { return relinquished_; }
-
-    protected:
-        T wait( const uint32_t timeout ) final;
-        bool isReady() const final;
-
-    private:
-        RequestHandler& handler_;
-        bool done_; //!< waitRequest finished
-        bool relinquished_;
-    };
+    class Impl;
 
 public:
-    Request( RequestHandler& handler, const uint32_t request )
-        : Future< T >( new Impl( handler, request ))
-    {}
+    /** Construct a new request. */
+    Request( RequestHandler& handler, const uint32_t request );
 
     /**
      * Destruct and wait for completion of the request, unless relinquished.
      * @version 1.9.1
      */
-    virtual ~Request()
-    {
-        if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
-            this->wait();
-    }
+    virtual ~Request();
 
     /** @return the identifier of the request. @version 1.9.1 */
-    uint32_t getID() const
-        { return static_cast< const Impl* >( this->impl_.get( ))->request; }
+    uint32_t getID() const;
 
     /**
      * Abandon the request.
@@ -87,29 +53,62 @@ public:
      * If the future has already been resolved this function has no effect.
      * @version 1.9.1
      */
-    void relinquish()
-        { static_cast< Impl* >( this->impl_.get( ))->relinquish(); }
+    void relinquish();
 };
 
 }
 
+// Implementation: Here be dragons
+
 #include <lunchbox/requestHandler.h>
 namespace lunchbox
 {
-template< class T > inline T Request< T >::Impl::wait(
-    const uint32_t timeout )
+template< class T > class Request< T >::Impl : public FutureImpl< T >
 {
-    if( !done_ )
-    {
-        if( relinquished_ )
-            LBUNREACHABLE;
+    typedef typename
+    boost::mpl::if_< boost::is_same< T, void >, void*, T >::type value_t;
 
-        if ( !handler_.waitRequest( request, result, timeout ))
-            throw FutureTimeout();
-        done_ = true;
+public:
+    Impl( RequestHandler& handler, const uint32_t req )
+        : request( req )
+        , result( 0 )
+        , handler_( handler )
+        , done_( false )
+        , relinquished_( false )
+    {}
+    virtual ~Impl() {}
+
+    const uint32_t request;
+    value_t result;
+
+    void relinquish() { relinquished_ = true; }
+    bool isRelinquished() const { return relinquished_; }
+
+protected:
+    T wait( const uint32_t timeout ) final
+    {
+        if( !done_ )
+        {
+            if( relinquished_ )
+                LBUNREACHABLE;
+
+            if ( !handler_.waitRequest( request, result, timeout ))
+                throw FutureTimeout();
+            done_ = true;
+        }
+        return result;
     }
-    return result;
-}
+
+    bool isReady() const final
+    {
+        return done_ || ( !relinquished_ && handler_.isRequestReady( request ));
+    }
+
+private:
+    RequestHandler& handler_;
+    bool done_; //!< waitRequest finished
+    bool relinquished_;
+};
 
 template<> inline void Request< void >::Impl::wait( const uint32_t timeout )
 {
@@ -124,9 +123,25 @@ template<> inline void Request< void >::Impl::wait( const uint32_t timeout )
     }
 }
 
-template< class T > inline bool Request< T >::Impl::isReady() const
+template< class T > inline
+Request< T >::Request( RequestHandler& handler, const uint32_t request )
+    : Future< T >( new Impl( handler, request ))
+{}
+
+template< class T > inline Request< T >::~Request()
 {
-    return done_ || ( !relinquished_ && handler_.isRequestReady( request ));
+    if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
+        this->wait();
+}
+
+template< class T > inline uint32_t Request< T >::getID() const
+{
+    return static_cast< const Impl* >( this->impl_.get( ))->request;
+}
+
+template< class T > inline void Request< T >::relinquish()
+{
+    static_cast< Impl* >( this->impl_.get( ))->relinquish();
 }
 
 }

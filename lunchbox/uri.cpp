@@ -143,7 +143,6 @@ public:
     const std::string& getURI() const { return _uri; }
 
 private:
-
      std::string _uri;
      URIData _uriData;
 };

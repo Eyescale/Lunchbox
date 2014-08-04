@@ -32,6 +32,7 @@ namespace detail { class URI; }
 /**
  * The URI class parses the given uri string according to the regex given in
  * RFC3986.
+ * @verbatim
  * http://bob@www.example.com:8080/path/?key=value,foo=bar#fragment
  * ^   ^  ^  ^               ^    ^     ^                 ^
  * a   b  c  d               e    f     g                 h
@@ -44,8 +45,10 @@ namespace detail { class URI; }
  * path	[f, g)	"/path/"
  * query (g, h)	"key=value"
  * fragment	(h,-) "fragment"
+ * @endverbatim
  *
- * Queries are parsed into key-value pairs and can be accessed using TBD.
+ * Queries are parsed into key-value pairs and can be accessed using
+ * findQuery(), queryBegin() and queryEnd().
  *
  * Example: @include tests/uri.cpp
  */
@@ -84,8 +87,22 @@ public:
 
     /** @name Getters to query key-value data @version 1.9.2 */
     //@{
+    /**
+     * @return a const iterator to the beginning of the query map.
+     * @version 1.9.2
+     */
     LUNCHBOX_API ConstKVIter queryBegin() const;
+
+    /**
+     * @return a const iterator to end beginning of the query map.
+     * @version 1.9.2
+     */
     LUNCHBOX_API ConstKVIter queryEnd() const;
+
+    /**
+     * @return a const iterator to the given key, or queryEnd().
+     * @version 1.9.2
+     */
     LUNCHBOX_API ConstKVIter findQuery( const std::string& key ) const;
     //@}
 

@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2010, Cedric Stalder <cedric.stalder@gmail.com>
- *               2010-2013, Stefan Eilemann <eile@eyescale.ch>
+ *               2010-2014, Stefan Eilemann <eile@eyescale.ch>
  *               2010-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -41,7 +41,7 @@ std::ostream& operator << ( std::ostream& os, const uint128_t& id );
 /**
  * A base type for 128 bit unsigned integer values.
  *
- * Example: @include tests/uuid.cpp
+ * Example: @include tests/uint128_t.cpp
  */
 class uint128_t
 {

@@ -52,7 +52,6 @@ int main( int, char ** )
         return EXIT_FAILURE;
     }
 
-    bool hadException = false;
     try
     {
         const std::string uriStr = "Helloworld";
@@ -60,9 +59,9 @@ int main( int, char ** )
     }
     catch( std::exception& exception )
     {
-        hadException = true;
+        return EXIT_SUCCESS;
     }
-    TEST( hadException );
 
-    return EXIT_SUCCESS;
+    TESTINFO( false, "Did not get exception on malformed URI" );
+    return EXIT_FAILURE;
 }

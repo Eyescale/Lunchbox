@@ -68,7 +68,7 @@ public:
      * @version 1.0
      * @deprecated use the future-based registerRequest()
      */
-    LUNCHBOX_API uint32_t registerRequest( void* data = 0 ) LB_DEPRECATED
+    uint32_t registerRequest( void* data = 0 ) LB_DEPRECATED
         { return _register( data ); }
 
     /**

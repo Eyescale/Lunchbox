@@ -32,6 +32,7 @@ namespace detail { class URI; }
 /**
  * The URI class parses the given uri string according to the regex given in
  * RFC3986.
+ * @verbatim
  * http://bob@www.example.com:8080/path/?key=value,foo=bar#fragment
  * ^   ^  ^  ^               ^    ^     ^                 ^
  * a   b  c  d               e    f     g                 h
@@ -44,12 +45,14 @@ namespace detail { class URI; }
  * path	[f, g)	"/path/"
  * query (g, h)	"key=value"
  * fragment	(h,-) "fragment"
+ * @endverbatim
  *
- * Queries are parsed into key-value pairs and can be accessed using TBD.
+ * Queries are parsed into key-value pairs and can be accessed using
+ * findQuery(), queryBegin() and queryEnd().
  *
  * Example: @include tests/uri.cpp
  */
-class URI : public boost::noncopyable
+class URI
 {
 public:
     typedef boost::unordered_map< std::string, std::string > KVMap;
@@ -57,12 +60,19 @@ public:
 
     /**
      * @param uri URI string to parse.
-     * @throws Throws std::exception for incomplete URIs, and throws
-     * boost::bad_lexical_cast if port is not a number.
+     * @throw std::exception for incomplete URIs, and boost::bad_lexical_cast
+     *        if the port is not a number.
      * @version 1.9.2
      */
-    URI( const std::string& uri );
-    ~URI();
+    LUNCHBOX_API URI( const std::string& uri );
+
+    /** Copy-construct an URI. @version 1.9.2 */
+    LUNCHBOX_API URI( const URI& from );
+
+    LUNCHBOX_API ~URI();
+
+    /** Assign the data from another URI. @version 1.9.2 */
+    LUNCHBOX_API URI& operator = ( const URI& rhs );
 
     /** @name Getters for the uri data @version 1.9.2 */
     //@{
@@ -77,13 +87,27 @@ public:
 
     /** @name Getters to query key-value data @version 1.9.2 */
     //@{
+    /**
+     * @return a const iterator to the beginning of the query map.
+     * @version 1.9.2
+     */
     LUNCHBOX_API ConstKVIter queryBegin() const;
+
+    /**
+     * @return a const iterator to end beginning of the query map.
+     * @version 1.9.2
+     */
     LUNCHBOX_API ConstKVIter queryEnd() const;
+
+    /**
+     * @return a const iterator to the given key, or queryEnd().
+     * @version 1.9.2
+     */
     LUNCHBOX_API ConstKVIter findQuery( const std::string& key ) const;
     //@}
 
 private:
-    detail::URI const *_impl;
+    detail::URI* const _impl;
 };
 
 inline std::ostream& operator << ( std::ostream& os, const URI& uri )

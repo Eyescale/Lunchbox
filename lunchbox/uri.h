@@ -64,15 +64,15 @@ public:
      *        if the port is not a number.
      * @version 1.9.2
      */
-    URI( const std::string& uri );
+    LUNCHBOX_API URI( const std::string& uri );
 
     /** Copy-construct an URI. @version 1.9.2 */
-    URI( const URI& from );
+    LUNCHBOX_API URI( const URI& from );
 
-    ~URI();
+    LUNCHBOX_API ~URI();
 
     /** Assign the data from another URI. @version 1.9.2 */
-    URI& operator = ( const URI& rhs );
+    LUNCHBOX_API URI& operator = ( const URI& rhs );
 
     /** @name Getters for the uri data @version 1.9.2 */
     //@{

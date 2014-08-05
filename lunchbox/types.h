@@ -35,7 +35,8 @@
  *   lunchbox::TimedLock)
  * - Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
  *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::Future,
- *   lunchbox::Servus, (lunchbox::ScopedMutex)
+ *   lunchbox::Servus, lunchbox::URI, lunchbox::PersistentMap,
+ *   (lunchbox::ScopedMutex)
  * - Compression and CPU-GPU transfer plugin handling: lunchbox::Compressor,
  *   lunchbox::Decompressor, lunchbox::Downloader, lunchbox::Plugin,
  *   lunchbox::PluginRegistry, lunchbox::Uploader

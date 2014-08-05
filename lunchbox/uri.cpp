@@ -68,9 +68,12 @@ private:
 class URI
 {
 public:
-    URI( const std::string &uri )
+    URI( const std::string& uri )
        : _uri( uri )
     {
+        if( uri.empty( ))
+            return;
+
         boost::match_results< std::string::const_iterator > results;
         boost::regex expr(
             "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",

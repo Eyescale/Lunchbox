@@ -261,6 +261,17 @@ unsigned char *MD5::raw_digest(){
   return s;
 }
 
+void MD5::raw_digest( uint64_t& high, uint64_t& low) const
+{
+    high = (uint64_t( digest[7] )<<0) | (uint64_t( digest[6] )<<8) |
+           (uint64_t( digest[5] )<<16) | (uint64_t( digest[4] )<<24) |
+           (uint64_t( digest[3] )<<32) | (uint64_t( digest[2] )<<40) |
+           (uint64_t( digest[1] )<<48) | (uint64_t( digest[0] )<<56);
+    low = (uint64_t( digest[15] )<<0) | (uint64_t( digest[14] )<<8) |
+          (uint64_t( digest[13] )<<16) | (uint64_t( digest[12] )<<24) |
+          (uint64_t( digest[11] )<<32) | (uint64_t( digest[10] )<<40) |
+          (uint64_t( digest[9] )<<48) | (uint64_t( digest[8] )<<56);
+}
 
 
 const char *MD5::hex_digest(){

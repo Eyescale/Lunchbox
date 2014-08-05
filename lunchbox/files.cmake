@@ -44,8 +44,8 @@ set(LUNCHBOX_PUBLIC_HEADERS
   lockable.h
   log.h
   memoryMap.h
-  mpi.h
   monitor.h
+  mpi.h
   mtQueue.h
   mtQueue.ipp
   nonCopyable.h
@@ -54,6 +54,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   perThread.h
   perThread.ipp
   perThreadRef.h
+  persistentMap.h
   plugin.h
   pluginRegistry.h
   pluginVisitor.h
@@ -141,11 +142,14 @@ set(LUNCHBOX_SOURCES
   file.cpp
   init.cpp
   launcher.cpp
+  leveldb/persistentMap.h
   lock.cpp
   log.cpp
+  md5/md5.cc
   memoryMap.cpp
   mpi.cpp
   omp.cpp
+  persistentMap.cpp
   plugin.cpp
   pluginInstance.h
   pluginRegistry.cpp
@@ -157,12 +161,10 @@ set(LUNCHBOX_SOURCES
   spinLock.cpp
   thread.cpp
   threadID.cpp
-  tls.cpp
   time.h
   timedLock.cpp
+  tls.cpp
   uint128_t.cpp
   uploader.cpp
   uri.cpp
-  md5/md5.cc
   )
-

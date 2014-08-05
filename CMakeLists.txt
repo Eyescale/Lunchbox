@@ -4,8 +4,10 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake
-  ${CMAKE_SOURCE_DIR}/CMake/common)
+list(APPEND CMAKE_MODULE_PATH 
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMake
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/common)
+
 include(GitExternal)
 
 include(Buildyard)

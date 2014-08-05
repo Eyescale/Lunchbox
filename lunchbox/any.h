@@ -256,7 +256,7 @@ inline const ValueType* any_cast( const Any* operand )
  * Retrieve the value stored in an Any including type checking.
  *
  * @return the value stored in the given Any
- * @throws bad_any_cast if types are not matching
+ * @throw bad_any_cast if types are not matching
  * @version 1.5.0
  */
 template< typename ValueType >
@@ -276,7 +276,7 @@ ValueType any_cast( Any& operand )
  * Retrieve the value stored in an Any including type checking.
  *
  * @return the value stored in the given Any
- * @throws bad_any_cast if types are not matching
+ * @throw bad_any_cast if types are not matching
  * @version 1.5.0
  */
 template< typename ValueType >

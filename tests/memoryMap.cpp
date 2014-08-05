@@ -15,8 +15,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-// Tests the functionality of MemoryMap
-
 #include <test.h>
 #include <lunchbox/memoryMap.h>
 

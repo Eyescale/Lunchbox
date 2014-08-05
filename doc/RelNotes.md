@@ -39,8 +39,9 @@ and documentation changes over Lunchbox 1.8:
 
 ## New Features {#NewFeatures}
 
-* MPI support through the new MPI class.
-* URI parsing support according to RFC3986.
+* lunchbox::MPI support
+* lunchbox::URI parsing support according to RFC3986
+* lunchbox::PersistentMap interface for persistent key-value stores
 
 ## Enhancements {#Enhancements}
 
@@ -51,6 +52,8 @@ and documentation changes over Lunchbox 1.8:
 * New Array class, moved from Collage
 
 ## Optimizations {#Optimizations}
+
+* Improved performance of lunchbox::make_uint128()
 
 ## Documentation {#Documentation}
 

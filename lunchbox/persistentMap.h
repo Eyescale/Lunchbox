@@ -30,9 +30,6 @@ namespace detail { class PersistentMap; }
 /**
  * Unified interface to save key-value pairs in a persistent store.
  *
- * Available implementations:
- * * If LUNCHBOX_USE_LEVELDB is defined: leveldb://path
- *
  * Example: @include tests/persistentMap.cpp
  */
 class PersistentMap : public boost::noncopyable
@@ -42,7 +39,8 @@ public:
      * Construct a new persistent map.
      *
      * Depending on the URI scheme an implementation backend is chosen. If no
-     * URI is given, a default one is selected.
+     * URI is given, a default one is selected. Available implementations are:
+     * * leveldb://path (if LUNCHBOX_USE_LEVELDB is defined)
      *
      * @param uri the storage backend and destination.
      * @throw std::runtime_error if no suitable implementation is found.

@@ -104,16 +104,6 @@ function(GIT_EXTERNAL DIR REPO TAG)
           WORKING_DIRECTORY "${DIR}")
       endif()
     endif()
-
-    # update tag
-    execute_process(COMMAND ${GIT_EXECUTABLE} rebase FETCH_HEAD
-      RESULT_VARIABLE RESULT OUTPUT_VARIABLE OUTPUT ERROR_VARIABLE OUTPUT
-      WORKING_DIRECTORY "${DIR}")
-    if(RESULT)
-      message(STATUS "git rebase failed, aborting ${DIR} merge")
-      execute_process(COMMAND ${GIT_EXECUTABLE} rebase --abort
-        WORKING_DIRECTORY "${DIR}")
-    endif()
   else()
     message(STATUS "Can't update git external ${DIR}: Not a git repository")
   endif()

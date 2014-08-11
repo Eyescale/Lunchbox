@@ -89,7 +89,7 @@ public:
     LUNCHBOX_API const std::string& getFragment() const;
     //@}
 
-    /** @name Getters to query key-value data @version 1.9.2 */
+    /** @name Access to key-value data in query @version 1.9.2 */
     //@{
     /**
      * @return a const iterator to the beginning of the query map.
@@ -108,6 +108,10 @@ public:
      * @version 1.9.2
      */
     LUNCHBOX_API ConstKVIter findQuery( const std::string& key ) const;
+
+    /** Add a key-value pair to the query. @version 1.9.2 */
+    LUNCHBOX_API void addQuery( const std::string& key,
+                                const std::string& value );
     //@}
 
 private:

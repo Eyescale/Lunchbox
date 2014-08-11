@@ -76,7 +76,7 @@ public:
 
         boost::match_results< std::string::const_iterator > results;
         boost::regex expr(
-            "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
+            "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#([^?]*))?$",
             boost::regex::perl | boost::regex::icase );
 
         if( !boost::regex_search( uri, results, expr ) )

@@ -112,16 +112,19 @@ private:
 
 inline std::ostream& operator << ( std::ostream& os, const URI& uri )
 {
-     os << uri.getScheme() << "://";
-     if( !uri.getUserinfo().empty( ))
-         os << uri.getUserinfo() << "@";
-     os << uri.getHost();
-     if( uri.getPort( ))
-         os << ':' << uri.getPort();
-     os << uri.getPath() << '?' << uri.getQuery();
-     if( !uri.getFragment().empty( ))
-         os << '#' << uri.getFragment();
-     return os;
+    if( !uri.getScheme().empty( ))
+        os << uri.getScheme() << "://";
+    if( !uri.getUserinfo().empty( ))
+        os << uri.getUserinfo() << "@";
+    os << uri.getHost();
+    if( uri.getPort( ))
+        os << ':' << uri.getPort();
+    os << uri.getPath();
+    if( !uri.getQuery().empty( ))
+        os << '?' << uri.getQuery();
+    if( !uri.getFragment().empty( ))
+        os << '#' << uri.getFragment();
+    return os;
 }
 
 }

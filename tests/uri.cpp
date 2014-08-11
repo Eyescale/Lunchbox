@@ -45,6 +45,15 @@ int main( int, char ** )
         std::stringstream sstr;
         sstr << uri;
         TESTINFO( sstr.str() == uriStr, sstr.str() << " " <<  uriStr );
+
+        sstr.str( "" );
+        sstr << lunchbox::URI( "http://www.example.com/path" );
+        TESTINFO( sstr.str() == "http://www.example.com/path", sstr.str( ));
+
+        sstr.str( "" );
+        sstr << lunchbox::URI( "/path" );
+        TESTINFO( sstr.str() == "/path", sstr.str( ));
+
     }
     catch( std::exception& exception )
     {
@@ -54,14 +63,11 @@ int main( int, char ** )
 
     try
     {
-        const std::string uriStr = "Helloworld";
+        const std::string uriStr = "Helloworld#?#://##";
         lunchbox::URI uri( uriStr );
+        TESTINFO( false, "Did not get exception on malformed URI: " << uri );
     }
-    catch( std::exception& exception )
-    {
-        return EXIT_SUCCESS;
-    }
+    catch( std::exception& exception ) {}
 
-    TESTINFO( false, "Did not get exception on malformed URI" );
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

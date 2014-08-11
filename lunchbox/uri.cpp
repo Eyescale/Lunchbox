@@ -76,18 +76,14 @@ public:
 
         boost::match_results< std::string::const_iterator > results;
         boost::regex expr(
-            "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
+            "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#([^?]*))?$",
             boost::regex::perl | boost::regex::icase );
 
         if( !boost::regex_search( uri, results, expr ) )
             throw uri_parse( _uri );
 
-        const std::string& schema = std::string( results[2].first,
-                                                 results[2].second );
-        if( schema.empty() )
-            throw uri_parse( _uri );
+        _uriData.scheme = std::string( results[2].first, results[2].second );
 
-        _uriData.scheme = schema;
         const std::string& userHost = std::string( results[4].first,
                                                    results[4].second );
         if( !userHost.empty() )

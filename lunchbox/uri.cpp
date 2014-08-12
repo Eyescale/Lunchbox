@@ -56,7 +56,7 @@ public:
 
     uri_parse( const uri_parse& excep )
     {
-        _error << excep._error;
+        _error << excep._error.str();
     }
 
     virtual ~uri_parse() throw() {}

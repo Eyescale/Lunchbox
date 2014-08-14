@@ -24,6 +24,7 @@
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
 #include <boost/unordered_map.hpp> // iterator typedefs
+#include <boost/lexical_cast.hpp>
 
 namespace lunchbox
 {
@@ -128,4 +129,15 @@ inline std::ostream& operator << ( std::ostream& os, const URI& uri )
 }
 
 }
+
+namespace boost
+{
+template<> inline std::string lexical_cast( const lunchbox::URI& uri )
+{
+    std::ostringstream os;
+    os << uri;
+    return os.str();
+}
+}
+
 #endif // LUNCHBOX_URI_H

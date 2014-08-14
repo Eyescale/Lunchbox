@@ -40,7 +40,7 @@ namespace
 {
 lunchbox::detail::PersistentMap* _newImpl( const std::string& uristr )
 {
-    const lunchbox::URI& uri( uristr );
+    const lunchbox::URI uri( uristr );
 
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))

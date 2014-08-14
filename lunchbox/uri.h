@@ -65,7 +65,10 @@ public:
      *        if the port is not a number.
      * @version 1.9.2
      */
-    LUNCHBOX_API URI( const std::string& uri );
+    LUNCHBOX_API explicit URI( const std::string& uri );
+
+    /** @overload URI::URI( const std::string& ) */
+    LUNCHBOX_API explicit URI( const char* uri );
 
     /** Copy-construct an URI. @version 1.9.2 */
     LUNCHBOX_API URI( const URI& from );

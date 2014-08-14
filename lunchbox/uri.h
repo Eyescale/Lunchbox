@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2013-2014, ahmet.bilgili@epfl.ch
  *                    2014, Stefan.Eilemann@epfl.ch
  *
@@ -134,7 +133,6 @@ inline std::ostream& operator << ( std::ostream& os, const URI& uri )
         os << '#' << uri.getFragment();
     return os;
 }
-
 }
 
 namespace boost
@@ -146,5 +144,4 @@ template<> inline std::string lexical_cast( const lunchbox::URI& uri )
     return os.str();
 }
 }
-
 #endif // LUNCHBOX_URI_H

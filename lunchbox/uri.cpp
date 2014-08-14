@@ -69,7 +69,6 @@ class URI
 {
 public:
     URI( const std::string& uri )
-       : _uri( uri )
     {
         if( uri.empty( ))
             return;
@@ -80,7 +79,7 @@ public:
             boost::regex::perl | boost::regex::icase );
 
         if( !boost::regex_search( uri, results, expr ) )
-            throw uri_parse( _uri );
+            throw uri_parse( uri );
 
         _uriData.scheme = std::string( results[2].first, results[2].second );
 
@@ -139,10 +138,8 @@ public:
     }
 
     const URIData& getData() const { return _uriData; }
-    const std::string& getURI() const { return _uri; }
 
 private:
-     std::string _uri;
      URIData _uriData;
 };
 

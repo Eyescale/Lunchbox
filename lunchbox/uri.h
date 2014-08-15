@@ -23,6 +23,7 @@
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
 #include <boost/unordered_map.hpp> // iterator typedefs
+#include <boost/lexical_cast.hpp>
 
 namespace lunchbox
 {
@@ -63,7 +64,10 @@ public:
      *        if the port is not a number.
      * @version 1.9.2
      */
-    LUNCHBOX_API URI( const std::string& uri );
+    LUNCHBOX_API explicit URI( const std::string& uri );
+
+    /** @overload URI::URI( const std::string& ) */
+    LUNCHBOX_API explicit URI( const char* uri );
 
     /** Copy-construct an URI. @version 1.9.2 */
     LUNCHBOX_API URI( const URI& from );
@@ -131,7 +135,6 @@ inline std::ostream& operator << ( std::ostream& os, const URI& uri )
 }
 }
 
-#  ifdef BOOST_LEXICAL_CAST_INCLUDED
 namespace boost
 {
 template<> inline std::string lexical_cast( const lunchbox::URI& uri )
@@ -142,5 +145,4 @@ template<> inline std::string lexical_cast( const lunchbox::URI& uri )
 }
 }
 
-#  endif
 #endif // LUNCHBOX_URI_H

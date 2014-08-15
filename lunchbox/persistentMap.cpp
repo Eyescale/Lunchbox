@@ -65,7 +65,7 @@ lunchbox::detail::PersistentMap* _newImpl( const lunchbox::URI& uri )
 namespace lunchbox
 {
 PersistentMap::PersistentMap( const std::string& uri )
-    : _impl( _newImpl( uri ))
+    : _impl( _newImpl( lunchbox::URI( uri )))
 {}
 
 PersistentMap::PersistentMap( const URI& uri )

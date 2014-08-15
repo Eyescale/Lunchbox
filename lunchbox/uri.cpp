@@ -70,7 +70,7 @@ private:
 class URI
 {
 public:
-    URI( const std::string& uri )
+    explicit URI( const std::string& uri )
     {
         if( uri.empty( ))
             return;
@@ -150,6 +150,11 @@ private:
 
 URI::URI( const std::string &uri )
    : _impl( new detail::URI( uri ) )
+{
+}
+
+URI::URI( const char* uri )
+    : _impl( new detail::URI( std::string( uri )))
 {
 }
 

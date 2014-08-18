@@ -54,6 +54,10 @@ int main( int, char ** )
         sstr << lunchbox::URI( "/path" );
         TESTINFO( sstr.str() == "/path", sstr.str( ));
 
+        const lunchbox::URI hostPortURI( "foo://hostname:12345" );
+        TESTINFO( hostPortURI.getScheme() == "foo", uri.getScheme() );
+        TESTINFO( hostPortURI.getHost() == "hostname", uri.getHost( ));
+        TESTINFO( hostPortURI.getPort() == 12345, uri.getPort( ));
     }
     catch( std::exception& exception )
     {

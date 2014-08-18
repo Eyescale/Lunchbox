@@ -104,7 +104,7 @@ public:
                                      boost::is_any_of( ":" ));
             _uriData.host = splitHostPort[ 0 ];
 
-            if( splitUserHost.size() == 2 ) // for ex: user:pass@hello.com:port
+            if( splitHostPort.size() == 2 ) // for ex: myhost:port
                 _uriData.port = boost::lexical_cast< uint16_t >(
                     splitHostPort[ 1 ] );
         }

@@ -71,7 +71,7 @@ int main( int, char ** )
         lunchbox::URI uri( uriStr );
         TESTINFO( false, "Did not get exception on malformed URI: " << uri );
     }
-    catch( std::exception& exception ) {}
+    catch( std::exception& ) {}
 
     return EXIT_SUCCESS;
 }

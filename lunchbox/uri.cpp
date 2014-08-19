@@ -87,7 +87,7 @@ public:
 
         const std::string& userHost = std::string( results[4].first,
                                                    results[4].second );
-        if( !userHost.empty() )
+        if( !userHost.empty( ))
         {
             std::vector< std::string > splitUserHost;
             std::string hostPort;
@@ -114,6 +114,16 @@ public:
         _uriData.path = std::string( results[5].first, results[5].second );
         _uriData.query = std::string( results[7].first, results[7].second );
         _uriData.fragment = std::string( results[9].first, results[9].second );
+
+        // from http://en.wikipedia.org/wiki/File_URI_scheme:
+        //   "file:///foo.txt" is okay, while "file://foo.txt" is not, although
+        //   some interpreters manage to handle the latter We are "some".
+        const bool isFileURI = _uriData.scheme.empty() ||
+                               _uriData.scheme == "file";
+        const bool hasHost = !_uriData.host.empty();
+        const bool hasPath = !_uriData.path.empty();
+        if( isFileURI && hasHost && !hasPath )
+            _uriData.host.swap( _uriData.path );
 
         // parse query data into key-value pairs
         std::string query = _uriData.query;

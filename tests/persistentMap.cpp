@@ -24,14 +24,14 @@
 
 using lunchbox::PersistentMap;
 
-const int values[] = { 17, 53, 42, 65535, 32768 };
-const size_t numValues = sizeof( values ) / sizeof( int );
+const int ints[] = { 17, 53, 42, 65535, 32768 };
+const size_t numInts = sizeof( ints ) / sizeof( int );
 
 template< class T > void insertVector( PersistentMap& map )
 {
     std::vector< T > vector;
-    for( size_t i = 0; i < numValues; ++i )
-        vector.push_back( T( values[ i ] ));
+    for( size_t i = 0; i < numInts; ++i )
+        vector.push_back( T( ints[ i ] ));
 
     TEST( map.insert( typeid( vector ).name(), vector ));
 }
@@ -40,16 +40,16 @@ template< class T > void readVector( PersistentMap& map )
 {
     const std::vector< T >& vector =
         map.getVector< T >( typeid( vector ).name( ));
-    TEST( vector.size() ==  numValues );
-    for( size_t i = 0; i < numValues; ++i )
-        TEST( vector[ i ] == T( values[i] ));
+    TEST( vector.size() ==  numInts );
+    for( size_t i = 0; i < numInts; ++i )
+        TEST( vector[ i ] == T( ints[i] ));
 }
 
 void setup( const std::string& uri )
 {
     PersistentMap map( uri );
     TEST( map.insert( "foo", "bar" ));
-    TEST( map[ "foo" ] == "bar" );
+    TESTINFO( map[ "foo" ] == "bar", map[ "foo" ] );
     TEST( map[ "bar" ].empty( ));
 
     insertVector< int >( map );
@@ -57,7 +57,7 @@ void setup( const std::string& uri )
     readVector< int >( map );
     readVector< uint16_t >( map );
 
-    std::set< int > set( values, values + numValues );
+    std::set< int > set( ints, ints + numInts );
     TEST( map.insert( "std::set< int >", set ));
 }
 
@@ -71,9 +71,9 @@ void read( const std::string& uri )
     readVector< uint16_t >( map );
 
     const std::set< int >& set = map.getSet< int >( "std::set< int >" );
-    TEST( set.size() ==  numValues );
-    for( size_t i = 0; i < numValues; ++i )
-        TEST( set.find( values[i] ) != set.end( ));
+    TEST( set.size() ==  numInts );
+    for( size_t i = 0; i < numInts; ++i )
+        TEST( set.find( ints[i] ) != set.end( ));
 }
 
 void testGenericFailures()

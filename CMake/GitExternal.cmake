@@ -61,16 +61,6 @@ function(GIT_EXTERNAL DIR REPO TAG)
       message(STATUS "Update of ${DIR} failed:\n   ${error}")
     endif()
 
-    # update tag
-    execute_process(COMMAND ${GIT_EXECUTABLE} rebase FETCH_HEAD
-      RESULT_VARIABLE RESULT OUTPUT_VARIABLE OUTPUT ERROR_VARIABLE OUTPUT
-      WORKING_DIRECTORY "${DIR}")
-    if(RESULT)
-      message(STATUS "git rebase failed, aborting ${DIR} merge")
-      execute_process(COMMAND ${GIT_EXECUTABLE} rebase --abort
-        WORKING_DIRECTORY "${DIR}")
-    endif()
-
     # checkout requested tag
     execute_process(
       COMMAND "${GIT_EXECUTABLE}" checkout -q "${TAG}"
@@ -182,4 +172,5 @@ endif()")
       endif()
     endif()
   endforeach()
+  include(${GIT_EXTERNALS})
 endif()

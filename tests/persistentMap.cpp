@@ -24,12 +24,21 @@
 
 using lunchbox::PersistentMap;
 
+const int ints[] = { 17, 53, 42 };
+const size_t numInts = sizeof( ints ) / sizeof( int );
+
 void setup( const std::string& uri )
 {
     PersistentMap map( uri );
     TEST( map.insert( "foo", "bar" ));
     TEST( map[ "foo" ] == "bar" );
     TEST( map[ "bar" ].empty( ));
+
+    std::vector< int > vector( ints, ints + numInts );
+    TEST( map.insert( "std::vector< int >", vector ));
+
+    std::set< int > set( ints, ints + numInts );
+    TEST( map.insert( "std::set< int >", set ));
 }
 
 void read( const std::string& uri )
@@ -37,6 +46,17 @@ void read( const std::string& uri )
     PersistentMap map( uri );
     TEST( map[ "foo" ] == "bar" );
     TEST( map[ "bar" ].empty( ));
+
+    const std::vector< int >& vector =
+        map.getVector< int >( "std::vector< int >" );
+    TEST( vector.size() ==  numInts );
+    for( size_t i = 0; i < numInts; ++i )
+        TEST( vector[ i ] == ints[i] );
+
+    const std::set< int >& set = map.getSet< int >( "std::set< int >" );
+    TEST( set.size() ==  numInts );
+    for( size_t i = 0; i < numInts; ++i )
+        TEST( set.find( ints[i] ) != set.end( ));
 }
 
 void testGenericFailures()

@@ -24,7 +24,7 @@ int main( int, char ** )
     {
         const std::string uriStr =
             "http://bob@www.example.com:8080/path/?key=value,foo=bar#fragment";
-        const lunchbox::URI uri( uriStr );
+        lunchbox::URI uri( uriStr );
 
         TESTINFO( uri.getScheme() == "http", uri.getScheme() );
         TESTINFO( uri.getHost() == "www.example.com", uri.getHost( ));
@@ -45,6 +45,16 @@ int main( int, char ** )
         std::stringstream sstr;
         sstr << uri;
         TESTINFO( sstr.str() == uriStr, sstr.str() << " " <<  uriStr );
+
+        uri.addQuery( "hans", "dampf" );
+        TESTINFO( uri.findQuery( "key" )->second == "value",
+                  uri.findQuery( "key" )->second );
+        TESTINFO( uri.findQuery( "foo" )->second == "bar",
+                  uri.findQuery( "foo" )->second );
+        TESTINFO( uri.findQuery( "hans" )->second == "dampf",
+                  uri.findQuery( "hans" )->second );
+        TESTINFO( uri.getQuery().find( "hans=dampf" ) != std::string::npos,
+                  uri.getQuery( ));
 
         sstr.str( "" );
         sstr << lunchbox::URI( "http://www.example.com/path" );

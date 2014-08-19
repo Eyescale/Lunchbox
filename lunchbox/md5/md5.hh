@@ -44,6 +44,11 @@ documentation and/or software.
 #include <fstream>
 #include <iostream>
 
+#ifdef _WIN32
+#  include <basetsd.h>
+   typedef UINT64 uint64_t;
+#endif
+
 class MD5 {
 
 public:

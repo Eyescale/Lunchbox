@@ -24,8 +24,26 @@
 
 using lunchbox::PersistentMap;
 
-const int ints[] = { 17, 53, 42 };
-const size_t numInts = sizeof( ints ) / sizeof( int );
+const int values[] = { 17, 53, 42, 65535, 32768 };
+const size_t numValues = sizeof( values ) / sizeof( int );
+
+template< class T > void insertVector( PersistentMap& map )
+{
+    std::vector< T > vector;
+    for( size_t i = 0; i < numValues; ++i )
+        vector.push_back( T( values[ i ] ));
+
+    TEST( map.insert( typeid( vector ).name(), vector ));
+}
+
+template< class T > void readVector( PersistentMap& map )
+{
+    const std::vector< T >& vector =
+        map.getVector< T >( typeid( vector ).name( ));
+    TEST( vector.size() ==  numValues );
+    for( size_t i = 0; i < numValues; ++i )
+        TEST( vector[ i ] == T( values[i] ));
+}
 
 void setup( const std::string& uri )
 {
@@ -34,10 +52,12 @@ void setup( const std::string& uri )
     TEST( map[ "foo" ] == "bar" );
     TEST( map[ "bar" ].empty( ));
 
-    std::vector< int > vector( ints, ints + numInts );
-    TEST( map.insert( "std::vector< int >", vector ));
+    insertVector< int >( map );
+    insertVector< uint16_t >( map );
+    readVector< int >( map );
+    readVector< uint16_t >( map );
 
-    std::set< int > set( ints, ints + numInts );
+    std::set< int > set( values, values + numValues );
     TEST( map.insert( "std::set< int >", set ));
 }
 
@@ -47,16 +67,13 @@ void read( const std::string& uri )
     TEST( map[ "foo" ] == "bar" );
     TEST( map[ "bar" ].empty( ));
 
-    const std::vector< int >& vector =
-        map.getVector< int >( "std::vector< int >" );
-    TEST( vector.size() ==  numInts );
-    for( size_t i = 0; i < numInts; ++i )
-        TEST( vector[ i ] == ints[i] );
+    readVector< int >( map );
+    readVector< uint16_t >( map );
 
     const std::set< int >& set = map.getSet< int >( "std::set< int >" );
-    TEST( set.size() ==  numInts );
-    for( size_t i = 0; i < numInts; ++i )
-        TEST( set.find( ints[i] ) != set.end( ));
+    TEST( set.size() ==  numValues );
+    for( size_t i = 0; i < numValues; ++i )
+        TEST( set.find( values[i] ) != set.end( ));
 }
 
 void testGenericFailures()

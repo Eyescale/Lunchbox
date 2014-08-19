@@ -17,7 +17,7 @@
 
 #include "persistentMap.h"
 
-#include <boost/lexical_cast.hpp> // needed first to enable cast in uri
+#include "log.h"
 #include "uri.h"
 
 namespace lunchbox
@@ -49,23 +49,23 @@ lunchbox::detail::PersistentMap* _newImpl( const lunchbox::URI& uri )
 #endif
 
     if( !uri.getScheme().empty( ))
-        throw std::runtime_error(
-            std::string( "No suitable implementation found for: " ) +
-                         boost::lexical_cast< std::string >( uri ));
+        LBTHROW( std::runtime_error(
+                     std::string( "No suitable implementation found for: " ) +
+                         boost::lexical_cast< std::string >( uri )));
 
 #ifdef LUNCHBOX_USE_LEVELDB
     return new lunchbox::leveldb::PersistentMap( uri );
 #endif
-    throw std::runtime_error(
-        std::string( "No suitable implementation found for: " ) +
-                     boost::lexical_cast< std::string >( uri ));
+    LBTHROW( std::runtime_error(
+                 std::string( "No suitable implementation found for: " ) +
+                     boost::lexical_cast< std::string >( uri )));
 }
 }
 
 namespace lunchbox
 {
 PersistentMap::PersistentMap( const std::string& uri )
-    : _impl( _newImpl( uri ))
+    : _impl( _newImpl( URI( uri )))
 {}
 
 PersistentMap::PersistentMap( const URI& uri )

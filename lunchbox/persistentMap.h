@@ -49,7 +49,7 @@ public:
      *
      * @param uri the storage backend and destination.
      * @throw std::runtime_error if no suitable implementation is found.
-     * @throw leveldb::Status if opening the leveldb database failed.
+     * @throw std::runtime_error if opening the leveldb failed.
      * @version 1.9.2
      */
     LUNCHBOX_API PersistentMap( const std::string& uri = std::string( ));
@@ -143,8 +143,8 @@ template< class V >
 std::vector< V > PersistentMap::getVector( const std::string& key )
 {
     const std::string& value = (*this)[ key ];
-    return std::vector< V >( value.data(),
-                             value.data() + value.size() / sizeof( V ));
+    return std::vector< V >( reinterpret_cast< const V* >( value.data( )),
+                             reinterpret_cast< const V* >( value.data() + value.size( )));
 }
 
 template< class V >

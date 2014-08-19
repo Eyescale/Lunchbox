@@ -16,6 +16,7 @@
  */
 
 #ifdef LUNCHBOX_USE_LEVELDB
+#include <lunchbox/log.h>
 #include <leveldb/db.h>
 
 namespace lunchbox
@@ -35,7 +36,7 @@ db::DB* _open( const URI& uri )
                               "persistentMap.leveldb" : uri.getPath();
     const db::Status status = db::DB::Open( options, path, &db );
     if( !status.ok( ))
-        throw status;
+        LBTHROW( std::runtime_error( status.ToString( )));
     return db;
 }
 }

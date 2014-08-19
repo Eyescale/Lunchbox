@@ -21,6 +21,7 @@
 #include "debug.h"
 #include "os.h"
 
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/regex.hpp>
 #include <sys/stat.h>
 #ifndef _MSC_VER
@@ -78,6 +79,17 @@ Strings searchDirectory( const std::string& directory,
     closedir(dir);
 #endif
     return files;
+}
+
+Strings expandWildcard( const std::string& directory,
+                        const std::string& wildcard )
+{
+    std::string pattern( wildcard );
+    boost::replace_all( pattern, ".", "\\." );
+    boost::replace_all( pattern, "*", ".*" );
+    boost::replace_all( pattern, "/", "\\/" );
+
+    return searchDirectory( directory, "^" + pattern + "$" );
 }
 
 std::string getFilename( const std::string& filename )

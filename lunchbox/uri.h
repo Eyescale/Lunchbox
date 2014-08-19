@@ -58,6 +58,9 @@ public:
     typedef boost::unordered_map< std::string, std::string > KVMap;
     typedef KVMap::const_iterator ConstKVIter;
 
+    /** Construct an empty URI. @version 1.9.2 */
+    LUNCHBOX_API URI();
+
     /**
      * @param uri URI string to parse.
      * @throw std::exception for incomplete URIs, and boost::bad_lexical_cast

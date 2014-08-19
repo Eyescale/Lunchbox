@@ -148,6 +148,11 @@ private:
 
 }
 
+URI::URI()
+    : _impl( new detail::URI( std::string( )))
+{
+}
+
 URI::URI( const std::string &uri )
    : _impl( new detail::URI( uri ) )
 {
@@ -236,7 +241,7 @@ void URI::addQuery( const std::string& key, const std::string& value )
     BOOST_FOREACH( const URI::KVMap::value_type& pair, data.queryMap )
     {
         if( data.query.empty( ))
-            data.query = std::string( "?" ) + pair.first + "=" + pair.second;
+            data.query = pair.first + "=" + pair.second;
         else
             data.query += std::string( "," ) + pair.first + "=" + pair.second;
     }

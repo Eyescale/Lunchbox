@@ -68,6 +68,15 @@ int main( int, char ** )
         TESTINFO( hostPortURI.getScheme() == "foo", uri.getScheme() );
         TESTINFO( hostPortURI.getHost() == "hostname", uri.getHost( ));
         TESTINFO( hostPortURI.getPort() == 12345, uri.getPort( ));
+
+        lunchbox::URI empty;
+        TEST( empty.getScheme().empty( ));
+        TEST( empty.getHost().empty( ));
+        TEST( empty.getUserinfo().empty( ));
+        TEST( empty.getPort() == 0 );
+        TEST( empty.getPath().empty( ));
+        TEST( empty.getQuery().empty( ));
+        TEST( empty.getFragment().empty( ));
     }
     catch( std::exception& exception )
     {

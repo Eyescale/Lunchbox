@@ -39,6 +39,16 @@ LUNCHBOX_API Strings searchDirectory( const std::string& directory,
 //    LB_DEPRECATED;
 
 /**
+ * Retrieve a list of directory contents (files and folders) matching a
+ * wildcard.
+ * @return all file and folder names matching the given wildcard
+ * in the given directory.
+ * @version 1.9.2 using boost::regex for matching
+ */
+LUNCHBOX_API Strings expandWildcard( const std::string& directory,
+                                     const std::string& wildcard );
+
+/**
  * @return the file name part of a path. @version 1.0
  * @deprecated Use Boost.Filesystem
  */

@@ -27,9 +27,8 @@
 
 namespace lunchbox
 {
-namespace detail
+namespace
 {
-
 struct URIData
 {
     URIData() : port( 0 ) {}
@@ -41,9 +40,12 @@ struct URIData
     std::string path;
     std::string query;
     std::string fragment;
-    lunchbox::URI::KVMap queryMap;
+    URI::KVMap queryMap;
 };
+}
 
+namespace detail
+{
 class uri_parse : public std::exception
 {
 public:
@@ -137,6 +139,7 @@ public:
         }
     }
 
+    URIData& getData() { return _uriData; }
     const URIData& getData() const { return _uriData; }
 
 private:
@@ -219,6 +222,24 @@ URI::ConstKVIter URI::queryEnd() const
 URI::ConstKVIter URI::findQuery( const std::string& key ) const
 {
     return _impl->getData().queryMap.find( key );
+}
+
+void URI::addQuery( const std::string& key, const std::string& value )
+{
+    URIData& data = _impl->getData();
+
+    data.queryMap[ key ] = value;
+    data.fragment.clear();
+
+    // Rebuild fragment string
+    data.query.clear();
+    BOOST_FOREACH( const URI::KVMap::value_type& pair, data.queryMap )
+    {
+        if( data.query.empty( ))
+            data.query = std::string( "?" ) + pair.first + "=" + pair.second;
+        else
+            data.query += std::string( "," ) + pair.first + "=" + pair.second;
+    }
 }
 
 }

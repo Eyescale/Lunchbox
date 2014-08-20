@@ -4,8 +4,8 @@
 # Change this number when adding tests to force a CMake run: 5
 
 include(InstallFiles)
+include_directories(${PROJECT_SOURCE_DIR}/tests)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}) # some tests need private headers
 set(TEST_LIBRARIES Lunchbox ${Boost_LIBRARIES})
 if(TRAVIS)
   set(EXCLUDE_FROM_TESTS persistentMap.cpp) # throws unreproducible error

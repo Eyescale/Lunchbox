@@ -17,6 +17,8 @@
 
 #ifdef LUNCHBOX_USE_LEVELDB
 #include <lunchbox/log.h>
+#include <lunchbox/compiler.h>
+
 #include <leveldb/db.h>
 
 namespace lunchbox

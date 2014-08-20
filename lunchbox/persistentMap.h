@@ -19,9 +19,14 @@
 #define LUNCHBOX_PERSISTENTMAP_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/types.h>
 #include <boost/noncopyable.hpp>
+
+#include <boost/type_traits.hpp>
 #include <iostream>
+#include <set>
 #include <string>
+#include <vector>
 
 namespace lunchbox
 {
@@ -44,10 +49,16 @@ public:
      *
      * @param uri the storage backend and destination.
      * @throw std::runtime_error if no suitable implementation is found.
-     * @throw leveldb::Status if opening the leveldb database failed.
+     * @throw std::runtime_error if opening the leveldb failed.
      * @version 1.9.2
      */
     LUNCHBOX_API PersistentMap( const std::string& uri = std::string( ));
+
+    /**
+     * Construct a persistent map using an URI. See other ctor for details.
+     * @version 1.9.2
+     */
+    LUNCHBOX_API explicit PersistentMap( const URI& uri );
 
     /** Destruct the persistent map. @version 1.9.2 */
     LUNCHBOX_API ~PersistentMap();
@@ -60,7 +71,32 @@ public:
      * @return true on success, false otherwise
      * @version 1.9.2
      */
-    LUNCHBOX_API bool insert( const std::string& key, const std::string& value);
+    template< class V > bool insert( const std::string& key, const V& value )
+        { return _insert( key, &value, sizeof( value )); }
+
+    /**
+     * Insert or update a vector of values in the database.
+     *
+     * @param key the key to store the value.
+     * @param value the values stored at the key.
+     * @return true on success, false otherwise
+     * @version 1.9.2
+     */
+    template< class V >
+    bool insert( const std::string& key, const std::vector< V >& values )
+        { return _insert( key, values, boost::is_pod< V >( )); }
+
+    /**
+     * Insert or update a set of values in the database.
+     *
+     * @param key the key to store the value.
+     * @param value the values stored at the key.
+     * @return true on success, false otherwise
+     * @version 1.9.2
+     */
+    template< class V >
+    bool insert( const std::string& key, const std::set< V >& values )
+        { return insert( key, std::vector<V>( values.begin(), values.end( ))); }
 
     /**
      * Retrieve a value for a key.
@@ -71,12 +107,56 @@ public:
      */
     LUNCHBOX_API std::string operator [] ( const std::string& key ) const;
 
+    /**
+     * Retrieve a value as a vector for a key.
+     *
+     * @param key the key to retreive.
+     * @return the values, or an empty vector if the key is not available.
+     * @version 1.9.2
+     */
+    template< class V > std::vector< V > getVector( const std::string& key );
+
+    /**
+     * Retrieve a value as a set for a key.
+     *
+     * @param key the key to retreive.
+     * @return the values, or an empty set if the key is not available.
+     * @version 1.9.2
+     */
+    template< class V > std::set< V > getSet( const std::string& key );
+
+    /** @return true if the key exists. @version 1.9.2 */
+    LUNCHBOX_API bool contains( const std::string& key ) const;
+
 private:
     detail::PersistentMap* const _impl;
+
+    LUNCHBOX_API bool _insert( const std::string& key, const void* data,
+                               const size_t size );
+    template< class V >
+    bool _insert( const std::string& key, const std::vector< V >& values,
+                  const boost::true_type& )
+        { return _insert( key, values.data(), values.size() * sizeof( V )); }
 };
 
-// inline std::ostream& operator << ( std::ostream& os, const PersistentMap& m )
+template< class V >
+std::vector< V > PersistentMap::getVector( const std::string& key )
+{
+    const std::string& value = (*this)[ key ];
+    return std::vector< V >( reinterpret_cast< const V* >( value.data( )),
+                             reinterpret_cast< const V* >( value.data() + value.size( )));
+}
 
+template< class V >
+std::set< V > PersistentMap::getSet( const std::string& key )
+{
+    const std::string& value = (*this)[ key ];
+    return std::set< V >( value.data(),
+                          value.data() + value.size() / sizeof( V ));
+}
+
+
+// inline std::ostream& operator << ( std::ostream& os, const PersistentMap& m )
 }
 
 #endif //LUNCHBOX_PERSISTENTMAP_H

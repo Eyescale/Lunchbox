@@ -16,6 +16,7 @@
  */
 
 #ifdef LUNCHBOX_USE_LEVELDB
+#include <lunchbox/log.h>
 #include <leveldb/db.h>
 
 namespace lunchbox
@@ -35,7 +36,7 @@ db::DB* _open( const URI& uri )
                               "persistentMap.leveldb" : uri.getPath();
     const db::Status status = db::DB::Open( options, path, &db );
     if( !status.ok( ))
-        throw status;
+        LBTHROW( std::runtime_error( status.ToString( )));
     return db;
 }
 }
@@ -50,8 +51,10 @@ public:
     static bool handles( const URI& uri )
         { return uri.getScheme() == "leveldb"; }
 
-    bool insert( const std::string& key, const std::string& value ) final
+    bool insert( const std::string& key, const void* data, const size_t size )
+        final
     {
+        const db::Slice value( (const char*)data, size );
         return _db->Put( db::WriteOptions(), key, value ).ok();
     }
 
@@ -61,6 +64,12 @@ public:
         if( _db->Get( db::ReadOptions(), key, &value ).ok( ))
             return value;
         return std::string();
+    }
+
+    bool contains( const std::string& key ) const final
+    {
+        std::string value;
+        return _db->Get( db::ReadOptions(), key, &value ).ok();
     }
 
 private:

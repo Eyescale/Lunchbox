@@ -27,9 +27,8 @@
 
 namespace lunchbox
 {
-namespace detail
+namespace
 {
-
 struct URIData
 {
     URIData() : port( 0 ) {}
@@ -41,9 +40,12 @@ struct URIData
     std::string path;
     std::string query;
     std::string fragment;
-    lunchbox::URI::KVMap queryMap;
+    URI::KVMap queryMap;
 };
+}
 
+namespace detail
+{
 class uri_parse : public std::exception
 {
 public:
@@ -85,7 +87,7 @@ public:
 
         const std::string& userHost = std::string( results[4].first,
                                                    results[4].second );
-        if( !userHost.empty() )
+        if( !userHost.empty( ))
         {
             std::vector< std::string > splitUserHost;
             std::string hostPort;
@@ -113,6 +115,16 @@ public:
         _uriData.query = std::string( results[7].first, results[7].second );
         _uriData.fragment = std::string( results[9].first, results[9].second );
 
+        // from http://en.wikipedia.org/wiki/File_URI_scheme:
+        //   "file:///foo.txt" is okay, while "file://foo.txt" is not, although
+        //   some interpreters manage to handle the latter We are "some".
+        const bool isFileURI = _uriData.scheme.empty() ||
+                               _uriData.scheme == "file";
+        const bool hasHost = !_uriData.host.empty();
+        const bool hasPath = !_uriData.path.empty();
+        if( isFileURI && hasHost && !hasPath )
+            _uriData.host.swap( _uriData.path );
+
         // parse query data into key-value pairs
         std::string query = _uriData.query;
         while( !query.empty( ))
@@ -137,12 +149,18 @@ public:
         }
     }
 
+    URIData& getData() { return _uriData; }
     const URIData& getData() const { return _uriData; }
 
 private:
      URIData _uriData;
 };
 
+}
+
+URI::URI()
+    : _impl( new detail::URI( std::string( )))
+{
 }
 
 URI::URI( const std::string &uri )
@@ -219,6 +237,24 @@ URI::ConstKVIter URI::queryEnd() const
 URI::ConstKVIter URI::findQuery( const std::string& key ) const
 {
     return _impl->getData().queryMap.find( key );
+}
+
+void URI::addQuery( const std::string& key, const std::string& value )
+{
+    URIData& data = _impl->getData();
+
+    data.queryMap[ key ] = value;
+    data.fragment.clear();
+
+    // Rebuild fragment string
+    data.query.clear();
+    BOOST_FOREACH( const URI::KVMap::value_type& pair, data.queryMap )
+    {
+        if( data.query.empty( ))
+            data.query = pair.first + "=" + pair.second;
+        else
+            data.query += std::string( "," ) + pair.first + "=" + pair.second;
+    }
 }
 
 }

@@ -17,6 +17,7 @@
 
 #include "persistentMap.h"
 
+#include "log.h"
 #include "uri.h"
 
 namespace lunchbox
@@ -27,8 +28,10 @@ class PersistentMap
 {
 public:
     virtual ~PersistentMap() {}
-    virtual bool insert( const std::string& key, const std::string& value ) = 0;
+    virtual bool insert( const std::string& key, const void* data,
+                         const size_t size ) = 0;
     virtual std::string operator [] ( const std::string& key ) const = 0;
+    virtual bool contains( const std::string& key ) const = 0;
 };
 }
 }
@@ -38,47 +41,56 @@ public:
 
 namespace
 {
-lunchbox::detail::PersistentMap* _newImpl( const std::string& uristr )
+lunchbox::detail::PersistentMap* _newImpl( const lunchbox::URI& uri )
 {
-    const lunchbox::URI uri( uristr );
-
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
         return new lunchbox::leveldb::PersistentMap( uri );
 #endif
 
     if( !uri.getScheme().empty( ))
-        throw std::runtime_error(
-            std::string( "No suitable implementation found for: " ) + uristr );
+        LBTHROW( std::runtime_error(
+                     std::string( "No suitable implementation found for: " ) +
+                         boost::lexical_cast< std::string >( uri )));
 
 #ifdef LUNCHBOX_USE_LEVELDB
     return new lunchbox::leveldb::PersistentMap( uri );
 #endif
-    throw std::runtime_error(
-        std::string( "No suitable implementation found for: " ) + uristr );
+    LBTHROW( std::runtime_error(
+                 std::string( "No suitable implementation found for: " ) +
+                     boost::lexical_cast< std::string >( uri )));
 }
 }
 
 namespace lunchbox
 {
 PersistentMap::PersistentMap( const std::string& uri )
+    : _impl( _newImpl( URI( uri )))
+{}
+
+PersistentMap::PersistentMap( const URI& uri )
     : _impl( _newImpl( uri ))
-{
-}
+{}
 
 PersistentMap::~PersistentMap()
 {
     delete _impl;
 }
 
-bool PersistentMap::insert( const std::string& key, const std::string& value)
+bool PersistentMap::_insert( const std::string& key, const void* data,
+                             const size_t size )
 {
-    return _impl->insert( key, value );
+    return _impl->insert( key, data, size );
 }
 
 std::string PersistentMap::operator [] ( const std::string& key ) const
 {
     return (*_impl)[ key ];
+}
+
+bool PersistentMap::contains( const std::string& key ) const
+{
+    return _impl->contains( key );
 }
 
 }

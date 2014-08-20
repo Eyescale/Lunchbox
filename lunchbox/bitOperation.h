@@ -117,6 +117,7 @@ template<> inline void byteswap( bool&) { /*NOP*/ }
 template<> inline void byteswap( char& ) { /*NOP*/ }
 template<> inline void byteswap( signed char& ) { /*NOP*/ }
 template<> inline void byteswap( unsigned char& ) { /*NOP*/ }
+template<> inline void byteswap( std::string& ) { /*NOP*/ }
 
 template<> inline void byteswap( uint32_t& value )
 {

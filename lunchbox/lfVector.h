@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2013, EPFL/Blue Brain Project
+/* Copyright (c) 2011-2014, EPFL/Blue Brain Project
  *                          Stefan Eilemann <stefan.eilemann@epfl.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
@@ -123,6 +123,7 @@ public:
      *
      * @param newSize the minimum new size.
      * @param item the element to insert.
+     * @throw std::runtime_error if the vector is full
      * @version 1.3.2
      */
     void expand( const size_t newSize, const T& item = T( ));
@@ -137,6 +138,7 @@ public:
      *
      * @param item the element to insert.
      * @param lock true for internal lock, false if locked with getWriteLock()
+     * @throw std::runtime_error if the vector is full
      * @version 1.3.2
      */
     void push_back( const T& item, bool lock = true );
@@ -202,6 +204,7 @@ public:
      * with concurrent reads on the removed elements and produces undefined
      * results.
      *
+     * @throw std::runtime_error if the vector is full
      * @version 1.7.2
      */
     void resize( const size_t size, const T& value = T( ));

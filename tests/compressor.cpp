@@ -126,11 +126,11 @@ void _testData( const uint32_t compressorName, const std::string& name,
     uint8_t* outData = result.getData();
 
     decompressor.decompress( &chunks.front(), &chunkSizes.front(),
-                             chunks.size(), outData, inDims );
+                             unsigned( chunks.size( )), outData, inDims );
 
     clock.reset();
     decompressor.decompress( &chunks.front(), &chunkSizes.front(),
-                             chunks.size(), outData, inDims );
+                             unsigned(chunks.size()), outData, inDims);
     const float decompressTime = clock.getTimef();
 
     TEST( memcmp( outData, data, size ) == 0 );

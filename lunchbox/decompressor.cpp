@@ -142,7 +142,7 @@ bool Decompressor::decompress( const CompressorResult& input, void* const out,
     }
 
     impl_->plugin->decompress( impl_->instance, impl_->info.name, in, inSizes,
-                               num, out, pvpOut, flags );
+                               unsigned( num ), out, pvpOut, flags);
     return true;
 }
 

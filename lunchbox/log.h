@@ -219,7 +219,7 @@ inline std::ostream& stopBlock( std::ostream& os )
  */
 #define LBTHROW(exc)                                                \
     {                                                               \
-        LBLOG(lunchbox::LOG_EXCEPTION) << exc.what() << std::endl;  \
+        LBINFO << exc.what() << std::endl;                          \
         throw exc;                                                  \
     }
 

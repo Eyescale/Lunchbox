@@ -77,6 +77,31 @@ int main( int, char ** )
         TEST( empty.getPath().empty( ));
         TEST( empty.getQuery().empty( ));
         TEST( empty.getFragment().empty( ));
+
+        lunchbox::URI file1( "/bla.txt" );
+        TEST( file1.getPath() == "/bla.txt" );
+        TEST( file1.getHost().empty( ));
+        TEST( file1.getScheme().empty( ));
+
+        lunchbox::URI file2( "bla.txt" );
+        TEST( file2.getPath() == "bla.txt" );
+        TEST( file2.getHost().empty( ));
+        TEST( file2.getScheme().empty( ));
+
+        lunchbox::URI file3( "file:///bla.txt" );
+        TEST( file3.getPath() == "/bla.txt" );
+        TEST( file3.getHost().empty( ));
+        TEST( file3.getScheme() == "file" );
+
+        lunchbox::URI file4( "file://bla.txt" );
+        TEST( file4.getPath() == "bla.txt" );
+        TEST( file4.getHost().empty( ));
+        TEST( file4.getScheme() == "file" );
+
+        lunchbox::URI file5( "host://bla.txt" );
+        TEST( file5.getHost() == "bla.txt" );
+        TEST( file5.getPath().empty( ));
+        TEST( file5.getScheme() == "host" );
     }
     catch( std::exception& exception )
     {

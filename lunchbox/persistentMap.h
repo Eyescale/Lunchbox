@@ -19,6 +19,7 @@
 #define LUNCHBOX_PERSISTENTMAP_H
 
 #include <lunchbox/api.h>
+#include <lunchbox/debug.h> // className
 #include <lunchbox/log.h> // LBTHROW
 #include <lunchbox/types.h>
 #include <boost/noncopyable.hpp>
@@ -155,8 +156,8 @@ private:
     }
 
     template< class V >
-    bool _insert( const std::string&, const V&, const boost::false_type& )
-        { LBTHROW( std::runtime_error( "Can't insert non-PODs" )); }
+    bool _insert( const std::string&, const V& v, const boost::false_type& )
+    { LBTHROW( std::runtime_error( "Can't insert non-POD " + className( v ))); }
 
     template< class V >
     bool _insert( const std::string& key, const std::vector< V >& values,

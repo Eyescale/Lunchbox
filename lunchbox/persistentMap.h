@@ -75,7 +75,7 @@ public:
      * @version 1.9.2
      */
     template< class V > bool insert( const std::string& key, const V& value )
-        { return _insert( key, value, boost::is_pod< V >( )); }
+        { return _insert( key, value, boost::has_trivial_assign< V >( )); }
 
     /**
      * Insert or update a vector of values in the database.
@@ -87,7 +87,7 @@ public:
      */
     template< class V >
     bool insert( const std::string& key, const std::vector< V >& values )
-        { return _insert( key, values, boost::is_pod< V >( )); }
+        { return _insert( key, values, boost::has_trivial_assign< V >( )); }
 
     /**
      * Insert or update a set of values in the database.

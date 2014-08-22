@@ -45,7 +45,7 @@ public:
 
     void clear()
     {
-        if( instance )
+        if( plugin && instance )
             plugin->deleteDecompressor( instance );
         PluginInstance::clear();
     }

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2013, EPFL/Blue Brain Project
+/* Copyright (c) 2011-2014, EPFL/Blue Brain Project
  *                          Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -344,9 +344,14 @@ void LFVector< T, nSlots >::push_back_unlocked_( const T& item )
 {
     const size_t i = size_ + 1;
     const int32_t slot = getIndexOfLastBit( i );
+    if( slot < 0 || slot >= nSlots )
+    {
+        LBASSERTINFO( slot >= 0 && slot < nSlots, slot );
+        LBTHROW( std::runtime_error( "LFVector full" ));
+    }
+
     const size_t sz = ( size_t( 1 ) << slot );
 
-    LBASSERTINFO( slot >= 0 && slot < nSlots, slot );
     if( !slots_[ slot ] )
         slots_[ slot ] = new T[ sz ];
 

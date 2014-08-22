@@ -48,9 +48,17 @@ template< class T > void readVector( PersistentMap& map )
 void setup( const std::string& uri )
 {
     PersistentMap map( uri );
+    TEST( map.insert( "the quick brown fox", "jumped over something" ));
+    TESTINFO( map[ "the quick brown fox" ] == "jumped over something",
+              map[ "the quick brown fox" ] );
+
     TEST( map.insert( "foo", "bar" ));
-    TESTINFO( map[ "foo" ] == std::string( "bar" ), map[ "foo" ] );
+    TESTINFO( map[ "foo" ] == "bar",
+              map[ "foo" ] << " length " << map[ "foo" ].length( ));
     TEST( map[ "bar" ].empty( ));
+
+    TEST( map.insert( "hans", std::string( "dampf" )));
+    TESTINFO( map[ "hans" ] == "dampf", map[ "hans" ] );
 
     insertVector< int >( map );
     insertVector< uint16_t >( map );
@@ -71,9 +79,10 @@ void read( const std::string& uri )
     readVector< uint16_t >( map );
 
     const std::set< int >& set = map.getSet< int >( "std::set< int >" );
-    TEST( set.size() ==  numInts );
+    TESTINFO( set.size() ==  numInts, set.size() << " != " << numInts );
     for( size_t i = 0; i < numInts; ++i )
-        TEST( set.find( ints[i] ) != set.end( ));
+        TESTINFO( set.find( ints[i] ) != set.end(),
+                  ints[i] << " not found in set" );
 }
 
 void testGenericFailures()
@@ -96,7 +105,7 @@ void testLevelDBFailures()
     {
         setup( "leveldb:///doesnotexist/deadbeef/coffee" );
     }
-    catch( const leveldb::Status& status )
+    catch( const std::runtime_error& )
     {
         return;
     }

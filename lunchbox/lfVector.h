@@ -28,6 +28,7 @@
 #include <lunchbox/serializable.h>
 #include <lunchbox/spinLock.h> // member
 #include <algorithm> // used inline
+#include <stdexcept>
 
 namespace lunchbox
 {

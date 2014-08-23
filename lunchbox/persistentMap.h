@@ -72,6 +72,7 @@ public:
      * @param key the key to store the value.
      * @param value the value stored at the key.
      * @return true on success, false otherwise
+     * @throw std::runtime_error if the value is not copyable
      * @version 1.9.2
      */
     template< class V > bool insert( const std::string& key, const V& value )
@@ -83,6 +84,7 @@ public:
      * @param key the key to store the value.
      * @param value the values stored at the key.
      * @return true on success, false otherwise
+     * @throw std::runtime_error if the vector values are not copyable
      * @version 1.9.2
      */
     template< class V >
@@ -95,6 +97,7 @@ public:
      * @param key the key to store the value.
      * @param value the values stored at the key.
      * @return true on success, false otherwise
+     * @throw std::runtime_error if the set values are not copyable
      * @version 1.9.2
      */
     template< class V >

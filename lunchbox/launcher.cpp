@@ -97,7 +97,7 @@ bool Launcher::run( const std::string& command )
     }
 
     // child
-    const size_t  argc         = commandLine.size();
+    const size_t argc = commandLine.size();
     std::vector<char*> argv( argc + 1 );
     std::ostringstream stringStream;
 
@@ -107,7 +107,7 @@ bool Launcher::run( const std::string& command )
         stringStream << commandLine[i] << " ";
     }
 
-    argv[argc] = 0;
+    argv[ argc ] = 0;
 
     LBINFO << "Executing: " << stringStream.str() << std::endl;
     //::exit( EXIT_SUCCESS );

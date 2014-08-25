@@ -4,8 +4,10 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake
-  ${CMAKE_SOURCE_DIR}/CMake/common)
+list(APPEND CMAKE_MODULE_PATH 
+  ${PROJECT_SOURCE_DIR}/CMake
+  ${PROJECT_SOURCE_DIR}/CMake/common)
+
 include(GitExternal)
 
 include(Buildyard)
@@ -49,7 +51,7 @@ if(OPENMP_FOUND)
 endif()
 
 set(LUNCHBOX_DEFINITIONS ${LUNCHBOX_DEFINITIONS}
-  -DLUNCHBOX_BUILD_DIR="${CMAKE_BINARY_DIR}/")
+  -DLUNCHBOX_BUILD_DIR="${PROJECT_BINARY_DIR}/")
 add_definitions(${LUNCHBOX_DEFINITIONS})
 
 if(APPLE)

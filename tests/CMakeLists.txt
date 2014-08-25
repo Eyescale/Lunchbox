@@ -4,8 +4,8 @@
 # Change this number when adding tests to force a CMake run: 5
 
 include(InstallFiles)
+include_directories(${PROJECT_SOURCE_DIR}/tests)
 
-include_directories(${CMAKE_SOURCE_DIR}) # some tests need private headers
 set(TEST_LIBRARIES Lunchbox ${Boost_LIBRARIES})
 if(COVERAGE AND TRAVIS)
   list(APPEND EXCLUDE_FROM_TESTS anySerialization.cpp) #timeout in lcov gather

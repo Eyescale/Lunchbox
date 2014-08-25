@@ -83,9 +83,11 @@ bool PersistentMap::handles( const URI& uri )
         return true;
 #endif
 
+    if( !uri.getScheme().empty( ))
+        return false;
+
 #ifdef LUNCHBOX_USE_LEVELDB
-    if( uri.getScheme().empty( ))
-        return true;
+    return true;
 #endif
     return false;
 }

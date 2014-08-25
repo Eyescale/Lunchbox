@@ -1,5 +1,5 @@
 
-/* Copyright (C) 2013, Stefan.Eilemann@epfl.ch
+/* Copyright (C) 2013-2014, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -48,7 +48,7 @@ public:
 
     void clear()
     {
-        if( instance )
+        if( plugin && instance )
             plugin->deleteDecompressor( instance );
         PluginInstance::clear();
     }
@@ -249,6 +249,8 @@ void Downloader::finish( void** buffer, const uint64_t inDims[4],
     LBASSERT( impl_->plugin );
     LBASSERT( impl_->instance );
     LBASSERT( gl );
+    if( !impl_->plugin )
+        return;
 
     if( impl_->info.capabilities & EQ_COMPRESSOR_USE_ASYNC_DOWNLOAD )
     {

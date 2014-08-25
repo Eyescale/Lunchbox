@@ -16,8 +16,6 @@
  */
 
 #include "persistentMap.h"
-
-#include "log.h"
 #include "uri.h"
 
 namespace lunchbox

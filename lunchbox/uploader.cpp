@@ -1,5 +1,5 @@
 
-/* Copyright (C) 2013, Stefan.Eilemann@epfl.ch
+/* Copyright (C) 2013-2014, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -45,7 +45,7 @@ public:
 
     void clear()
     {
-        if( instance )
+        if( plugin && instance )
             plugin->deleteDecompressor( instance );
         PluginInstance::clear();
     }

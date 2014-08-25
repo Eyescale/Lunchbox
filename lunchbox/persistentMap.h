@@ -67,6 +67,12 @@ public:
     LUNCHBOX_API ~PersistentMap();
 
     /**
+     * @return true if an implementation for the given URI is available.
+     * @version 1.9.2
+     */
+    LUNCHBOX_API static bool handles( const URI& uri );
+
+    /**
      * Insert or update a value in the database.
      *
      * @param key the key to store the value.

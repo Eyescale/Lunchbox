@@ -41,6 +41,7 @@ namespace
 {
 lunchbox::detail::PersistentMap* _newImpl( const lunchbox::URI& uri )
 {
+    // Update handles() below on any change here!
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
         return new lunchbox::leveldb::PersistentMap( uri );
@@ -73,6 +74,20 @@ PersistentMap::PersistentMap( const URI& uri )
 PersistentMap::~PersistentMap()
 {
     delete _impl;
+}
+
+bool PersistentMap::handles( const URI& uri )
+{
+#ifdef LUNCHBOX_USE_LEVELDB
+    if( lunchbox::leveldb::PersistentMap::handles( uri ))
+        return true;
+#endif
+
+#ifdef LUNCHBOX_USE_LEVELDB
+    if( uri.getScheme().empty( ))
+        return true;
+#endif
+    return false;
 }
 
 bool PersistentMap::_insert( const std::string& key, const void* data,

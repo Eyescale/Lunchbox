@@ -168,14 +168,14 @@ private:
         { return _insert( key, values.data(), values.size() * sizeof( V )); }
 };
 
-template<>
+template<> inline
 bool PersistentMap::_insert( const std::string& k, const std::string& v,
                              const boost::false_type& )
 {
     return _insert( k, v.data(), v.length( ));
 }
 
-template< class V >
+template< class V > inline
 std::vector< V > PersistentMap::getVector( const std::string& key )
 {
     const std::string& value = (*this)[ key ];
@@ -183,7 +183,7 @@ std::vector< V > PersistentMap::getVector( const std::string& key )
                    reinterpret_cast< const V* >( value.data() + value.size( )));
 }
 
-template< class V >
+template< class V > inline
 std::set< V > PersistentMap::getSet( const std::string& key )
 {
     const std::string& value = (*this)[ key ];

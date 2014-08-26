@@ -72,8 +72,8 @@ else()
 endif()
 
 
-if(EXISTS ${CMAKE_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
-  include(${CMAKE_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
+if(EXISTS ${PROJECT_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
+  include(${PROJECT_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
 endif()
 
 if(HWLOC_FOUND)

@@ -31,6 +31,10 @@
 
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/shared_ptr.hpp>
+
+// Don't reorder below!
+#include <boost/serialization/singleton.hpp>
+#include <boost/serialization/extended_type_info.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/base_object.hpp>

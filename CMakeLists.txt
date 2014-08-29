@@ -4,16 +4,11 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
 
-list(APPEND CMAKE_MODULE_PATH 
-  ${PROJECT_SOURCE_DIR}/CMake
+include(CMake/GitExternal.cmake)
+include(CMake/common/Superproject.cmake)
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
   ${PROJECT_SOURCE_DIR}/CMake/common)
-
-include(GitExternal)
-
-include(Buildyard)
-if(BUILDYARD_STOP)
-  return()
-endif()
 
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
@@ -67,7 +62,7 @@ add_subdirectory(tests)
 add_subdirectory(doc)
 
 include(DoxygenRule) # must be after all targets
-include(CPackConfig)
+include(LunchboxCPack)
 include(PackageConfig)
 include(GNUModules)
 

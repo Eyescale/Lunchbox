@@ -147,10 +147,11 @@ if(EXISTS ${GIT_EXTERNALS})
           if(NOT TARGET update)
             add_custom_target(update)
           endif()
-          if(NOT TARGET update_git_external)
-            add_custom_target(update_git_external)
+          if(NOT TARGET ${PROJECT_NAME}-update)
+            message(${PROJECT_NAME}-update)
+            add_custom_target(${PROJECT_NAME}-update)
+            add_dependencies(update ${PROJECT_NAME}-update)
             add_custom_target(flatten_git_external)
-            add_dependencies(update update_git_external)
           endif()
 
           # Create a unique, flat name
@@ -188,7 +189,7 @@ endif()")
             COMMENT "Update ${REPO} in ${GIT_EXTERNALS_BASE}"
             DEPENDS ${GIT_EXTERNAL_TARGET}
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-          add_dependencies(update_git_external
+          add_dependencies(${PROJECT_NAME}-update
             update_git_external_${GIT_EXTERNAL_NAME})
 
           # Flattens a git external repository into its parent repo:

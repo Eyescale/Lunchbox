@@ -143,6 +143,7 @@ set(LUNCHBOX_SOURCES
   init.cpp
   launcher.cpp
   leveldb/persistentMap.h
+  skv/persistentMap.h
   lock.cpp
   log.cpp
   md5/md5.cc

@@ -36,6 +36,7 @@ public:
 
 // Impls - need detail::PersistentMap interface
 #include "leveldb/persistentMap.h"
+#include "skv/persistentMap.h"
 
 namespace
 {
@@ -45,6 +46,10 @@ lunchbox::detail::PersistentMap* _newImpl( const lunchbox::URI& uri )
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
         return new lunchbox::leveldb::PersistentMap( uri );
+#endif
+#ifdef LUNCHBOX_USE_SKV
+    if( lunchbox::skv::PersistentMap::handles( uri ))
+        return new lunchbox::skv::PersistentMap( uri );
 #endif
 
     if( !uri.getScheme().empty( ))
@@ -80,6 +85,10 @@ bool PersistentMap::handles( const URI& uri )
 {
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
+        return true;
+#endif
+#ifdef LUNCHBOX_USE_SKV
+    if( lunchbox::skv::PersistentMap::handles( uri ))
         return true;
 #endif
 

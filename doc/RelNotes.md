@@ -50,6 +50,7 @@ and documentation changes over Lunchbox 1.8:
 * Use structure to gather compression results
 * Boolean operators for (De)compressor
 * New Array class, moved from Collage
+* Added API for continuous browsing to lunchbox::Servus
 
 ## Optimizations {#Optimizations}
 

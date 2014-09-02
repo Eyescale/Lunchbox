@@ -93,11 +93,6 @@ function(GIT_EXTERNAL DIR REPO TAG)
         message(STATUS "git rebase failed, aborting ${DIR} merge")
         execute_process(COMMAND ${GIT_EXECUTABLE} rebase --abort
           WORKING_DIRECTORY "${DIR}")
-        if(RESULT)
-          message(STATUS "git rebase failed, aborting ${DIR} merge")
-          execute_process(COMMAND ${GIT_EXECUTABLE} rebase --abort
-            WORKING_DIRECTORY "${DIR}")
-        endif()
       endif()
 
       # checkout requested tag
@@ -147,11 +142,10 @@ if(EXISTS ${GIT_EXTERNALS})
           if(NOT TARGET update)
             add_custom_target(update)
           endif()
-          if(NOT TARGET ${PROJECT_NAME}-update)
-            message(${PROJECT_NAME}-update)
-            add_custom_target(${PROJECT_NAME}-update)
-            add_dependencies(update ${PROJECT_NAME}-update)
+          if(NOT TARGET update_git_external)
+            add_custom_target(update_git_external)
             add_custom_target(flatten_git_external)
+            add_dependencies(update update_git_external)
           endif()
 
           # Create a unique, flat name
@@ -189,7 +183,7 @@ endif()")
             COMMENT "Update ${REPO} in ${GIT_EXTERNALS_BASE}"
             DEPENDS ${GIT_EXTERNAL_TARGET}
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-          add_dependencies(${PROJECT_NAME}-update
+          add_dependencies(update_git_external
             update_git_external_${GIT_EXTERNAL_NAME})
 
           # Flattens a git external repository into its parent repo:

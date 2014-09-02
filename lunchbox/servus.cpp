@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2012-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -71,9 +71,10 @@ class Servus
 public:
 #ifdef LUNCHBOX_USE_DNSSD
     explicit Servus( const std::string& name )
-        : name_( name )
-        , service_( 0 )
-        , result_( lunchbox::Servus::Result::PENDING )
+        : _name( name )
+        , _out( 0 )
+        , _in( 0 )
+        , _result( lunchbox::Servus::Result::PENDING )
     {}
 #else
     explicit Servus( const std::string& ) {}
@@ -82,6 +83,7 @@ public:
     ~Servus()
     {
 #ifdef LUNCHBOX_USE_DNSSD
+        endBrowsing();
         withdraw();
 #endif
     }
@@ -89,7 +91,7 @@ public:
 #ifdef LUNCHBOX_USE_DNSSD
     void set( const std::string& key, const std::string& value )
     {
-        data_[ key ] = value;
+        _data[ key ] = value;
         updateRecord_();
     }
 #else
@@ -100,7 +102,7 @@ public:
     {
         Strings keys;
 #ifdef LUNCHBOX_USE_DNSSD
-        for( ValueMapCIter i = data_.begin(); i != data_.end(); ++i )
+        for( ValueMapCIter i = _data.begin(); i != _data.end(); ++i )
             keys.push_back( i->first );
 #endif
         return keys;
@@ -109,8 +111,8 @@ public:
 #ifdef LUNCHBOX_USE_DNSSD
     const std::string& get( const std::string& key ) const
     {
-        ValueMapCIter i = data_.find( key );
-        if( i != data_.end( ))
+        ValueMapCIter i = _data.find( key );
+        if( i != _data.end( ))
             return i->second;
         return empty_;
     }
@@ -121,21 +123,21 @@ public:
     }
 #endif
 
-#ifdef LUNCHBOX_USE_DNSSD
-    lunchbox::Servus::Result announce( const unsigned short port,
-                                      const std::string& instance )
+    lunchbox::Servus::Result announce( const unsigned short port LB_UNUSED,
+                                       const std::string& instance LB_UNUSED )
     {
-        if( service_ )
-            return lunchbox::Servus::Result( kDNSServiceErr_NotInitialized );
+#ifdef LUNCHBOX_USE_DNSSD
+        if( _out )
+            return lunchbox::Servus::Result( kDNSServiceErr_AlreadyRegistered );
 
         TXTRecordRef record;
         createTXTRecord_( record );
 
         const lunchbox::Servus::Result result(
-            DNSServiceRegister( &service_, 0 /* flags */,
+            DNSServiceRegister( &_out, 0 /* flags */,
                                 0 /* all interfaces */,
                                 instance.empty() ? 0 : instance.c_str(),
-                                name_.c_str(), 0 /* default domains */,
+                                _name.c_str(), 0 /* default domains */,
                                 0 /* hostname */, htons( port ),
                                 TXTRecordGetLength( &record ),
                                 TXTRecordGetBytesPtr( &record ),
@@ -144,72 +146,53 @@ public:
         TXTRecordDeallocate( &record );
 
         if( result )
-            return handleEvents_( service_, ANNOUNCE_TIMEOUT );
+            return _handleEvents( _out, ANNOUNCE_TIMEOUT );
 
         LBWARN << "DNSServiceRegister returned: " << result << std::endl;
         return result;
-    }
 #else
-    lunchbox::Servus::Result announce( const unsigned short, const std::string&)
-    {
-        return lunchbox::Servus::Result( lunchbox::Servus::Result::NOT_SUPPORTED);
-    }
+        return lunchbox::Servus::Result(
+            lunchbox::Servus::Result::NOT_SUPPORTED );
 #endif
+    }
 
     void withdraw()
     {
 #ifdef LUNCHBOX_USE_DNSSD
-        if( !service_ )
+        if( !_out )
             return;
 
-        DNSServiceRefDeallocate( service_ );
-        service_ = 0;
+        DNSServiceRefDeallocate( _out );
+        _out = 0;
 #endif
     }
 
     bool isAnnounced() const
-        {
-#ifdef LUNCHBOX_USE_DNSSD
-            return service_ != 0;
-#endif
-            return false;
-        }
-
-#ifdef LUNCHBOX_USE_DNSSD
-    Strings discover( const lunchbox::Servus::Interface interface_,
-                      const unsigned browseTime )
     {
-        instanceMap_.clear();
+#ifdef LUNCHBOX_USE_DNSSD
+        return _out != 0;
+#endif
+        return false;
+    }
+
+    lunchbox::Servus::Result beginBrowsing(
+        const lunchbox::Servus::Interface interface_ LB_UNUSED )
+    {
+#ifdef LUNCHBOX_USE_DNSSD
+        if( _in )
+            return lunchbox::Servus::Result( kDNSServiceErr_AlreadyRegistered );
+
+        _instanceMap.clear();
+        _hosts.clear();
 
 #   ifdef SERVUS_BONJOUR
         const lunchbox::Servus::Interface addr = interface_;
-#   endif
-#   ifdef SERVUS_AVAHI // no kDNSServiceInterfaceIndexLocalOnly support in avahi
-        const lunchbox::Servus::Interface addr = lunchbox::Servus::IF_ALL;
-#   endif
-        DNSServiceRef service;
-        const DNSServiceErrorType error = DNSServiceBrowse( &service, 0,
-                                                            addr,
-                                                            name_.c_str(),
-                                                            "",
-                                     (DNSServiceBrowseReply)browseCBS_,
-                                                            this );
-        if( error != kDNSServiceErr_NoError )
-        {
-            LBWARN << "DNSServiceDiscovery error: " << error << std::endl;
-            DNSServiceRefDeallocate( service );
-            return getInstances();
-        }
-
-        handleEvents_( service, browseTime );
-        DNSServiceRefDeallocate( service );
-
-#   ifdef SERVUS_AVAHI // let's implement InterfaceIndexLocalOnly for avahi
+#   else
+        // no kDNSServiceInterfaceIndexLocalOnly support in avahi
+        // let's implement InterfaceIndexLocalOnly for avahi
         if( interface_ == lunchbox::Servus::IF_LOCAL )
         {
-            Strings hosts;
             char hostname[256] = {0};
-
             gethostname( hostname, 256 );
 
             std::string name = hostname;
@@ -217,40 +200,73 @@ public:
             if( dotPos != std::string::npos )
                 name = name.substr( 0, dotPos );
 
-            hosts.push_back( name );
-            hosts.push_back( name + ".local." );
-
-            InstanceMap localData;
-            for( InstanceMapCIter i = instanceMap_.begin();
-                 i != instanceMap_.end(); ++i )
-            {
-                const ValueMap& values = i->second;
-                const ValueMapCIter j = values.find( "servus_host" );
-                const std::string& current = j->second;
-                if( std::find( hosts.begin(), hosts.end(), current ) !=
-                    hosts.end( ))
-                {
-                    localData[ i->first ] = i->second;
-                }
-            }
-            instanceMap_.swap( localData );
+            _hosts.push_back( name );
+            _hosts.push_back( name + ".local." );
         }
+        const lunchbox::Servus::Interface addr = lunchbox::Servus::IF_ALL;
 #   endif
-        return getInstances();
-    }
+        const DNSServiceErrorType error = DNSServiceBrowse( &_in, 0, addr,
+                                                            _name.c_str(), "",
+                                              (DNSServiceBrowseReply)browseCBS_,
+                                                            this );
+        if( error != kDNSServiceErr_NoError )
+        {
+            LBWARN << "DNSServiceDiscovery error: " << error << std::endl;
+            endBrowsing();
+        }
+        return lunchbox::Servus::Result( error );
 #else
-    Strings discover( const lunchbox::Servus::Interface, const unsigned )
+        return lunchbox::Servus::Result(
+            lunchbox::Servus::Result::NOT_SUPPORTED );
+#endif
+    }
+
+    lunchbox::Servus::Result browse( int32_t timeout )
     {
+        return _handleEvents( _in, timeout );
+    }
+
+    void endBrowsing()
+    {
+#ifdef LUNCHBOX_USE_DNSSD
+        if( !_in )
+            return;
+
+        DNSServiceRefDeallocate( _in );
+        _in = 0;
+#endif
+    }
+
+    bool isBrowsing() const
+    {
+#ifdef LUNCHBOX_USE_DNSSD
+        return _in != 0;
+#endif
+        return false;
+    }
+
+    Strings discover( const lunchbox::Servus::Interface interface_ LB_UNUSED,
+                      const unsigned browseTime LB_UNUSED )
+    {
+#ifdef LUNCHBOX_USE_DNSSD
+        const lunchbox::Servus::Result& result = beginBrowsing( interface_ );
+        if( !result && result != kDNSServiceErr_AlreadyRegistered )
+            return getInstances();
+
+        LBASSERT( _in );
+        browse( browseTime );
+        if( result != kDNSServiceErr_AlreadyRegistered )
+            endBrowsing();
+#endif
         return getInstances();
     }
-#endif
 
     Strings getInstances() const
     {
         Strings instances;
 #ifdef LUNCHBOX_USE_DNSSD
-        for( InstanceMapCIter i = instanceMap_.begin();
-             i != instanceMap_.end(); ++i )
+        for( InstanceMapCIter i = _instanceMap.begin();
+             i != _instanceMap.end(); ++i )
         {
             instances.push_back( i->first );
         }
@@ -262,8 +278,8 @@ public:
     Strings getKeys( const std::string& instance ) const
     {
         Strings keys;
-        InstanceMapCIter i = instanceMap_.find( instance );
-        if( i == instanceMap_.end( ))
+        InstanceMapCIter i = _instanceMap.find( instance );
+        if( i == _instanceMap.end( ))
             return keys;
 
         const ValueMap& values = i->second;
@@ -282,8 +298,8 @@ public:
     bool containsKey( const std::string& instance,
                       const std::string& key ) const
     {
-        InstanceMapCIter i = instanceMap_.find( instance );
-        if( i == instanceMap_.end( ))
+        InstanceMapCIter i = _instanceMap.find( instance );
+        if( i == _instanceMap.end( ))
             return false;
 
         const ValueMap& values = i->second;
@@ -303,8 +319,8 @@ public:
     const std::string& get( const std::string& instance,
                             const std::string& key ) const
     {
-        InstanceMapCIter i = instanceMap_.find( instance );
-        if( i == instanceMap_.end( ))
+        InstanceMapCIter i = _instanceMap.find( instance );
+        if( i == _instanceMap.end( ))
             return empty_;
 
         const ValueMap& values = i->second;
@@ -323,7 +339,7 @@ public:
 #ifdef LUNCHBOX_USE_DNSSD
     void getData( lunchbox::Servus::Data& data )
     {
-        data = instanceMap_;
+        data = _instanceMap;
     }
 #else
     void getData( lunchbox::Servus::Data& ) {}
@@ -331,23 +347,25 @@ public:
 
 private:
 #ifdef LUNCHBOX_USE_DNSSD
-    const std::string name_;
-    InstanceMap instanceMap_; //!< last discovered data
-    ValueMap data_;   //!< self data to announce
-    DNSServiceRef service_; //!< used for announce()
-    int32_t result_;
-    std::string browsedName_;
+    const std::string _name;
+    InstanceMap _instanceMap; //!< last discovered data
+    ValueMap _data;   //!< self data to announce
+    DNSServiceRef _out; //!< used for announce()
+    DNSServiceRef _in; //!< used to browse()
+    int32_t _result;
+    Strings _hosts;
+    std::string _browsedName;
 
     void updateRecord_()
     {
-        if( !service_ )
+        if( !_out )
             return;
 
         TXTRecordRef record;
         createTXTRecord_( record );
 
         const DNSServiceErrorType error =
-            DNSServiceUpdateRecord( service_, 0, 0,
+            DNSServiceUpdateRecord( _out, 0, 0,
                                     TXTRecordGetLength( &record ),
                                     TXTRecordGetBytesPtr( &record ), 0 );
         TXTRecordDeallocate( &record );
@@ -358,7 +376,7 @@ private:
     void createTXTRecord_( TXTRecordRef& record )
     {
         TXTRecordCreate( &record, 0, 0 );
-        for( ValueMapCIter i = data_.begin(); i != data_.end(); ++i )
+        for( ValueMapCIter i = _data.begin(); i != _data.end(); ++i )
         {
             const std::string& key = i->first;
             const std::string& value = i->second;
@@ -368,17 +386,21 @@ private:
         }
     }
 
-    lunchbox::Servus::Result handleEvents_( DNSServiceRef service,
+    lunchbox::Servus::Result _handleEvents( DNSServiceRef service,
                                             const int32_t timeout = -1 )
     {
-        assert( service );
+        LBASSERT( service );
         if( !service )
             return lunchbox::Servus::Result( kDNSServiceErr_Unknown );
 
         const int fd = DNSServiceRefSockFD( service );
         const int nfds = fd + 1;
 
-        while( result_ == lunchbox::Servus::Result::PENDING )
+        LBASSERT( fd >= 0 );
+        if( fd < 0 )
+            return lunchbox::Servus::Result( kDNSServiceErr_BadParam );
+
+        while( _result == lunchbox::Servus::Result::PENDING )
         {
             fd_set fdSet;
             FD_ZERO( &fdSet );
@@ -393,15 +415,16 @@ private:
             switch( result )
             {
               case 0: // timeout
-                return lunchbox::Servus::Result( result_ );
+                _result = kDNSServiceErr_NoError;
+                break;
 
               case -1: // error
-                LBWARN << "Select error: " << strerror( errno ) << " ("
-                          << errno << ")" << std::endl;
+                LBWARN << "Select error: " << strerror( errno ) << " (" << errno
+                       << ")" << std::endl;
                 if( errno != EINTR )
                 {
                     withdraw();
-                    result_ = errno;
+                    _result = errno;
                 }
                 break;
 
@@ -416,15 +439,15 @@ private:
                         LBWARN << "DNSServiceProcessResult error: " << error
                                << std::endl;
                         withdraw();
-                        result_ = error;
+                        _result = error;
                     }
                 }
                 break;
             }
         }
 
-        lunchbox::Servus::Result result( result_ );
-        result_ = lunchbox::Servus::Result::PENDING; // reset for next operation
+        const lunchbox::Servus::Result result( _result );
+        _result = lunchbox::Servus::Result::PENDING; // reset for next operation
         return result;
     }
 
@@ -447,7 +470,7 @@ private:
             LBWARN << "Register callback error: " << error << std::endl;
             withdraw();
         }
-        result_ = error;
+        _result = error;
     }
 
     static void browseCBS_( DNSServiceRef, DNSServiceFlags flags,
@@ -471,7 +494,7 @@ private:
         if( !( flags & kDNSServiceFlagsAdd ))
             return;
 
-        browsedName_ = name;
+        _browsedName = name;
 
         DNSServiceRef service = 0;
         const DNSServiceErrorType resolve =
@@ -482,7 +505,7 @@ private:
 
         if( service )
         {
-            handleEvents_( service, 500 );
+            _handleEvents( service, 500 );
             DNSServiceRefDeallocate( service );
         }
     }
@@ -497,13 +520,19 @@ private:
     {
         if( error == kDNSServiceErr_NoError)
             servus->resolveCB_( host, txtLen, txt );
-        servus->result_ = error;
+        servus->_result = error;
     }
 
     void resolveCB_( const char* host, uint16_t txtLen,
                      const unsigned char* txt )
     {
-        ValueMap& values = instanceMap_[ browsedName_ ];
+        if( !_hosts.empty() &&
+            std::find( _hosts.begin(), _hosts.end(), host ) == _hosts.end( ))
+        {
+            return;
+        }
+
+        ValueMap& values = _instanceMap[ _browsedName ];
         values[ "servus_host" ] = host;
 
         char key[256] = {0};
@@ -525,12 +554,12 @@ private:
 }
 
 Servus::Servus( const std::string& name )
-        : impl_( new detail::Servus( name ))
+        : _impl( new detail::Servus( name ))
 {}
 
 Servus::~Servus()
 {
-    delete impl_;
+    delete _impl;
 }
 
 std::string Servus::Result::getString() const
@@ -576,17 +605,17 @@ std::string Servus::Result::getString() const
 
 void Servus::set( const std::string& key, const std::string& value )
 {
-    impl_->set( key, value );
+    _impl->set( key, value );
 }
 
 Strings Servus::getKeys() const
 {
-    return impl_->getKeys();
+    return _impl->getKeys();
 }
 
 const std::string& Servus::get( const std::string& key ) const
 {
-    return impl_->get( key );
+    return _impl->get( key );
 }
 
 Servus::Result Servus::announce( const unsigned short port,
@@ -595,7 +624,7 @@ Servus::Result Servus::announce( const unsigned short port,
 #ifdef SERVUS_AVAHI
     ScopedWrite mutex( lock_ );
 #endif
-    return impl_->announce( port, instance );
+    return _impl->announce( port, instance );
 }
 
 void Servus::withdraw()
@@ -603,12 +632,12 @@ void Servus::withdraw()
 #ifdef SERVUS_AVAHI
     ScopedWrite mutex( lock_ );
 #endif
-    impl_->withdraw();
+    _impl->withdraw();
 }
 
 bool Servus::isAnnounced() const
 {
-    return impl_->isAnnounced();
+    return _impl->isAnnounced();
 }
 
 Strings Servus::discover( const Interface addr, const unsigned browseTime )
@@ -616,41 +645,65 @@ Strings Servus::discover( const Interface addr, const unsigned browseTime )
 #ifdef SERVUS_AVAHI
     ScopedWrite mutex( lock_ );
 #endif
-    return impl_->discover( addr, browseTime );
+    return _impl->discover( addr, browseTime );
+}
+
+Servus::Result Servus::beginBrowsing( const lunchbox::Servus::Interface addr )
+{
+    return _impl->beginBrowsing( addr );
+}
+
+Servus::Result Servus::browse( int32_t timeout )
+{
+#ifdef SERVUS_AVAHI
+    ScopedWrite mutex( lock_ );
+#endif
+    return _impl->browse( timeout );
+}
+
+void Servus::endBrowsing()
+{
+    _impl->endBrowsing();
+}
+
+bool Servus::isBrowsing() const
+{
+    return _impl->isBrowsing();
 }
 
 Strings Servus::getInstances() const
 {
-    return impl_->getInstances();
+    return _impl->getInstances();
 }
 
 Strings Servus::getKeys( const std::string& instance ) const
 {
-    return impl_->getKeys( instance );
+    return _impl->getKeys( instance );
 }
 
 bool Servus::containsKey( const std::string& instance,
                           const std::string& key ) const
 {
-    return impl_->containsKey( instance, key );
+    return _impl->containsKey( instance, key );
 }
 
 const std::string& Servus::get( const std::string& instance,
                                 const std::string& key ) const
 {
-    return impl_->get( instance, key );
+    return _impl->get( instance, key );
 }
 
 void Servus::getData( Data& data )
 {
-    impl_->getData( data );
+    _impl->getData( data );
 }
 
 #ifdef LUNCHBOX_USE_DNSSD
 std::ostream& operator << ( std::ostream& os, const Servus& servus )
 {
     os << disableFlush << disableHeader << "Servus instance"
-       << (servus.isAnnounced() ? " " : " not ") << "announced" << indent;
+       << (servus.isAnnounced() ? " " : " not ") << "announced"
+       << (servus.isBrowsing() ? " " : " not ") << "browsing" << indent;
 
     const Strings& keys = servus.getKeys();
     for( StringsCIter i = keys.begin(); i != keys.end(); ++i )

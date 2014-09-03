@@ -28,7 +28,7 @@
 #include "plugin.h"
 #include "pluginVisitor.h"
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #  include "os.h" // GetModuleFileName
 #  include <direct.h>
 #  define getcwd _getcwd

@@ -22,14 +22,17 @@
 #include <algorithm>
 #include <vector>
 
-#ifdef LB_GCC_4_4_OR_LATER
-#  include <parallel/algorithm>
+#ifndef __MINGW32__ // MinGW does not provide the header
+#  ifdef LB_GCC_4_4_OR_LATER
+#    include <parallel/algorithm>
+#    define LB_USE_STD_PARALLEL
+#  endif
 #endif
 
 namespace lunchbox
 {
 /** std::sort using parallel sorting where available @version 1.9.1 */
-#ifdef LB_GCC_4_4_OR_LATER
+#ifdef LB_USE_STD_PARALLEL
 using std::__parallel::sort;
 #else
 using std::sort;

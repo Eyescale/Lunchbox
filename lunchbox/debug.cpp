@@ -27,7 +27,7 @@
 #ifdef _WIN32
 #  include "scopedMutex.h"
 #  define LB_SYMBOL_LENGTH 256
-#  include <DbgHelp.h>
+#  include <dbghelp.h>
 #  pragma comment(lib, "DbgHelp.lib")
 #else
 #  include <cxxabi.h>

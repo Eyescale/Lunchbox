@@ -123,6 +123,9 @@ template<> inline std::string format( const uint8_t* data, const size_t num )
 template<> inline std::string format( const void* data, const size_t num )
     { return format( reinterpret_cast< const uint8_t* >( data ), num ); }
 
+template< class T > inline std::string format( const std::vector< T >& data )
+    { return format< T >( &data[0], data.size( )); }
+
 } // namespace lunchbox
 
 #ifdef NDEBUG

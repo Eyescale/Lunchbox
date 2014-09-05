@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012-2013, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2012-2014, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -126,9 +126,34 @@ public:
      *                   records.
      * @return all instance names found during discovery.
      * @version 0.9
+     * @sa beginBrowsing(), browse(), endBrowsing()
      */
     LUNCHBOX_API Strings discover( const Interface addr,
                                    const unsigned browseTime );
+
+    /**
+     * Begin the discovery of announced key/value pairs.
+     *
+     * @param addr the scope of the discovery
+     * @return the success status of the operation.
+     * @version 1.9.2
+     */
+    LUNCHBOX_API Result beginBrowsing( const lunchbox::Servus::Interface addr );
+
+    /**
+     * Browse and process discovered key/value pairs.
+     *
+     * @param timeout The time to spend browsing.
+     * @return the success status of the operation.
+     * @version 1.9.2
+     */
+    LUNCHBOX_API Result browse( int32_t timeout = -1 );
+
+    /** Stop a discovery process and return all results. @version 1.9.2 */
+    LUNCHBOX_API void endBrowsing();
+
+    /** @return true if the local data is browsing. @version 1.9.2 */
+    LUNCHBOX_API bool isBrowsing() const;
 
     /** @return all instances found during the last discovery. @version 0.9 */
     LUNCHBOX_API Strings getInstances() const;
@@ -138,7 +163,7 @@ public:
 
     /** @return true if the given key was discovered. @version 0.9 */
     LUNCHBOX_API bool containsKey( const std::string& instance,
-                                 const std::string& key ) const;
+                                   const std::string& key ) const;
 
     /** @return the value of the given key and instance. @version 0.9 */
     LUNCHBOX_API const std::string& get( const std::string& instance,
@@ -151,7 +176,7 @@ public:
     LUNCHBOX_API void getData( Data& data );
 
 private:
-    detail::Servus* const impl_;
+    detail::Servus* const _impl;
 };
 
 /** Output the servus instance in human-readable format. @version 1.5.1 */

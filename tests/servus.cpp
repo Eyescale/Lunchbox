@@ -68,6 +68,25 @@ int main( int, char** )
     service.discover( lunchbox::Servus::IF_LOCAL, 500 );
     TEST( service.get( hosts.front(), "foobar" ) == "42" );
     TEST( service.getKeys().size() == 2 );
+
+    // continuous browse API
+    TEST( !service.isBrowsing( ));
+    TEST( service.beginBrowsing( lunchbox::Servus::IF_LOCAL ));
+    TEST( service.isBrowsing( ));
+    TEST( service.beginBrowsing( lunchbox::Servus::IF_LOCAL ) ==
+          kDNSServiceErr_AlreadyRegistered );
+    TEST( service.isBrowsing( ));
+
+    TESTINFO( service.browse( 0 ), service.browse( 0 ));
+    TEST( service.get( hosts.front(), "foobar" ) == "42" );
+    TEST( service.getKeys().size() == 2 );
+
+    TEST( service.isBrowsing( ));
+    service.endBrowsing();
+    TEST( !service.isBrowsing( ));
+    TEST( service.get( hosts.front(), "foo" ) == "bar" );
+    TEST( service.getKeys().size() == 2 );
+
 #else
     TESTINFO( result == lunchbox::Servus::Result::NOT_SUPPORTED, result );
 #endif

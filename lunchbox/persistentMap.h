@@ -49,6 +49,7 @@ public:
      * Depending on the URI scheme an implementation backend is chosen. If no
      * URI is given, a default one is selected. Available implementations are:
      * * leveldb://path (if LUNCHBOX_USE_LEVELDB is defined)
+     * * skv://path_to_config#pdsname (if LUNCHBOX_USE_SKV is defined)
      *
      * @param uri the storage backend and destination.
      * @throw std::runtime_error if no suitable implementation is found.

@@ -42,7 +42,10 @@ endif()
 
 set(PROJECT_INCLUDE_NAME lunchbox)
 include(FindPackages)
-set(LUNCHBOX_DEPENDENT_LIBRARIES Boost skv)
+set(LUNCHBOX_DEPENDENT_LIBRARIES Boost)
+if(SKV_FOUND)
+  list(APPEND LUNCHBOX_DEPENDENT_LIBRARIES skv)
+endif()
 
 if(OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")

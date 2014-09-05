@@ -110,7 +110,7 @@ public:
      * @version 0.9
      */
     LUNCHBOX_API Result announce( const unsigned short port,
-                                 const std::string& instance );
+                                  const std::string& instance );
 
     /** Stop announcing the registered key/value pairs. @version 0.9 */
     LUNCHBOX_API void withdraw();

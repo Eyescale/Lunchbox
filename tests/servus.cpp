@@ -21,6 +21,7 @@
 
 #include <lunchbox/servus.h>
 #include <lunchbox/rng.h>
+#include <boost/lexical_cast.hpp>
 
 #ifdef LUNCHBOX_USE_DNSSD
 #  include <dns_sd.h>
@@ -29,12 +30,11 @@
 int main( int, char** )
 {
     lunchbox::RNG rng;
-    const uint16_t port = rng.get< uint16_t >();
+    const uint16_t port = (rng.get< uint16_t >() % 60000) + 1024;
     lunchbox::Servus service( "_servustest._tcp" );
-    std::ostringstream os;
-    os << port;
 
-    const lunchbox::Servus::Result& result = service.announce( port, os.str( ));
+    const lunchbox::Servus::Result& result = service.announce( port,
+                                    boost::lexical_cast< std::string >( port ));
 
 #ifdef LUNCHBOX_USE_DNSSD
     TEST( lunchbox::Result::SUCCESS == kDNSServiceErr_NoError );
@@ -48,7 +48,7 @@ int main( int, char** )
 
     service.withdraw();
     service.set( "foo", "bar" );
-    TEST( service.announce( port, os.str( )));
+    TEST( service.announce( port, boost::lexical_cast< std::string >( port )));
 
     const lunchbox::Strings& hosts =
         service.discover( lunchbox::Servus::IF_LOCAL, 200 );
@@ -59,7 +59,8 @@ int main( int, char** )
     }
 
     TESTINFO( hosts.size() == 1, hosts.size( ));
-    TESTINFO( hosts.front() == os.str(), hosts.front( ));
+    TESTINFO( hosts.front() == boost::lexical_cast< std::string >( port ),
+              hosts.front( ));
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
     lunchbox::sleep( 200 );
 
@@ -78,8 +79,21 @@ int main( int, char** )
     TEST( service.isBrowsing( ));
 
     TESTINFO( service.browse( 200 ), service.browse( 0 ));
-    TEST( service.get( hosts.front(), "foobar" ) == "42" );
+    TESTINFO( service.get( hosts.front(), "foobar" ) == "42",
+              service.get( hosts.front(), "foobar" ));
     TEST( service.getKeys().size() == 2 );
+
+    { // test updates during browsing
+        lunchbox::Servus service2( "_servustest._tcp" );
+        TEST( service2.announce( port+1,
+                                 boost::lexical_cast< std::string >( port+1 )));
+        TEST( service.browse( 200 ));
+        TEST( service.getInstances().size() == 2 );
+    }
+
+    TEST( service.browse( 200 ));
+    TESTINFO( service.getInstances().size() == 1,
+              lunchbox::format( service.getInstances( )));
 
     TEST( service.isBrowsing( ));
     service.endBrowsing();

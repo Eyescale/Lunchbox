@@ -45,8 +45,8 @@ public:
     /** @return true if no error occured, false otherwise. @version 1.9.1 */
     operator bool_t() const { return code_ == SUCCESS ? &Result::bool_true : 0;}
 
-    /** @return true if an error operator, false otherwise. @version 1.9.1 */
-    bool operator !() const { return code_ == SUCCESS ? 0 : &Result::bool_true;}
+    /** @return true if an error occured, false otherwise. @version 1.9.1 */
+    bool operator !() const { return code_ != SUCCESS; }
 
     /** @return true if the result is equal to the given value. @version 1.9.1*/
     bool operator == ( const int32_t code ) const { return code_ == code; }

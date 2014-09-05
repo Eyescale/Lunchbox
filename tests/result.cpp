@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014, Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,13 +18,19 @@
 #include <test.h>
 #include <lunchbox/result.h>
 
-int main( int, char ** )
+int main( int, char** )
 {
-    const lunchbox::Result ok( lunchbox::Result::SUCCESS );
-    const lunchbox::Result nok( 42 );
+    const lunchbox::Result success( lunchbox::Result::SUCCESS );
+    const lunchbox::Result failure( lunchbox::Result::SUCCESS + 1 );
 
-    TEST( ok );
-    TEST( !nok );
+    TEST( success );
+    TEST( !failure );
+
+    if( !success )
+        TEST( false )
+
+    if( failure )
+        TEST( false )
 
     return EXIT_SUCCESS;
 }

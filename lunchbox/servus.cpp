@@ -529,6 +529,7 @@ private:
         if( !_hosts.empty() &&
             std::find( _hosts.begin(), _hosts.end(), host ) == _hosts.end( ))
         {
+            LBVERB << "Ignore non-local record from " << host << std::endl;
             return;
         }
 

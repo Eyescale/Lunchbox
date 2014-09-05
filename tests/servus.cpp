@@ -51,7 +51,7 @@ int main( int, char** )
     TEST( service.announce( port, os.str( )));
 
     const lunchbox::Strings& hosts =
-        service.discover( lunchbox::Servus::IF_LOCAL, 500 );
+        service.discover( lunchbox::Servus::IF_LOCAL, 200 );
     if( hosts.empty() && getenv( "TRAVIS" ))
     {
         std::cerr << "Bailing, got no hosts on a Travis CI setup" << std::endl;
@@ -61,11 +61,11 @@ int main( int, char** )
     TESTINFO( hosts.size() == 1, hosts.size( ));
     TESTINFO( hosts.front() == os.str(), hosts.front( ));
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
-    lunchbox::sleep( 500 );
+    lunchbox::sleep( 200 );
 
     service.set( "foobar", "42" );
-    lunchbox::sleep( 500 );
-    service.discover( lunchbox::Servus::IF_LOCAL, 500 );
+    lunchbox::sleep( 200 );
+    service.discover( lunchbox::Servus::IF_LOCAL, 200 );
     TEST( service.get( hosts.front(), "foobar" ) == "42" );
     TEST( service.getKeys().size() == 2 );
 
@@ -77,7 +77,7 @@ int main( int, char** )
           kDNSServiceErr_AlreadyRegistered );
     TEST( service.isBrowsing( ));
 
-    TESTINFO( service.browse( 0 ), service.browse( 0 ));
+    TESTINFO( service.browse( 200 ), service.browse( 0 ));
     TEST( service.get( hosts.front(), "foobar" ) == "42" );
     TEST( service.getKeys().size() == 2 );
 

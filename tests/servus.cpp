@@ -50,8 +50,8 @@ int main( int, char** )
     service.set( "foo", "bar" );
     TEST( service.announce( port, boost::lexical_cast< std::string >( port )));
 
-    const lunchbox::Strings& hosts =
-        service.discover( lunchbox::Servus::IF_LOCAL, 200 );
+    lunchbox::Strings hosts = service.discover( lunchbox::Servus::IF_LOCAL,
+                                                200 );
     if( hosts.empty() && getenv( "TRAVIS" ))
     {
         std::cerr << "Bailing, got no hosts on a Travis CI setup" << std::endl;
@@ -65,9 +65,11 @@ int main( int, char** )
     lunchbox::sleep( 200 );
 
     service.set( "foobar", "42" );
-    lunchbox::sleep( 200 );
-    service.discover( lunchbox::Servus::IF_LOCAL, 200 );
-    TEST( service.get( hosts.front(), "foobar" ) == "42" );
+    lunchbox::sleep( 500 );
+    hosts = service.discover( lunchbox::Servus::IF_LOCAL, 200 );
+    TESTINFO( hosts.size() == 1, hosts.size( ));
+    TESTINFO( service.get( hosts.front(), "foobar" ) == "42",
+              "Keys: " << lunchbox::format( service.getKeys( hosts.front( ))));
     TEST( service.getKeys().size() == 2 );
 
     // continuous browse API
@@ -79,6 +81,8 @@ int main( int, char** )
     TEST( service.isBrowsing( ));
 
     TESTINFO( service.browse( 200 ), service.browse( 0 ));
+    hosts = service.getInstances();
+    TESTINFO( hosts.size() == 1, hosts.size( ));
     TESTINFO( service.get( hosts.front(), "foobar" ) == "42",
               service.get( hosts.front(), "foobar" ));
     TEST( service.getKeys().size() == 2 );
@@ -88,16 +92,21 @@ int main( int, char** )
         TEST( service2.announce( port+1,
                                  boost::lexical_cast< std::string >( port+1 )));
         TEST( service.browse( 200 ));
-        TEST( service.getInstances().size() == 2 );
+        hosts = service.getInstances();
+        TESTINFO( hosts.size() == 2, lunchbox::format( hosts ));
     }
+    lunchbox::sleep( 500 );
 
     TEST( service.browse( 200 ));
-    TESTINFO( service.getInstances().size() == 1,
-              lunchbox::format( service.getInstances( )));
+    hosts = service.getInstances();
+    TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
 
     TEST( service.isBrowsing( ));
     service.endBrowsing();
     TEST( !service.isBrowsing( ));
+
+    hosts = service.getInstances();
+    TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
     TEST( service.getKeys().size() == 2 );
 

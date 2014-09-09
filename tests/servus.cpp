@@ -93,7 +93,7 @@ int main( int, char** )
     TESTINFO( hosts.size() == 1, hosts.size( ));
     TESTINFO( service.get( hosts.front(), "foo" ) == "bar",
               service.get( hosts.front(), "foo" ));
-    TEST( service.getKeys().size() == 1 );
+    TEST( service.getKeys().size() == 2 );
 
     { // test updates during browsing
         lunchbox::Servus service2( "_servustest._tcp" );
@@ -107,16 +107,20 @@ int main( int, char** )
 
     TEST( service.browse( 200 ));
     hosts = service.getInstances();
+#ifndef LUNCHBOX_USE_DNSSD // no update of removed services
     TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
+#endif
 
     TEST( service.isBrowsing( ));
     service.endBrowsing();
     TEST( !service.isBrowsing( ));
 
     hosts = service.getInstances();
+#ifndef LUNCHBOX_USE_DNSSD // no update of removed services
     TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
     TEST( service.getKeys().size() == 2 );
+#endif
 
     return EXIT_SUCCESS;
 }

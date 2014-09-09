@@ -22,23 +22,43 @@
 
 namespace lunchbox
 {
+#define ANNOUNCE_TIMEOUT 1000 /*ms*/
+
+namespace detail
+{
+static const std::string empty_;
 typedef std::map< std::string, std::string > ValueMap;
 typedef std::map< std::string, ValueMap > InstanceMap;
 typedef ValueMap::const_iterator ValueMapCIter;
 typedef InstanceMap::const_iterator InstanceMapCIter;
 
-#define ANNOUNCE_TIMEOUT 1000 /*ms*/
-
-namespace detail
-{
 class Servus
 {
 public:
     Servus() {}
     virtual ~Servus() {}
-    virtual void set( const std::string& key, const std::string& value ) = 0;
-    virtual Strings getKeys() const = 0;
-    virtual const std::string& get( const std::string& key ) const = 0;
+
+    void set( const std::string& key, const std::string& value )
+    {
+        _data[ key ] = value;
+        _updateRecord();
+    }
+
+    Strings getKeys() const
+    {
+        Strings keys;
+        for( ValueMapCIter i = _data.begin(); i != _data.end(); ++i )
+            keys.push_back( i->first );
+        return keys;
+    }
+
+    const std::string& get( const std::string& key ) const
+    {
+        ValueMapCIter i = _data.find( key );
+        if( i != _data.end( ))
+            return i->second;
+        return empty_;
+    }
 
     virtual lunchbox::Servus::Result announce( const unsigned short port,
                                                const std::string& instance ) =0;
@@ -54,14 +74,68 @@ public:
     virtual Strings discover( const lunchbox::Servus::Interface interface_,
                               const unsigned browseTime ) = 0;
 
-    virtual Strings getInstances() const = 0;
-    virtual Strings getKeys( const std::string& instance ) const = 0;
-    virtual bool containsKey( const std::string& instance,
-                              const std::string& key ) const = 0;
-    virtual const std::string& get( const std::string& instance,
-                                    const std::string& key ) const = 0;
+    Strings getInstances() const
+    {
+        Strings instances;
+        for( InstanceMapCIter i = _instanceMap.begin();
+             i != _instanceMap.end(); ++i )
+        {
+            instances.push_back( i->first );
+        }
+        return instances;
+    }
 
-    virtual void getData( lunchbox::Servus::Data& data ) = 0;
+    Strings getKeys( const std::string& instance ) const
+    {
+        Strings keys;
+        InstanceMapCIter i = _instanceMap.find( instance );
+        if( i == _instanceMap.end( ))
+            return keys;
+
+        const ValueMap& values = i->second;
+        for( ValueMapCIter j = values.begin(); j != values.end(); ++j )
+            keys.push_back( j->first );
+        return keys;
+    }
+
+    bool containsKey( const std::string& instance, const std::string& key )
+        const
+    {
+        InstanceMapCIter i = _instanceMap.find( instance );
+        if( i == _instanceMap.end( ))
+            return false;
+
+        const ValueMap& values = i->second;
+        ValueMapCIter j = values.find( key );
+        if( j == values.end( ))
+            return false;
+        return true;
+    }
+
+    const std::string& get( const std::string& instance,
+                            const std::string& key ) const
+    {
+        InstanceMapCIter i = _instanceMap.find( instance );
+        if( i == _instanceMap.end( ))
+            return detail::empty_;
+
+        const ValueMap& values = i->second;
+        ValueMapCIter j = values.find( key );
+        if( j == values.end( ))
+            return detail::empty_;
+        return j->second;
+    }
+
+    void getData( lunchbox::Servus::Data& data ) const
+    {
+        data = _instanceMap;
+    }
+
+protected:
+    InstanceMap _instanceMap; //!< last discovered data
+    ValueMap _data;   //!< self data to announce
+
+    virtual void _updateRecord() = 0;
 };
 
 }
@@ -70,15 +144,26 @@ public:
 // Impls need detail interface definition above
 #ifdef LUNCHBOX_USE_DNSSD
 #  include "dnssd/servus.h"
-#else
-#  include "none/servus.h"
+#elif defined(LUNCHBOX_USE_AVAHI_CLIENT)
+#  include "avahi/servus.h"
 #endif
+#include "none/servus.h"
 
 namespace lunchbox
 {
+bool Servus::isAvailable()
+{
+#if defined(LUNCHBOX_USE_DNSSD) || defined(LUNCHBOX_USE_AVAHI_CLIENT)
+    return true;
+#endif
+    return false;
+}
+
 Servus::Servus( const std::string& name )
 #ifdef LUNCHBOX_USE_DNSSD
     : _impl( new dnssd::Servus( name ))
+#elif defined(LUNCHBOX_USE_AVAHI_CLIENT)
+    : _impl( new avahi::Servus( name ))
 #else
     : _impl( new none::Servus( ))
 #endif
@@ -120,9 +205,9 @@ std::string Servus::Result::getString() const
     case kDNSServiceErr_BadTime:           return "bad time";
 #endif
 
-    case PENDING:          return "operation did not complete";
+    case PENDING:          return "operation pending";
     case NOT_SUPPORTED:    return "Lunchbox compiled without ZeroConf support";
-
+    case POLL_ERROR:       return "Error polling for events";
     default:
         if( code > 0 )
             return ::strerror( code );
@@ -213,12 +298,12 @@ void Servus::getData( Data& data )
     _impl->getData( data );
 }
 
-#ifdef LUNCHBOX_USE_DNSSD
 std::ostream& operator << ( std::ostream& os, const Servus& servus )
 {
     os << disableFlush << disableHeader << "Servus instance"
        << (servus.isAnnounced() ? " " : " not ") << "announced"
-       << (servus.isBrowsing() ? " " : " not ") << "browsing" << indent;
+       << (servus.isBrowsing() ? " " : " not ") << "browsing, implementation"
+       << className( servus._impl ) << indent;
 
     const Strings& keys = servus.getKeys();
     for( StringsCIter i = keys.begin(); i != keys.end(); ++i )
@@ -226,11 +311,15 @@ std::ostream& operator << ( std::ostream& os, const Servus& servus )
 
     return os << exdent << enableHeader << enableFlush;
 }
-#else
-std::ostream& operator << ( std::ostream& os, const Servus& )
+
+std::ostream& operator << ( std::ostream& os , const Servus::Interface& addr )
 {
-    return os << "No dnssd support, empty Servus implementation";
+    switch( addr )
+    {
+    case Servus::IF_ALL: return os << " all ";
+    case Servus::IF_LOCAL: return os << " local ";
+    }
+    return os;
 }
-#endif
 
 }

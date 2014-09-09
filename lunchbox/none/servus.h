@@ -19,19 +19,11 @@ namespace lunchbox
 {
 namespace none
 {
-static const std::string empty_;
-
-class Servus
+class Servus : public detail::Servus
 {
 public:
     Servus() {}
     virtual ~Servus() {}
-    void set( const std::string& key, const std::string& ) final {}
-    Strings getKeys() const final { return Strings(); }
-    const std::string& get( const std::string& ) const final
-    {
-        return empty_;
-    }
 
     lunchbox::Servus::Result announce( const unsigned short,
                                        const std::string& ) final
@@ -58,25 +50,10 @@ public:
 
     void endBrowsing() final {}
     bool isBrowsing() const final { return false; }
-    Strings discover( const lunchbox::Servus::Interface interface_,
-                      const unsigned browseTime ) final
+    Strings discover( const lunchbox::Servus::Interface, const unsigned ) final
     {
         return getInstances();
     }
-
-    Strings getInstances() const final { return Strings; }
-    Strings getKeys( const std::string& instance ) const final { return Strings(); }
-    bool containsKey( const std::string& instance,
-                      const std::string& key ) const final { return false; }
-    const std::string& get( const std::string& instance,
-                            const std::string& key ) const final
-    {
-        return empty_;
-    }
-
-    void getData( lunchbox::Servus::Data& data ) final {}
 };
 }
 }
-
-#endif

@@ -36,12 +36,19 @@ int main( int, char** )
     const lunchbox::Servus::Result& result = service.announce( port,
                                     boost::lexical_cast< std::string >( port ));
 
+    if( !lunchbox::Servus::isAvailable( ))
+    {
+        TESTINFO( result == lunchbox::Servus::Result::NOT_SUPPORTED, result );
+        return EXIT_SUCCESS;
+    }
+
 #ifdef LUNCHBOX_USE_DNSSD
     TEST( lunchbox::Result::SUCCESS == kDNSServiceErr_NoError );
-    if( result == kDNSServiceErr_Unknown ) // happens on CI VMs
+#endif
+    if( result != lunchbox::Result::SUCCESS ) // happens on CI VMs
     {
-        std::cerr << "Bailing, got " << result
-                  << ": looks like a broken zeroconf setup" << std::endl;
+        LBWARN << "Bailing, got " << result
+               << ": looks like a broken zeroconf setup" << std::endl;
         return EXIT_SUCCESS;
     }
     TESTINFO( result, result );
@@ -74,18 +81,19 @@ int main( int, char** )
 
     // continuous browse API
     TEST( !service.isBrowsing( ));
-    TEST( service.beginBrowsing( lunchbox::Servus::IF_LOCAL ));
+    TESTRESULT( service.beginBrowsing( lunchbox::Servus::IF_LOCAL ),
+                lunchbox::Servus::Result );
     TEST( service.isBrowsing( ));
     TEST( service.beginBrowsing( lunchbox::Servus::IF_LOCAL ) ==
-          kDNSServiceErr_AlreadyRegistered );
+          lunchbox::Servus::Result::PENDING );
     TEST( service.isBrowsing( ));
 
     TESTINFO( service.browse( 200 ), service.browse( 0 ));
     hosts = service.getInstances();
     TESTINFO( hosts.size() == 1, hosts.size( ));
-    TESTINFO( service.get( hosts.front(), "foobar" ) == "42",
-              service.get( hosts.front(), "foobar" ));
-    TEST( service.getKeys().size() == 2 );
+    TESTINFO( service.get( hosts.front(), "foo" ) == "bar",
+              service.get( hosts.front(), "foo" ));
+    TEST( service.getKeys().size() == 1 );
 
     { // test updates during browsing
         lunchbox::Servus service2( "_servustest._tcp" );
@@ -110,8 +118,5 @@ int main( int, char** )
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
     TEST( service.getKeys().size() == 2 );
 
-#else
-    TESTINFO( result == lunchbox::Servus::Result::NOT_SUPPORTED, result );
-#endif
     return EXIT_SUCCESS;
 }

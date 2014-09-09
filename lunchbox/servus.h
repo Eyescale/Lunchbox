@@ -33,11 +33,10 @@ namespace detail { class Servus; }
 /**
  * Simple wrapper for ZeroConf key/value pairs.
  *
- * The servus class allows simple announcement and discovery of key/value
- * pairs using ZeroConf networking. The same instance can be used to announce
- * and/or to browse a ZeroConf service. If the Lunchbox library is compiled
- * without zeroconf support (LUNCHBOX_USE_DNSSD is not set), this class does not
- * do anything useful.
+ * The servus class allows simple announcement and discovery of key/value pairs
+ * using ZeroConf networking. The same instance can be used to announce and/or
+ * to browse a ZeroConf service. If the Lunchbox library is compiled without
+ * zeroconf support (@sa isAvailable()), this class does not do anything useful.
  *
  * Example: @include tests/servus.cpp
  */
@@ -68,12 +67,17 @@ public:
         static const int32_t PENDING = -1;
         /** Lunchbox compiled without ZeroConf support. */
         static const int32_t NOT_SUPPORTED = -2;
+        /** Error during polling for event. */
+        static const int32_t POLL_ERROR = -3;
     };
+
+    /** @return true if a usable implementation is available. @version 1.9.2 */
+    LUNCHBOX_API static bool isAvailable();
 
     /**
      * Create a new service handle.
      *
-     * @param name the service descriptor, e.g., "_gpu-sd._tcp"
+     * @param name the service descriptor, e.g., "_hwsd._tcp"
      * @version 0.9
      */
     LUNCHBOX_API explicit Servus( const std::string& name );
@@ -177,10 +181,14 @@ public:
 
 private:
     detail::Servus* const _impl;
+    friend std::ostream& operator << ( std::ostream&, const Servus& );
 };
 
 /** Output the servus instance in human-readable format. @version 1.5.1 */
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const Servus& );
+
+/** Output the servus interface in human-readable format. @version 1.9.2 */
+LUNCHBOX_API std::ostream& operator << (std::ostream&,const Servus::Interface&);
 }
 
 #endif // LUNCHBOX_SERVUS_H

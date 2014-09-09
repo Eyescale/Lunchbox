@@ -372,6 +372,13 @@ private:
             avahi_string_list_free( data );
 
         if( _result != lunchbox::Result::SUCCESS )
+        {
+            avahi_simple_poll_quit( _poll );
+            return;
+        }
+
+        _result = avahi_entry_group_commit( _group );
+        if( _result != lunchbox::Result::SUCCESS )
             avahi_simple_poll_quit( _poll );
     }
 

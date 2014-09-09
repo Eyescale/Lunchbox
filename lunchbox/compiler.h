@@ -22,7 +22,7 @@
 #  include <boost/config.hpp>
 
 // C++11 feature 'backported' to C++03
-#  ifdef BOOST_NO_CXX11_NULLPTR
+#  ifndef CXX_NULLPTR_SUPPORTED
 #    define nullptr 0
 #  endif
 

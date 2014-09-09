@@ -21,6 +21,7 @@
 
 #include <lunchbox/servus.h>
 #include <lunchbox/rng.h>
+#include <boost/lexical_cast.hpp>
 
 #ifdef LUNCHBOX_USE_DNSSD
 #  include <dns_sd.h>
@@ -29,29 +30,35 @@
 int main( int, char** )
 {
     lunchbox::RNG rng;
-    const uint16_t port = rng.get< uint16_t >();
+    const uint16_t port = (rng.get< uint16_t >() % 60000) + 1024;
     lunchbox::Servus service( "_servustest._tcp" );
-    std::ostringstream os;
-    os << port;
 
-    const lunchbox::Servus::Result& result = service.announce( port, os.str( ));
+    const lunchbox::Servus::Result& result = service.announce( port,
+                                    boost::lexical_cast< std::string >( port ));
+
+    if( !lunchbox::Servus::isAvailable( ))
+    {
+        TESTINFO( result == lunchbox::Servus::Result::NOT_SUPPORTED, result );
+        return EXIT_SUCCESS;
+    }
 
 #ifdef LUNCHBOX_USE_DNSSD
     TEST( lunchbox::Result::SUCCESS == kDNSServiceErr_NoError );
-    if( result == kDNSServiceErr_Unknown ) // happens on CI VMs
+#endif
+    if( result != lunchbox::Result::SUCCESS ) // happens on CI VMs
     {
-        std::cerr << "Bailing, got " << result
-                  << ": looks like a broken zeroconf setup" << std::endl;
+        LBWARN << "Bailing, got " << result
+               << ": looks like a broken zeroconf setup" << std::endl;
         return EXIT_SUCCESS;
     }
     TESTINFO( result, result );
 
     service.withdraw();
     service.set( "foo", "bar" );
-    TEST( service.announce( port, os.str( )));
+    TEST( service.announce( port, boost::lexical_cast< std::string >( port )));
 
-    const lunchbox::Strings& hosts =
-        service.discover( lunchbox::Servus::IF_LOCAL, 500 );
+    lunchbox::Strings hosts = service.discover( lunchbox::Servus::IF_LOCAL,
+                                                200 );
     if( hosts.empty() && getenv( "TRAVIS" ))
     {
         std::cerr << "Bailing, got no hosts on a Travis CI setup" << std::endl;
@@ -59,36 +66,57 @@ int main( int, char** )
     }
 
     TESTINFO( hosts.size() == 1, hosts.size( ));
-    TESTINFO( hosts.front() == os.str(), hosts.front( ));
+    TESTINFO( hosts.front() == boost::lexical_cast< std::string >( port ),
+              hosts.front( ));
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
-    lunchbox::sleep( 500 );
+    lunchbox::sleep( 200 );
 
     service.set( "foobar", "42" );
     lunchbox::sleep( 500 );
-    service.discover( lunchbox::Servus::IF_LOCAL, 500 );
-    TEST( service.get( hosts.front(), "foobar" ) == "42" );
+    hosts = service.discover( lunchbox::Servus::IF_LOCAL, 200 );
+    TESTINFO( hosts.size() == 1, hosts.size( ));
+    TESTINFO( service.get( hosts.front(), "foobar" ) == "42",
+              "Keys: " << lunchbox::format( service.getKeys( hosts.front( ))));
     TEST( service.getKeys().size() == 2 );
 
     // continuous browse API
     TEST( !service.isBrowsing( ));
-    TEST( service.beginBrowsing( lunchbox::Servus::IF_LOCAL ));
+    TESTRESULT( service.beginBrowsing( lunchbox::Servus::IF_LOCAL ),
+                lunchbox::Servus::Result );
     TEST( service.isBrowsing( ));
     TEST( service.beginBrowsing( lunchbox::Servus::IF_LOCAL ) ==
-          kDNSServiceErr_AlreadyRegistered );
+          lunchbox::Servus::Result::PENDING );
     TEST( service.isBrowsing( ));
 
-    TESTINFO( service.browse( 0 ), service.browse( 0 ));
-    TEST( service.get( hosts.front(), "foobar" ) == "42" );
-    TEST( service.getKeys().size() == 2 );
+    TESTINFO( service.browse( 200 ), service.browse( 0 ));
+    hosts = service.getInstances();
+    TESTINFO( hosts.size() == 1, hosts.size( ));
+    TESTINFO( service.get( hosts.front(), "foo" ) == "bar",
+              service.get( hosts.front(), "foo" ));
+    TEST( service.getKeys().size() == 1 );
+
+    { // test updates during browsing
+        lunchbox::Servus service2( "_servustest._tcp" );
+        TEST( service2.announce( port+1,
+                                 boost::lexical_cast< std::string >( port+1 )));
+        TEST( service.browse( 200 ));
+        hosts = service.getInstances();
+        TESTINFO( hosts.size() == 2, lunchbox::format( hosts ));
+    }
+    lunchbox::sleep( 500 );
+
+    TEST( service.browse( 200 ));
+    hosts = service.getInstances();
+    TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
 
     TEST( service.isBrowsing( ));
     service.endBrowsing();
     TEST( !service.isBrowsing( ));
+
+    hosts = service.getInstances();
+    TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
     TEST( service.getKeys().size() == 2 );
 
-#else
-    TESTINFO( result == lunchbox::Servus::Result::NOT_SUPPORTED, result );
-#endif
     return EXIT_SUCCESS;
 }

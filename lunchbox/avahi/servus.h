@@ -188,6 +188,7 @@ private:
             }
         }
 
+        LBINFO << "Browse for " << _name << " on " << ifIndex << std::endl;
         _browser = avahi_service_browser_new( _client, ifIndex,
                                               AVAHI_PROTO_UNSPEC, _name.c_str(),
                                               0, (AvahiLookupFlags)(0),
@@ -260,7 +261,9 @@ private:
                     const AvahiBrowserEvent event, const char* name,
                     const char* type, const char* domain )
     {
-        LBINFO << "Browse event " << int(event) << std::endl;
+        LBINFO << "Browse event " << int(event) << " for "
+               << (name ? "none" : name) << " type " <<  (type ? "none" : type)
+               << std::endl;
         switch( event )
         {
         case AVAHI_BROWSER_FAILURE:
@@ -355,18 +358,19 @@ private:
 
         AvahiStringList* data = 0;
         for( detail::ValueMapCIter i = _data.begin(); i != _data.end(); ++i )
-            avahi_string_list_add_pair( data, i->first.c_str(),
-                                        i->second.c_str( ));
+            data = avahi_string_list_add_pair( data, i->first.c_str(),
+                                               i->second.c_str( ));
 
         _result = avahi_entry_group_add_service_strlst(
             _group, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC,
                 (AvahiPublishFlags)(0), _announce.c_str(), _name.c_str(), 0, 0,
                 _port, data );
 
+        LBINFO << "announced " << _data.size() << " pairs: "
+               << avahi_string_list_to_string( data ) << std::endl;
         if( data )
             avahi_string_list_free( data );
 
-        LBINFO << "announced" << std::endl;
         if( _result != lunchbox::Result::SUCCESS )
             avahi_simple_poll_quit( _poll );
     }

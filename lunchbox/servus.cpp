@@ -67,7 +67,7 @@ public:
 
     virtual lunchbox::Servus::Result beginBrowsing(
         const lunchbox::Servus::Interface interface_ ) = 0;
-    virtual lunchbox::Servus::Result browse( int32_t timeout ) = 0;
+    virtual lunchbox::Servus::Result browse( const int32_t timeout ) = 0;
 
     virtual void endBrowsing() = 0;
     virtual bool isBrowsing() const = 0;

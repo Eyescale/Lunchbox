@@ -124,6 +124,12 @@ if(LibJpegTurbo_FOUND)
     compressor/compressorTurboJPEG.h compressor/compressorTurboJPEG.cpp)
 endif()
 
+set(LUNCHBOX_HEADERS
+  avahi/servus.h
+  dnssd/servus.h
+  none/servus.h
+)
+
 set(LUNCHBOX_SOURCES
   ${LUNCHBOX_COMPRESSORS}
   ${COMMON_SOURCES}

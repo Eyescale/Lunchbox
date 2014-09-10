@@ -25,6 +25,7 @@
 #include <avahi-common/simple-watch.h>
 
 #include <net/if.h>
+#include <stdexcept>
 
 namespace lunchbox
 {
@@ -125,16 +126,17 @@ public:
         _result = lunchbox::Servus::Result::PENDING;
         lunchbox::Clock clock;
 
-        while( _result == lunchbox::Servus::Result::PENDING &&
-               clock.getTime64() < timeout )
+        while( clock.getTime64() < timeout )
         {
             if( avahi_simple_poll_iterate( _poll, timeout ) != 0 )
             {
-                if( _result == lunchbox::Result::SUCCESS )
-                    _result = lunchbox::Servus::Result::POLL_ERROR;
+                _result = lunchbox::Servus::Result::POLL_ERROR;
                 break;
             }
         }
+
+        if( _result != lunchbox::Servus::Result::POLL_ERROR )
+            _result = lunchbox::Servus::Result::SUCCESS;
 
         return lunchbox::Servus::Result( _result );
     }
@@ -188,7 +190,6 @@ private:
             }
         }
 
-        LBINFO << "Browse for " << _name << " on " << ifIndex << std::endl;
         _browser = avahi_service_browser_new( _client, ifIndex,
                                               AVAHI_PROTO_UNSPEC, _name.c_str(),
                                               0, (AvahiLookupFlags)(0),
@@ -211,7 +212,6 @@ private:
 
     void _clientCB( AvahiClientState state )
     {
-        LBINFO << "Client state " << int(state) << std::endl;
         switch (state)
         {
         case AVAHI_CLIENT_S_RUNNING:
@@ -261,8 +261,8 @@ private:
                     const AvahiBrowserEvent event, const char* name,
                     const char* type, const char* domain )
     {
-        LBINFO << "Browse event " << int(event) << " for "
-               << (name ? "none" : name) << " type " <<  (type ? "none" : type)
+        LBVERB << "Browse event " << int(event) << " for "
+               << (name ? name : "none") << " type " <<  (type ? type : "none")
                << std::endl;
         switch( event )
         {
@@ -290,7 +290,7 @@ private:
             }
 
         case AVAHI_BROWSER_REMOVE:
-            LBUNIMPLEMENTED;
+            _instanceMap.erase( name );
             break;
 
         case AVAHI_BROWSER_ALL_FOR_NOW:
@@ -304,19 +304,18 @@ private:
     static void _resolveCBS( AvahiServiceResolver* resolver,
                              AvahiIfIndex, AvahiProtocol,
                              AvahiResolverEvent event, const char* name,
-                             const char* type, const char*,
-                             const char*, const AvahiAddress*,
+                             const char*, const char*,
+                             const char* host, const AvahiAddress*,
                              uint16_t, AvahiStringList *txt,
                              AvahiLookupResultFlags, void* servus )
     {
-        ((Servus*)servus)->_resolveCB( resolver, event, name, type, txt );
+        ((Servus*)servus)->_resolveCB( resolver, event, name, host, txt );
     }
 
     void _resolveCB( AvahiServiceResolver* resolver,
-                             const AvahiResolverEvent event, const char* name,
-                     const char* type, AvahiStringList *txt )
+                     const AvahiResolverEvent event, const char* name,
+                     const char* host, AvahiStringList *txt )
     {
-        LBINFO << "Resolve event " << int(event) << std::endl;
         switch( event )
         {
         case AVAHI_RESOLVER_FAILURE:
@@ -326,10 +325,20 @@ private:
             break;
 
         case AVAHI_RESOLVER_FOUND:
-            for( ; txt; txt = txt->next )
-                LBINFO << name << " " << type << " " << txt->text
-                       << std::endl;
-            break;
+            {
+                detail::ValueMap& values = _instanceMap[ name ];
+                values[ "servus_host" ] = host;
+                for( ; txt; txt = txt->next )
+                {
+                    const std::string entry(
+                                reinterpret_cast< const char* >( txt->text ),
+                                txt->size );
+                    const size_t pos = entry.find_first_of( "=" );
+                    const std::string key = entry.substr( 0, pos );
+                    const std::string value = entry.substr( pos + 1 );
+                    values[ key ] = value;
+                }
+            } break;
         }
 
         avahi_service_resolver_free( resolver );
@@ -366,8 +375,6 @@ private:
                 (AvahiPublishFlags)(0), _announce.c_str(), _name.c_str(), 0, 0,
                 _port, data );
 
-        LBINFO << "announced " << _data.size() << " pairs: "
-               << avahi_string_list_to_string( data ) << std::endl;
         if( data )
             avahi_string_list_free( data );
 

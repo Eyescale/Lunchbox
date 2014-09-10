@@ -58,7 +58,7 @@ int main( int, char** )
     TEST( service.announce( port, boost::lexical_cast< std::string >( port )));
 
     lunchbox::Strings hosts = service.discover( lunchbox::Servus::IF_LOCAL,
-                                                200 );
+                                                2000 );
     if( hosts.empty() && getenv( "TRAVIS" ))
     {
         std::cerr << "Bailing, got no hosts on a Travis CI setup" << std::endl;
@@ -72,8 +72,8 @@ int main( int, char** )
     lunchbox::sleep( 200 );
 
     service.set( "foobar", "42" );
-    lunchbox::sleep( 500 );
-    hosts = service.discover( lunchbox::Servus::IF_LOCAL, 200 );
+    lunchbox::sleep( 2000 );
+    hosts = service.discover( lunchbox::Servus::IF_LOCAL, 2000 );
     TESTINFO( hosts.size() == 1, hosts.size( ));
     TESTINFO( service.get( hosts.front(), "foobar" ) == "42",
               "Keys: " << lunchbox::format( service.getKeys( hosts.front( ))));
@@ -93,30 +93,34 @@ int main( int, char** )
     TESTINFO( hosts.size() == 1, hosts.size( ));
     TESTINFO( service.get( hosts.front(), "foo" ) == "bar",
               service.get( hosts.front(), "foo" ));
-    TEST( service.getKeys().size() == 1 );
+    TEST( service.getKeys().size() == 2 );
 
     { // test updates during browsing
         lunchbox::Servus service2( "_servustest._tcp" );
         TEST( service2.announce( port+1,
                                  boost::lexical_cast< std::string >( port+1 )));
-        TEST( service.browse( 200 ));
+        TEST( service.browse( 2000 ));
         hosts = service.getInstances();
         TESTINFO( hosts.size() == 2, lunchbox::format( hosts ));
     }
     lunchbox::sleep( 500 );
 
-    TEST( service.browse( 200 ));
+    TEST( service.browse( 2000 ));
     hosts = service.getInstances();
+#ifndef LUNCHBOX_USE_DNSSD // no update of removed services
     TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
+#endif
 
     TEST( service.isBrowsing( ));
     service.endBrowsing();
     TEST( !service.isBrowsing( ));
 
     hosts = service.getInstances();
+#ifndef LUNCHBOX_USE_DNSSD // no update of removed services
     TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
     TEST( service.getKeys().size() == 2 );
+#endif
 
     return EXIT_SUCCESS;
 }

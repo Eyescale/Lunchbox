@@ -144,7 +144,7 @@ private:
 
     lunchbox::Servus::Result _browse( const lunchbox::Servus::Interface addr )
     {
-        LBASSERT( _in );
+        LBASSERT( !_in );
         const DNSServiceErrorType error =
             DNSServiceBrowse( &_in, 0, addr, _name.c_str(), "",
                               (DNSServiceBrowseReply)_browseCBS, this );

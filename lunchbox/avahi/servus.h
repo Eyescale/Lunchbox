@@ -17,6 +17,7 @@
 
 #include "../clock.h"
 #include "../debug.h"
+#include "../os.h"
 
 #include <avahi-client/client.h>
 #include <avahi-client/lookup.h>
@@ -74,11 +75,7 @@ public:
         _result = lunchbox::Servus::Result::PENDING;
         _port = port;
         if( instance.empty( ))
-        {
-            char cHostname[256] = {0};
-            gethostname( cHostname, 256 );
-            _announce = cHostname;
-        }
+            _announce = getHostname();
         else
             _announce = instance;
 
@@ -228,17 +225,16 @@ private:
             break;
 
         case AVAHI_CLIENT_S_COLLISION:
-            /* Let's drop our registered services. When the server is back in
-             * AVAHI_SERVER_RUNNING state we will register them again with the
-             * new host name. */
+            // Can't setup client
+            _result = EEXIST;
+            avahi_simple_poll_quit( _poll );
+            break;
 
         case AVAHI_CLIENT_S_REGISTERING:
             /* The server records are now being established. This might be
              * caused by a host name change. We need to wait for our own records
              * to register until the host name is properly esatblished. */
-
-            // if( group )
-            //     avahi_entry_group_reset( group );
+            LBUNIMPLEMENTED; // withdraw & _createServices ?
             break;
 
         case AVAHI_CLIENT_CONNECTING:

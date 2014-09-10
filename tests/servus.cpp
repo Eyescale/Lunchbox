@@ -107,20 +107,16 @@ int main( int, char** )
 
     TEST( service.browse( 2000 ));
     hosts = service.getInstances();
-#ifndef LUNCHBOX_USE_DNSSD // no update of removed services
     TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
-#endif
 
     TEST( service.isBrowsing( ));
     service.endBrowsing();
     TEST( !service.isBrowsing( ));
 
     hosts = service.getInstances();
-#ifndef LUNCHBOX_USE_DNSSD // no update of removed services
     TESTINFO( hosts.size() == 1, lunchbox::format( hosts ));
     TEST( service.get( hosts.front(), "foo" ) == "bar" );
     TEST( service.getKeys().size() == 2 );
-#endif
 
     return EXIT_SUCCESS;
 }

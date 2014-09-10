@@ -126,8 +126,14 @@ endif()
 
 set(LUNCHBOX_HEADERS
   avahi/servus.h
+  compressorInfo.h
+  detail/threadID.h
   dnssd/servus.h
+  leveldb/persistentMap.h
   none/servus.h
+  pluginInstance.h
+  skv/persistentMap.h
+  time.h
 )
 
 set(LUNCHBOX_SOURCES
@@ -137,28 +143,24 @@ set(LUNCHBOX_SOURCES
   atomic.cpp
   clock.cpp
   compressor.cpp
-  compressorInfo.h
   condition.cpp
   condition_w32.ipp
   debug.cpp
   decompressor.cpp
-  detail/threadID.h
   downloader.cpp
   dso.cpp
   file.cpp
   init.cpp
   launcher.cpp
-  leveldb/persistentMap.h
-  skv/persistentMap.h
   lock.cpp
   log.cpp
   md5/md5.cc
   memoryMap.cpp
   mpi.cpp
   omp.cpp
+  os.cpp
   persistentMap.cpp
   plugin.cpp
-  pluginInstance.h
   pluginRegistry.cpp
   referenced.cpp
   requestHandler.cpp
@@ -168,7 +170,6 @@ set(LUNCHBOX_SOURCES
   spinLock.cpp
   thread.cpp
   threadID.cpp
-  time.h
   timedLock.cpp
   tls.cpp
   uint128_t.cpp

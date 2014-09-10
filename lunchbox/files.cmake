@@ -125,16 +125,10 @@ if(LibJpegTurbo_FOUND)
 endif()
 
 set(LUNCHBOX_HEADERS
+  avahi/servus.h
+  dnssd/servus.h
   none/servus.h
 )
-
-if(DNSSD_FOUND)
-  list(APPEND LUNCHBOX_HEADERS dnssd/servus.h)
-endif()
-
-if(AVAHI-CLIENT_FOUND)
-  list(APPEND LUNCHBOX_HEADERS avahi/servus.h)
-endif()
 
 set(LUNCHBOX_SOURCES
   ${LUNCHBOX_COMPRESSORS}

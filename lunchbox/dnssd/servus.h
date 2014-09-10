@@ -120,10 +120,10 @@ public:
         return _in != 0;
     }
 
-    Strings discover( const lunchbox::Servus::Interface addr LB_UNUSED,
+    Strings discover( const lunchbox::Servus::Interface addr,
                       const unsigned browseTime ) final
     {
-        const lunchbox::Servus::Result& result = beginBrowsing( lunchbox::Servus::IF_ALL );
+        const lunchbox::Servus::Result& result = beginBrowsing( addr );
         if( !result && result != kDNSServiceErr_AlreadyRegistered )
             return getInstances();
 
@@ -142,17 +142,17 @@ private:
     std::string _browsedName;
 
 
-    lunchbox::Servus::Result _browse( const lunchbox::Servus::Interface )
+    lunchbox::Servus::Result _browse( const lunchbox::Servus::Interface addr )
     {
         LBASSERT( !_in );
         const DNSServiceErrorType error =
-            DNSServiceBrowse( &_in, 0, lunchbox::Servus::IF_ALL, _name.c_str(),
-                              "", (DNSServiceBrowseReply)_browseCBS, this );
+            DNSServiceBrowse( &_in, 0, addr, _name.c_str(), "",
+                              (DNSServiceBrowseReply)_browseCBS, this );
 
         if( error != kDNSServiceErr_NoError )
         {
             LBWARN << "DNSServiceDiscovery error: " << error << " for " << _name
-                   << " on " << lunchbox::Servus::IF_ALL << std::endl;
+                   << " on " << addr << std::endl;
             endBrowsing();
         }
         return lunchbox::Servus::Result( error );

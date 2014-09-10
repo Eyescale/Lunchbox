@@ -25,6 +25,7 @@
 #include <avahi-common/simple-watch.h>
 
 #include <net/if.h>
+#include <stdexcept>
 
 namespace lunchbox
 {

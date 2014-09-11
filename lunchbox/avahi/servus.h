@@ -18,8 +18,6 @@
 #include "../clock.h"
 #include "../debug.h"
 #include "../os.h"
-#include "../lock.h"
-#include "../scopedMutex.h"
 
 #include <avahi-client/client.h>
 #include <avahi-client/lookup.h>
@@ -39,7 +37,7 @@ class Servus : public detail::Servus
 public:
     explicit Servus( const std::string& name )
         : _name( name )
-        , _poll( 0 )
+        , _poll( avahi_simple_poll_new( ))
         , _client( 0 )
         , _browser( 0 )
         , _group( 0 )
@@ -47,8 +45,6 @@ public:
         , _port( 0 )
         , _announcable( false )
     {
-        ScopedMutex<> mutex( _lock );
-        _poll = avahi_simple_poll_new();
         if( !_poll )
             LBTHROW( std::runtime_error( "Can't setup avahi poll device" ));
 
@@ -67,7 +63,6 @@ public:
         withdraw();
         endBrowsing();
 
-        ScopedMutex<> mutex( _lock );
         if( _client )
             avahi_client_free( _client );
         if( _poll )
@@ -88,7 +83,6 @@ public:
             _createServices();
         else
         {
-            ScopedMutex<> mutex( _lock );
             lunchbox::Clock clock;
             while( !_announcable &&
                    _result == lunchbox::Servus::Result::PENDING &&
@@ -106,10 +100,7 @@ public:
         _announce.clear();
         _port = 0;
         if( _group )
-        {
-            ScopedMutex<> mutex( _lock );
             avahi_entry_group_reset( _group );
-        }
     }
 
     bool isAnnounced() const final
@@ -132,7 +123,6 @@ public:
         _result = lunchbox::Servus::Result::PENDING;
         lunchbox::Clock clock;
 
-        ScopedMutex<> mutex( _lock );
         while( clock.getTime64() < timeout )
         {
             if( avahi_simple_poll_iterate( _poll, timeout ) != 0 )
@@ -151,10 +141,7 @@ public:
     void endBrowsing() final
     {
         if( _browser )
-        {
-            ScopedMutex<> mutex( _lock );
             avahi_service_browser_free( _browser );
-        }
         _browser = 0;
     }
 
@@ -184,8 +171,6 @@ private:
     std::string _announce;
     unsigned short _port;
     bool _announcable;
-    // http://stackoverflow.com/questions/14430906/multi-threaded-avahi-resolving-causes-segfault
-    Lock _lock;
 
     lunchbox::Servus::Result _browse( const lunchbox::Servus::Interface addr )
     {
@@ -202,7 +187,6 @@ private:
             }
         }
 
-        ScopedMutex<> mutex( _lock );
         _browser = avahi_service_browser_new( _client, ifIndex,
                                               AVAHI_PROTO_UNSPEC, _name.c_str(),
                                               0, (AvahiLookupFlags)(0),
@@ -363,16 +347,12 @@ private:
             return;
 
         if( _group )
-        {
-            ScopedMutex<> mutex( _lock );
             avahi_entry_group_reset( _group );
-         }
         _createServices();
     }
 
     void _createServices()
     {
-        ScopedMutex<> mutex( _lock );
         if( !_group )
             _group = avahi_entry_group_new( _client, _groupCBS, this );
         else

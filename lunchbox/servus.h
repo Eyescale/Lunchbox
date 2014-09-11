@@ -181,7 +181,8 @@ public:
 
 private:
     detail::Servus* const _impl;
-    friend std::ostream& operator << ( std::ostream&, const Servus& );
+    friend LUNCHBOX_API std::ostream& operator << ( std::ostream&,
+                                                    const Servus& );
 };
 
 /** Output the servus instance in human-readable format. @version 1.5.1 */

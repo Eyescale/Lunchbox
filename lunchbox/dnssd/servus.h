@@ -101,7 +101,7 @@ public:
         return _browse( addr );
     }
 
-    lunchbox::Servus::Result browse( int32_t timeout ) final
+    lunchbox::Servus::Result browse( const int32_t timeout ) final
     {
         return _handleEvents( _in, timeout );
     }

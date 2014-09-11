@@ -149,6 +149,15 @@ protected:
 #endif
 #include "none/servus.h"
 
+// http://stackoverflow.com/questions/14430906/multi-threaded-avahi-resolving-causes-segfault
+#include "lock.h"
+#include "scopedMutex.h"
+#ifdef __APPLE__
+static lunchbox::Lock* lock_( 0 );
+#else
+static lunchbox::Lock lock_;
+#endif
+
 namespace lunchbox
 {
 bool Servus::isAvailable()
@@ -233,11 +242,13 @@ const std::string& Servus::get( const std::string& key ) const
 Servus::Result Servus::announce( const unsigned short port,
                                  const std::string& instance )
 {
+    ScopedWrite mutex( lock_ );
     return _impl->announce( port, instance );
 }
 
 void Servus::withdraw()
 {
+    ScopedWrite mutex( lock_ );
     _impl->withdraw();
 }
 
@@ -248,21 +259,25 @@ bool Servus::isAnnounced() const
 
 Strings Servus::discover( const Interface addr, const unsigned browseTime )
 {
+    ScopedWrite mutex( lock_ );
     return _impl->discover( addr, browseTime );
 }
 
 Servus::Result Servus::beginBrowsing( const lunchbox::Servus::Interface addr )
 {
+    ScopedWrite mutex( lock_ );
     return _impl->beginBrowsing( addr );
 }
 
 Servus::Result Servus::browse( int32_t timeout )
 {
+    ScopedWrite mutex( lock_ );
     return _impl->browse( timeout );
 }
 
 void Servus::endBrowsing()
 {
+    ScopedWrite mutex( lock_ );
     _impl->endBrowsing();
 }
 

@@ -19,7 +19,7 @@
 
 // for NI_MAXHOST
 #ifdef _WIN32
-#  include <Ws2tcpip.h>
+#  include <ws2tcpip.h>
 #else
 #  include <netdb.h>
 #endif

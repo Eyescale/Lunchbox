@@ -108,14 +108,14 @@ public:
         return ( _group && !avahi_entry_group_is_empty( _group ));
     }
 
-    lunchbox::Servus::Result beginBrowsing( const lunchbox::Servus::Interface )
+    lunchbox::Servus::Result beginBrowsing( const lunchbox::Servus::Interface addr)
         final
     {
         if( _browser )
             return lunchbox::Servus::Result( lunchbox::Servus::Result::PENDING);
 
         _instanceMap.clear();
-        return _browse( lunchbox::Servus::IF_ALL );
+        return _browse( addr );
     }
 
     lunchbox::Servus::Result browse( const int32_t timeout ) final

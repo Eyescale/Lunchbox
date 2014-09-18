@@ -18,7 +18,7 @@
  */
 
 #include "servus.h"
-
+#include "debug.h"
 
 namespace lunchbox
 {
@@ -168,7 +168,7 @@ bool Servus::isAvailable()
     return false;
 }
 
-Servus::Servus( const std::string& name )
+Servus::Servus( const std::string& name LB_UNUSED )
 #ifdef LUNCHBOX_USE_DNSSD
     : _impl( new dnssd::Servus( name ))
 #elif defined(LUNCHBOX_USE_AVAHI_CLIENT)

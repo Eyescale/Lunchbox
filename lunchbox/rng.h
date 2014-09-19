@@ -78,14 +78,14 @@ template<> inline float RNG::get()
 {
     const float max_limits =
         static_cast< float >( std::numeric_limits< uint32_t >::max( ));
-    return ( get< uint32_t >() / max_limits);
+    return ((float)get< uint32_t >() / max_limits);
 }
 
 template<> inline double RNG::get()
 {
     const double max_limits =
         static_cast< double >( std::numeric_limits< uint64_t >::max( ));
-    return ( get< uint64_t >() / max_limits);
+    return ((double)get< uint64_t >() / max_limits);
 }
 
 template<> inline bool RNG::get()

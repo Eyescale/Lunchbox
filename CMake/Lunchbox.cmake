@@ -6,7 +6,8 @@ set(LUNCHBOX_DEPENDS eyescale eyescalePorts hwloc DNSSD LibJpegTurbo OpenMP MPI
                      leveldb REQUIRED Boost)
 set(LUNCHBOX_DEB_DEPENDS libboost-regex-dev libboost-serialization-dev
   libhwloc-dev libavahi-compat-libdnssd-dev libboost-filesystem-dev
-  libboost-system-dev libjpeg-turbo8-dev libturbojpeg libleveldb-dev)
+  libboost-system-dev libboost-thread-dev
+  libjpeg-turbo8-dev libturbojpeg libleveldb-dev)
 set(LUNCHBOX_PORT_DEPENDS boost)
 set(LUNCHBOX_BOOST_COMPONENTS "regex serialization filesystem system")
 set(LUNCHBOX_MATURITY RD)

@@ -80,6 +80,7 @@ public:
     }
 
     Vector_t* vector;
+    Reader& operator=( const Reader& ) { return *this; }
 };
 
 class Writer : public lunchbox::Thread
@@ -112,6 +113,7 @@ public:
     }
 
     Vector_t* vector;
+    Writer& operator=( const Writer& ) { return *this; }
 };
 
 class Pusher : public lunchbox::Thread
@@ -141,6 +143,7 @@ public:
     }
 
     Vector_t* vector;
+    Pusher& operator=( const Pusher& ) { return *this; }
 };
 
 class Copier : public lunchbox::Thread
@@ -158,6 +161,8 @@ public:
             cTime_ = _clock.getTimef();
         }
     Vector_t* vector;
+
+    Copier& operator=( const Copier& ) { return *this; }
 };
 
 class Eraser : public lunchbox::Thread
@@ -176,6 +181,8 @@ public:
             eTime_ = _clock.getTimef();
         }
     Vector_t* vector;
+
+    Eraser& operator=( const Eraser& ) { return *this; }
 };
 
 class Flusher : public lunchbox::Thread
@@ -193,6 +200,7 @@ public:
             }
         }
     Vector_t* vector;
+    Flusher& operator=( const Flusher& ) { return *this; }
 };
 
 template< class V, class T > void _runSerialTest()

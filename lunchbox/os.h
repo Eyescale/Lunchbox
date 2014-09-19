@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,6 +19,7 @@
 #ifndef LUNCHBOX_OS_H
 #define LUNCHBOX_OS_H
 
+#include <lunchbox/api.h>
 #include <lunchbox/defines.h>
 #include <lunchbox/compiler.h>
 
@@ -52,6 +53,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 #ifndef _MSC_VER
 #  include <stdint.h>
@@ -77,6 +79,9 @@ static inline void setZero( void* ptr, const size_t size )
     ::bzero( ptr, size );
 #endif
 }
+
+/** @return the local hostname. @version 1.9.2 */
+LUNCHBOX_API std::string getHostname();
 }
 
 #endif //LUNCHBOX_OS_H

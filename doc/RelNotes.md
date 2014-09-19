@@ -42,6 +42,7 @@ and documentation changes over Lunchbox 1.8:
 * lunchbox::MPI support
 * lunchbox::URI parsing support according to RFC3986
 * lunchbox::PersistentMap interface for persistent key-value stores
+* lunchbox::getHostname function
 
 ## Enhancements {#Enhancements}
 
@@ -50,6 +51,9 @@ and documentation changes over Lunchbox 1.8:
 * Use structure to gather compression results
 * Boolean operators for (De)compressor
 * New Array class, moved from Collage
+* Added API for continuous browsing to lunchbox::Servus
+* Improved lunchbox::Servus implementations, supporting continuous browsing and
+  using the native Avahi API on Linux
 
 ## Optimizations {#Optimizations}
 

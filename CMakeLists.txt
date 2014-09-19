@@ -4,8 +4,10 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
 
-include(CMake/GitExternal.cmake)
-include(CMake/common/SuperProject.cmake)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
+  ${PROJECT_SOURCE_DIR}/CMake/common)
+
+include(GitExternal)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
   ${PROJECT_SOURCE_DIR}/CMake/common)
@@ -39,6 +41,9 @@ endif()
 set(PROJECT_INCLUDE_NAME lunchbox)
 include(FindPackages)
 set(LUNCHBOX_DEPENDENT_LIBRARIES Boost)
+if(SKV_FOUND)
+  list(APPEND LUNCHBOX_DEPENDENT_LIBRARIES skv)
+endif()
 
 if(OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -46,7 +51,7 @@ if(OPENMP_FOUND)
 endif()
 
 set(LUNCHBOX_DEFINITIONS ${LUNCHBOX_DEFINITIONS}
-  -DLUNCHBOX_BUILD_DIR="${PROJECT_BINARY_DIR}/")
+  -DLUNCHBOX_BUILD_DIR="${CMAKE_BINARY_DIR}/")
 add_definitions(${LUNCHBOX_DEFINITIONS})
 
 if(APPLE)

@@ -29,10 +29,26 @@
 
 int main( int, char** )
 {
-    lunchbox::RNG rng;
-    const uint16_t port = (rng.get< uint16_t >() % 60000) + 1024;
+    try
+    {
+        lunchbox::Servus service( "_servustest._tcp" );
+    }
+    catch( const std::runtime_error& e )
+    {
+        if( getenv( "TRAVIS" ))
+        {
+            std::cerr << "Bailing, no avahi on a Travis CI setup" << std::endl;
+            TEST( e.what() ==
+                  std::string( "Can't setup avahi client: Daemon not running"));
+            return EXIT_SUCCESS;
+        }
+        throw e;
+    }
+
     lunchbox::Servus service( "_servustest._tcp" );
 
+    lunchbox::RNG rng;
+    const uint16_t port = (rng.get< uint16_t >() % 60000) + 1024;
     const lunchbox::Servus::Result& result = service.announce( port,
                                     boost::lexical_cast< std::string >( port ));
 
@@ -59,12 +75,6 @@ int main( int, char** )
 
     lunchbox::Strings hosts = service.discover( lunchbox::Servus::IF_LOCAL,
                                                 2000 );
-    if( hosts.empty() && getenv( "TRAVIS" ))
-    {
-        std::cerr << "Bailing, got no hosts on a Travis CI setup" << std::endl;
-        return EXIT_SUCCESS;
-    }
-
     TESTINFO( hosts.size() == 1, hosts.size( ));
     TESTINFO( hosts.front() == boost::lexical_cast< std::string >( port ),
               hosts.front( ));

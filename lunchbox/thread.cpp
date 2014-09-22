@@ -289,7 +289,7 @@ void Thread::pinCurrentThread()
 #endif
 }
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #  ifndef MS_VC_EXCEPTION
 #    define MS_VC_EXCEPTION 0x406D1388
 #  endif

@@ -5,7 +5,7 @@ include(files.cmake)
 
 list(APPEND LUNCHBOX_LINK_LIBRARIES ${PTHREAD_LIBRARIES} ${Boost_LIBRARIES})
 if(WIN32)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES ws2_32 mswsock)
+  list(APPEND LUNCHBOX_LINK_LIBRARIES ws2_32 mswsock imagehlp)
 endif(WIN32)
 if(LINUX)
   list(APPEND LUNCHBOX_LINK_LIBRARIES dl rt)

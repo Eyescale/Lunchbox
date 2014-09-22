@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-#ifdef LB_GCC_4_4_OR_LATER
+#ifdef LB_USE_STD_PARALLEL
 #  include <parallel/algorithm>
 #endif
 

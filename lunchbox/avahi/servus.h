@@ -123,7 +123,7 @@ public:
         _result = lunchbox::Servus::Result::PENDING;
         lunchbox::Clock clock;
 
-        while( clock.getTime64() < timeout )
+        do
         {
             if( avahi_simple_poll_iterate( _poll, timeout ) != 0 )
             {
@@ -131,6 +131,7 @@ public:
                 break;
             }
         }
+        while( clock.getTime64() < timeout );
 
         if( _result != lunchbox::Servus::Result::POLL_ERROR )
             _result = lunchbox::Servus::Result::SUCCESS;

@@ -44,6 +44,7 @@ public:
         , _result( lunchbox::Servus::Result::PENDING )
         , _port( 0 )
         , _announcable( false )
+        , _scope( lunchbox::Servus::IF_ALL )
     {
         if( !_poll )
             LBTHROW( std::runtime_error( "Can't setup avahi poll device" ));
@@ -108,14 +109,15 @@ public:
         return ( _group && !avahi_entry_group_is_empty( _group ));
     }
 
-    lunchbox::Servus::Result beginBrowsing( const lunchbox::Servus::Interface addr)
-        final
+    lunchbox::Servus::Result beginBrowsing(
+                                  const lunchbox::Servus::Interface addr ) final
     {
+        _scope = addr;
         if( _browser )
             return lunchbox::Servus::Result( lunchbox::Servus::Result::PENDING);
 
         _instanceMap.clear();
-        return _browse( addr );
+        return _browse();
     }
 
     lunchbox::Servus::Result browse( const int32_t timeout ) final
@@ -172,23 +174,13 @@ private:
     std::string _announce;
     unsigned short _port;
     bool _announcable;
+    lunchbox::Servus::Interface _scope;
 
-    lunchbox::Servus::Result _browse( const lunchbox::Servus::Interface addr )
+    lunchbox::Servus::Result _browse()
     {
         _result = lunchbox::Servus::Result::SUCCESS;
-        int ifIndex = AVAHI_IF_UNSPEC;
-        if( addr == lunchbox::Servus::IF_LOCAL )
-        {
-            ifIndex = if_nametoindex( "lo" );
-            if( ifIndex == 0 )
-            {
-                LBWARN << "Can't enumerate loopback interface: "
-                       << lunchbox::sysError() << std::endl;
-                return lunchbox::Servus::Result( errno );
-            }
-        }
 
-        _browser = avahi_service_browser_new( _client, ifIndex,
+        _browser = avahi_service_browser_new( _client, AVAHI_IF_UNSPEC,
                                               AVAHI_PROTO_UNSPEC, _name.c_str(),
                                               0, (AvahiLookupFlags)(0),
                                               _browseCBS, this );
@@ -313,6 +305,16 @@ private:
                      const AvahiResolverEvent event, const char* name,
                      const char* host, AvahiStringList *txt )
     {
+        const std::string& hostStr( host );
+        // host in "hostname.local" format
+        size_t pos = hostStr.find_last_of( "." );
+        const std::string hostName = hostStr.substr( 0, pos );
+
+        // If browsing through the local interface,
+        // consider only the local instances
+        if( _scope == lunchbox::Servus::IF_LOCAL && hostName != getHostname( ))
+            return;
+
         switch( event )
         {
         case AVAHI_RESOLVER_FAILURE:
@@ -330,7 +332,7 @@ private:
                     const std::string entry(
                                 reinterpret_cast< const char* >( txt->text ),
                                 txt->size );
-                    const size_t pos = entry.find_first_of( "=" );
+                    pos = entry.find_first_of( "=" );
                     const std::string key = entry.substr( 0, pos );
                     const std::string value = entry.substr( pos + 1 );
                     values[ key ] = value;

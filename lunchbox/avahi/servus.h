@@ -305,15 +305,18 @@ private:
                      const AvahiResolverEvent event, const char* name,
                      const char* host, AvahiStringList *txt )
     {
-        const std::string& hostStr( host );
-        // host in "hostname.local" format
-        size_t pos = hostStr.find_last_of( "." );
-        const std::string hostName = hostStr.substr( 0, pos );
-
         // If browsing through the local interface,
         // consider only the local instances
-        if( _scope == lunchbox::Servus::IF_LOCAL && hostName != getHostname( ))
-            return;
+        if( _scope == lunchbox::Servus::IF_LOCAL )
+        {
+            const std::string& hostStr( host );
+            // host in "hostname.local" format
+            const size_t pos = hostStr.find_last_of( "." );
+            const std::string hostName = hostStr.substr( 0, pos );
+
+            if( hostName != getHostname( ))
+                return;
+        }
 
         switch( event )
         {
@@ -332,7 +335,7 @@ private:
                     const std::string entry(
                                 reinterpret_cast< const char* >( txt->text ),
                                 txt->size );
-                    pos = entry.find_first_of( "=" );
+                    const size_t pos = entry.find_first_of( "=" );
                     const std::string key = entry.substr( 0, pos );
                     const std::string value = entry.substr( pos + 1 );
                     values[ key ] = value;

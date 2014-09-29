@@ -75,12 +75,6 @@ int main( int, char** )
 
     lunchbox::Strings hosts = service.discover( lunchbox::Servus::IF_LOCAL,
                                                 2000 );
-    if( hosts.empty() && getenv( "TRAVIS" ))
-    {
-        std::cerr << "Bailing, got no hosts on a Travis CI setup" << std::endl;
-        return EXIT_SUCCESS;
-    }
-
     TESTINFO( hosts.size() == 1, hosts.size( ));
     TESTINFO( hosts.front() == boost::lexical_cast< std::string >( port ),
               hosts.front( ));

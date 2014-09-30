@@ -14,8 +14,8 @@ option(LUNCHBOX_BUILD_V2_API
 
 set(LAST_RELEASE 1.9.1) # tarball, MacPorts, ...
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "9")
-set(VERSION_PATCH "1")
+set(VERSION_MINOR "10")
+set(VERSION_PATCH "0")
 set(VERSION_ABI 3)
 
 set(GITTARGETS_RELEASE_BRANCH minor)

@@ -12,7 +12,6 @@ include(GitExternal)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 
-set(LAST_RELEASE 1.9.1) # tarball, MacPorts, ...
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "10")
 set(VERSION_PATCH "0")

@@ -18,6 +18,8 @@
 #include "../clock.h"
 #include "../debug.h"
 #include "../os.h"
+#include "../scopedMutex.h"
+#include "../lock.h"
 
 #include <avahi-client/client.h>
 #include <avahi-client/lookup.h>
@@ -28,6 +30,14 @@
 #include <net/if.h>
 #include <stdexcept>
 
+// http://stackoverflow.com/questions/14430906/multi-threaded-avahi-resolving-causes-segfault
+// Most proper way of doing this is using the threaded polling in avahi
+#ifdef __APPLE__
+static lunchbox::Lock* lock_( 0 );
+#else
+static lunchbox::Lock lock_;
+#endif
+
 namespace lunchbox
 {
 namespace avahi
@@ -37,7 +47,7 @@ class Servus : public detail::Servus
 public:
     explicit Servus( const std::string& name )
         : _name( name )
-        , _poll( avahi_simple_poll_new( ))
+        , _poll( 0 )
         , _client( 0 )
         , _browser( 0 )
         , _group( 0 )
@@ -46,6 +56,9 @@ public:
         , _announcable( false )
         , _scope( lunchbox::Servus::IF_ALL )
     {
+        lunchbox::ScopedWrite mutex( lock_ );
+         _poll = avahi_simple_poll_new();
+
         if( !_poll )
             LBTHROW( std::runtime_error( "Can't setup avahi poll device" ));
 
@@ -64,6 +77,7 @@ public:
         withdraw();
         endBrowsing();
 
+        lunchbox::ScopedWrite mutex( lock_ );
         if( _client )
             avahi_client_free( _client );
         if( _poll )
@@ -73,6 +87,7 @@ public:
     lunchbox::Servus::Result announce( const unsigned short port,
                                        const std::string& instance ) final
     {
+        ScopedWrite mutex( lock_ );
         _result = lunchbox::Servus::Result::PENDING;
         _port = port;
         if( instance.empty( ))
@@ -98,6 +113,7 @@ public:
 
     void withdraw() final
     {
+        ScopedWrite mutex( lock_ );
         _announce.clear();
         _port = 0;
         if( _group )
@@ -112,6 +128,7 @@ public:
     lunchbox::Servus::Result beginBrowsing(
                                   const lunchbox::Servus::Interface addr ) final
     {
+        ScopedWrite mutex( lock_ );
         _scope = addr;
         if( _browser )
             return lunchbox::Servus::Result( lunchbox::Servus::Result::PENDING);
@@ -122,6 +139,7 @@ public:
 
     lunchbox::Servus::Result browse( const int32_t timeout ) final
     {
+        ScopedWrite mutex( lock_ );
         _result = lunchbox::Servus::Result::PENDING;
         lunchbox::Clock clock;
 
@@ -143,6 +161,7 @@ public:
 
     void endBrowsing() final
     {
+        ScopedWrite mutex( lock_ );
         if( _browser )
             avahi_service_browser_free( _browser );
         _browser = 0;
@@ -153,6 +172,7 @@ public:
     Strings discover( const lunchbox::Servus::Interface addr,
                       const unsigned browseTime ) final
     {
+        ScopedWrite mutex( lock_ );
         const lunchbox::Servus::Result& result = beginBrowsing( addr );
         if( !result && result != lunchbox::Servus::Result::PENDING )
             return getInstances();

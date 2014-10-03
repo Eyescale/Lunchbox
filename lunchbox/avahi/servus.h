@@ -18,6 +18,8 @@
 #include "../clock.h"
 #include "../debug.h"
 #include "../os.h"
+#include "../scopedMutex.h"
+#include "../lock.h"
 
 #include <avahi-client/client.h>
 #include <avahi-client/lookup.h>
@@ -28,6 +30,14 @@
 #include <net/if.h>
 #include <stdexcept>
 
+// http://stackoverflow.com/questions/14430906/multi-threaded-avahi-resolving-causes-segfault
+// Most proper way of doing this is using the threaded polling in avahi
+#ifdef __APPLE__
+static lunchbox::Lock* lock_( 0 );
+#else
+static lunchbox::Lock lock_;
+#endif
+
 namespace lunchbox
 {
 namespace avahi
@@ -37,14 +47,18 @@ class Servus : public detail::Servus
 public:
     explicit Servus( const std::string& name )
         : _name( name )
-        , _poll( avahi_simple_poll_new( ))
+        , _poll( 0 )
         , _client( 0 )
         , _browser( 0 )
         , _group( 0 )
         , _result( lunchbox::Servus::Result::PENDING )
         , _port( 0 )
         , _announcable( false )
+        , _scope( lunchbox::Servus::IF_ALL )
     {
+        lunchbox::ScopedWrite mutex( lock_ );
+         _poll = avahi_simple_poll_new();
+
         if( !_poll )
             LBTHROW( std::runtime_error( "Can't setup avahi poll device" ));
 
@@ -63,6 +77,7 @@ public:
         withdraw();
         endBrowsing();
 
+        lunchbox::ScopedWrite mutex( lock_ );
         if( _client )
             avahi_client_free( _client );
         if( _poll )
@@ -72,6 +87,7 @@ public:
     lunchbox::Servus::Result announce( const unsigned short port,
                                        const std::string& instance ) final
     {
+        ScopedWrite mutex( lock_ );
         _result = lunchbox::Servus::Result::PENDING;
         _port = port;
         if( instance.empty( ))
@@ -97,6 +113,7 @@ public:
 
     void withdraw() final
     {
+        ScopedWrite mutex( lock_ );
         _announce.clear();
         _port = 0;
         if( _group )
@@ -108,22 +125,25 @@ public:
         return ( _group && !avahi_entry_group_is_empty( _group ));
     }
 
-    lunchbox::Servus::Result beginBrowsing( const lunchbox::Servus::Interface addr)
-        final
+    lunchbox::Servus::Result beginBrowsing(
+                                  const lunchbox::Servus::Interface addr ) final
     {
+        ScopedWrite mutex( lock_ );
+        _scope = addr;
         if( _browser )
             return lunchbox::Servus::Result( lunchbox::Servus::Result::PENDING);
 
         _instanceMap.clear();
-        return _browse( addr );
+        return _browse();
     }
 
     lunchbox::Servus::Result browse( const int32_t timeout ) final
     {
+        ScopedWrite mutex( lock_ );
         _result = lunchbox::Servus::Result::PENDING;
         lunchbox::Clock clock;
 
-        while( clock.getTime64() < timeout )
+        do
         {
             if( avahi_simple_poll_iterate( _poll, timeout ) != 0 )
             {
@@ -131,6 +151,7 @@ public:
                 break;
             }
         }
+        while( clock.getTime64() < timeout );
 
         if( _result != lunchbox::Servus::Result::POLL_ERROR )
             _result = lunchbox::Servus::Result::SUCCESS;
@@ -140,6 +161,7 @@ public:
 
     void endBrowsing() final
     {
+        ScopedWrite mutex( lock_ );
         if( _browser )
             avahi_service_browser_free( _browser );
         _browser = 0;
@@ -150,6 +172,7 @@ public:
     Strings discover( const lunchbox::Servus::Interface addr,
                       const unsigned browseTime ) final
     {
+        ScopedWrite mutex( lock_ );
         const lunchbox::Servus::Result& result = beginBrowsing( addr );
         if( !result && result != lunchbox::Servus::Result::PENDING )
             return getInstances();
@@ -171,23 +194,13 @@ private:
     std::string _announce;
     unsigned short _port;
     bool _announcable;
+    lunchbox::Servus::Interface _scope;
 
-    lunchbox::Servus::Result _browse( const lunchbox::Servus::Interface addr )
+    lunchbox::Servus::Result _browse()
     {
         _result = lunchbox::Servus::Result::SUCCESS;
-        int ifIndex = AVAHI_IF_UNSPEC;
-        if( addr == lunchbox::Servus::IF_LOCAL )
-        {
-            ifIndex = if_nametoindex( "lo" );
-            if( ifIndex == 0 )
-            {
-                LBWARN << "Can't enumerate loopback interface: "
-                       << lunchbox::sysError() << std::endl;
-                return lunchbox::Servus::Result( errno );
-            }
-        }
 
-        _browser = avahi_service_browser_new( _client, ifIndex,
+        _browser = avahi_service_browser_new( _client, AVAHI_IF_UNSPEC,
                                               AVAHI_PROTO_UNSPEC, _name.c_str(),
                                               0, (AvahiLookupFlags)(0),
                                               _browseCBS, this );
@@ -312,6 +325,19 @@ private:
                      const AvahiResolverEvent event, const char* name,
                      const char* host, AvahiStringList *txt )
     {
+        // If browsing through the local interface,
+        // consider only the local instances
+        if( _scope == lunchbox::Servus::IF_LOCAL )
+        {
+            const std::string& hostStr( host );
+            // host in "hostname.local" format
+            const size_t pos = hostStr.find_last_of( "." );
+            const std::string hostName = hostStr.substr( 0, pos );
+
+            if( hostName != getHostname( ))
+                return;
+        }
+
         switch( event )
         {
         case AVAHI_RESOLVER_FAILURE:

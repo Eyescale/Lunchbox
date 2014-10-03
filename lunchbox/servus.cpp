@@ -169,9 +169,17 @@ Servus::Servus( const std::string& name LB_UNUSED )
 #endif
 {}
 
+Servus::Servus( const Servus& from )
+    : _impl( from._impl )
+{}
+
 Servus::~Servus()
+{}
+
+Servus& Servus::operator = ( const Servus& rhs )
 {
-    delete _impl;
+    _impl = rhs._impl;
+    return *this;
 }
 
 std::string Servus::Result::getString() const

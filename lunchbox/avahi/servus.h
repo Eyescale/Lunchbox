@@ -30,24 +30,29 @@
 #include <net/if.h>
 #include <stdexcept>
 
-// http://stackoverflow.com/questions/14430906/multi-threaded-avahi-resolving-causes-segfault
-// Most proper way of doing this is using the threaded polling in avahi
-#ifdef __APPLE__
-static lunchbox::Lock* lock_( 0 );
-#else
+// http://stackoverflow.com/questions/14430906
+//   Proper way of doing this is using the threaded polling in avahi
 static lunchbox::Lock lock_;
-#endif
 
 namespace lunchbox
 {
 namespace avahi
 {
+namespace
+{
+AvahiSimplePoll* _newSimplePoll()
+{
+    lunchbox::ScopedWrite mutex( lock_ );
+    return avahi_simple_poll_new();
+}
+}
+
 class Servus : public detail::Servus
 {
 public:
     explicit Servus( const std::string& name )
         : _name( name )
-        , _poll( 0 )
+        , _poll( _newSimplePoll( ))
         , _client( 0 )
         , _browser( 0 )
         , _group( 0 )
@@ -56,13 +61,11 @@ public:
         , _announcable( false )
         , _scope( lunchbox::Servus::IF_ALL )
     {
-        lunchbox::ScopedWrite mutex( lock_ );
-         _poll = avahi_simple_poll_new();
-
         if( !_poll )
             LBTHROW( std::runtime_error( "Can't setup avahi poll device" ));
 
         int error = 0;
+        lunchbox::ScopedWrite mutex( lock_ );
         _client = avahi_client_new( avahi_simple_poll_get( _poll ),
                                     (AvahiClientFlags)(0), _clientCBS, this,
                                     &error );
@@ -122,19 +125,31 @@ public:
 
     bool isAnnounced() const final
     {
+        ScopedWrite mutex( lock_ );
         return ( _group && !avahi_entry_group_is_empty( _group ));
     }
 
     lunchbox::Servus::Result beginBrowsing(
                                   const lunchbox::Servus::Interface addr ) final
     {
-        ScopedWrite mutex( lock_ );
-        _scope = addr;
         if( _browser )
             return lunchbox::Servus::Result( lunchbox::Servus::Result::PENDING);
 
+        ScopedWrite mutex( lock_ );
+        _scope = addr;
         _instanceMap.clear();
-        return _browse();
+        _result = lunchbox::Servus::Result::SUCCESS;
+        _browser = avahi_service_browser_new( _client, AVAHI_IF_UNSPEC,
+                                              AVAHI_PROTO_UNSPEC, _name.c_str(),
+                                              0, (AvahiLookupFlags)(0),
+                                              _browseCBS, this );
+        if( _browser )
+            return lunchbox::Servus::Result( _result );
+
+        _result = avahi_client_errno( _client );
+        LBWARN << "Failed to create browser: " << avahi_strerror( _result )
+               << std::endl;
+        return lunchbox::Servus::Result( _result );
     }
 
     lunchbox::Servus::Result browse( const int32_t timeout ) final
@@ -172,7 +187,6 @@ public:
     Strings discover( const lunchbox::Servus::Interface addr,
                       const unsigned browseTime ) final
     {
-        ScopedWrite mutex( lock_ );
         const lunchbox::Servus::Result& result = beginBrowsing( addr );
         if( !result && result != lunchbox::Servus::Result::PENDING )
             return getInstances();
@@ -186,7 +200,7 @@ public:
 
 private:
     const std::string _name;
-    AvahiSimplePoll* _poll;
+    AvahiSimplePoll* const _poll;
     AvahiClient* _client;
     AvahiServiceBrowser* _browser;
     AvahiEntryGroup* _group;
@@ -195,23 +209,6 @@ private:
     unsigned short _port;
     bool _announcable;
     lunchbox::Servus::Interface _scope;
-
-    lunchbox::Servus::Result _browse()
-    {
-        _result = lunchbox::Servus::Result::SUCCESS;
-
-        _browser = avahi_service_browser_new( _client, AVAHI_IF_UNSPEC,
-                                              AVAHI_PROTO_UNSPEC, _name.c_str(),
-                                              0, (AvahiLookupFlags)(0),
-                                              _browseCBS, this );
-        if( _browser )
-            return lunchbox::Servus::Result( _result );
-
-        _result = avahi_client_errno( _client );
-        LBWARN << "Failed to create browser: " << avahi_strerror( _result )
-               << std::endl;
-        return lunchbox::Servus::Result( _result );
-    }
 
     // Client state change
     static void _clientCBS( AvahiClient*, AvahiClientState state,

@@ -331,7 +331,10 @@ private:
             const size_t pos = hostStr.find_last_of( "." );
             const std::string hostName = hostStr.substr( 0, pos );
 
-            if( hostName != getHostname( ))
+            const std::string& localHost = getHostname();
+            // omit the domain for the local hostname
+            if( hostName != localHost.substr( 0,
+                                              localHost.find_first_of( "." )))
                 return;
         }
 

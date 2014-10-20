@@ -22,10 +22,12 @@ set(PTHREADS_DIR ${CMAKE_BINARY_DIR}/${PTHREADS_NAME})
 if(NOT EXISTS ${PTHREADS_DIR})
   execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf
     ${PTHREADS_TGZ} WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-endif(NOT EXISTS ${PTHREADS_DIR})
+endif()
 
 file(COPY ${PTHREADS_DIR}/pthread.h ${PTHREADS_DIR}/sched.h
      DESTINATION ${OUTPUT_INCLUDE_DIR})
+
+add_definitions(/wd4267) # conversion from 'size_t' to 'long'
 
 add_library(pthread SHARED
   ${PTHREADS_DIR}/attr.c

@@ -20,9 +20,10 @@
 #include <lunchbox/compiler.h>
 
 #define SKV_CLIENT_UNI
+#define SKV_NON_MPI
 #include <skv/client/skv_client.hpp>
-// Note: skv api is not const-correct. Ignore all const_cast and mutable below.
 
+// Note: skv api is not const-correct. Ignore all const_cast and mutable below.
 namespace lunchbox
 {
 namespace skv

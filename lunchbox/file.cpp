@@ -21,10 +21,18 @@
 #include "debug.h"
 #include "os.h"
 
+#include <boost/filesystem/path.hpp>
 #include <boost/regex.hpp>
 #include <sys/stat.h>
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+#  include <windows.h>
+#elif __APPLE__
 #  include <dirent.h>
+#  include <mach-o/dyld.h>
+#else
+#  include <dirent.h>
+#  include <limits.h>
+#  include <unistd.h>
 #endif
 
 namespace lunchbox
@@ -103,6 +111,28 @@ std::string getDirname( const std::string& filename )
             lastSeparator = i+1;
 
     return lastSeparator == 0 ? "." : filename.substr( 0, lastSeparator );
+}
+
+std::string getExecutablePath()
+{
+    // http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
+#ifdef _MSC_VER
+    char result[MAX_PATH];
+    const std::string execPath( result, GetModuleFileName( NULL, result,
+                                                           MAX_PATH ));
+#elif __APPLE__
+    char result[PATH_MAX+1];
+    uint32_t size = sizeof(result);
+    if( _NSGetExecutablePath( result, &size ) != 0 )
+        return std::string();
+    const std::string execPath( result );
+#else
+    char result[PATH_MAX];
+    const ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+    const std::string execPath( result, count > 0 ? count : 0 );
+#endif
+    const boost::filesystem::path path( execPath );
+    return path.parent_path().string();
 }
 
 }

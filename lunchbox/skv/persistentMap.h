@@ -63,7 +63,7 @@ public:
     }
 
     static bool handles( const URI& uri )
-    { return uri.getScheme() == "skv"; }
+        { return uri.getScheme() == "skv"; }
 
     bool insert( const std::string& key, const void* data, const size_t size )
         final
@@ -72,7 +72,7 @@ public:
             _client.Insert( &_namespace,
                             const_cast< char* >( key.c_str( )), key.length(),
                             static_cast< char* >( const_cast< void* >( data )),
-                            size, 0, SKV_COMMAND_RIU_FLAGS_NONE );
+                            size, 0, SKV_COMMAND_RIU_UPDATE );
         if( status != SKV_SUCCESS )
             LBINFO << "skv insert failed:" << skv_status_to_string( status )
                    << std::endl;

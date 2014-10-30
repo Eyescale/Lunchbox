@@ -115,7 +115,7 @@ std::string getDirname( const std::string& filename )
 
 std::string getExecutablePath()
 {
-    // http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
+    // http://stackoverflow.com/questions/933850
 #ifdef _MSC_VER
     char result[MAX_PATH];
     const std::string execPath( result, GetModuleFileName( NULL, result,

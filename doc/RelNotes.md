@@ -41,7 +41,7 @@ and documentation changes over Lunchbox 1.9:
 
 * lunchbox::URI parsing support according to RFC3986
 * lunchbox::PersistentMap interface for persistent key-value stores
-* lunchbox::getHostname function
+* lunchbox::getHostname and lunchbox::getExecutablePath functions
 
 ## Enhancements {#Enhancements}
 

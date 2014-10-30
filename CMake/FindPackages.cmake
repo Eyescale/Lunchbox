@@ -78,15 +78,18 @@ else()
 endif()
 
 if(PKG_CONFIG_EXECUTABLE)
-  find_package(Boost 1.41.0 COMPONENTS regex serialization filesystem system thread unit_test_framework)
+  find_package(Boost 1.41.0 COMPONENTS regex serialization filesystem system thread
+                                       unit_test_framework)
   if((NOT Boost_FOUND) AND (NOT BOOST_FOUND))
     pkg_check_modules(Boost Boost>=1.41.0)
   endif()
   if((NOT Boost_FOUND) AND (NOT BOOST_FOUND))
-    message(FATAL_ERROR "Could not find Boost COMPONENTS regex serialization filesystem system thread unit_test_framework")
+    message(FATAL_ERROR "Could not find Boost COMPONENTS regex serialization
+                         filesystem system thread unit_test_framework")
   endif()
 else()
-  find_package(Boost 1.41.0  REQUIRED regex serialization filesystem system thread unit_test_framework)
+  find_package(Boost 1.41.0  REQUIRED regex serialization filesystem system thread
+                                      unit_test_framework)
 endif()
 
 

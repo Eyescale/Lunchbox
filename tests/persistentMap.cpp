@@ -48,14 +48,14 @@ template< class T > void readVector( PersistentMap& map )
 void setup( const std::string& uri )
 {
     PersistentMap map( uri );
-    TEST( map.insert( "the quick brown fox", "jumped over something" ));
-    TESTINFO( map[ "the quick brown fox" ] == "jumped over something",
-              map[ "the quick brown fox" ] );
-
     TEST( map.insert( "foo", "bar" ));
     TESTINFO( map[ "foo" ] == "bar",
               map[ "foo" ] << " length " << map[ "foo" ].length( ));
     TEST( map[ "bar" ].empty( ));
+
+    TEST( map.insert( "the quick brown fox", "jumped over something" ));
+    TESTINFO( map[ "the quick brown fox" ] == "jumped over something",
+              map[ "the quick brown fox" ] );
 
     TEST( map.insert( "hans", std::string( "dampf" )));
     TESTINFO( map[ "hans" ] == "dampf", map[ "hans" ] );

@@ -125,7 +125,7 @@ int main( int, char** )
         read( "leveldb://" );
         read( "leveldb://persistentMap2.leveldb" );
 #endif
-#ifdef LUNCHBOX_USE_SKV
+#ifdef LUNCHBOX_USE_SKV_NOT_READY
         setup( "skv://" );
         read( "skv://" );
 #endif

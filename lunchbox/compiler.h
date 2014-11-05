@@ -21,14 +21,17 @@
 #ifdef __cplusplus
 #  include <boost/config.hpp>
 
-// C++11 feature 'backported' to C++03
-#  ifndef CXX_NULLPTR_SUPPORTED
+// C++11 features 'backported' to C++03
+#  if !defined(CXX_NULLPTR_SUPPORTED) && !defined(nullptr)
 #    define nullptr 0
 #  endif
-
 #  ifndef CXX_FINAL_OVERRIDE_SUPPORTED
-#    define final
-#    define override
+#    ifndef final
+#      define final
+#    endif
+#    ifndef override
+#      define override
+#    endif
 #  endif
 #endif
 

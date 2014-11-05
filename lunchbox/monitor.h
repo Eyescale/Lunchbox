@@ -27,6 +27,7 @@
 #include <string.h>
 #include <iostream>
 #include <typeinfo>
+#include <functional>
 #include <boost/bind.hpp>
 
 namespace lunchbox

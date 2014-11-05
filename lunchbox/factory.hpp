@@ -1,7 +1,7 @@
 /*=============================================================================
     Copyright (c) 2007 Tobias Schwinger
-  
-    Use modification and distribution are subject to the Boost Software 
+
+    Use modification and distribution are subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
     http://www.boost.org/LICENSE_1_0.txt).
 ==============================================================================*/
@@ -42,7 +42,7 @@ namespace boost
     //----- ---- --- -- - -  -   -
 
     template< typename Pointer, factory_alloc_propagation AP >
-    class factory<Pointer, boost::none_t, AP> 
+    class factory<Pointer, boost::none_t, AP>
     {
       public:
         typedef typename boost::remove_cv<Pointer>::type result_type;
@@ -51,7 +51,7 @@ namespace boost
         factory()
         { }
 
-#     define BOOST_PP_FILENAME_1 <brion/factory.hpp>
+#     define BOOST_PP_FILENAME_1 <lunchbox/factory.hpp>
 #     define BOOST_PP_ITERATION_LIMITS (0,BOOST_FUNCTIONAL_FACTORY_MAX_ARITY)
 #     include BOOST_PP_ITERATE()
     };
@@ -77,7 +77,7 @@ namespace boost
         struct deleter
             : allocator_type
         {
-            inline deleter(allocator_type const& that) 
+            inline deleter(allocator_type const& that)
               : allocator_type(that)
             { }
 
@@ -118,13 +118,13 @@ namespace boost
       public:
 
 #     define BOOST_TMP_MACRO
-#     define BOOST_PP_FILENAME_1 <brion/factory.hpp>
+#     define BOOST_PP_FILENAME_1 <lunchbox/factory.hpp>
 #     define BOOST_PP_ITERATION_LIMITS (0,BOOST_FUNCTIONAL_FACTORY_MAX_ARITY)
 #     include BOOST_PP_ITERATE()
 #     undef BOOST_TMP_MACRO
     };
 
-    template< typename Pointer, class Allocator, factory_alloc_propagation AP > 
+    template< typename Pointer, class Allocator, factory_alloc_propagation AP >
     class factory<Pointer&, Allocator, AP>;
     // forbidden, would create a dangling reference
 }
@@ -148,7 +148,7 @@ namespace boost
     {
         value_type* memory = this->get_allocator().allocate(1);
         try
-        { 
+        {
             return make_pointer(
                 new(memory) value_type(BOOST_PP_ENUM_PARAMS(N,a)),
                 boost::non_type<factory_alloc_propagation,AP>() );
@@ -160,4 +160,3 @@ namespace boost
 #   endif // defined(BOOST_PP_IS_ITERATING)
 
 #endif // include guard
-

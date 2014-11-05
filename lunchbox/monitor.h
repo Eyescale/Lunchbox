@@ -407,8 +407,7 @@ private:
         }
 
     template< typename F >
-    const T _timedWaitPredicate( const F& predicate,
-                                 const uint32_t timeout ) const
+    bool _timedWaitPredicate( const F& predicate, const uint32_t timeout ) const
         {
             if( sizeof( T ) <= 8 ) // issue #1
             {

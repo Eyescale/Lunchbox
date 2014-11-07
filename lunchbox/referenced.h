@@ -123,10 +123,7 @@ public:
 
 protected:
     /** Construct a new reference-counted object. @version 1.0 */
-    Referenced()
-        : _refCount( 0 )
-        , _hasBeenDeleted( false )
-    {}
+    LUNCHBOX_API Referenced();
 
     /** Construct a new copy of a reference-counted object. @version 1.0 */
     Referenced( const Referenced& )
@@ -138,13 +135,7 @@ protected:
     {}
 
     /** Destruct a reference-counted object. @version 1.0 */
-    virtual ~Referenced()
-    {
-        LBASSERT( !_hasBeenDeleted );
-        _hasBeenDeleted = true;
-        LBASSERTINFO( _refCount == 0,
-                      "Deleting object with ref count " << _refCount );
-    }
+    LUNCHBOX_API virtual ~Referenced();
 
     /** Assign another object to this object. @version 1.1.3 */
     // cppcheck-suppress operatorEqVarError

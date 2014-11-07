@@ -20,9 +20,10 @@
 #include <lunchbox/compiler.h>
 
 #define SKV_CLIENT_UNI
+#define SKV_NON_MPI
 #include <skv/client/skv_client.hpp>
-// Note: skv api is not const-correct. Ignore all const_cast and mutable below.
 
+// Note: skv api is not const-correct. Ignore all const_cast and mutable below.
 namespace lunchbox
 {
 namespace skv
@@ -62,7 +63,7 @@ public:
     }
 
     static bool handles( const URI& uri )
-    { return uri.getScheme() == "skv"; }
+        { return uri.getScheme() == "skv"; }
 
     bool insert( const std::string& key, const void* data, const size_t size )
         final
@@ -71,9 +72,9 @@ public:
             _client.Insert( &_namespace,
                             const_cast< char* >( key.c_str( )), key.length(),
                             static_cast< char* >( const_cast< void* >( data )),
-                            size, 0, SKV_COMMAND_RIU_FLAGS_NONE );
+                            size, 0, SKV_COMMAND_RIU_UPDATE );
         if( status != SKV_SUCCESS )
-            LBINFO << "skv insert failed:" << skv_status_to_string( status )
+            LBINFO << "skv insert failed: " << skv_status_to_string( status )
                    << std::endl;
 
         return status == SKV_SUCCESS;
@@ -84,7 +85,7 @@ public:
         std::string value;
         const skv_status_t status = _retrieve( key, value );
         if( status != SKV_SUCCESS )
-            LBINFO << "skv retrieve failed" << skv_status_to_string( status )
+            LBINFO << "skv retrieve failed: " << skv_status_to_string( status )
                    << std::endl;
         return value;
     }

@@ -15,12 +15,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "test.h"
-
-#include <lunchbox/mpi.h>
+// need to include mpi.h before stdio.h to work with Intel MPI
 #ifdef LUNCHBOX_USE_MPI
 #  include <mpi.h>
 #endif
+
+#include "test.h"
+
+#include <lunchbox/mpi.h>
 
 int main( int argc, char** argv )
 {

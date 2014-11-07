@@ -78,15 +78,18 @@ else()
 endif()
 
 if(PKG_CONFIG_EXECUTABLE)
-  find_package(Boost 1.41.0 COMPONENTS regex serialization filesystem system thread)
+  find_package(Boost 1.41.0 COMPONENTS regex serialization filesystem system thread
+                                       unit_test_framework)
   if((NOT Boost_FOUND) AND (NOT BOOST_FOUND))
     pkg_check_modules(Boost Boost>=1.41.0)
   endif()
   if((NOT Boost_FOUND) AND (NOT BOOST_FOUND))
-    message(FATAL_ERROR "Could not find Boost COMPONENTS regex serialization filesystem system thread")
+    message(FATAL_ERROR "Could not find Boost COMPONENTS regex serialization
+                         filesystem system thread unit_test_framework")
   endif()
 else()
-  find_package(Boost 1.41.0  REQUIRED regex serialization filesystem system thread)
+  find_package(Boost 1.41.0  REQUIRED regex serialization filesystem system thread
+                                      unit_test_framework)
 endif()
 
 
@@ -238,7 +241,7 @@ if(Boost_name)
   endif()
 endif()
 
-set(LUNCHBOX_BUILD_DEBS autoconf;automake;cmake;doxygen;git;git-review;libavahi-client-dev;libboost-filesystem-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libboost-thread-dev;libhwloc-dev;libjpeg-turbo8-dev;libleveldb-dev;libturbojpeg;pkg-config;subversion)
+set(LUNCHBOX_BUILD_DEBS autoconf;automake;avahi-daemon;cmake;doxygen;git;git-review;libavahi-client-dev;libboost-filesystem-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libboost-test-dev;libboost-thread-dev;libhwloc-dev;libjpeg-turbo8-dev;libleveldb-dev;libopenmpi-dev;libturbojpeg;openmpi-bin;pkg-config;subversion)
 
 set(LUNCHBOX_DEPENDS hwloc;DNSSD;avahi-client;LibJpegTurbo;OpenMP;MPI;leveldb;skv;Boost)
 
@@ -310,8 +313,8 @@ if(QT4_FOUND)
 endif()
 if(FIND_PACKAGES_FOUND)
   if(MSVC)
-    message(STATUS "Configured with ${FIND_PACKAGES_FOUND}")
+    message(STATUS "Configured ${PROJECT_NAME} with ${FIND_PACKAGES_FOUND}")
   else()
-    message(STATUS "Configured with ${CMAKE_BUILD_TYPE}${FIND_PACKAGES_FOUND}")
+    message(STATUS "Configured ${PROJECT_NAME} with ${CMAKE_BUILD_TYPE}${FIND_PACKAGES_FOUND}")
   endif()
 endif()

@@ -20,6 +20,19 @@
 
 namespace lunchbox
 {
+Referenced::Referenced()
+    : _refCount( 0 )
+    , _hasBeenDeleted( false )
+{}
+
+Referenced::~Referenced()
+{
+    LBASSERT( !_hasBeenDeleted );
+    _hasBeenDeleted = true;
+    LBASSERTINFO( _refCount == 0,
+        "Deleting object with ref count " << _refCount );
+}
+
 void Referenced::notifyFree()
 {
     // Don't inline referenced destruction

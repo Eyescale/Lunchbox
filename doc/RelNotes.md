@@ -6,15 +6,15 @@ Release Notes {#RelNotes}
 # Introduction {#Introduction}
 
 Welcome to Lunchbox, a C++ library for multi-threaded programming.
-Lunchbox 1.9 adds MPI support, compilation fixes for different
-platforms, resolves deprecation warnings and adds minor improvements of
-the API.
+Lunchbox 1.10 adds URI parsing, persistent map interface for key value
+stores, compilation fixes for different platforms and adds minor improvements
+of the API.
 
-Lunchbox 1.9 is a feature release based on the 1.8 Lunchbox API. It is
+Lunchbox 1.10 is a feature release based on the 1.9 Lunchbox API. It is
 intended for all application developers creating high-preformance
-multi-threaded programs. Lunchbox 1.9 can be retrieved by downloading
+multi-threaded programs. Lunchbox 1.10 can be retrieved by downloading
 the
-[source code](http://www.equalizergraphics.com/downloads/Lunchbox-1.9.0.tar.gz)
+[source code](http://www.equalizergraphics.com/downloads/Lunchbox-1.10.0.tar.gz)
 or any of the
 [precompiled packages](http://www.equalizergraphics.com/downloads/major.html).
 
@@ -34,23 +34,22 @@ development and deployment of multi-threaded applications:
 
 # New in this release {#New}
 
-Lunchbox 1.9 contains the following features, enhancements, bug fixes
-and documentation changes over Lunchbox 1.8:
+Lunchbox 1.10 contains the following features, enhancements, bug fixes
+and documentation changes over Lunchbox 1.9:
 
 ## New Features {#NewFeatures}
 
-* lunchbox::MPI support
 * lunchbox::URI parsing support according to RFC3986
 * lunchbox::PersistentMap interface for persistent key-value stores
-* lunchbox::getHostname function
+* lunchbox::getHostname and lunchbox::getExecutablePath functions
+* lunchbox::IOPluginFactory, a mechanism to register input/ouput plugins has
+  been added. The mechanism is focused on static registration but could also be
+  used for dynamically loaded plugins
 
 ## Enhancements {#Enhancements}
 
 * Added timeout parameter for the Future::wait function
 * Improved thread logging facilities
-* Use structure to gather compression results
-* Boolean operators for (De)compressor
-* New Array class, moved from Collage
 * Added API for continuous browsing to lunchbox::Servus
 * Improved lunchbox::Servus implementations, supporting continuous browsing and
   using the native Avahi API on Linux
@@ -61,17 +60,15 @@ and documentation changes over Lunchbox 1.8:
 
 ## Documentation {#Documentation}
 
-* [API documentation](http://eyescale.github.io/Lunchbox-1.9/index.html)
+* [API documentation](http://eyescale.github.io/Lunchbox-1.10/index.html)
   of the public Lunchbox API
 
 ## Bug Fixes {#Fixes}
 
-Lunchbox 1.9 includes various compilation fixes over the 1.8 release, including
+Lunchbox 1.10 includes various compilation fixes over the 1.9 release, including
 the following:
 
-* OSX 10.9, Win32 builds fixed
-* Byteswap for unsigned long is satisfied on clang on OSX
-* Deprecation warnings resolved
+* OSX 10.9, Win32 builds improved.
 
 ## Known Bugs {#Bugs}
 
@@ -89,7 +86,7 @@ operating system, including all Unix variants and the Windows operating
 system. Lunchbox uses CMake to create a platform-specific build
 environment. The following platforms and build environments are tested:
 
-* Linux: Ubuntu 12.04, 12.10, 13.04, 13.10 RHEL 6 (Makefile, i386, x64)
+* Linux: Ubuntu 12.04, 12.10, 13.04, 13.10, 14.04 RHEL 6 (Makefile, i386, x64)
 * Windows: 7 (Visual Studio 2008, i386, x64)
 * Mac OS X: 10.8 (Makefile, XCode, i386, x64)
 

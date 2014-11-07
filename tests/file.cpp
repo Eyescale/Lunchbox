@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014, Daniel.Nachbaur@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -15,22 +15,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "os.h"
+#include "test.h"
 
-// for NI_MAXHOST
-#ifdef _WIN32
-#  include <ws2tcpip.h>
-#else
-#  include <netdb.h>
-#endif
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem/path.hpp>
+#include <lunchbox/file.h>
 
-namespace lunchbox
+int main( int, char** argv )
 {
-std::string getHostname()
-{
-    char hostname[NI_MAXHOST+1] = {0};
-    gethostname( hostname, NI_MAXHOST );
-    hostname[NI_MAXHOST] = '\0';
-    return std::string( hostname );
-}
+    const std::string& execPath = lunchbox::getExecutablePath();
+    const boost::filesystem::path path( argv[0] );
+    const std::string argvPath( path.parent_path().string( ));
+    TEST( boost::algorithm::ends_with( execPath, argvPath ));
+    return EXIT_SUCCESS;
 }

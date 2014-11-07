@@ -51,5 +51,12 @@ LUNCHBOX_API std::string getFilename( const std::string& filename );
  */
 LUNCHBOX_API std::string getDirname( const std::string& filename )
     LB_DEPRECATED;
+
+/**
+ * @return the absolute path to the current executable
+ * @version 1.10
+ */
+LUNCHBOX_API std::string getExecutablePath();
 }
+
 #endif //LUNCHBOX_FILE_H

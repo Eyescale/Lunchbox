@@ -18,7 +18,7 @@
  */
 
 #include "servus.h"
-
+#include "debug.h"
 
 namespace lunchbox
 {
@@ -149,15 +149,6 @@ protected:
 #endif
 #include "none/servus.h"
 
-// http://stackoverflow.com/questions/14430906/multi-threaded-avahi-resolving-causes-segfault
-#include "lock.h"
-#include "scopedMutex.h"
-#ifdef __APPLE__
-static lunchbox::Lock* lock_( 0 );
-#else
-static lunchbox::Lock lock_;
-#endif
-
 namespace lunchbox
 {
 bool Servus::isAvailable()
@@ -168,7 +159,7 @@ bool Servus::isAvailable()
     return false;
 }
 
-Servus::Servus( const std::string& name )
+Servus::Servus( const std::string& name LB_UNUSED )
 #ifdef LUNCHBOX_USE_DNSSD
     : _impl( new dnssd::Servus( name ))
 #elif defined(LUNCHBOX_USE_AVAHI_CLIENT)
@@ -178,9 +169,17 @@ Servus::Servus( const std::string& name )
 #endif
 {}
 
+Servus::Servus( const Servus& from )
+    : _impl( from._impl )
+{}
+
 Servus::~Servus()
+{}
+
+Servus& Servus::operator = ( const Servus& rhs )
 {
-    delete _impl;
+    _impl = rhs._impl;
+    return *this;
 }
 
 std::string Servus::Result::getString() const
@@ -242,13 +241,11 @@ const std::string& Servus::get( const std::string& key ) const
 Servus::Result Servus::announce( const unsigned short port,
                                  const std::string& instance )
 {
-    ScopedWrite mutex( lock_ );
     return _impl->announce( port, instance );
 }
 
 void Servus::withdraw()
 {
-    ScopedWrite mutex( lock_ );
     _impl->withdraw();
 }
 
@@ -259,25 +256,21 @@ bool Servus::isAnnounced() const
 
 Strings Servus::discover( const Interface addr, const unsigned browseTime )
 {
-    ScopedWrite mutex( lock_ );
     return _impl->discover( addr, browseTime );
 }
 
 Servus::Result Servus::beginBrowsing( const lunchbox::Servus::Interface addr )
 {
-    ScopedWrite mutex( lock_ );
     return _impl->beginBrowsing( addr );
 }
 
 Servus::Result Servus::browse( int32_t timeout )
 {
-    ScopedWrite mutex( lock_ );
     return _impl->browse( timeout );
 }
 
 void Servus::endBrowsing()
 {
-    ScopedWrite mutex( lock_ );
     _impl->endBrowsing();
 }
 

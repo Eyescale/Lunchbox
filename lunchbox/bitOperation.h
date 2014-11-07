@@ -145,7 +145,7 @@ template<> inline void byteswap( uint16_t& value )
 #elif defined __xlC__
     __store2r( value, &value );
 #else
-    value = (value>>8) | (value<<8);
+    value = (uint16_t)(value>>8) | (uint16_t)(value<<8);
 #endif
 }
 

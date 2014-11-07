@@ -54,6 +54,8 @@ public:
     {
         return getInstances();
     }
+
+    void _updateRecord() final {};
 };
 }
 }

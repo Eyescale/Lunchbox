@@ -23,7 +23,7 @@
 #include <lunchbox/api.h>
 #include <lunchbox/result.h> // nested base class
 #include <lunchbox/types.h>
-#include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 #include <map>
 
 namespace lunchbox
@@ -40,7 +40,7 @@ namespace detail { class Servus; }
  *
  * Example: @include tests/servus.cpp
  */
-class Servus : public boost::noncopyable
+class Servus
 {
 public:
     enum Interface
@@ -82,8 +82,19 @@ public:
      */
     LUNCHBOX_API explicit Servus( const std::string& name );
 
+    /**
+     * Copy-construct a ZeroConf service.
+     *
+     * Both objects will share the same underlying ZeroConf implementation.
+     * @version 1.9.2
+     */
+    LUNCHBOX_API Servus( const Servus& from );
+
     /** Destruct this service. */
     LUNCHBOX_API virtual ~Servus();
+
+    /** Share the ZeroConf service with the rhs argument @version 1.9.2 */
+    LUNCHBOX_API Servus& operator = ( const Servus& rhs );
 
     /**
      * Set a key/value pair to be announced.
@@ -180,7 +191,7 @@ public:
     LUNCHBOX_API void getData( Data& data );
 
 private:
-    detail::Servus* const _impl;
+    boost::shared_ptr< detail::Servus > _impl;
     friend LUNCHBOX_API std::ostream& operator << ( std::ostream&,
                                                     const Servus& );
 };

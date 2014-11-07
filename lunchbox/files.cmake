@@ -34,6 +34,8 @@ set(LUNCHBOX_PUBLIC_HEADERS
   hash.h
   indexIterator.h
   init.h
+  ioPluginFactory.h
+  ioPluginFactory.ipp
   launcher.h
   lfQueue.h
   lfQueue.ipp
@@ -83,6 +85,10 @@ set(LUNCHBOX_PUBLIC_HEADERS
   uri.h
   visitorResult.h
   )
+
+if(Boost_VERSION VERSION_LESS 1.43.0)
+  list(APPEND LUNCHBOX_PUBLIC_HEADERS factory.hpp)
+endif()
 
 set(LUNCHBOX_COMPRESSORS
   compressor/compressor.cpp

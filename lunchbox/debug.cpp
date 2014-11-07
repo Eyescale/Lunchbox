@@ -27,7 +27,7 @@
 #ifdef _WIN32
 #  include "scopedMutex.h"
 #  define LB_SYMBOL_LENGTH 256
-#  include <DbgHelp.h>
+#  include <dbghelp.h>
 #  pragma comment(lib, "DbgHelp.lib")
 #else
 #  include <cxxabi.h>
@@ -74,9 +74,9 @@ static void backtrace_( std::ostream& os, const size_t skipFrames )
     static Lock lock;
     ScopedMutex<> mutex( lock );
 
-    typedef USHORT (WINAPI *CaptureStackBackTraceType)( __in ULONG, __in ULONG,
-                                                        __out PVOID*,
-                                                        __out_opt PULONG );
+    typedef USHORT (WINAPI *CaptureStackBackTraceType)( ULONG, ULONG,
+                                                        PVOID*,
+                                                        PULONG );
     CaptureStackBackTraceType backtraceFunc = (CaptureStackBackTraceType)
        GetProcAddress(LoadLibrary("kernel32.dll"), "RtlCaptureStackBackTrace");
     if( !backtraceFunc )

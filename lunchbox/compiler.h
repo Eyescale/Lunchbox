@@ -21,37 +21,42 @@
 #ifdef __cplusplus
 #  include <boost/config.hpp>
 
-// C++11 feature 'backported' to C++03
-#  ifndef CXX_NULLPTR_SUPPORTED
+// C++11 features 'backported' to C++03
+#  if !defined(CXX_NULLPTR_SUPPORTED) && !defined(nullptr)
 #    define nullptr 0
 #  endif
-
 #  ifndef CXX_FINAL_OVERRIDE_SUPPORTED
-#    define final
-#    define override
+#    ifndef final
+#      define final
+#    endif
+#    ifndef override
+#      define override
+#    endif
 #  endif
 #endif
 
+// align macros
 #ifdef _MSC_VER
 #  define LB_ALIGN8( var )  __declspec (align (8)) var;
 #  define LB_ALIGN16( var ) __declspec (align (16)) var;
-#else
-/**
- * Declare and align a variable to a 8-byte boundary.
- * @deprecated Use boost::aligned_storage
- */
+#  if defined(_M_PPC)
+#    define LB_BIGEENDIAN
+#  else
+#    define LB_LITTLEENDIAN
+#  endif
+#elif defined (__GNUC__)
 #  define LB_ALIGN8( var )  var __attribute__ ((aligned (8)));
-/**
- * Declare and align a variable to a 16-byte boundary.
- * @deprecated Use boost::aligned_storage
- */
 #  define LB_ALIGN16( var ) var __attribute__ ((aligned (16)));
-#endif
-
-#ifdef __GNUC__
 #  define LB_UNUSED __attribute__((unused))
+#  define LB_LIKELY(x)       __builtin_expect( (x), 1 )
+#  define LB_UNLIKELY(x)     __builtin_expect( (x), 0 )
 #  ifdef WARN_DEPRECATED // Set CMake option ENABLE_WARN_DEPRECATED
 #    define LB_DEPRECATED __attribute__((deprecated))
+#  endif
+#  ifdef __BIG_ENDIAN__
+#    define LB_BIGEENDIAN
+#  else
+#    define LB_LITTLEENDIAN
 #  endif
 #  if (( __GNUC__ > 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 0)) )
 #    define LB_GCC_4_0_OR_LATER
@@ -83,7 +88,6 @@
 #  if (( __GNUC__ > 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) )
 #    define LB_GCC_4_9_OR_LATER
 #  endif
-
 #  if (( __GNUC__ < 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ < 3)) )
 #    define LB_GCC_4_3_OR_OLDER
 #  endif
@@ -112,12 +116,24 @@
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ == 9))
 #    define LB_GCC_4_9
 #  endif
+#else
+#  warning Unknown compiler, taking guesses
+#  define LB_ALIGN8( var )  var __attribute__ ((aligned (8)));
+#  define LB_ALIGN16( var ) var __attribute__ ((aligned (16)));
+#  ifdef __BIG_ENDIAN__
+#    define LB_BIGEENDIAN
+#  else
+#    define LB_LITTLEENDIAN
+#  endif
 #endif // GCC
 
 #ifndef LB_UNUSED
 #  define LB_UNUSED
 #endif
-
+#ifndef LB_LIKELY
+#  define LB_LIKELY(x)       x
+#  define LB_UNLIKELY(x)     x
+#endif
 #ifdef LB_DEPRECATED
 #  define LB_PUSH_DEPRECATED                                          \
     _Pragma("clang diagnostic push")                                  \
@@ -132,14 +148,6 @@
 #  define LB_DEPRECATED
 #  define LB_PUSH_DEPRECATED
 #  define LB_POP_DEPRECATED
-#endif
-
-#ifdef __GNUC__
-#  define LB_LIKELY(x)       __builtin_expect( (x), 1 )
-#  define LB_UNLIKELY(x)     __builtin_expect( (x), 0 )
-#else
-#  define LB_LIKELY(x)       x
-#  define LB_UNLIKELY(x)     x
 #endif
 
 #endif //LUNCHBOX_COMPILER_H

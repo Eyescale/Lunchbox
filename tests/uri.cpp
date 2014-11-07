@@ -102,6 +102,9 @@ int main( int, char ** )
         TEST( file5.getHost() == "bla.txt" );
         TEST( file5.getPath().empty( ));
         TEST( file5.getScheme() == "host" );
+
+        file5.setScheme( "foo" );
+        TEST( file5.getScheme() == "foo" );
     }
     catch( std::exception& exception )
     {

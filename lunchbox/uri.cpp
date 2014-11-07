@@ -224,6 +224,11 @@ const std::string &URI::getFragment() const
     return _impl->getData().fragment;
 }
 
+void URI::setScheme( const std::string& scheme )
+{
+    _impl->getData().scheme = scheme;
+}
+
 URI::ConstKVIter URI::queryBegin() const
 {
     return _impl->getData().queryMap.begin();

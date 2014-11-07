@@ -74,7 +74,7 @@ public:
                             static_cast< char* >( const_cast< void* >( data )),
                             size, 0, SKV_COMMAND_RIU_UPDATE );
         if( status != SKV_SUCCESS )
-            LBINFO << "skv insert failed:" << skv_status_to_string( status )
+            LBINFO << "skv insert failed: " << skv_status_to_string( status )
                    << std::endl;
 
         return status == SKV_SUCCESS;
@@ -85,7 +85,7 @@ public:
         std::string value;
         const skv_status_t status = _retrieve( key, value );
         if( status != SKV_SUCCESS )
-            LBINFO << "skv retrieve failed" << skv_status_to_string( status )
+            LBINFO << "skv retrieve failed: " << skv_status_to_string( status )
                    << std::endl;
         return value;
     }

@@ -34,7 +34,7 @@ public:
 }
 }
 
-// Impls - need detail::PersistentMap interface
+// Impls - need detail::PersistentMap interface above
 #include "leveldb/persistentMap.h"
 #include "skv/persistentMap.h"
 

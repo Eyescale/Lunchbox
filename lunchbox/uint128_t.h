@@ -367,6 +367,10 @@ inline uint128_t operator | ( const lunchbox::uint128_t& a,
  */
 LUNCHBOX_API uint128_t make_uint128( const char* string );
 
+/** Create a 128 bit integer based on a string. */
+inline uint128_t make_uint128( const std::string& string )
+    { return make_uint128( string.c_str( )); }
+
 /**
  * Construct a new 128 bit integer with a generated universally unique
  * identifier.

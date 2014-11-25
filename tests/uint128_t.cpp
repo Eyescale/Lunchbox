@@ -102,6 +102,10 @@ int main( int argc, char **argv )
                                           0xA068FFADDF22CBD0ull ),
               fox );
 
+    const lunchbox::uint128_t& stringFox = lunchbox::make_uint128(
+        std::string( "The quick brown fox jumps over the lazy dog." ));
+    TEST( fox == stringFox );
+
     lunchbox::RNG rng;
     const uint16_t high = rng.get< uint16_t >();
     const int32_t low = rng.get< int32_t >();

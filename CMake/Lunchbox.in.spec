@@ -6,20 +6,20 @@ Summary:	@CPACK_PACKAGE_DESCRIPTION_SUMMARY@
 Group:		Development/Libraries
 License:	@CPACK_PACKAGE_LICENSE@
 URL:		http://www.equalizergraphics.com/
-Source0:	http://www.equalizergraphics.com/downloads/@CMAKE_PROJECT_NAME@-%{version}.tar.gz
-#Patch0:		@CMAKE_PROJECT_NAME@-@VERSION@-build-fix.patch
+Source0:	http://www.equalizergraphics.com/downloads/@PROJECT_NAME@-%{version}.tar.gz
+#Patch0:		@PROJECT_NAME@-@VERSION@-build-fix.patch
 BuildRequires:	cmake boost-devel
 
 %description
 Lunchbox is a C++ toolkit library for multi-threaded programming.
 
 %package devel
-Summary:	Development files for @CMAKE_PROJECT_NAME@
+Summary:	Development files for @PROJECT_NAME@
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
-Development files for the @CMAKE_PROJECT_NAME@.
+Development files for the @PROJECT_NAME@.
 
 %prep
 %setup -q

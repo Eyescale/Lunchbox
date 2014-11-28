@@ -13,6 +13,7 @@ set(LUNCHBOX_BOOST_COMPONENTS "regex serialization filesystem system thread
                                unit_test_framework")
 set(LUNCHBOX_MATURITY RD)
 set(LUNCHBOX_FORCE_BUILD ${CI_BUILD})
+set(LUNCHBOX_SUBPROJECT ON)
 
 if(CI_BUILD_COMMIT)
   set(LUNCHBOX_REPO_TAG ${CI_BUILD_COMMIT})

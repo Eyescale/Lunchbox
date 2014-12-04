@@ -80,7 +80,7 @@ public:
     /** Assign the data from another URI. @version 1.9.2 */
     LUNCHBOX_API URI& operator = ( const URI& rhs );
 
-    /** @name Getters for the uri data @version 1.9.2 */
+    /** @name Getters for uri data @version 1.9.2 */
     //@{
     LUNCHBOX_API const std::string& getScheme() const;
     LUNCHBOX_API const std::string& getUserinfo() const;
@@ -89,6 +89,11 @@ public:
     LUNCHBOX_API const std::string& getPath() const;
     LUNCHBOX_API const std::string& getQuery() const;
     LUNCHBOX_API const std::string& getFragment() const;
+    //@}
+
+    /** @name Setters for uri data @version 1.10 */
+    //@{
+    LUNCHBOX_API void setScheme( const std::string& scheme );
     //@}
 
     /** @name Access to key-value data in query @version 1.9.2 */

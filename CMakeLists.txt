@@ -9,13 +9,12 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
 
 include(GitExternal)
 
-option(LUNCHBOX_BUILD_V2_API
-  "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
-
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "10")
 set(VERSION_PATCH "0")
 set(VERSION_ABI 3)
+option(LUNCHBOX_BUILD_V2_API
+  "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 
 set(GITTARGETS_RELEASE_BRANCH minor)
 set(DPUT_HOST "ppa:eilemann/equalizer-dev")
@@ -68,7 +67,7 @@ add_subdirectory(tests)
 add_subdirectory(doc)
 
 include(DoxygenRule) # must be after all targets
-include(CPackConfig)
+include(LunchboxCPack)
 include(PackageConfig)
 include(GNUModules)
 

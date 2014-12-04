@@ -17,4 +17,3 @@ set(CPACK_MACPORTS_DEPENDS boost)
 
 include(CommonCPack)
 include(OSSCPack)
-

@@ -20,6 +20,9 @@
 #ifdef LUNCHBOX_USE_LEVELDB
 #  include <leveldb/db.h>
 #endif
+#ifdef LUNCHBOX_USE_SKV
+#  include <FxLogger/FxLogger.hpp>
+#endif
 #include <stdexcept>
 
 using lunchbox::PersistentMap;
@@ -113,7 +116,7 @@ void testLevelDBFailures()
 #endif
 }
 
-int main( int, char** )
+int main( int, char** argv )
 {
     try
     {
@@ -125,7 +128,8 @@ int main( int, char** )
         read( "leveldb://" );
         read( "leveldb://persistentMap2.leveldb" );
 #endif
-#ifdef LUNCHBOX_USE_SKV_NOT_READY
+#ifdef LUNCHBOX_USE_SKV
+        FxLogger_Init( argv[ 0 ] );
         setup( "skv://" );
         read( "skv://" );
 #endif
@@ -138,7 +142,13 @@ int main( int, char** )
 #endif
     catch( const std::runtime_error& error )
     {
-        TESTINFO( !"exception", error.what( ));
+#ifdef LUNCHBOX_USE_SKV
+        if( error.what() !=
+            std::string( "skv init failed: SKV_ERRNO_CONN_FAILED" ))
+#endif
+        {
+            TESTINFO( !"exception", error.what( ));
+        }
     }
 
     testGenericFailures();

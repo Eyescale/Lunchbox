@@ -39,19 +39,19 @@ public:
         skv_status_t status = _client.Init( 0, MPI_COMM_WORLD, 0 );
 #endif
         if( status != SKV_SUCCESS )
-            LBTHROW( std::runtime_error( std::string( "skv init failed:" ) +
+            LBTHROW( std::runtime_error( std::string( "skv init failed: " ) +
                                          skv_status_to_string( status )));
 
         status = _client.Connect( uri.getPath().c_str(), 0 );
         if( status != SKV_SUCCESS )
-            LBTHROW( std::runtime_error( std::string( "skv connect failed:" ) +
+            LBTHROW( std::runtime_error( std::string( "skv connect failed: " ) +
                                          skv_status_to_string( status )));
 
         status = _client.Open( const_cast< char* >( uri.getFragment().c_str( )),
                               (skv_pds_priv_t)(SKV_PDS_READ | SKV_PDS_WRITE),
                               SKV_COMMAND_OPEN_FLAGS_CREATE, &_namespace );
         if( status != SKV_SUCCESS )
-            LBTHROW( std::runtime_error( std::string( "skv open failed:" ) +
+            LBTHROW( std::runtime_error( std::string( "skv open failed: " ) +
                                          skv_status_to_string( status )));
     }
 

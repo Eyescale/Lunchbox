@@ -116,7 +116,7 @@ void testLevelDBFailures()
 #endif
 }
 
-int main( int, char** argv )
+int main( int, char** argv LB_UNUSED )
 {
     try
     {

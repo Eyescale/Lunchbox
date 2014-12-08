@@ -21,56 +21,75 @@
 namespace lunchbox
 {
 
-template< typename IOPluginT >
-IOPluginAbstractFactory< IOPluginT >&
-    IOPluginAbstractFactory< IOPluginT >::getInstance()
+template< typename IOPluginT, typename InitDataT >
+IOPluginAbstractFactory< IOPluginT, InitDataT >&
+    IOPluginAbstractFactory< IOPluginT, InitDataT >::getInstance()
 {
-    static IOPluginAbstractFactory< IOPluginT > factory;
+    static IOPluginAbstractFactory< IOPluginT, InitDataT > factory;
     return factory;
 }
 
-template< typename IOPluginT >
-IOPluginT* IOPluginAbstractFactory< IOPluginT >::create( const URI& uri )
+template< typename IOPluginT, typename InitDataT >
+IOPluginT* IOPluginAbstractFactory< IOPluginT, InitDataT >::create(
+                                                 const InitDataT& initData )
 {
     for( typename IOPlugins::const_iterator i = _plugins.begin();
          i != _plugins.end(); ++i )
     {
-        if( i->handles( uri ))
-            return i->constructor( uri );
+        if( i->handles( initData ))
+            return i->constructor( initData );
     }
-    const std::string uriString = boost::lexical_cast< std::string >( uri );
+
     LBTHROW( std::runtime_error(
-        "No plugin implementation available for URI " + uriString ));
+        "No plugin implementation available for given initData" ));
 }
 
-template< typename IOPluginT >
-void IOPluginAbstractFactory< IOPluginT >::registerPlugin(
-                                           const IOPlugin< IOPluginT >& plugin )
+template< typename IOPluginT, typename InitDataT >
+void IOPluginAbstractFactory< IOPluginT, InitDataT >::registerPlugin(
+                                           const IOPlugin< IOPluginT,
+                                           InitDataT >& plugin )
 {
     _plugins.push_back( plugin );
 }
 
-template< typename IOPluginT >
-void IOPluginAbstractFactory< IOPluginT >::unregisterAllPlugins()
+template< typename IOPluginT, typename InitDataT >
+void IOPluginAbstractFactory< IOPluginT, InitDataT >::unregisterAllPlugins()
 {
     _plugins.clear();
 }
 
-template< typename IOPluginT >
-IOPlugin< IOPluginT >::IOPlugin( const Constructor& constructor_,
-                                 const HandlesFunc& handles_ )
+template< typename IOPluginT, typename InitDataT >
+IOPlugin< IOPluginT, InitDataT >::IOPlugin( const Constructor& constructor_,
+                                            const HandlesFunc& handles_ )
     : constructor( constructor_ )
     , handles( handles_ )
 {}
 
 template< typename Impl >
-IOPluginRegisterer< Impl >::IOPluginRegisterer()
+IOPluginRegisterer< Impl, true >::IOPluginRegisterer( )
+{
+    IOPlugin< typename Impl::IOPluginT, typename Impl::InitDataT > plugin (
+                boost::bind( boost::factory< Impl* >(), _1 ),
+                boost::bind( &Impl::handles, _1 ));
+    typedef IOPluginAbstractFactory< typename Impl::IOPluginT,
+                                     typename Impl::InitDataT >
+        _PluginFactory;
+    _PluginFactory::getInstance().registerPlugin( plugin );
+}
+
+template< typename Impl >
+IOPluginRegisterer< Impl, false >::IOPluginRegisterer( )
 {
     IOPlugin< typename Impl::IOPluginT > plugin (
                 boost::bind( boost::factory< Impl* >(), _1 ),
                 boost::bind( &Impl::handles, _1 ));
-    typedef IOPluginAbstractFactory< typename Impl::IOPluginT> _PluginFactory;
+
+    typedef IOPluginAbstractFactory< typename Impl::IOPluginT >
+        _PluginFactory;
+
     _PluginFactory::getInstance().registerPlugin( plugin );
 }
+
+
 
 }

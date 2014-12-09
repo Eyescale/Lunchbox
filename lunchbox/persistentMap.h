@@ -21,7 +21,6 @@
 #include <lunchbox/api.h>
 #include <lunchbox/debug.h> // className
 #include <lunchbox/log.h> // LBTHROW
-#include <lunchbox/future.h> // used inline
 #include <lunchbox/types.h>
 
 #include <boost/noncopyable.hpp>
@@ -84,7 +83,7 @@ public:
      * @throw std::runtime_error if the value is not copyable
      * @version 1.9.2
      */
-    template< class V > f_bool_t insert( const std::string& key, const V& value )
+    template< class V > bool insert( const std::string& key, const V& value )
         { return _insert( key, value, boost::has_trivial_assign< V >( )); }
 
     /**
@@ -97,7 +96,7 @@ public:
      * @version 1.9.2
      */
     template< class V >
-    f_bool_t insert( const std::string& key, const std::vector< V >& values )
+    bool insert( const std::string& key, const std::vector< V >& values )
         { return _insert( key, values, boost::has_trivial_assign< V >( )); }
 
     /**
@@ -110,7 +109,7 @@ public:
      * @version 1.9.2
      */
     template< class V >
-    f_bool_t insert( const std::string& key, const std::set< V >& values )
+    bool insert( const std::string& key, const std::set< V >& values )
         { return insert( key, std::vector<V>( values.begin(), values.end( ))); }
 
     /**
@@ -143,24 +142,27 @@ public:
     /** @return true if the key exists. @version 1.9.2 */
     LUNCHBOX_API bool contains( const std::string& key ) const;
 
+    /** Flush outstanding operations to the backend storage. @version 1.10 */
+    LUNCHBOX_API bool flush();
+
 private:
     detail::PersistentMap* const _impl;
 
-    LUNCHBOX_API f_bool_t _insert( const std::string& key, const void* data,
-                                 const size_t size );
+    LUNCHBOX_API bool _insert( const std::string& key, const void* data,
+                               const size_t size );
 
 
     // Enables map.insert( "foo", "bar" ); bar is a char[4]. The funny braces
     // declare v as a "const ref to array of four chars", not as a "const array
     // to four char refs". Long live Bjarne!
-    template< size_t N > f_bool_t
+    template< size_t N > bool
     _insert( const std::string& k, char const (& v)[N], const boost::true_type&)
     {
         return _insert( k, (void*)v, N - 1 ); // strip '0'
     }
 
     template< class V >
-    f_bool_t _insert( const std::string& k, const V& v, const boost::true_type& )
+    bool _insert( const std::string& k, const V& v, const boost::true_type& )
     {
         if( boost::is_pointer< V >::value )
             LBTHROW( std::runtime_error( "Can't insert pointers" ));
@@ -168,18 +170,18 @@ private:
     }
 
     template< class V >
-    f_bool_t _insert( const std::string&, const V& v, const boost::false_type& )
+    bool _insert( const std::string&, const V& v, const boost::false_type& )
     { LBTHROW( std::runtime_error( "Can't insert non-POD " + className( v ))); }
 
     template< class V >
-    f_bool_t _insert( const std::string& key, const std::vector< V >& values,
-                    const boost::true_type& )
+    bool _insert( const std::string& key, const std::vector< V >& values,
+                  const boost::true_type& )
         { return _insert( key, values.data(), values.size() * sizeof( V )); }
 };
 
 template<> inline
-f_bool_t PersistentMap::_insert( const std::string& k, const std::string& v,
-                                 const boost::false_type& )
+bool PersistentMap::_insert( const std::string& k, const std::string& v,
+                             const boost::false_type& )
 {
     return _insert( k, v.data(), v.length( ));
 }

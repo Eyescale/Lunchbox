@@ -26,10 +26,11 @@ class PersistentMap
 {
 public:
     virtual ~PersistentMap() {}
-    virtual f_bool_t insert( const std::string& key, const void* data,
-                             const size_t size ) = 0;
+    virtual bool insert( const std::string& key, const void* data,
+                         const size_t size ) = 0;
     virtual std::string operator [] ( const std::string& key ) const = 0;
     virtual bool contains( const std::string& key ) const = 0;
+    virtual bool flush() = 0;
 };
 }
 }
@@ -101,8 +102,8 @@ bool PersistentMap::handles( const URI& uri )
     return false;
 }
 
-f_bool_t PersistentMap::_insert( const std::string& key, const void* data,
-                                 const size_t size )
+bool PersistentMap::_insert( const std::string& key, const void* data,
+                             const size_t size )
 {
     return _impl->insert( key, data, size );
 }
@@ -115,6 +116,11 @@ std::string PersistentMap::operator [] ( const std::string& key ) const
 bool PersistentMap::contains( const std::string& key ) const
 {
     return _impl->contains( key );
+}
+
+bool PersistentMap::flush()
+{
+    return _impl->flush();
 }
 
 }

@@ -87,7 +87,7 @@ public:
         {
             LBINFO << "skv insert failed: " << skv_status_to_string( status )
                    << std::endl;
-            return makeFalseFuture();
+            return false;
         }
 
         _pending.push_back( handle );

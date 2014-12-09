@@ -18,7 +18,6 @@
 #ifdef LUNCHBOX_USE_LEVELDB
 #include <lunchbox/compiler.h>
 #include <lunchbox/log.h>
-#include <lunchbox/readyFuture.h>
 
 #include <leveldb/db.h>
 
@@ -30,7 +29,6 @@ namespace leveldb
 {
 namespace
 {
-
 db::DB* _open( const URI& uri )
 {
     db::DB* db = 0;
@@ -55,13 +53,11 @@ public:
     static bool handles( const URI& uri )
         { return uri.getScheme() == "leveldb"; }
 
-    f_bool_t insert( const std::string& key, const void* data, const size_t size )
+    bool insert( const std::string& key, const void* data, const size_t size )
         final
     {
         const db::Slice value( (const char*)data, size );
-        if( _db->Put( db::WriteOptions(), key, value ).ok( ))
-            return makeTrueFuture();
-        return makeFalseFuture();
+        return _db->Put( db::WriteOptions(), key, value ).ok();
     }
 
     std::string operator [] ( const std::string& key ) const final
@@ -77,6 +73,8 @@ public:
         std::string value;
         return _db->Get( db::ReadOptions(), key, &value ).ok();
     }
+
+    bool flush() final { /*NOP?*/ return true; }
 
 private:
     db::DB* const _db;

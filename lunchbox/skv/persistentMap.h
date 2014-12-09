@@ -31,10 +31,8 @@ namespace lunchbox
 {
 namespace
 {
-bool sync( skv_client_t* client, const skv_client_cmd_ext_hdl_t handle )
-{
-    return client->Wait( handle ) == SKV_SUCCESS;
-}
+typedef std::deque< skv_client_cmd_ext_hdl_t > PendingOperations;
+static const size_t _maxPendingOps = 100000;
 }
 
 namespace skv
@@ -68,6 +66,7 @@ public:
 
     virtual ~PersistentMap()
     {
+        flush();
         _client.Close( &_namespace );
         _client.Disconnect();
         _client.Finalize();
@@ -75,11 +74,10 @@ public:
 
     static bool handles( const URI& uri ) { return uri.getScheme() == "skv"; }
 
-    f_bool_t insert( const std::string& key, const void* data,
-                           const size_t size ) final
+    bool insert( const std::string& key, const void* data, const size_t size )
+        final
     {
         skv_client_cmd_ext_hdl_t handle;
-
         const skv_status_t status =
             _client.iInsert( &_namespace,
                             const_cast< char* >( key.c_str( )), key.length(),
@@ -89,12 +87,11 @@ public:
         {
             LBINFO << "skv insert failed: " << skv_status_to_string( status )
                    << std::endl;
-            return makeFalseFuture();
+            return false;
         }
 
-        // Create and return a lazy future on skv::Client::Wait()
-        return f_bool_t( new FutureFunction< bool >(
-                             boost::bind( &sync, &_client, handle )));
+        _pending.push_back( handle );
+        return _flush( _maxPendingOps );
     }
 
     std::string operator [] ( const std::string& key ) const final
@@ -113,9 +110,12 @@ public:
         return _retrieve( key, value ) == SKV_SUCCESS;
     }
 
+    bool flush() final { return _flush( 0 ); }
+
 private:
     mutable skv_client_t _client;
     mutable skv_pds_id_t _namespace;
+    PendingOperations _pending;
 
     skv_status_t _retrieve( const std::string& key, std::string& value ) const
     {
@@ -130,6 +130,18 @@ private:
                               SKV_COMMAND_RIU_FLAGS_NONE );
         value.resize( valueSize );
         return status;
+    }
+
+    bool _flush( const size_t maxPending )
+    {
+        while( _pending.size() > maxPending )
+        {
+            skv_client_cmd_ext_hdl_t handle = _pending.front();
+            _pending.pop_front();
+            if( _client.Wait( handle ) != SKV_SUCCESS )
+                return false;
+        }
+        return true;
     }
 };
 

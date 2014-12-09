@@ -16,8 +16,11 @@
  */
 
 #ifdef LUNCHBOX_USE_SKV
-#include <lunchbox/log.h>
+
 #include <lunchbox/compiler.h>
+#include <lunchbox/futureFunction.h>
+#include <lunchbox/log.h>
+#include <boost/bind.hpp>
 
 #define SKV_CLIENT_UNI
 #define SKV_NON_MPI
@@ -26,6 +29,14 @@
 // Note: skv api is not const-correct. Ignore all const_cast and mutable below.
 namespace lunchbox
 {
+namespace
+{
+bool sync( skv_client_t* client, const skv_client_cmd_ext_hdl_t handle )
+{
+    return client->Wait( handle ) == SKV_SUCCESS;
+}
+}
+
 namespace skv
 {
 class PersistentMap : public detail::PersistentMap
@@ -62,22 +73,28 @@ public:
         _client.Finalize();
     }
 
-    static bool handles( const URI& uri )
-        { return uri.getScheme() == "skv"; }
+    static bool handles( const URI& uri ) { return uri.getScheme() == "skv"; }
 
-    bool insert( const std::string& key, const void* data, const size_t size )
-        final
+    f_bool_t insert( const std::string& key, const void* data,
+                           const size_t size ) final
     {
+        skv_client_cmd_ext_hdl_t handle;
+
         const skv_status_t status =
-            _client.Insert( &_namespace,
+            _client.iInsert( &_namespace,
                             const_cast< char* >( key.c_str( )), key.length(),
                             static_cast< char* >( const_cast< void* >( data )),
-                            size, 0, SKV_COMMAND_RIU_UPDATE );
+                             size, 0, SKV_COMMAND_RIU_UPDATE, &handle );
         if( status != SKV_SUCCESS )
+        {
             LBINFO << "skv insert failed: " << skv_status_to_string( status )
                    << std::endl;
+            return makeFalseFuture();
+        }
 
-        return status == SKV_SUCCESS;
+        // Create and return a lazy future on skv::Client::Wait()
+        return f_bool_t( new FutureFunction< bool >(
+                             boost::bind( &sync, &_client, handle )));
     }
 
     std::string operator [] ( const std::string& key ) const final

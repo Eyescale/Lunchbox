@@ -15,43 +15,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef LUNCHBOX_FUTUREFUNCTION_H
-#define LUNCHBOX_FUTUREFUNCTION_H
+#ifndef LUNCHBOX_READYFUTURE_H
+#define LUNCHBOX_READYFUTURE_H
 
 #include <lunchbox/future.h> // base class
-#include <boost/function/function0.hpp>
 
 namespace lunchbox
 {
-/**
- * A Future implementation using a boost::function for fulfilment.
- * Not thread safe.
- */
-template< class T > class FutureFunction : public FutureImpl< T >
+
+/** A boolean future with a known value. Fully thread safe. */
+template< bool value > class FutureBool : public FutureImpl< bool >
 {
-public:
-    typedef boost::function< T() > Func; //!< The fulfilling function
-
-    explicit FutureFunction( const Func& func ) : func_( func ) {}
-
 protected:
-    virtual ~FutureFunction() { wait( 0 ); }
-
-    T wait( const uint32_t ) final
-    {
-        if( !func_.empty( ))
-        {
-            result_ = func_();
-            func_.clear();
-        }
-        return result_;
-    }
-
-    bool isReady() const final { return func_.empty(); }
-
-    Func func_;
-    T result_;
+    bool wait( const uint32_t ) final { return value; }
+    bool isReady() const final { return true; }
 };
 
+/** @return a boolean future being true. */
+inline Future< bool > makeTrueFuture()
+    { return Future< bool >( new FutureBool< true >); }
+
+/** @return a boolean future being false. */
+inline Future< bool > makeFalseFuture()
+    { return Future< bool >( new FutureBool< false >); }
+
 }
-#endif //LUNCHBOX_FUTURE_H
+#endif //LUNCHBOX_READYFUTURE_H

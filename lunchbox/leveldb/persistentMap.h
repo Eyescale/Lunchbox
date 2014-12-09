@@ -16,8 +16,8 @@
  */
 
 #ifdef LUNCHBOX_USE_LEVELDB
-#include <lunchbox/log.h>
 #include <lunchbox/compiler.h>
+#include <lunchbox/log.h>
 
 #include <leveldb/db.h>
 
@@ -73,6 +73,8 @@ public:
         std::string value;
         return _db->Get( db::ReadOptions(), key, &value ).ok();
     }
+
+    bool flush() final { /*NOP?*/ return true; }
 
 private:
     db::DB* const _db;

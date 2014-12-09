@@ -30,6 +30,7 @@ public:
                          const size_t size ) = 0;
     virtual std::string operator [] ( const std::string& key ) const = 0;
     virtual bool contains( const std::string& key ) const = 0;
+    virtual bool flush() = 0;
 };
 }
 }
@@ -115,6 +116,11 @@ std::string PersistentMap::operator [] ( const std::string& key ) const
 bool PersistentMap::contains( const std::string& key ) const
 {
     return _impl->contains( key );
+}
+
+bool PersistentMap::flush()
+{
+    return _impl->flush();
 }
 
 }

@@ -22,9 +22,10 @@
 #include <lunchbox/debug.h> // className
 #include <lunchbox/log.h> // LBTHROW
 #include <lunchbox/types.h>
-#include <boost/noncopyable.hpp>
 
+#include <boost/noncopyable.hpp>
 #include <boost/type_traits.hpp>
+
 #include <iostream>
 #include <set>
 #include <stdexcept>
@@ -140,6 +141,9 @@ public:
 
     /** @return true if the key exists. @version 1.9.2 */
     LUNCHBOX_API bool contains( const std::string& key ) const;
+
+    /** Flush outstanding operations to the backend storage. @version 1.10 */
+    LUNCHBOX_API bool flush();
 
 private:
     detail::PersistentMap* const _impl;

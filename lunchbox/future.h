@@ -120,6 +120,8 @@ protected:
     Impl impl_;
 };
 
+typedef Future< bool > f_bool_t; //!< A boolean future
+
 /** Future template specialization for void */
 template<> class Future< void >
 {
@@ -156,6 +158,5 @@ public:
 protected:
     Impl impl_;
 };
-
 }
 #endif //LUNCHBOX_FUTURE_H

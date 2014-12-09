@@ -16,8 +16,11 @@
  */
 
 #ifdef LUNCHBOX_USE_SKV
-#include <lunchbox/log.h>
+
 #include <lunchbox/compiler.h>
+#include <lunchbox/futureFunction.h>
+#include <lunchbox/log.h>
+#include <boost/bind.hpp>
 
 #define SKV_CLIENT_UNI
 #define SKV_NON_MPI
@@ -26,6 +29,12 @@
 // Note: skv api is not const-correct. Ignore all const_cast and mutable below.
 namespace lunchbox
 {
+namespace
+{
+typedef std::deque< skv_client_cmd_ext_hdl_t > PendingOperations;
+static const size_t _maxPendingOps = 100000;
+}
+
 namespace skv
 {
 class PersistentMap : public detail::PersistentMap
@@ -57,27 +66,32 @@ public:
 
     virtual ~PersistentMap()
     {
+        flush();
         _client.Close( &_namespace );
         _client.Disconnect();
         _client.Finalize();
     }
 
-    static bool handles( const URI& uri )
-        { return uri.getScheme() == "skv"; }
+    static bool handles( const URI& uri ) { return uri.getScheme() == "skv"; }
 
     bool insert( const std::string& key, const void* data, const size_t size )
         final
     {
+        skv_client_cmd_ext_hdl_t handle;
         const skv_status_t status =
-            _client.Insert( &_namespace,
+            _client.iInsert( &_namespace,
                             const_cast< char* >( key.c_str( )), key.length(),
                             static_cast< char* >( const_cast< void* >( data )),
-                            size, 0, SKV_COMMAND_RIU_UPDATE );
+                             size, 0, SKV_COMMAND_RIU_UPDATE, &handle );
         if( status != SKV_SUCCESS )
+        {
             LBINFO << "skv insert failed: " << skv_status_to_string( status )
                    << std::endl;
+            return false;
+        }
 
-        return status == SKV_SUCCESS;
+        _pending.push_back( handle );
+        return _flush( _maxPendingOps );
     }
 
     std::string operator [] ( const std::string& key ) const final
@@ -96,9 +110,12 @@ public:
         return _retrieve( key, value ) == SKV_SUCCESS;
     }
 
+    bool flush() final { return _flush( 0 ); }
+
 private:
     mutable skv_client_t _client;
     mutable skv_pds_id_t _namespace;
+    PendingOperations _pending;
 
     skv_status_t _retrieve( const std::string& key, std::string& value ) const
     {
@@ -113,6 +130,18 @@ private:
                               SKV_COMMAND_RIU_FLAGS_NONE );
         value.resize( valueSize );
         return status;
+    }
+
+    bool _flush( const size_t maxPending )
+    {
+        while( _pending.size() > maxPending )
+        {
+            skv_client_cmd_ext_hdl_t handle = _pending.front();
+            _pending.pop_front();
+            if( _client.Wait( handle ) != SKV_SUCCESS )
+                return false;
+        }
+        return true;
     }
 };
 

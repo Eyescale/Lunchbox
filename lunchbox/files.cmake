@@ -61,6 +61,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   pluginRegistry.h
   pluginVisitor.h
   pool.h
+  readyFuture.h
   refPtr.h
   referenced.h
   request.h

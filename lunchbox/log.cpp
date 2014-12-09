@@ -312,6 +312,15 @@ Log& Log::instance()
     {
         log = new Log();
         _logInstance = log;
+        static bool first = true;
+        if( first )
+        {
+            first = false;
+            log->disableHeader();
+            *log << "  PID.Thread   | Filename:line                  | ms | Message"
+                 << std::endl;
+            log->enableHeader();
+        }
     }
 
     return *log;

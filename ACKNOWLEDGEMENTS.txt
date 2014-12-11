@@ -7,11 +7,11 @@ This file is Copyrighted
 
     This file is covered under the following Copyright:
 
-	Copyright (C) 2001,2006 Ross P. Johnson
-	All rights reserved.
+    Copyright (C) 2001,2006 Ross P. Johnson
+    All rights reserved.
 
-	Everyone is permitted to copy and distribute verbatim copies
-	of this license document, but changing it is not allowed.
+    Everyone is permitted to copy and distribute verbatim copies
+    of this license document, but changing it is not allowed.
 
 Pthreads-win32 is covered by the GNU Lesser General Public License
 ------------------------------------------------------------------
@@ -33,16 +33,16 @@ Pthreads-win32 is covered by the GNU Lesser General Public License
     A copy of the GNU Lesser General Public License is distributed with
     pthreads-win32 under the filename:
 
-	    COPYING.LIB
+        COPYING.LIB
 
     You should have received a copy of the version 2.1 GNU Lesser General
     Public License with pthreads-win32; if not, write to:
 
-	    Free Software Foundation, Inc.
-	    59 Temple Place
-	    Suite 330
-	    Boston, MA	02111-1307
-	    USA
+        Free Software Foundation, Inc.
+        59 Temple Place
+        Suite 330
+        Boston, MA	02111-1307
+        USA
 
     The contact addresses for pthreads-win32 is as follows:
 
@@ -59,14 +59,14 @@ Pthreads-win32 copyrights and exception files
     is covered under the following GNU Lesser General Public License
     Copyrights:
 
-	Pthreads-win32 - POSIX Threads Library for Win32
-	Copyright(C) 1998 John E. Bossom
-	Copyright(C) 1999,2006 Pthreads-win32 contributors
+    Pthreads-win32 - POSIX Threads Library for Win32
+    Copyright(C) 1998 John E. Bossom
+    Copyright(C) 1999,2006 Pthreads-win32 contributors
 
-	The current list of contributors is contained
+    The current list of contributors is contained
         in the file CONTRIBUTORS included with the source
-	code distribution. The current list of CONTRIBUTORS
-	can also be seen at the following WWW location:
+    code distribution. The current list of CONTRIBUTORS
+    can also be seen at the following WWW location:
         http://sources.redhat.com/pthreads-win32/contributors.html
 
     Contact Email: Ross Johnson
@@ -75,7 +75,7 @@ Pthreads-win32 copyrights and exception files
     These files are not covered under one of the Copyrights listed above:
 
             COPYING
-	    COPYING.LIB
+        COPYING.LIB
             tests/rwlock7.c
 
     This file, COPYING, is distributed under the Copyright found at the
@@ -172,93 +172,3 @@ without express or implied warranty of any kind.
 
 These notices must be retained in any copies of any part of this
 documentation and/or software.
-
-===========================================================================
-                             CompressorLZF
-===========================================================================
-Copyright (c) 2000-2009 Marc Alexander Lehmann <schmorp@schmorp.de>
-
-Redistribution and use in source and binary forms, with or without modifica-
-tion, are permitted provided that the following conditions are met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MER-
-CHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
-EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPE-
-CIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTH-
-ERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-OF THE POSSIBILITY OF SUCH DAMAGE.
-
-Alternatively, the following files carry an additional notice that
-explicitly allows relicensing under the GPLv2: lzf.c lzf.h lzfP.h lzf_c.c
-lzf_d.c
-
-===========================================================================
-                            CompressorFastLZ
-===========================================================================
-FastLZ - lightning-fast lossless compression library
-
-Copyright (C) 2007 Ariya Hidayat (ariya@kde.org)
-Copyright (C) 2006 Ariya Hidayat (ariya@kde.org)
-Copyright (C) 2005 Ariya Hidayat (ariya@kde.org)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-
-===========================================================================
-                            CompressorSnappy
-===========================================================================
-Copyright 2011, Google Inc.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-    * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-    * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

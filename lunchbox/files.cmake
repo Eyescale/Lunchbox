@@ -1,14 +1,7 @@
 
 # Copyright (c) 2012-2014 Stefan Eilemann <eile@eyescale.ch>
 
-set(PLUGIN_HEADERS
-  plugins/compressor.h
-  plugins/compressorTokens.h
-  plugins/compressorTypes.h
-  )
-
 set(LUNCHBOX_PUBLIC_HEADERS
-  ${PLUGIN_HEADERS}
   ${COMMON_INCLUDES}
   algorithm.h
   any.h
@@ -20,13 +13,9 @@ set(LUNCHBOX_PUBLIC_HEADERS
   buffer.ipp
   clock.h
   compiler.h
-  compressor.h
-  compressorResult.h
   condition.h
   daemon.h
   debug.h
-  decompressor.h
-  downloader.h
   dso.h
   file.h
   future.h
@@ -57,9 +46,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   perThread.ipp
   perThreadRef.h
   persistentMap.h
-  plugin.h
-  pluginRegistry.h
-  pluginVisitor.h
   pool.h
   readyFuture.h
   refPtr.h
@@ -82,7 +68,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   uint128_t.h
   unorderedIntervalSet.h
   unorderedIntervalSet.ipp
-  uploader.h
   uri.h
   visitorResult.h
   )
@@ -91,70 +76,24 @@ if(Boost_VERSION VERSION_LESS 1.43.0)
   list(APPEND LUNCHBOX_PUBLIC_HEADERS factory.hpp)
 endif()
 
-set(LUNCHBOX_COMPRESSORS
-  compressor/compressor.cpp
-  compressor/compressor.h
-  compressor/compressorFastLZ.cpp
-  compressor/compressorFastLZ.h
-  compressor/compressorLZF.cpp
-  compressor/compressorLZF.h
-  compressor/compressorRLE.ipp
-  compressor/compressorRLE10A2.cpp
-  compressor/compressorRLE10A2.h
-  compressor/compressorRLE4B.cpp
-  compressor/compressorRLE4B.h
-  compressor/compressorRLE4BU.cpp
-  compressor/compressorRLE4BU.h
-  compressor/compressorRLE4HF.cpp
-  compressor/compressorRLE4HF.h
-  compressor/compressorRLE565.cpp
-  compressor/compressorRLE565.h
-  compressor/compressorRLEB.cpp
-  compressor/compressorRLEB.h
-  compressor/compressorRLEYUV.cpp
-  compressor/compressorRLEYUV.h
-  compressor/compressorSnappy.cpp
-  compressor/compressorSnappy.h
-  compressor/fastlz/fastlz.c
-  compressor/fastlz/fastlz.h
-  compressor/liblzf/lzf.h
-  compressor/liblzf/lzf_c.c
-  compressor/liblzf/lzf_d.c
-  compressor/snappy/snappy.h
-  compressor/snappy/snappy.cc
-  compressor/snappy/snappy-sinksource.cc
-  )
-
-if(LibJpegTurbo_FOUND)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES ${LibJpegTurbo_LIBRARIES})
-  list(APPEND LUNCHBOX_COMPRESSORS
-    compressor/compressorTurboJPEG.h compressor/compressorTurboJPEG.cpp)
-endif()
-
 set(LUNCHBOX_HEADERS
   avahi/servus.h
-  compressorInfo.h
   detail/threadID.h
   dnssd/servus.h
   leveldb/persistentMap.h
   none/servus.h
-  pluginInstance.h
   skv/persistentMap.h
   time.h
 )
 
 set(LUNCHBOX_SOURCES
-  ${LUNCHBOX_COMPRESSORS}
   ${COMMON_SOURCES}
   any.cpp
   atomic.cpp
   clock.cpp
-  compressor.cpp
   condition.cpp
   condition_w32.ipp
   debug.cpp
-  decompressor.cpp
-  downloader.cpp
   dso.cpp
   file.cpp
   init.cpp
@@ -167,8 +106,6 @@ set(LUNCHBOX_SOURCES
   omp.cpp
   os.cpp
   persistentMap.cpp
-  plugin.cpp
-  pluginRegistry.cpp
   referenced.cpp
   requestHandler.cpp
   rng.cpp
@@ -180,6 +117,5 @@ set(LUNCHBOX_SOURCES
   timedLock.cpp
   tls.cpp
   uint128_t.cpp
-  uploader.cpp
   uri.cpp
   )

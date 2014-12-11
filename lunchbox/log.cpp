@@ -300,9 +300,13 @@ unsigned getLogTopics()
         return atoll(env);
 
     if( Log::level == LOG_ALL )
-        return 0xffffffffu;
+        return LOG_ANY;
 
+#ifdef NDEBUG
     return 0;
+#else
+    return LOG_BUG;
+#endif
 }
 
 Log& Log::instance()

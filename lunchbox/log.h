@@ -59,6 +59,7 @@ enum LogTopic
 {
     LOG_EXCEPTION = 0x01,    //!< Log exception within LBTHROW
     LOG_PLUGIN    = 0x02,    //!< Log plugin handling
+    LOG_BUG       = 0x04,    //!< Log potential bugs
     LOG_CUSTOM    = 0x10,    //!< Log topics for other namespaces start here
     LOG_ANY       = 0xffffu  //!< Log all Lunchbox topics
 };

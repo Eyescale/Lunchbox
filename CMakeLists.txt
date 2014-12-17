@@ -15,6 +15,7 @@ set(VERSION_PATCH "0")
 set(VERSION_ABI 3)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
+option(LUNCHBOX_USE_MPI "Enable MPI functionality if found" ON)
 
 set(GITTARGETS_RELEASE_BRANCH minor)
 set(DPUT_HOST "ppa:eilemann/equalizer-dev")
@@ -41,9 +42,6 @@ endif()
 set(PROJECT_INCLUDE_NAME lunchbox)
 include(FindPackages)
 set(LUNCHBOX_DEPENDENT_LIBRARIES Boost)
-if(SKV_FOUND)
-  list(APPEND LUNCHBOX_DEPENDENT_LIBRARIES skv)
-endif()
 
 if(OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")

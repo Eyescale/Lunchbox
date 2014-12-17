@@ -321,8 +321,10 @@ Log& Log::instance()
         {
             first = false;
             log->disableHeader();
+            log->disableFlush();
             *log << "  PID.Thread   | Filename:line                  | ms | Message"
                  << std::endl;
+            log->enableFlush();
             log->enableHeader();
         }
     }

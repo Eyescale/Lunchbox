@@ -37,9 +37,6 @@
  *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::Future,
  *   lunchbox::Servus, lunchbox::URI, lunchbox::PersistentMap,
  *   (lunchbox::ScopedMutex)
- * - Compression and CPU-GPU transfer plugin handling: lunchbox::Compressor,
- *   lunchbox::Decompressor, lunchbox::Downloader, lunchbox::Plugin,
- *   lunchbox::PluginRegistry, lunchbox::Uploader
  *
  * @ref RelNotes
  * <br><a class="el" href="CoverageReport/index.html">Test Code Coverage
@@ -204,9 +201,6 @@ typedef SSIZE_T    ssize_t;
 #define LB_64MB  (67108864)
 
 /** @cond IGNORE */
-struct EqCompressorInfo;
-typedef std::vector< EqCompressorInfo > EqCompressorInfos;
-typedef EqCompressorInfos::const_iterator EqCompressorInfosCIter;
 struct GLEWContextStruct;
 struct WGLEWContextStruct;
 typedef struct GLEWContextStruct GLEWContext;
@@ -225,17 +219,12 @@ typedef Strings::iterator StringsIter;
 class Clock;
 class Lock;
 class NonCopyable;
-class Plugin;
-class PluginRegistry;
 class Referenced;
 class RequestHandler;
 class Servus;
 class SpinLock;
-class Uploader;
 class URI;
 class uint128_t;
-
-struct CompressorResult;
 
 template< class > class Array;
 template< class > class Atomic;
@@ -245,7 +234,6 @@ template< class > class Monitor;
 template< class > class Request;
 template< class, class > class LFVectorIterator;
 template< class, class > class Lockable;
-template< class, class > class PluginVisitorT;
 template< class, int32_t > class LFVector;
 
 typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable
@@ -257,25 +245,9 @@ typedef Future< uint32_t > f_uint32_t; //!< A future 32 bit unsigned promise
 typedef Future< ssize_t > f_ssize_t; //!< A future signed size promise
 typedef Future< void > f_void_t; //!< A future signed size promise
 
-typedef Array< void > CompressorChunk;
-typedef std::vector< CompressorChunk > CompressorChunks;
-typedef std::vector< Plugin* > Plugins;
-typedef Plugins::const_iterator PluginsCIter;
-
-typedef PluginVisitorT< Plugin, EqCompressorInfo > PluginVisitor;
-typedef PluginVisitorT< const Plugin,
-                        const EqCompressorInfo > ConstPluginVisitor;
-
 #ifdef LUNCHBOX_USE_V1_API
 typedef uint128_t UUID;
 #endif
-
-/** @cond IGNORE */
-struct CompressorInfo;
-typedef std::vector< CompressorInfo > CompressorInfos;
-typedef CompressorInfos::const_iterator CompressorInfosCIter;
-typedef CompressorInfos::iterator CompressorInfosIter;
-/** @endcond */
 }
 
 #endif //LUNCHBOX_TYPES_H

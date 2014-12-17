@@ -119,16 +119,16 @@ private:
 
     skv_status_t _retrieve( const std::string& key, std::string& value ) const
     {
-        value.resize( 65536 );
+        static const size_t bufferSize = 65536;
+        char buffer[ bufferSize ];
         int valueSize = 0;
 
         const skv_status_t status =
             _client.Retrieve( &_namespace,
                               const_cast< char* >( key.c_str( )), key.length(),
-                              const_cast< char* >( value.c_str( )),
-                              value.size(), &valueSize, 0,
+                              buffer, bufferSize, &valueSize, 0,
                               SKV_COMMAND_RIU_FLAGS_NONE );
-        value.resize( valueSize );
+        value.assign( buffer, bufferSize );
         return status;
     }
 

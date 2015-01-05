@@ -30,10 +30,18 @@
 #define VALID_VALUE    10
 #define INVALID_VALUE   0
 
-class InitData
+struct InitData
 {
     lunchbox::URI uri;
 };
+
+namespace boost
+{
+template<> inline std::string lexical_cast( const InitData& data )
+{
+    return lexical_cast< std::string >( data.uri );
+}
+}
 
 class IOPluginInterface
 {
@@ -186,4 +194,3 @@ BOOST_AUTO_TEST_CASE( testWhenOneTypedPluginHandlesURICreateInstCorrectType )
     BOOST_REQUIRE_NO_THROW( tryCreateTypedPlugin( plugin ));
     BOOST_CHECK_EQUAL( plugin->getValue(), VALID_VALUE );
 }
-

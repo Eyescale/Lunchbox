@@ -40,8 +40,8 @@ IOPluginT* IOPluginAbstractFactory< IOPluginT, InitDataT >::create(
             return i->constructor( initData );
     }
 
-    LBTHROW( std::runtime_error(
-        "No plugin implementation available for given initData" ));
+    LBTHROW( std::runtime_error( "No plugin implementation available for " +
+                                 boost::lexical_cast<std::string>( initData )));
 }
 
 template< typename IOPluginT, typename InitDataT >

@@ -147,8 +147,8 @@ public:
             return lunchbox::Servus::Result( _result );
 
         _result = avahi_client_errno( _client );
-        LBWARN << "Failed to create browser: " << avahi_strerror( _result )
-               << std::endl;
+        LBWARN << "Failed to create browser for " << _name << ": "
+               << avahi_strerror( _result ) << std::endl;
         return lunchbox::Servus::Result( _result );
     }
 

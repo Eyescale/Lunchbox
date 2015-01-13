@@ -25,23 +25,23 @@ int main( int argc, char **argv )
 {
     TEST( lunchbox::init( argc, argv ));
 
-    std::cout << "Operation, MB/s" << std::endl;
-    void* const from = ::malloc( LB_100MB );
-    void* const to = ::malloc( LB_100MB );
+    std::cout << "Operation, GB/s" << std::endl;
+    void* const from = ::malloc( LB_1GB );
+    void* const to = ::malloc( LB_1GB );
     // touch all pages once
-    ::memset( from, 0, LB_100MB );
-    ::memset( to, 0, LB_100MB );
+    ::memset( from, 0, LB_1GB );
+    ::memset( to, 0, LB_1GB );
 
     lunchbox::Clock clock;
 
-    ::memcpy( to, from, LB_100MB );
-    std::cout << "memcpy,    " << 100 /*MB*/ / (clock.resetTimef() / 1000.f)
+    ::memcpy( to, from, LB_1GB );
+    std::cout << "memcpy,    " << 1.f / (clock.resetTimef() / 1000.f)
               << std::endl;
-    ::memmove( to, from, LB_100MB );
-    std::cout << "memmove,   " << 100 /*MB*/ / (clock.resetTimef() / 1000.f)
+    ::memmove( to, from, LB_1GB );
+    std::cout << "memmove,   " << 1.f / (clock.resetTimef() / 1000.f)
               << std::endl;
-    ::memset( to, 42, LB_100MB );
-    std::cout << "memset,    " << 100 /*MB*/ / (clock.resetTimef() / 1000.f)
+    ::memset( to, 42, LB_1GB );
+    std::cout << "memset,    " << 1.f / (clock.resetTimef() / 1000.f)
               << std::endl;
 
     free( to );

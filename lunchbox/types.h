@@ -192,6 +192,7 @@ typedef SSIZE_T    ssize_t;
 #define LB_1MB   (1048576)
 #define LB_10MB  (10485760)
 #define LB_100MB (104857600)
+#define LB_1GB   (1073741824)
 
 #define LB_16KB  (16384)
 #define LB_32KB  (32768)

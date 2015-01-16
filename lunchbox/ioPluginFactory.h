@@ -52,8 +52,8 @@ template< typename IOPluginT, typename InitDataT > class IOPlugin;
  *
  * The IOPluginAbstractFactory selects the most appropriate plugin factory for a
  * given InitDataT ( default is URI ) based on a plugin's handles InitDataT
- * function. In case a InitDataT can be handled by multiple plugins, which plugin is
- * chosen is undefined.
+ * function. In case a InitDataT can be handled by multiple plugins, which
+ * plugin is chosen is undefined.
  *
  * This class has been designed as a singleton to allow for link time plugin
  * registration, but nothing prevents an application from registering new types

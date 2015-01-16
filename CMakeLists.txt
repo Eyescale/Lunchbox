@@ -26,13 +26,7 @@ set(COMMON_PROJECT_DOMAIN ch.eyescale)
 
 include(Common)
 
-include(Buildyard)
-if(BUILDYARD_STOP)
-  return()
-endif()
-
 list(APPEND CPPCHECK_EXTRA_ARGS -DLB_GCC_4_1_OR_LATER=1)
-
 if(LUNCHBOX_BUILD_V2_API)
   list(APPEND FIND_PACKAGES_DEFINES LUNCHBOX_USE_V2_API)
 else()

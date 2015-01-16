@@ -12,10 +12,11 @@
 #
 # [optional] Flags which control behaviour
 #  NO_UPDATE
-#    When set, GitExternal will not change a repo that has already been checked out.
-#    The purpose of this is to allow one to set a default branch to be checked out,
-#    but stop GitExternal from changing back to that branch if the user has checked
-#    out and is working on another.
+#    When set, GitExternal will not change a repo that has already
+#    been checked out. The purpose of this is to allow one to set a
+#    default branch to be checked out, but stop GitExternal from
+#    changing back to that branch if the user has checked out and is
+#    working on another.
 #  VERBOSE
 #    When set, displays information about git commands that are executed
 #
@@ -102,7 +103,7 @@ function(GIT_EXTERNAL DIR REPO TAG)
         WORKING_DIRECTORY "${DIR}"
         )
       if(nok)
-        message(STATUS "${DIR} git checkout ${TAG} failed: ${error}\n")
+        message(STATUS "git checkout ${TAG} in ${DIR} failed: ${error}\n")
       endif()
     else()
       message(STATUS "Can't update git external ${DIR}: Not a git repository")
@@ -115,7 +116,8 @@ if(NOT GIT_EXTERNALS)
   set(GIT_EXTERNALS "${CMAKE_CURRENT_SOURCE_DIR}/.gitexternals")
 endif()
 
-if(EXISTS ${GIT_EXTERNALS})
+if(EXISTS ${GIT_EXTERNALS} AND NOT GIT_EXTERNAL_SCRIPT_MODE)
+  include(${GIT_EXTERNALS})
   file(READ ${GIT_EXTERNALS} GIT_EXTERNAL_FILE)
   string(REGEX REPLACE "\n" ";" GIT_EXTERNAL_FILE "${GIT_EXTERNAL_FILE}")
   foreach(LINE ${GIT_EXTERNAL_FILE})
@@ -160,7 +162,7 @@ if(EXISTS ${GIT_EXTERNALS})
             file(WRITE "${GIT_EXTERNAL_SCRIPT}"
               "file(WRITE ${GIT_EXTERNALS} \"# -*- mode: cmake -*-\n\")\n")
             add_custom_target(${GIT_EXTERNAL_TARGET}
-              COMMAND ${CMAKE_COMMAND} -P ${GIT_EXTERNAL_SCRIPT}
+              COMMAND ${CMAKE_COMMAND} -DGIT_EXTERNAL_SCRIPT_MODE=1 -P ${GIT_EXTERNAL_SCRIPT}
               COMMENT "Recreate ${GIT_EXTERNALS_BASE}"
               WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
           endif()
@@ -168,18 +170,21 @@ if(EXISTS ${GIT_EXTERNALS})
           set(GIT_EXTERNAL_SCRIPT
             "${CMAKE_CURRENT_BINARY_DIR}/gitupdate${GIT_EXTERNAL_NAME}.cmake")
           file(WRITE "${GIT_EXTERNAL_SCRIPT}" "
+include(${CMAKE_CURRENT_LIST_DIR}/GitExternal.cmake)
 execute_process(COMMAND ${GIT_EXECUTABLE} fetch --all -q
   WORKING_DIRECTORY ${DIR})
 execute_process(
   COMMAND ${GIT_EXECUTABLE} show-ref --hash=7 refs/remotes/origin/master
-  OUTPUT_VARIABLE newref WORKING_DIRECTORY ${DIR})
+  OUTPUT_VARIABLE newref OUTPUT_STRIP_TRAILING_WHITESPACE
+  WORKING_DIRECTORY ${DIR})
 if(newref)
-  file(APPEND ${GIT_EXTERNALS} \"# ${DIR} ${REPO} \${newref}\")
+  file(APPEND ${GIT_EXTERNALS} \"# ${DIR} ${REPO} \${newref}\\n\")
+  git_external(${DIR} ${REPO} \${newref})
 else()
   file(APPEND ${GIT_EXTERNALS} \"# ${DIR} ${REPO} ${TAG}\n\")
 endif()")
           add_custom_target(update_git_external_${GIT_EXTERNAL_NAME}
-            COMMAND ${CMAKE_COMMAND} -P ${GIT_EXTERNAL_SCRIPT}
+            COMMAND ${CMAKE_COMMAND} -DGIT_EXTERNAL_SCRIPT_MODE=1 -P ${GIT_EXTERNAL_SCRIPT}
             COMMENT "Update ${REPO} in ${GIT_EXTERNALS_BASE}"
             DEPENDS ${GIT_EXTERNAL_TARGET}
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")

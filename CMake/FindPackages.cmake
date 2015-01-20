@@ -194,7 +194,7 @@ if(skv_name)
   set(FIND_PACKAGES_FOUND "${FIND_PACKAGES_FOUND} skv")
   link_directories(${${skv_name}_LIBRARY_DIRS})
   if(NOT "${${skv_name}_INCLUDE_DIRS}" MATCHES "-NOTFOUND")
-    include_directories(${${skv_name}_INCLUDE_DIRS})
+    include_directories(SYSTEM ${${skv_name}_INCLUDE_DIRS})
   endif()
 endif()
 

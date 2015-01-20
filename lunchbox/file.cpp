@@ -135,4 +135,25 @@ std::string getExecutablePath()
     return path.parent_path().string();
 }
 
+std::string getLibraryPath()
+{
+    const std::string& exePath = getExecutablePath();
+    if( exePath.empty( ))
+        return exePath;
+
+#ifdef _MSC_VER
+    return exePath;
+#elif __APPLE__
+    const boost::filesystem::path path( exePath );
+
+    // foo.app/Contents/MacOS/foo
+    if( boost::algorithm::ends_with( exePath, ".app/Contents/MacOS" ))
+        return path.parent_path().parent_path().parent_path().string() + "/lib";
+    return path.parent_path().string() + "/lib";
+#else
+    const boost::filesystem::path path( exePath );
+    return path.parent_path().string() + "/lib";
+#endif
+}
+
 }

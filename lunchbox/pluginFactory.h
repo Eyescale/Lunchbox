@@ -51,7 +51,7 @@ namespace lunchbox
  *
  * Example: @include tests/pluginFactory.cpp
  *
- * @version 1.10.0
+ * @version 1.11.0
  */
 template< class PluginT, class InitDataT = URI >
 class PluginFactory : public boost::noncopyable
@@ -60,7 +60,7 @@ public:
     typedef Plugin< PluginT, InitDataT > PluginHolder;
     typedef std::vector< PluginHolder > Plugins;
 
-    /** Get the single class instance. @version 1.10.0 */
+    /** Get the single class instance. @version 1.11.0 */
     static PluginFactory& getInstance();
 
     /**
@@ -79,7 +79,7 @@ public:
     /** Deregister a plugin type. @version 1.11.0 */
     bool deregister( const Plugin< PluginT, InitDataT >& plugin );
 
-    /** Unregister all plugin types. @version 1.10.0 */
+    /** Unregister all plugin types. @version 1.11.0 */
     void deregisterAll();
 
     /** @name Automatic loading of plugin DSOs. */
@@ -87,9 +87,9 @@ public:
     /**
      * Load all compatible plugin libraries from a directory matching a pattern.
      *
-     * The pattern the core naming, and is extended by the system-specific
-     * shared library suffix and postfix. The plugin has to implement the C
-     * functions 'int LunchboxPluginGetVersion()' and 'bool
+     * The pattern is the core name of the library, and is extended by the
+     * system-specific shared library suffix and postfix. The plugin has to
+     * implement the C functions 'int LunchboxPluginGetVersion()' and 'bool
      * LunchboxPluginRegister()'. Only plugins with the same ABI version as the
      * given one are registered.
      *

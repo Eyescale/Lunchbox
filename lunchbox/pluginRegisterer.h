@@ -59,7 +59,7 @@ namespace lunchbox
  * }
  * @endcode
  *
- * @version 1.10.0
+ * @version 1.11.0
  */
 template< class T > struct hasInitDataT
 {
@@ -78,7 +78,7 @@ template< class Impl, bool hasInitData = hasInitDataT< Impl >::value >
 class PluginRegisterer
 {
 public:
-    /** Construct a registerer and register the Impl class. @version 1.10.0 */
+    /** Construct a registerer and register the Impl class. @version 1.11.0 */
     PluginRegisterer();
 };
 
@@ -89,7 +89,7 @@ public:
 template< class Impl > class PluginRegisterer< Impl, true >
 {
 public:
-    /** Construct a registerer and register the Impl class. @version 1.10.0 */
+    /** Construct a registerer and register the Impl class. @version 1.11.0 */
     PluginRegisterer()
     {
         Plugin< class Impl::PluginT, class Impl::InitDataT > plugin(
@@ -107,7 +107,7 @@ public:
 template< class Impl > class PluginRegisterer< Impl, false >
 {
 public:
-    /** Construct a registerer and register the Impl class. @version 1.10.0 */
+    /** Construct a registerer and register the Impl class. @version 1.11.0 */
     PluginRegisterer()
     {
         Plugin< class Impl::PluginT > plugin(

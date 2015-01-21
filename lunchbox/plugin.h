@@ -42,7 +42,7 @@ namespace lunchbox
  * static bool handles( const InitDataT& initData );
  * @endcode
  *
- * @version 1.10.0
+ * @version 1.11.0
  */
 template< class PluginT, class InitDataT = URI > class Plugin
 {
@@ -64,7 +64,7 @@ public:
      * @param constructor_ The constructor method for Plugin objects.
      * @param handles_ The method to check if the plugin can handle the
      * initData.
-     * @version 1.10.0
+     * @version 1.11.0
      */
     Plugin( const Constructor& constructor_, const HandlesFunc& handles_ )
         : constructor( constructor_ ), handles( handles_ ), tag( make_UUID( )) {}

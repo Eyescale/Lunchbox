@@ -42,9 +42,7 @@ and documentation changes over Lunchbox 1.9:
 * lunchbox::URI parsing support according to RFC3986
 * lunchbox::PersistentMap interface for persistent key-value stores
 * lunchbox::getHostname and lunchbox::getExecutablePath functions
-* lunchbox::PluginFactory, a mechanism to register input/ouput plugins has
-  been added. The mechanism is focused on static registration but could also be
-  used for dynamically loaded plugins
+* lunchbox::PluginFactory, a mechanism to register and load plugins
 
 ## Enhancements {#Enhancements}
 

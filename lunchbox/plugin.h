@@ -22,7 +22,9 @@
 #ifndef LUNCHBOX_PLUGIN_H
 #define LUNCHBOX_PLUGIN_H
 
+#include <lunchbox/uint128_t.h> // member
 #include <boost/function.hpp> // Plugin functions
+#include <boost/function_equal.hpp> // operator ==
 
 namespace lunchbox
 {
@@ -35,7 +37,7 @@ namespace lunchbox
  * DerivedPluginClass( const InitDataT& initData );
  * @endcode
  *
- * They must also implement the following method to be registered:
+ * PluginT must also implement the following method to be registered:
  * @code
  * static bool handles( const InitDataT& initData );
  * @endcode
@@ -65,13 +67,22 @@ public:
      * @version 1.10.0
      */
     Plugin( const Constructor& constructor_, const HandlesFunc& handles_ )
-        : constructor( constructor_ ), handles( handles_ ) {}
+        : constructor( constructor_ ), handles( handles_ ), tag( make_UUID( )) {}
+
+    /** @return true if the plugins wrap the same plugin. @version 1.11.0 */
+    bool operator == ( const Plugin& rhs ) const
+        { return tag == rhs.tag; }
+
+    /** @return false if the plugins do wrap the same plugin. @version 1.11.0 */
+    bool operator != ( const Plugin& rhs ) const { return !(*this == rhs); }
 
 private:
     friend class PluginFactory< PluginT, InitDataT >;
-
     Constructor constructor;
     HandlesFunc handles;
+
+    // Makes Plugin comparable. See http://stackoverflow.com/questions/18665515
+    uint128_t tag;
 };
 
 }

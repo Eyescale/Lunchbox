@@ -24,10 +24,13 @@
 
 #include <lunchbox/types.h>
 #include <lunchbox/debug.h> // LBTHROW
+#include <lunchbox/dso.h> // used inline
+#include <lunchbox/file.h> // searchDirectory() used inline
 #include <lunchbox/uri.h> // Default template type
 
 #include <boost/noncopyable.hpp> // base class
 #include <boost/lexical_cast.hpp> // used inline
+#include <boost/unordered_map.hpp>
 
 namespace lunchbox
 {
@@ -58,11 +61,7 @@ public:
     typedef std::vector< PluginHolder > Plugins;
 
     /** Get the single class instance. @version 1.10.0 */
-    static PluginFactory& getInstance()
-    {
-        static PluginFactory< PluginT, InitDataT > factory;
-        return factory;
-    }
+    static PluginFactory& getInstance();
 
     /**
      * Create a plugin instance.
@@ -72,28 +71,57 @@ public:
      * @throws std::runtime_error if no plugin can handle the initData.
      * @version 1.11.0
      */
-    PluginT* create( const InitDataT& initData )
-    {
-        BOOST_FOREACH( PluginHolder& plugin, _plugins )
-            if( plugin.handles( initData ))
-                return plugin.constructor( initData );
-
-        LBTHROW( std::runtime_error( "No plugin implementation available for " +
-                                 boost::lexical_cast<std::string>( initData )));
-    }
+    PluginT* create( const InitDataT& initData );
 
     /** Register a plugin type. @version 1.11.0 */
-    void register_( const Plugin< PluginT, InitDataT >& plugin )
-        { _plugins.push_back( plugin ); }
+    void register_( const Plugin< PluginT, InitDataT >& plugin );
+
+    /** Deregister a plugin type. @version 1.11.0 */
+    bool deregister( const Plugin< PluginT, InitDataT >& plugin );
 
     /** Unregister all plugin types. @version 1.10.0 */
-    void unregisterAll() { _plugins.clear(); }
+    void deregisterAll();
+
+    /** @name Automatic loading of plugin DSOs. */
+    //@{
+    /**
+     * Load all compatible plugin libraries from a directory matching a pattern.
+     *
+     * The pattern the core naming, and is extended by the system-specific
+     * shared library suffix and postfix. The plugin has to implement the C
+     * functions 'int LunchboxPluginGetVersion()' and 'bool
+     * LunchboxPluginRegister()'. Only plugins with the same ABI version as the
+     * given one are registered.
+     *
+     * @param version the current ABI version of the application loading the
+     *                plugins.
+     * @param path the directory to search for plugins.
+     * @param pattern the core pattern of plugin names.
+     * @return the loaded plugins, ownership remains with the PluginFactory.
+     * @version 1.11.0
+     * @sa getLibraryPath()
+     */
+    DSOs load( const int version, const std::string& path,
+               const std::string& pattern );
+
+    /**
+     * Unload and deregister a previously loaded plugin
+     *
+     * @return true if the plugin was loaded, false on error.
+     * @version 1.11.0
+     */
+    bool unload( DSO* dso );
+    //@}
 
 private:
     Plugins _plugins;
+
+    typedef boost::unordered_map< DSO*, PluginHolder > PluginMap;
+    PluginMap _libraries;
 };
 
-
 }
+
+#include "pluginFactory.ipp" // template implementation
 
 #endif // LUNCHBOX_PLUGINFACTORY_H

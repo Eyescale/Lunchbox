@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2007-2015, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -218,6 +218,7 @@ typedef Strings::const_iterator StringsCIter;
 typedef Strings::iterator StringsIter;
 
 class Clock;
+class DSO;
 class Lock;
 class NonCopyable;
 class Referenced;
@@ -247,6 +248,8 @@ typedef Future< bool > f_bool_t; //!< A future with a boolean return value
 typedef Future< uint32_t > f_uint32_t; //!< A future 32 bit unsigned promise
 typedef Future< ssize_t > f_ssize_t; //!< A future signed size promise
 typedef Future< void > f_void_t; //!< A future signed size promise
+
+typedef std::vector< DSO* > DSOs; /** A vector of DSO @version 1.11.0 */
 
 #ifdef LUNCHBOX_USE_V1_API
 typedef uint128_t UUID;

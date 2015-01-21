@@ -114,7 +114,7 @@ void tryCreateTypedPlugin( IOTypedPluginInterfacePtr& plugin )
 
 BOOST_AUTO_TEST_CASE( testWhenNoPluginIsRegisteredCreateThrowsRuntimeError )
 {
-    MyPluginFactory::getInstance().unregisterAll();
+    MyPluginFactory::getInstance().deregisterAll();
 
     PluginInterfacePtr plugin;
     BOOST_CHECK_THROW( tryCreatePlugin( plugin ), std::runtime_error );
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE( testWhenNoPluginIsRegisteredCreateThrowsRuntimeError )
 
 BOOST_AUTO_TEST_CASE( testWhenNoTypedPluginIsRegisteredCreateThrowsRuntimeErr )
 {
-    MyTypedPluginFactory::getInstance().unregisterAll();
+    MyTypedPluginFactory::getInstance().deregisterAll();
 
     IOTypedPluginInterfacePtr plugin;
     BOOST_CHECK_THROW( tryCreateTypedPlugin( plugin ), std::runtime_error );
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE( testWhenNoTypedPluginIsRegisteredCreateThrowsRuntimeErr )
 
 BOOST_AUTO_TEST_CASE( testWhenPluginRegistererIsInstantiatedPluginIsRegistered )
 {
-    MyPluginFactory::getInstance().unregisterAll();
+    MyPluginFactory::getInstance().deregisterAll();
 
     lunchbox::PluginRegisterer< MyPlugin > registerer;
 
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE( testWhenPluginRegistererIsInstantiatedPluginIsRegistered )
 BOOST_AUTO_TEST_CASE(
                 testWhenTypedPluginRegistererIsInstantiatedPluginIsRegistered )
 {
-    MyTypedPluginFactory::getInstance().unregisterAll();
+    MyTypedPluginFactory::getInstance().deregisterAll();
 
     lunchbox::PluginRegisterer< MyTypedPlugin > registerer;
 
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(
 
 BOOST_AUTO_TEST_CASE( testWhenPluginsDontHandleURICreateThrowsRuntimeError )
 {
-    MyPluginFactory::getInstance().unregisterAll();
+    MyPluginFactory::getInstance().deregisterAll();
 
     lunchbox::PluginRegisterer< MyDummyPlugin > registerer;
 
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE( testWhenPluginsDontHandleURICreateThrowsRuntimeError )
 
 BOOST_AUTO_TEST_CASE( testWhenTypedPlginsDontHandleURICreateThrowsRuntimeError )
 {
-    MyTypedPluginFactory::getInstance().unregisterAll();
+    MyTypedPluginFactory::getInstance().deregisterAll();
 
     lunchbox::PluginRegisterer< MyTypedDummyPlugin > registerer;
 
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE( testWhenTypedPlginsDontHandleURICreateThrowsRuntimeError )
 
 BOOST_AUTO_TEST_CASE( testWhenOnePluginHandlesURICreateInstanciesCorrectType )
 {
-    MyPluginFactory::getInstance().unregisterAll();
+    MyPluginFactory::getInstance().deregisterAll();
 
     lunchbox::PluginRegisterer< MyDummyPlugin > registerer1;
     lunchbox::PluginRegisterer< MyPlugin > registerer2;
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE( testWhenOnePluginHandlesURICreateInstanciesCorrectType )
 
 BOOST_AUTO_TEST_CASE( testWhenOneTypedPluginHandlesURICreateInstCorrectType )
 {
-    MyTypedPluginFactory::getInstance().unregisterAll();
+    MyTypedPluginFactory::getInstance().deregisterAll();
 
     lunchbox::PluginRegisterer< MyTypedDummyPlugin > registerer1;
     lunchbox::PluginRegisterer< MyTypedPlugin > registerer2;

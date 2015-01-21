@@ -46,6 +46,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   persistentMap.h
   plugin.h
   pluginFactory.h
+  pluginFactory.ipp
   pluginRegisterer.h
   pool.h
   readyFuture.h

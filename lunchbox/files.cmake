@@ -23,8 +23,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   hash.h
   indexIterator.h
   init.h
-  ioPluginFactory.h
-  ioPluginFactory.ipp
   launcher.h
   lfQueue.h
   lfQueue.ipp
@@ -46,6 +44,10 @@ set(LUNCHBOX_PUBLIC_HEADERS
   perThread.ipp
   perThreadRef.h
   persistentMap.h
+  plugin.h
+  pluginFactory.h
+  pluginFactory.ipp
+  pluginRegisterer.h
   pool.h
   readyFuture.h
   refPtr.h

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2014, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2015, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
@@ -18,10 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define BOOST_TEST_MODULE IOPluginFactory
+#define BOOST_TEST_MODULE PluginFactory
 
 #include <lunchbox/types.h>
-#include <lunchbox/ioPluginFactory.h>
+#include <lunchbox/pluginFactory.h>
+#include <lunchbox/pluginRegisterer.h>
 #include <lunchbox/uri.h>
 
 #include <boost/test/unit_test.hpp>
@@ -43,24 +44,24 @@ template<> inline std::string lexical_cast( const InitData& data )
 }
 }
 
-class IOPluginInterface
+class PluginInterface
 {
 public:
-    typedef IOPluginInterface IOPluginT;
-    virtual ~IOPluginInterface() {}
+    typedef PluginInterface PluginT;
+    virtual ~PluginInterface() {}
     virtual int getValue() = 0;
 };
 
 class IOTypedPluginInterface
 {
 public:
-    typedef IOTypedPluginInterface IOPluginT;
+    typedef IOTypedPluginInterface PluginT;
     typedef InitData InitDataT;
     virtual ~IOTypedPluginInterface() {}
     virtual int getValue() = 0;
 };
 
-class MyPlugin : public IOPluginInterface
+class MyPlugin : public PluginInterface
 {
 public:
     MyPlugin( const lunchbox::URI& ) {}
@@ -76,7 +77,7 @@ public:
     int getValue() final { return VALID_VALUE; }
 };
 
-class MyDummyPlugin : public IOPluginInterface
+class MyDummyPlugin : public PluginInterface
 {
 public:
     MyDummyPlugin( const lunchbox::URI& ) {}
@@ -92,14 +93,14 @@ public:
     int getValue() final { return INVALID_VALUE; }
 };
 
-typedef lunchbox::IOPluginAbstractFactory< IOPluginInterface> MyPluginFactory;
-typedef lunchbox::IOPluginAbstractFactory< IOTypedPluginInterface, InitData >
+typedef lunchbox::PluginFactory< PluginInterface> MyPluginFactory;
+typedef lunchbox::PluginFactory< IOTypedPluginInterface, InitData >
                                                            MyTypedPluginFactory;
 
-typedef boost::scoped_ptr< IOPluginInterface > IOPluginInterfacePtr;
+typedef boost::scoped_ptr< PluginInterface > PluginInterfacePtr;
 typedef boost::scoped_ptr< IOTypedPluginInterface > IOTypedPluginInterfacePtr;
 
-void tryCreatePlugin( IOPluginInterfacePtr& plugin )
+void tryCreatePlugin( PluginInterfacePtr& plugin )
 {
     MyPluginFactory& factory = MyPluginFactory::getInstance();
     plugin.reset( factory.create( lunchbox::URI( "XYZ" )));
@@ -113,15 +114,15 @@ void tryCreateTypedPlugin( IOTypedPluginInterfacePtr& plugin )
 
 BOOST_AUTO_TEST_CASE( testWhenNoPluginIsRegisteredCreateThrowsRuntimeError )
 {
-    MyPluginFactory::getInstance().unregisterAllPlugins();
+    MyPluginFactory::getInstance().deregisterAll();
 
-    IOPluginInterfacePtr plugin;
+    PluginInterfacePtr plugin;
     BOOST_CHECK_THROW( tryCreatePlugin( plugin ), std::runtime_error );
 }
 
 BOOST_AUTO_TEST_CASE( testWhenNoTypedPluginIsRegisteredCreateThrowsRuntimeErr )
 {
-    MyTypedPluginFactory::getInstance().unregisterAllPlugins();
+    MyTypedPluginFactory::getInstance().deregisterAll();
 
     IOTypedPluginInterfacePtr plugin;
     BOOST_CHECK_THROW( tryCreateTypedPlugin( plugin ), std::runtime_error );
@@ -130,11 +131,11 @@ BOOST_AUTO_TEST_CASE( testWhenNoTypedPluginIsRegisteredCreateThrowsRuntimeErr )
 
 BOOST_AUTO_TEST_CASE( testWhenPluginRegistererIsInstantiatedPluginIsRegistered )
 {
-    MyPluginFactory::getInstance().unregisterAllPlugins();
+    MyPluginFactory::getInstance().deregisterAll();
 
-    lunchbox::IOPluginRegisterer< MyPlugin > registerer;
+    lunchbox::PluginRegisterer< MyPlugin > registerer;
 
-    IOPluginInterfacePtr plugin;
+    PluginInterfacePtr plugin;
     BOOST_REQUIRE_NO_THROW( tryCreatePlugin( plugin ));
     BOOST_CHECK_EQUAL( plugin->getValue(), VALID_VALUE );
 }
@@ -142,9 +143,9 @@ BOOST_AUTO_TEST_CASE( testWhenPluginRegistererIsInstantiatedPluginIsRegistered )
 BOOST_AUTO_TEST_CASE(
                 testWhenTypedPluginRegistererIsInstantiatedPluginIsRegistered )
 {
-    MyTypedPluginFactory::getInstance().unregisterAllPlugins();
+    MyTypedPluginFactory::getInstance().deregisterAll();
 
-    lunchbox::IOPluginRegisterer< MyTypedPlugin > registerer;
+    lunchbox::PluginRegisterer< MyTypedPlugin > registerer;
 
     IOTypedPluginInterfacePtr plugin;
     BOOST_REQUIRE_NO_THROW( tryCreateTypedPlugin( plugin ));
@@ -153,19 +154,19 @@ BOOST_AUTO_TEST_CASE(
 
 BOOST_AUTO_TEST_CASE( testWhenPluginsDontHandleURICreateThrowsRuntimeError )
 {
-    MyPluginFactory::getInstance().unregisterAllPlugins();
+    MyPluginFactory::getInstance().deregisterAll();
 
-    lunchbox::IOPluginRegisterer< MyDummyPlugin > registerer;
+    lunchbox::PluginRegisterer< MyDummyPlugin > registerer;
 
-    IOPluginInterfacePtr plugin;
+    PluginInterfacePtr plugin;
     BOOST_CHECK_THROW( tryCreatePlugin( plugin ), std::runtime_error );
 }
 
 BOOST_AUTO_TEST_CASE( testWhenTypedPlginsDontHandleURICreateThrowsRuntimeError )
 {
-    MyTypedPluginFactory::getInstance().unregisterAllPlugins();
+    MyTypedPluginFactory::getInstance().deregisterAll();
 
-    lunchbox::IOPluginRegisterer< MyTypedDummyPlugin > registerer;
+    lunchbox::PluginRegisterer< MyTypedDummyPlugin > registerer;
 
     IOTypedPluginInterfacePtr plugin;
     BOOST_CHECK_THROW( tryCreateTypedPlugin( plugin ), std::runtime_error );
@@ -173,22 +174,22 @@ BOOST_AUTO_TEST_CASE( testWhenTypedPlginsDontHandleURICreateThrowsRuntimeError )
 
 BOOST_AUTO_TEST_CASE( testWhenOnePluginHandlesURICreateInstanciesCorrectType )
 {
-    MyPluginFactory::getInstance().unregisterAllPlugins();
+    MyPluginFactory::getInstance().deregisterAll();
 
-    lunchbox::IOPluginRegisterer< MyDummyPlugin > registerer1;
-    lunchbox::IOPluginRegisterer< MyPlugin > registerer2;
+    lunchbox::PluginRegisterer< MyDummyPlugin > registerer1;
+    lunchbox::PluginRegisterer< MyPlugin > registerer2;
 
-    IOPluginInterfacePtr plugin;
+    PluginInterfacePtr plugin;
     BOOST_REQUIRE_NO_THROW( tryCreatePlugin( plugin ));
     BOOST_CHECK_EQUAL( plugin->getValue(), VALID_VALUE );
 }
 
 BOOST_AUTO_TEST_CASE( testWhenOneTypedPluginHandlesURICreateInstCorrectType )
 {
-    MyTypedPluginFactory::getInstance().unregisterAllPlugins();
+    MyTypedPluginFactory::getInstance().deregisterAll();
 
-    lunchbox::IOPluginRegisterer< MyTypedDummyPlugin > registerer1;
-    lunchbox::IOPluginRegisterer< MyTypedPlugin > registerer2;
+    lunchbox::PluginRegisterer< MyTypedDummyPlugin > registerer1;
+    lunchbox::PluginRegisterer< MyTypedPlugin > registerer2;
 
     IOTypedPluginInterfacePtr plugin;
     BOOST_REQUIRE_NO_THROW( tryCreateTypedPlugin( plugin ));

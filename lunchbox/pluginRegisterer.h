@@ -61,7 +61,7 @@ namespace lunchbox
  *
  * @version 1.11.0
  */
-template< class T > struct hasInitDataT
+template< typename T > struct hasInitDataT
 {
     // SFINAE class to check whether class T has a typedef InitDataT
     // If class has the typedef, "value" is known in compile time as true,
@@ -69,12 +69,12 @@ template< class T > struct hasInitDataT
 
     // SFINAE is used for specializing the PluginRegisterer class
     // when no InitDataT is defined.
-    template<class U> static char (&test(class U::InitDataT const*))[1];
-    template<class U> static char (&test(...))[2];
+    template<typename U> static char (&test(typename U::InitDataT const*))[1];
+    template<typename U> static char (&test(...))[2];
     static const bool value = (sizeof(test<T>(0)) == 1);
 };
 
-template< class Impl, bool hasInitData = hasInitDataT< Impl >::value >
+template< typename Impl, bool hasInitData = hasInitDataT< Impl >::value >
 class PluginRegisterer
 {
 public:
@@ -86,17 +86,18 @@ public:
  * Specialized PluginRegisterer for implementations which have the InitDataT
  * definition.
  */
-template< class Impl > class PluginRegisterer< Impl, true >
+template< typename Impl > class PluginRegisterer< Impl, true >
 {
 public:
     /** Construct a registerer and register the Impl class. @version 1.11.0 */
     PluginRegisterer()
     {
-        Plugin< class Impl::PluginT, class Impl::InitDataT > plugin(
+        Plugin< typename Impl::PluginT, typename Impl::InitDataT > plugin(
             boost::bind( boost::factory< Impl* >(), _1 ),
             boost::bind( &Impl::handles, _1 ));
-        PluginFactory< class Impl::PluginT,
-                       class Impl::InitDataT >::getInstance().register_(plugin);
+        PluginFactory< typename Impl::PluginT,
+                       typename Impl::InitDataT >::getInstance().
+            register_( plugin );
     }
 };
 
@@ -104,17 +105,18 @@ public:
  * Specialized PluginRegisterer for plugin implementations which don't have
  * the InitDataT definition.
  */
-template< class Impl > class PluginRegisterer< Impl, false >
+template< typename Impl > class PluginRegisterer< Impl, false >
 {
 public:
     /** Construct a registerer and register the Impl class. @version 1.11.0 */
     PluginRegisterer()
     {
-        Plugin< class Impl::PluginT > plugin(
+        Plugin< typename Impl::PluginT > plugin(
             boost::bind( boost::factory< Impl* >(), _1 ),
             boost::bind( &Impl::handles, _1 ));
 
-        PluginFactory< class Impl::PluginT >::getInstance().register_( plugin );
+        PluginFactory< typename Impl::PluginT >::getInstance().
+            register_( plugin );
     }
 };
 

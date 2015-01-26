@@ -52,12 +52,12 @@ public:
     virtual int getValue() = 0;
 };
 
-class IOTypedPluginInterface
+class TypedPluginInterface
 {
 public:
-    typedef IOTypedPluginInterface PluginT;
+    typedef TypedPluginInterface PluginT;
     typedef InitData InitDataT;
-    virtual ~IOTypedPluginInterface() {}
+    virtual ~TypedPluginInterface() {}
     virtual int getValue() = 0;
 };
 
@@ -69,7 +69,7 @@ public:
     int getValue() final { return VALID_VALUE; }
 };
 
-class MyTypedPlugin : public IOTypedPluginInterface
+class MyTypedPlugin : public TypedPluginInterface
 {
 public:
     MyTypedPlugin( const InitData&  ) {}
@@ -85,7 +85,7 @@ public:
     int getValue() final { return INVALID_VALUE; }
 };
 
-class MyTypedDummyPlugin : public IOTypedPluginInterface
+class MyTypedDummyPlugin : public TypedPluginInterface
 {
 public:
     MyTypedDummyPlugin( const InitData&  ) {}
@@ -94,11 +94,11 @@ public:
 };
 
 typedef lunchbox::PluginFactory< PluginInterface> MyPluginFactory;
-typedef lunchbox::PluginFactory< IOTypedPluginInterface, InitData >
-                                                           MyTypedPluginFactory;
+typedef lunchbox::PluginFactory< TypedPluginInterface,
+                                 InitData > MyTypedPluginFactory;
 
 typedef boost::scoped_ptr< PluginInterface > PluginInterfacePtr;
-typedef boost::scoped_ptr< IOTypedPluginInterface > IOTypedPluginInterfacePtr;
+typedef boost::scoped_ptr< TypedPluginInterface > TypedPluginInterfacePtr;
 
 void tryCreatePlugin( PluginInterfacePtr& plugin )
 {
@@ -106,7 +106,7 @@ void tryCreatePlugin( PluginInterfacePtr& plugin )
     plugin.reset( factory.create( lunchbox::URI( "XYZ" )));
 }
 
-void tryCreateTypedPlugin( IOTypedPluginInterfacePtr& plugin )
+void tryCreateTypedPlugin( TypedPluginInterfacePtr& plugin )
 {
     MyTypedPluginFactory& factory = MyTypedPluginFactory::getInstance();
     plugin.reset( factory.create( InitData() ));
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE( testWhenNoTypedPluginIsRegisteredCreateThrowsRuntimeErr )
 {
     MyTypedPluginFactory::getInstance().deregisterAll();
 
-    IOTypedPluginInterfacePtr plugin;
+    TypedPluginInterfacePtr plugin;
     BOOST_CHECK_THROW( tryCreateTypedPlugin( plugin ), std::runtime_error );
 }
 
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(
 
     lunchbox::PluginRegisterer< MyTypedPlugin > registerer;
 
-    IOTypedPluginInterfacePtr plugin;
+    TypedPluginInterfacePtr plugin;
     BOOST_REQUIRE_NO_THROW( tryCreateTypedPlugin( plugin ));
     BOOST_CHECK_EQUAL( plugin->getValue(), VALID_VALUE );
 }
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE( testWhenTypedPlginsDontHandleURICreateThrowsRuntimeError )
 
     lunchbox::PluginRegisterer< MyTypedDummyPlugin > registerer;
 
-    IOTypedPluginInterfacePtr plugin;
+    TypedPluginInterfacePtr plugin;
     BOOST_CHECK_THROW( tryCreateTypedPlugin( plugin ), std::runtime_error );
 }
 
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE( testWhenOneTypedPluginHandlesURICreateInstCorrectType )
     lunchbox::PluginRegisterer< MyTypedDummyPlugin > registerer1;
     lunchbox::PluginRegisterer< MyTypedPlugin > registerer2;
 
-    IOTypedPluginInterfacePtr plugin;
+    TypedPluginInterfacePtr plugin;
     BOOST_REQUIRE_NO_THROW( tryCreateTypedPlugin( plugin ));
     BOOST_CHECK_EQUAL( plugin->getValue(), VALID_VALUE );
 }

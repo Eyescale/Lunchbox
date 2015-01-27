@@ -23,6 +23,7 @@
 #define LUNCHBOX_PLUGINFACTORY_H
 
 #include <lunchbox/types.h>
+#include <lunchbox/algorithm.h> // used inline
 #include <lunchbox/debug.h> // LBTHROW
 #include <lunchbox/dso.h> // used inline
 #include <lunchbox/file.h> // searchDirectory() used inline
@@ -103,6 +104,8 @@ public:
      */
     DSOs load( const int version, const std::string& path,
                const std::string& pattern );
+    DSOs load( const int version, const Strings& paths,
+               const std::string& pattern );
 
     /**
      * Unload and deregister a previously loaded plugin
@@ -118,6 +121,9 @@ private:
 
     typedef boost::unordered_map< DSO*, PluginHolder > PluginMap;
     PluginMap _libraries;
+
+    void _load( DSOs& result, const int version, const std::string& path,
+                const std::string& pattern );
 };
 
 }

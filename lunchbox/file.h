@@ -63,6 +63,12 @@ LUNCHBOX_API std::string getExecutablePath();
  * @version 1.11
  */
 LUNCHBOX_API std::string getLibraryPath();
+
+/**
+ * @return the search paths to libraries of the current executable.
+ * @version 1.11
+ */
+LUNCHBOX_API Strings getLibraryPaths();
 }
 
 #endif //LUNCHBOX_FILE_H

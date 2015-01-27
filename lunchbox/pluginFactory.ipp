@@ -71,10 +71,34 @@ void PluginFactory< PluginT, InitDataT >::deregisterAll()
 
 template< typename PluginT, typename InitDataT >
 DSOs PluginFactory< PluginT, InitDataT >::load( const int version,
+                                                const Strings& paths,
+                                                const std::string& pattern )
+{
+    Strings unique = paths;
+    lunchbox::usort( unique );
+
+    DSOs result;
+    BOOST_FOREACH( const std::string& path, unique )
+        _load( result, version, path, pattern );
+    return result;
+}
+
+template< typename PluginT, typename InitDataT >
+DSOs PluginFactory< PluginT, InitDataT >::load( const int version,
                                                 const std::string& path,
                                                 const std::string& pattern )
 {
     DSOs loaded;
+    _load( loaded, version, path, pattern );
+    return loaded;
+}
+
+template< typename PluginT, typename InitDataT >
+void PluginFactory< PluginT, InitDataT >::_load( DSOs& result,
+                                                 const int version,
+                                                 const std::string& path,
+                                                 const std::string& pattern )
+{
 #ifdef _MSC_VER
     const std::string regex( pattern + ".dll" );
 #elif __APPLE__
@@ -121,13 +145,12 @@ DSOs PluginFactory< PluginT, InitDataT >::load( const int version,
         if( registerFunc( ))
         {
             _libraries.insert( std::make_pair( dso, _plugins.back( )));
-            loaded.push_back( dso );
+            result.push_back( dso );
             LBINFO << "Enabled " << lib << std::endl;
         }
         else
             delete dso;
     }
-    return loaded;
 }
 
 template< typename PluginT, typename InitDataT >

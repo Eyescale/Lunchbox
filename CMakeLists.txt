@@ -44,9 +44,7 @@ if(OPENMP_FOUND)
     "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
-set(LUNCHBOX_DEFINITIONS ${LUNCHBOX_DEFINITIONS}
-  -DLUNCHBOX_BUILD_DIR="${CMAKE_BINARY_DIR}/")
-add_definitions(${LUNCHBOX_DEFINITIONS})
+add_definitions("-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
 if(APPLE)
   # WAR needed when CMAKE_OSX_SYSROOT is set to find /usr/include/turbojpeg.h

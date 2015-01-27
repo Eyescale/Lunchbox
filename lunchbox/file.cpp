@@ -24,6 +24,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/regex.hpp>
+#include <boost/tokenizer.hpp>
 #include <sys/stat.h>
 #ifdef _MSC_VER
 #  include <windows.h>
@@ -156,5 +157,41 @@ std::string getLibraryPath()
     return path.parent_path().string() + "/lib";
 #endif
 }
+
+#define STDSTRING( macro ) std::string( STRINGIFY( macro ))
+#define STRINGIFY( foo ) #foo
+
+Strings getLibraryPaths()
+{
+    Strings paths;
+    const std::string& appPath = getLibraryPath();
+    if( !appPath.empty( ))
+        paths.push_back( appPath );
+
+#ifdef _MSC_VER
+    const char* env = ::getenv( "PATH" );
+    boost::char_separator< char > separator(";");
+    paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/bin" );
+#elif __APPLE__
+    const char* env = ::getenv( "LD_LIBRARY_PATH" );
+    boost::char_separator< char > separator(":");
+    paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/lib" );
+#else
+    const char* env = ::getenv( "DYLD_LIBRARY_PATH" );
+    boost::char_separator< char > separator(":");
+    paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/lib" );
+#endif
+
+    if( !env )
+        return paths;
+
+    const boost::tokenizer< boost::char_separator< char > >
+        tokens( std::string( env ), separator );
+    BOOST_FOREACH( const std::string& token, tokens )
+        paths.push_back( token );
+
+    return paths;
+}
+
 
 }

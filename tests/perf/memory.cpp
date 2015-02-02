@@ -20,6 +20,7 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/debug.h>
 #include <lunchbox/init.h>
+#include <string.h>
 
 int main( int argc, char **argv )
 {

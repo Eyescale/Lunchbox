@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2015, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,7 +20,7 @@
 
 #include <lunchbox/refPtr.h>      // used inline
 #include <lunchbox/referenced.h>  // base class
-
+#include <boost/noncopyable.hpp> // base class
 #include <stdexcept>
 
 namespace lunchbox

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2014, ahmet.bilgili@epfl.ch
+/* Copyright (c) 2013-2015, Ahmet.Bilgili@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -19,9 +19,10 @@
 
 #include <lunchbox/uri.h>
 
-#include <boost/regex.hpp>
 #include <boost/algorithm/string_regex.hpp>
+#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
 #include <sstream>
 #include <exception>
 

@@ -76,6 +76,16 @@ function(GIT_EXTERNAL DIR REPO TAG)
       WORKING_DIRECTORY "${DIR}")
   endif()
 
+  # set up "user" remote for github forks
+  if(GIT_EXTERNAL_USER_FORK AND REPO MATCHES ".*github.com.*")
+    string(REGEX REPLACE "(.*github.com[\\/:]).*(\\/.*)"
+      "\\1${GIT_EXTERNAL_USER_FORK}\\2" GIT_EXTERNAL_USER_REPO ${REPO})
+    execute_process(
+      COMMAND "${GIT_EXECUTABLE}" remote add user ${GIT_EXTERNAL_USER_REPO}
+      RESULT_VARIABLE nok ERROR_VARIABLE error
+      WORKING_DIRECTORY "${DIR}")
+  endif()
+
   if(IS_DIRECTORY "${DIR}/.git")
     if(${GIT_EXTERNAL_NO_UPDATE})
       GIT_EXTERNAL_MESSAGE("git update disabled by user")

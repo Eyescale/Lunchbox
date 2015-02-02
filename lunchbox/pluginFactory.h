@@ -29,8 +29,9 @@
 #include <lunchbox/file.h> // searchDirectory() used inline
 #include <lunchbox/uri.h> // Default template type
 
-#include <boost/noncopyable.hpp> // base class
+#include <boost/foreach.hpp> // used inline
 #include <boost/lexical_cast.hpp> // used inline
+#include <boost/noncopyable.hpp> // base class
 #include <boost/unordered_map.hpp>
 
 namespace lunchbox

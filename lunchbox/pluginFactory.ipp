@@ -117,7 +117,7 @@ void PluginFactory< PluginT, InitDataT >::_load( DSOs& result,
             continue;
         }
 
-        typedef uint32_t( *GetVersion_t )();
+        typedef int( *GetVersion_t )();
         typedef bool( *Register_t )();
 
         GetVersion_t getVersion = dso->getFunctionPointer< GetVersion_t >(

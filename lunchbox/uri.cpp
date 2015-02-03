@@ -33,6 +33,17 @@ struct URIData
 {
     URIData() : port( 0 ) {}
 
+    bool operator == ( const URIData& rhs ) const
+    {
+        return (userinfo == rhs.userinfo &&
+                host == rhs.host &&
+                port == rhs.port &&
+                path == rhs.path &&
+                query == rhs.query &&
+                fragment == rhs.fragment &&
+                queryMap == rhs.queryMap);
+    }
+
     std::string scheme;
     std::string userinfo;
     std::string host;
@@ -187,6 +198,16 @@ URI& URI::operator = ( const URI& rhs )
     if( this != &rhs )
         *_impl = *rhs._impl;
     return *this;
+}
+
+bool URI::operator == ( const URI& rhs ) const
+{
+    return this == &rhs || ( _impl->getData() == rhs._impl->getData( ));
+}
+
+bool URI::operator != ( const URI& rhs ) const
+{
+    return !( *this == rhs );
 }
 
 const std::string &URI::getScheme() const

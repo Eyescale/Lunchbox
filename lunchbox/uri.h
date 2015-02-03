@@ -80,6 +80,12 @@ public:
     /** Assign the data from another URI. @version 1.9.2 */
     LUNCHBOX_API URI& operator = ( const URI& rhs );
 
+    /** Equals operator, @version 1.10.0 */
+    LUNCHBOX_API bool operator == ( const URI& rhs ) const;
+
+    /** Not equals operator, @version 1.10.0 */
+    LUNCHBOX_API bool operator != ( const URI& rhs ) const;
+
     /** @name Getters for uri data @version 1.9.2 */
     //@{
     LUNCHBOX_API const std::string& getScheme() const;

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012-2014, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2012-2015, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -19,6 +19,8 @@
 
 #include "servus.h"
 #include "debug.h"
+
+#include <string.h>
 
 namespace lunchbox
 {

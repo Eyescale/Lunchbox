@@ -23,6 +23,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/foreach.hpp>
 #include <boost/regex.hpp>
 #include <boost/tokenizer.hpp>
 #include <sys/stat.h>

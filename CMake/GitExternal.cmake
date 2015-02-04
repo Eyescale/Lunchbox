@@ -67,14 +67,6 @@ function(GIT_EXTERNAL DIR REPO TAG)
       message(FATAL_ERROR "${DIR} git clone failed: ${error}\n")
     endif()
   endif()
-  if(GIT_EXTERNAL_USER_FORK AND REPO MATCHES ".*github.com.*")
-    string(REGEX REPLACE "(.*github.com[\\/:]).*(\\/.*)"
-      "\\1${GIT_EXTERNAL_USER_FORK}\\2" GIT_EXTERNAL_USER_REPO ${REPO})
-    execute_process(
-      COMMAND "${GIT_EXECUTABLE}" remote add user ${GIT_EXTERNAL_USER_REPO}
-      RESULT_VARIABLE nok ERROR_VARIABLE error
-      WORKING_DIRECTORY "${DIR}")
-  endif()
 
   # set up "user" remote for github forks
   if(GIT_EXTERNAL_USER_FORK AND REPO MATCHES ".*github.com.*")

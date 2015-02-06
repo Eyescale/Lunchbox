@@ -151,7 +151,8 @@ std::string getLibraryPath()
 
     // foo.app/Contents/MacOS/foo
     if( boost::algorithm::ends_with( exePath, ".app/Contents/MacOS" ))
-        return path.parent_path().parent_path().parent_path().string() + "/lib";
+        return path.parent_path().parent_path().parent_path().parent_path().
+                   string() + "/lib";
     return path.parent_path().string() + "/lib";
 #else
     const boost::filesystem::path path( exePath );

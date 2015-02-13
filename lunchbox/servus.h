@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012-2014, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2012-2015, Stefan Eilemann <eile@eyescale.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -95,6 +95,9 @@ public:
 
     /** Share the ZeroConf service with the rhs argument @version 1.9.2 */
     LUNCHBOX_API Servus& operator = ( const Servus& rhs );
+
+    /** @return the service name. @version 1.11 */
+    const std::string& getName() const;
 
     /**
      * Set a key/value pair to be announced.

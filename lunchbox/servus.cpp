@@ -37,8 +37,10 @@ typedef InstanceMap::const_iterator InstanceMapCIter;
 class Servus
 {
 public:
-    Servus() {}
+    Servus( const std::string& name ) : _name( name ) {}
     virtual ~Servus() {}
+
+    const std::string& getName() const { return _name; }
 
     void set( const std::string& key, const std::string& value )
     {
@@ -134,6 +136,7 @@ public:
     }
 
 protected:
+    const std::string _name;
     InstanceMap _instanceMap; //!< last discovered data
     ValueMap _data;   //!< self data to announce
 
@@ -167,7 +170,7 @@ Servus::Servus( const std::string& name LB_UNUSED )
 #elif defined(LUNCHBOX_USE_AVAHI_CLIENT)
     : _impl( new avahi::Servus( name ))
 #else
-    : _impl( new none::Servus( ))
+    : _impl( new none::Servus( name ))
 #endif
 {}
 
@@ -182,6 +185,11 @@ Servus& Servus::operator = ( const Servus& rhs )
 {
     _impl = rhs._impl;
     return *this;
+}
+
+const std::string& Servus::getName() const
+{
+    return _impl->getName();
 }
 
 std::string Servus::Result::getString() const

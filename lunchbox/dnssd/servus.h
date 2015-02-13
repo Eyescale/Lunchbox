@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -37,7 +37,7 @@ class Servus : public detail::Servus
 {
 public:
     explicit Servus( const std::string& name )
-        : _name( name )
+        : detail::Servus( name )
         , _out( 0 )
         , _in( 0 )
         , _result( lunchbox::Servus::Result::PENDING )
@@ -135,7 +135,6 @@ public:
     }
 
 private:
-    const std::string _name;
     DNSServiceRef _out; //!< used for announce()
     DNSServiceRef _in; //!< used to browse()
     int32_t _result;

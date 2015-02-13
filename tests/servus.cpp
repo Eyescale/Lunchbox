@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012-2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2012-2015, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -53,6 +53,8 @@ int main( int, char** )
     lunchbox::Servus service( serviceName.str( ));
     const lunchbox::Servus::Result& result = service.announce( port,
                                     boost::lexical_cast< std::string >( port ));
+
+    TEST( service.getName() == serviceName.str( ));
 
     if( !lunchbox::Servus::isAvailable( ))
     {

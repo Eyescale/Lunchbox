@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012-2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2012-2015, Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -29,9 +29,14 @@
 
 int main( int, char** )
 {
+    lunchbox::RNG rng;
+    const uint16_t port = (rng.get< uint16_t >() % 60000) + 1024;
+    std::stringstream serviceName;
+    serviceName << "_servustest_" << port << "._tcp";
+
     try
     {
-        lunchbox::Servus service( "_servustest._tcp" );
+        lunchbox::Servus service( serviceName.str( ));
     }
     catch( const std::runtime_error& e )
     {
@@ -45,12 +50,11 @@ int main( int, char** )
         throw e;
     }
 
-    lunchbox::Servus service( "_servustest._tcp" );
-
-    lunchbox::RNG rng;
-    const uint16_t port = (rng.get< uint16_t >() % 60000) + 1024;
+    lunchbox::Servus service( serviceName.str( ));
     const lunchbox::Servus::Result& result = service.announce( port,
                                     boost::lexical_cast< std::string >( port ));
+
+    TEST( service.getName() == serviceName.str( ));
 
     if( !lunchbox::Servus::isAvailable( ))
     {
@@ -112,7 +116,7 @@ int main( int, char** )
     TEST( service.getKeys().size() == 2 );
 
     { // test updates during browsing
-        lunchbox::Servus service2( "_servustest._tcp" );
+        lunchbox::Servus service2( serviceName.str( ));
         TEST( service2.announce( port+1,
                                  boost::lexical_cast< std::string >( port+1 )));
         TEST( service.browse( 2000 ));

@@ -1,5 +1,5 @@
 
-# Copyright (c) 2012-2014 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2015 Stefan Eilemann <eile@eyescale.ch>
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
@@ -10,7 +10,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
 include(GitExternal)
 
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "10")
+set(VERSION_MINOR "11")
 set(VERSION_PATCH "0")
 set(VERSION_ABI 3)
 option(LUNCHBOX_BUILD_V2_API

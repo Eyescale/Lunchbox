@@ -17,10 +17,7 @@
 
 #include "test.h"
 
-#include <lunchbox/clock.h>
-#include <lunchbox/debug.h>
-#include <lunchbox/init.h>
-#include <lunchbox/monitor.h>
+#include <lunchbox/lunchbox.h>
 #include <string.h>
 
 enum Task

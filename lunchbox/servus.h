@@ -97,7 +97,7 @@ public:
     LUNCHBOX_API Servus& operator = ( const Servus& rhs );
 
     /** @return the service name. @version 1.11 */
-    const std::string& getName() const;
+    LUNCHBOX_API const std::string& getName() const;
 
     /**
      * Set a key/value pair to be announced.

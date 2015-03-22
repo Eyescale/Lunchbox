@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -99,8 +99,7 @@ public:
         std::string value;
         const skv_status_t status = _retrieve( key, value );
         if( status != SKV_SUCCESS )
-            LBINFO << "skv retrieve failed: " << skv_status_to_string( status )
-                   << std::endl;
+            value.clear();
         return value;
     }
 
@@ -128,7 +127,7 @@ private:
                               const_cast< char* >( key.c_str( )), key.length(),
                               buffer, bufferSize, &valueSize, 0,
                               SKV_COMMAND_RIU_FLAGS_NONE );
-        value.assign( buffer, bufferSize );
+        value.assign( buffer, valueSize );
         return status;
     }
 

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014 Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -43,7 +43,7 @@ template< class T > void readVector( PersistentMap& map )
 {
     const std::vector< T >& vector =
         map.getVector< T >( typeid( vector ).name( ));
-    TEST( vector.size() ==  numInts );
+    TESTINFO( vector.size() ==  numInts, vector.size() << " != " << numInts );
     for( size_t i = 0; i < numInts; ++i )
         TEST( vector[ i ] == T( ints[i] ));
 }
@@ -52,6 +52,7 @@ void setup( const std::string& uri )
 {
     PersistentMap map( uri );
     TEST( map.insert( "foo", "bar" ));
+    TEST( map.contains( "foo" ));
     TESTINFO( map[ "foo" ] == "bar",
               map[ "foo" ] << " length " << map[ "foo" ].length( ));
     TEST( map[ "bar" ].empty( ));

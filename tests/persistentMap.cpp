@@ -16,6 +16,8 @@
  */
 
 #include <test.h>
+#include <lunchbox/clock.h>
+#include <lunchbox/os.h>
 #include <lunchbox/persistentMap.h>
 #ifdef LUNCHBOX_USE_LEVELDB
 #  include <leveldb/db.h>
@@ -89,6 +91,41 @@ void read( const std::string& uri )
                   ints[i] << " not found in set" );
 }
 
+void benchmark( const std::string& uri )
+{
+    PersistentMap map( uri );
+    lunchbox::Clock clock;
+
+    // Fast way to generate unique keys by incrementing the key as an uint64_t
+    char charKey[9];
+    lunchbox::setZero( charKey, 8 );
+    uint64_t* keyPtr = reinterpret_cast< uint64_t* >( charKey );
+    std::string key;
+    const std::string value = "Just a few bytes of value";
+
+    while( clock.getTimef() < 1000.f )
+    {
+        ++(*keyPtr);
+        key.assign( charKey, 8 );
+        map.insert( key, value );
+    }
+    map.flush();
+    const float insertTime = clock.resetTimef();
+    const size_t wOps = *keyPtr;
+
+    while( (*keyPtr) > 0 && clock.getTimef() < 1000.f )
+    {
+        map[ key ];
+        --(*keyPtr);
+    }
+
+    const float readTime = clock.resetTimef();
+    const size_t rOps = wOps - (*keyPtr);
+
+    std::cout << rOps / readTime << ", " << wOps / insertTime
+              << " r+w ops/ms on " << uri << std::endl;
+}
+
 void testGenericFailures()
 {
     try
@@ -117,8 +154,10 @@ void testLevelDBFailures()
 #endif
 }
 
-int main( int, char** argv LB_UNUSED )
+int main( int, char* argv[] )
 {
+    const bool perfTest = std::string( argv[0] ).find( "perf_" ) !=
+                          std::string::npos;
     try
     {
 #ifdef LUNCHBOX_USE_LEVELDB
@@ -128,11 +167,15 @@ int main( int, char** argv LB_UNUSED )
         read( "" );
         read( "leveldb://" );
         read( "leveldb://persistentMap2.leveldb" );
+        if( perfTest )
+            benchmark( "leveldb://" );
 #endif
 #ifdef LUNCHBOX_USE_SKV
-        FxLogger_Init( argv[ 0 ] );
+        FxLogger_Init( argv[0] );
         setup( "skv://" );
         read( "skv://" );
+        if( perfTest )
+            benchmark( "skv://" );
 #endif
     }
 #ifdef LUNCHBOX_USE_LEVELDB

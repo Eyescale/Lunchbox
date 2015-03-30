@@ -75,6 +75,20 @@ public:
     LUNCHBOX_API static bool handles( const URI& uri );
 
     /**
+     * Set the maximum number of asynchronous outstanding write operations.
+     *
+     * Some backend implementations support asynchronous writes, which can be
+     * enabled by setting a non-zero queue depth. Applications then need to
+     * quarantee that the inserted values stay valid until 'depth' other
+     * elements have been inserted or flush() has been called. Implementations
+     * which do not support asynchronous writes return 0.
+     *
+     * @return the queue depth chosen by the implementation, smaller or equal to
+     *         the given depth.
+     */
+    size_t setQueueDepth( const size_t depth );
+
+    /**
      * Insert or update a value in the database.
      *
      * @param key the key to store the value.
@@ -115,16 +129,26 @@ public:
     /**
      * Retrieve a value for a key.
      *
-     * @param key the key to retreive.
+     * @param key the key to retrieve.
      * @return the value, or an empty string if the key is not available.
      * @version 1.9.2
      */
     LUNCHBOX_API std::string operator [] ( const std::string& key ) const;
 
     /**
+     * Retrieve a value for a key.
+     *
+     * @param key the key to retrieve.
+     * @return the value, or an empty string if the key is not available.
+     * @version 1.9.2
+     */
+    template< class V > V get( const std::string& key )
+        { return _get< V >( key ); }
+
+    /**
      * Retrieve a value as a vector for a key.
      *
-     * @param key the key to retreive.
+     * @param key the key to retrieve.
      * @return the values, or an empty vector if the key is not available.
      * @version 1.9.2
      */
@@ -133,7 +157,7 @@ public:
     /**
      * Retrieve a value as a set for a key.
      *
-     * @param key the key to retreive.
+     * @param key the key to retrieve.
      * @return the values, or an empty set if the key is not available.
      * @version 1.9.2
      */
@@ -177,6 +201,20 @@ private:
     bool _insert( const std::string& key, const std::vector< V >& values,
                   const boost::true_type& )
         { return _insert( key, values.data(), values.size() * sizeof( V )); }
+
+    template< class V > V _get( const std::string& k )
+    {
+        if( !boost::has_trivial_assign< V >( ))
+            LBTHROW( std::runtime_error( "Can't retrieve non-POD " +
+                                     className( V( ))));
+        if( boost::is_pointer< V >::value )
+            LBTHROW( std::runtime_error( "Can't retrieve pointers" ));
+
+        const std::string& value = (*this)[ k ];
+        LBASSERTINFO( value.size() == sizeof( V ),
+                      value.size() << " != " << sizeof( V ) << " for " << k );
+        return *reinterpret_cast< const V* >( &value[0] );
+    }
 };
 
 template<> inline

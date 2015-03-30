@@ -66,6 +66,14 @@ void setup( const std::string& uri )
     TEST( map.insert( "hans", std::string( "dampf" )));
     TESTINFO( map[ "hans" ] == "dampf", map[ "hans" ] );
 
+    const bool bValue = true;
+    TEST( map.insert( "bValue", bValue ));
+    TEST( map.get< bool >( "bValue" ) == bValue );
+
+    const int iValue = 42;
+    TEST( map.insert( "iValue", iValue ));
+    TEST( map.get< int >( "iValue" ) == iValue );
+
     insertVector< int >( map );
     insertVector< uint16_t >( map );
     readVector< int >( map );
@@ -80,6 +88,8 @@ void read( const std::string& uri )
     PersistentMap map( uri );
     TEST( map[ "foo" ] == "bar" );
     TEST( map[ "bar" ].empty( ));
+    TEST( map.get< bool >( "bValue" ) == true );
+    TEST( map.get< int >( "iValue" ) == 42 );
 
     readVector< int >( map );
     readVector< uint16_t >( map );
@@ -91,39 +101,56 @@ void read( const std::string& uri )
                   ints[i] << " not found in set" );
 }
 
-void benchmark( const std::string& uri )
+void benchmark( const std::string& uri, const size_t queueDepth )
 {
     PersistentMap map( uri );
+    map.setQueueDepth( queueDepth );
+
+    // Prepare keys
+    lunchbox::Strings keys;
+    keys.resize( queueDepth + 1 );
+    for( uint64_t i = 0; i <= queueDepth; ++i )
+        keys[i].assign( reinterpret_cast< char* >( &i ), 8 );
+
+    // write performance
     lunchbox::Clock clock;
-
-    // Fast way to generate unique keys by incrementing the key as an uint64_t
-    char charKey[9];
-    lunchbox::setZero( charKey, 8 );
-    uint64_t* keyPtr = reinterpret_cast< uint64_t* >( charKey );
-    std::string key;
-    const std::string value = "Just a few bytes of value";
-
+    uint64_t i = 0;
     while( clock.getTimef() < 1000.f )
     {
-        ++(*keyPtr);
-        key.assign( charKey, 8 );
-        map.insert( key, value );
+        std::string& key = keys[ i % (queueDepth+1) ];
+        map.insert( key, key );
+
+        ++i;
+        ++(*reinterpret_cast< uint64_t* >( &key[0] ));
     }
+
     map.flush();
     const float insertTime = clock.resetTimef();
-    const size_t wOps = *keyPtr;
+    const uint64_t wOps = i;
+    std::string key;
+    key.assign( reinterpret_cast< char* >( &i ), 8 );
 
-    while( (*keyPtr) > 0 && clock.getTimef() < 1000.f )
+    // read performance
+    while( i > 0 && clock.getTimef() < 1000.f )
     {
         map[ key ];
-        --(*keyPtr);
+        --(*reinterpret_cast< uint64_t* >( &key[0] ));
+        --i;
     }
 
     const float readTime = clock.resetTimef();
-    const size_t rOps = wOps - (*keyPtr);
-
+    const uint64_t rOps = wOps - i;
     std::cout << rOps / readTime << ", " << wOps / insertTime
-              << " r+w ops/ms on " << uri << std::endl;
+              << " r+w ops/ms on " << uri << " " << queueDepth
+              << " async writes" << std::endl;
+
+    // check contents of store
+    for( uint64_t j = 0; j < wOps; ++j )
+    {
+        key.assign( reinterpret_cast< char* >( &j ), 8 );
+        TESTINFO( map.get< uint64_t >( key ) == j,
+                  j << " = " << map.get< uint64_t >( key ));
+    }
 }
 
 void testGenericFailures()
@@ -168,14 +195,18 @@ int main( int, char* argv[] )
         read( "leveldb://" );
         read( "leveldb://persistentMap2.leveldb" );
         if( perfTest )
-            benchmark( "leveldb://" );
+            benchmark( "leveldb://", 0 );
 #endif
 #ifdef LUNCHBOX_USE_SKV
         FxLogger_Init( argv[0] );
         setup( "skv://" );
         read( "skv://" );
         if( perfTest )
-            benchmark( "skv://" );
+        {
+            benchmark( "skv://", 0 );
+            for( size_t i=1; i < 100000; i = i<<1 )
+                benchmark( "skv://", i );
+        }
 #endif
     }
 #ifdef LUNCHBOX_USE_LEVELDB

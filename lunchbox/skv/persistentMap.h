@@ -32,7 +32,6 @@ namespace lunchbox
 namespace
 {
 typedef std::deque< skv_client_cmd_ext_hdl_t > PendingOperations;
-static const size_t _maxPendingOps = 100000;
 }
 
 namespace skv
@@ -41,6 +40,7 @@ class PersistentMap : public detail::PersistentMap
 {
 public:
     PersistentMap( const URI& uri )
+        : _maxPendingOps( 0 )
     {
 #ifdef SKV_CLIENT_UNI
         skv_status_t status = _client.Init( 0, 0 );
@@ -74,15 +74,28 @@ public:
 
     static bool handles( const URI& uri ) { return uri.getScheme() == "skv"; }
 
+    size_t setQueueDepth( const size_t depth ) final
+    {
+        _maxPendingOps = depth;
+        LBCHECK( _flush( depth ));
+        return depth;
+    }
+
     bool insert( const std::string& key, const void* data, const size_t size )
         final
     {
         skv_client_cmd_ext_hdl_t handle;
-        const skv_status_t status =
+        const bool useAsync = ( _maxPendingOps > 0 );
+        const skv_status_t status = useAsync ?
             _client.iInsert( &_namespace,
+                             const_cast< char* >( key.c_str( )), key.length(),
+                             static_cast< char* >( const_cast< void* >( data )),
+                             size, 0, SKV_COMMAND_RIU_UPDATE, &handle ) :
+            _client.Insert( &_namespace,
                             const_cast< char* >( key.c_str( )), key.length(),
                             static_cast< char* >( const_cast< void* >( data )),
-                             size, 0, SKV_COMMAND_RIU_UPDATE, &handle );
+                            size, 0, SKV_COMMAND_RIU_UPDATE );
+
         if( status != SKV_SUCCESS )
         {
             LBINFO << "skv insert failed: " << skv_status_to_string( status )
@@ -90,7 +103,8 @@ public:
             return false;
         }
 
-        _pending.push_back( handle );
+        if( useAsync )
+            _pending.push_back( handle );
         return _flush( _maxPendingOps );
     }
 
@@ -115,6 +129,7 @@ private:
     mutable skv_client_t _client;
     mutable skv_pds_id_t _namespace;
     PendingOperations _pending;
+    size_t _maxPendingOps;
 
     skv_status_t _retrieve( const std::string& key, std::string& value ) const
     {

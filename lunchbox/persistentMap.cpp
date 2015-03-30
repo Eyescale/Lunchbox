@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -26,6 +26,7 @@ class PersistentMap
 {
 public:
     virtual ~PersistentMap() {}
+    virtual size_t setQueueDepth( const size_t ) { return 0; }
     virtual bool insert( const std::string& key, const void* data,
                          const size_t size ) = 0;
     virtual std::string operator [] ( const std::string& key ) const = 0;
@@ -100,6 +101,11 @@ bool PersistentMap::handles( const URI& uri )
     return true;
 #endif
     return false;
+}
+
+size_t PersistentMap::setQueueDepth( const size_t depth )
+{
+    return _impl->setQueueDepth( depth );
 }
 
 bool PersistentMap::_insert( const std::string& key, const void* data,

@@ -183,8 +183,8 @@ void testLevelDBFailures()
 
 int main( int, char* argv[] )
 {
-    const bool perfTest = std::string( argv[0] ).find( "perf_" ) !=
-                          std::string::npos;
+    const bool perfTest LB_UNUSED
+        = std::string( argv[0] ).find( "perf_" ) != std::string::npos;
     try
     {
 #ifdef LUNCHBOX_USE_LEVELDB

@@ -21,6 +21,7 @@
 #include <lunchbox/futureFunction.h>
 #include <lunchbox/log.h>
 #include <boost/bind.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #define SKV_CLIENT_UNI
 #define SKV_NON_MPI
@@ -31,7 +32,9 @@ namespace lunchbox
 {
 namespace
 {
-typedef std::deque< skv_client_cmd_ext_hdl_t > PendingOperations;
+  typedef boost::tuple<skv_client_cmd_ext_hdl_t, int*, char *> PendingGetType;
+  typedef std::map< std::string, PendingGetType >     PendingGetOperations;
+  typedef std::deque< skv_client_cmd_ext_hdl_t >      PendingPutOperations;
 }
 
 namespace skv
@@ -77,6 +80,8 @@ public:
     size_t setQueueDepth( const size_t depth ) final
     {
         _maxPendingOps = depth;
+        _pendingGetRefIndex = 0;
+        _pendingGetSize.resize(depth*2); // @TODO : Fix : this is dangerous
         LBCHECK( _flush( depth ));
         return depth;
     }
@@ -111,10 +116,55 @@ public:
     std::string operator [] ( const std::string& key ) const final
     {
         std::string value;
+        // asking for a key when there are pending gets, check async receives
+        if (!_pendingGets.empty()) {
+            PendingGetOperations::const_iterator it = _pendingGets.find(key);
+            if (it!=_pendingGets.end()) {
+                skv_client_cmd_ext_hdl_t handle = (*it).second.get<0>();
+                if( _client.Wait( handle ) != SKV_SUCCESS ) {
+                    _pendingGets.erase(it);
+                    return "";
+                }
+//                std::cout << "Async get ok, length " << *((*it).second.get<1>());
+                value.assign( reinterpret_cast< const char* >( (*it).second.get<2>() ), *((*it).second.get<1>()) );
+//                std::cout << " key " << *reinterpret_cast< const uint64_t* >( &key[0] )  << " value " << *reinterpret_cast< const uint64_t* >( &value[0] ) << std::endl;
+                _pendingGets.erase(it);
+
+          }
+        }
+
         const skv_status_t status = _retrieve( key, value );
         if( status != SKV_SUCCESS )
             value.clear();
         return value;
+    }
+
+    bool fetch(const std::string& key, char *buffer, int buflength)
+    {
+        // calling fetch on a non async map should not be allowed?
+        LBCHECK( (_maxPendingOps>0) );
+
+        skv_client_cmd_ext_hdl_t handle;
+        const skv_status_t status = _client.iRetrieve(
+            &_namespace,
+            const_cast< char* >( key.c_str( )), key.length(),
+            buffer, buflength,
+            &_pendingGetSize[_pendingGetRefIndex], 0, SKV_COMMAND_RIU_FLAGS_NONE, &handle );
+
+        if( status != SKV_SUCCESS )
+        {
+            LBINFO << "skv fetch failed: " << skv_status_to_string( status )
+                   << std::endl;
+            return false;
+        }
+
+        // when we make an async get, we must store the buffer pointer
+        // so that we can retrieve the value, also the length of the value
+        // which is written by the iRetrieve call into an int so we store the pointer
+        _pendingGets[key]    = boost::make_tuple(handle, &_pendingGetSize[_pendingGetRefIndex], buffer);
+        _pendingGetRefIndex += 1;
+        _pendingGetRefIndex  = _pendingGetRefIndex % (_maxPendingOps*2);
+        return true;
     }
 
     bool contains( const std::string& key ) const final
@@ -126,10 +176,13 @@ public:
     bool flush() final { return _flush( 0 ); }
 
 private:
-    mutable skv_client_t _client;
-    mutable skv_pds_id_t _namespace;
-    PendingOperations _pending;
-    size_t _maxPendingOps;
+    mutable skv_client_t    _client;
+    mutable skv_pds_id_t    _namespace;
+    PendingPutOperations    _pending;
+    mutable PendingGetOperations    _pendingGets;
+    std::vector<int>        _pendingGetSize;
+    int                     _pendingGetRefIndex;
+    size_t                  _maxPendingOps;
 
     skv_status_t _retrieve( const std::string& key, std::string& value ) const
     {

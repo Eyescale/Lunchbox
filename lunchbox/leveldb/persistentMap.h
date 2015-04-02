@@ -68,6 +68,12 @@ public:
         return std::string();
     }
 
+    bool fetch(const std::string& , char *, int )
+    {
+      // not implemented
+      return false;
+    }
+
     bool contains( const std::string& key ) const final
     {
         std::string value;

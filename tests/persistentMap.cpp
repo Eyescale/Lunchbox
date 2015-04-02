@@ -14,7 +14,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+#define TEST_RUNTIME 240
 #include <test.h>
 #include <lunchbox/clock.h>
 #include <lunchbox/os.h>
@@ -118,7 +118,7 @@ void benchmark( const std::string& uri, const size_t queueDepth, float time_per_
     while( clock.getTimef() < time_per_loop )
     {
         std::string& key = keys[ i % (queueDepth+1) ];
-        (*reinterpret_cast< uint64_t* >( &key[0] ) = i);
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
         map.insert( key, key );
 
         ++i;
@@ -128,14 +128,26 @@ void benchmark( const std::string& uri, const size_t queueDepth, float time_per_
     map.flush();
     const float insertTime = clock.resetTimef();
     const uint64_t wOps = i;
-    std::string key;
-    key.assign( reinterpret_cast< char* >( &i ), 8 );
+    std::string key1, key2;
+    key1.assign( reinterpret_cast< char* >( &i ), 8 );
+    key2.assign( reinterpret_cast< char* >( &i ), 8 );
 
+    static char buffer[65536];
     // read performance
     while( i > 0 && clock.getTimef() < time_per_loop )
     {
-        map[ key ];
-        --(*reinterpret_cast< uint64_t* >( &key[0] ));
+        *reinterpret_cast< uint64_t* >( &key1[0] ) = i;
+        if (queueDepth>0) {
+          map.fetch( key1, buffer, 65536 ); // async fetch
+          uint64_t prev_i = i+queueDepth;
+          if (prev_i<=wOps) {
+              *reinterpret_cast< uint64_t* >( &key2[0] ) = prev_i;
+              map[key2]; // read the actual value from N fetches ago
+          }
+        }
+        else {
+          map[key1]; // read the actual value from N fetches ago
+        }
         --i;
     }
 
@@ -148,9 +160,9 @@ void benchmark( const std::string& uri, const size_t queueDepth, float time_per_
     // check contents of store
     for( uint64_t j = 0; j < wOps; ++j )
     {
-        key.assign( reinterpret_cast< char* >( &j ), 8 );
-        TESTINFO( map.get< uint64_t >( key ) == j,
-                  j << " = " << map.get< uint64_t >( key ));
+        key1.assign( reinterpret_cast< char* >( &j ), 8 );
+        TESTINFO( map.get< uint64_t >( key1 ) == j,
+                  j << " = " << map.get< uint64_t >( key1 ));
     }
 }
 
@@ -184,7 +196,7 @@ void testLevelDBFailures()
 
 int main( int, char* argv[] )
 {
-    float time_per_loop = 1000.0;
+    float time_per_loop = 500.0;
     const bool perfTest = std::string( argv[0] ).find( "perf_" ) !=
                           std::string::npos;
     try

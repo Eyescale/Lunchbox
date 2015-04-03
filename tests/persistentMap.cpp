@@ -26,6 +26,7 @@
 #  include <FxLogger/FxLogger.hpp>
 #endif
 #include <stdexcept>
+#include <boost/format.hpp>
 
 using lunchbox::PersistentMap;
 
@@ -120,55 +121,46 @@ void benchmark( const std::string& uri, const size_t queueDepth, float time_per_
         std::string& key = keys[ i % (queueDepth+1) ];
         *reinterpret_cast< uint64_t* >( &key[0] ) = i;
         map.insert( key, key );
-
         ++i;
-        ++(*reinterpret_cast< uint64_t* >( &key[0] ));
     }
     map.flush();
     const float insertTime = clock.resetTimef();
-    const uint64_t wOps = i--;
+    const uint64_t wOps = i;
     //std::cout << "Wrote " << wOps << " k/v pairs into database " << std::endl;
 
     // reserve space in keys
     std::string key1, key2;
-    key1.assign( reinterpret_cast< char* >( &i ), 8 );
-    key2.assign( reinterpret_cast< char* >( &i ), 8 );
+    key1.assign( 0, 8 );
+    key2.assign( 0, 8 );
 
     // we need space for queueDepth * sizeof values results, for this test, just make a buffer
-    static char buffer[16*65536];
+    std::vector<char> buffer(16*queueDepth, 0);
+
     // read performance
-    uint64_t prefetch_i = i+queueDepth;
     // we will not stop after a fixed time as we do not want to leave incomplete requests in the queue
     // fetch i, then N iterations later get it, maintain two counters and stop when all fetches have been read
     clock.resetTimef();
-    while(i>0 || prefetch_i>0)
+    for (i=0; i<wOps+queueDepth; ++i)
     {
         // i is the index we are fetching
-        if (i>0) {
+        if (i<wOps) {
             *reinterpret_cast< uint64_t* >( &key1[0] ) = i;
             if (queueDepth>0) {
-//              std::cout << "Async fetch for key " << *reinterpret_cast< uint64_t* >( &key1[0] ) << std::endl;
-                map.fetch( key1, &buffer[i*16], 16 ); // async fetch
+                //std::cout << "Async fetch for key " << *reinterpret_cast< uint64_t* >( &key1[0] ) << std::endl;
+                map.fetch( key1, &buffer[(i%(queueDepth+1))*16], 16 ); // async fetch
             }
-            else {
-                map[key1]; // not async, so just read directly
-            }
-            --i;
         }
-        // prefetch_i is the index from N iterations ago
-        if (prefetch_i<=wOps) {
-            *reinterpret_cast< uint64_t* >( &key2[0] ) = prefetch_i;
-//            std::cout << "Async get for key " << *reinterpret_cast< uint64_t* >( &key2[0] ) << std::endl;
+        if (i>=(queueDepth-1)) {
+            uint64_t prefetched_i = i-queueDepth+1;
+            *reinterpret_cast< uint64_t* >( &key2[0] ) = prefetched_i;
+            //std::cout << "Async get for key " << *reinterpret_cast< uint64_t* >( &key2[0] ) << std::endl;
             map[key2]; // read the actual value from N fetches ago
         }
-        --prefetch_i;
     }
+    //
     const float readTime = clock.resetTimef();
-    std::cout << std::setprecision(5) << std::setw(6)
-              << "write, " << wOps / insertTime  << ", "
-              << "read,  " << wOps / readTime    << ", "
-              << queueDepth << ", "
-              << " ops/ms, " << uri << std::endl;
+    std::cout << boost::format("write, %6.2f, read %6.2f, %6i, ops/ms ") % (wOps/insertTime) % (wOps/readTime) % queueDepth;
+    std::cout << std::endl;
 
     // check contents of store (not all to save time on bigger tests)
     for( uint64_t j = 0; j < wOps && clock.getTimef() < time_per_loop*5.0; ++j )
@@ -209,12 +201,12 @@ void testLevelDBFailures()
 
 int main( int, char* argv[] )
 {
-    float time_per_loop = 50.0;
+    float time_per_loop = 200.0;
     const bool perfTest = std::string( argv[0] ).find( "perf_" ) !=
                           std::string::npos;
     try
     {
-#ifdef LUNCHBOX_USE_LEVELDB
+#ifdef __LUNCHBOX_USE_LEVELDB
         setup( "" );
         setup( "leveldb://" );
         setup( "leveldb://persistentMap2.leveldb" );
@@ -230,8 +222,8 @@ int main( int, char* argv[] )
         read( "skv://" );
         if( perfTest )
         {
-            benchmark( "skv://", 0, time_per_loop );
-            for( size_t i=1; i < 100000; i = i<<1 )
+//            benchmark( "skv://", 0, time_per_loop );
+            for( size_t i=1; i < 200000; i = i<<1 )
                 benchmark( "skv://", i, time_per_loop );
         }
 #endif

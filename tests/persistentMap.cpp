@@ -26,6 +26,7 @@
 #  include <FxLogger/FxLogger.hpp>
 #endif
 #include <stdexcept>
+#include <deque>
 #include <boost/format.hpp>
 
 using lunchbox::PersistentMap;
@@ -129,37 +130,47 @@ void benchmark( const std::string& uri, const size_t queueDepth, float time_per_
     //std::cout << "Wrote " << wOps << " k/v pairs into database " << std::endl;
 
     // reserve space in keys
-    std::string key1, key2;
-    key1.assign( 0, 8 );
-    key2.assign( 0, 8 );
+    std::string key1;
+    key1.assign( reinterpret_cast< char* >( &i ), 8 );
 
     // we need space for queueDepth * sizeof values results, for this test, just make a buffer
     std::vector<char> buffer(16*queueDepth, 0);
+
+    std::deque<int> requests;
 
     // read performance
     // we will not stop after a fixed time as we do not want to leave incomplete requests in the queue
     // fetch i, then N iterations later get it, maintain two counters and stop when all fetches have been read
     clock.resetTimef();
-    for (i=0; i<wOps+queueDepth; ++i)
+    for (i=0; i<wOps+queueDepth-1; ++i)
     {
-        // i is the index we are fetching
-        if (i<wOps) {
-            *reinterpret_cast< uint64_t* >( &key1[0] ) = i;
-            if (queueDepth>0) {
-                //std::cout << "Async fetch for key " << *reinterpret_cast< uint64_t* >( &key1[0] ) << std::endl;
-                map.fetch( key1, &buffer[(i%(queueDepth+1))*16], 16 ); // async fetch
+        *reinterpret_cast< uint64_t* >( &key1[0] ) = i;
+        if (queueDepth==0) {
+            map[key1];
+        }
+        else {
+            if (i<wOps) {
+                if (queueDepth>0) {
+                    //std::cout << "Async fetch for key " << *reinterpret_cast< uint64_t* >( &key1[0] ) << std::endl;
+                    uint64_t request = map.fetch( key1, &buffer[(i%(queueDepth+1))*16], 16 ); // async fetch
+                    requests.push_back(request);
+                }
+            }
+            if (i>=(queueDepth-1)) {
+                uint64_t request = requests.front();
+                //uint64_t prefetched_i = i-queueDepth+1;
+                //*reinterpret_cast< uint64_t* >( &key2[0] ) = prefetched_i;
+                // std::cout << "Async get for key " << *reinterpret_cast< uint64_t* >( &key2[0] ) << " request handle is " << request << std::endl;
+                //map[key2]; // read the actual value from N fetches ago
+                map.getfetched(request);
+                requests.pop_front();
             }
         }
-        if (i>=(queueDepth-1)) {
-            uint64_t prefetched_i = i-queueDepth+1;
-            *reinterpret_cast< uint64_t* >( &key2[0] ) = prefetched_i;
-            //std::cout << "Async get for key " << *reinterpret_cast< uint64_t* >( &key2[0] ) << std::endl;
-            map[key2]; // read the actual value from N fetches ago
-        }
     }
+    //std::cout << "Read " << wOps << " k/v pairs from database " << std::endl;
     //
     const float readTime = clock.resetTimef();
-    std::cout << boost::format("write, %6.2f, read %6.2f, %6i, ops/ms ") % (wOps/insertTime) % (wOps/readTime) % queueDepth;
+    std::cout << boost::format("write, %6.2f, read, %6.2f, ops/ms, queue-depth, %6i") % (wOps/insertTime) % (wOps/readTime) % queueDepth;
     std::cout << std::endl;
 
     // check contents of store (not all to save time on bigger tests)
@@ -169,6 +180,9 @@ void benchmark( const std::string& uri, const size_t queueDepth, float time_per_
         TESTINFO( map.get< uint64_t >( key1 ) == j,
                   j << " = " << map.get< uint64_t >( key1 ));
     }
+
+    // try to make sure there's nothing outstanding if we messed up i our test.
+    map.flush();
 }
 
 void testGenericFailures()
@@ -222,8 +236,8 @@ int main( int, char* argv[] )
         read( "skv://" );
         if( perfTest )
         {
-//            benchmark( "skv://", 0, time_per_loop );
-            for( size_t i=1; i < 200000; i = i<<1 )
+            benchmark( "skv://", 0, time_per_loop );
+            for( size_t i=1; i < 100000; i = i<<1 )
                 benchmark( "skv://", i, time_per_loop );
         }
 #endif

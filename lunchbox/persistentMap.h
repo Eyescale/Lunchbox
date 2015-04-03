@@ -170,7 +170,8 @@ public:
      * @return none
      * @version 1.9.2
      */
-    bool fetch(const std::string& key, char *buffer, int buflength);
+    uint64_t fetch(const std::string& key, char *buffer, int buflength);
+    std::string getfetched(uint64_t handle);
 
 
     /** @return true if the key exists. @version 1.9.2 */

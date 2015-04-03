@@ -124,41 +124,54 @@ void benchmark( const std::string& uri, const size_t queueDepth, float time_per_
         ++i;
         ++(*reinterpret_cast< uint64_t* >( &key[0] ));
     }
-
     map.flush();
     const float insertTime = clock.resetTimef();
-    const uint64_t wOps = i;
+    const uint64_t wOps = i--;
+    //std::cout << "Wrote " << wOps << " k/v pairs into database " << std::endl;
+
+    // reserve space in keys
     std::string key1, key2;
     key1.assign( reinterpret_cast< char* >( &i ), 8 );
     key2.assign( reinterpret_cast< char* >( &i ), 8 );
 
-    static char buffer[65536];
+    // we need space for queueDepth * sizeof values results, for this test, just make a buffer
+    static char buffer[16*65536];
     // read performance
-    while( i > 0 && clock.getTimef() < time_per_loop )
+    uint64_t prefetch_i = i+queueDepth;
+    // we will not stop after a fixed time as we do not want to leave incomplete requests in the queue
+    // fetch i, then N iterations later get it, maintain two counters and stop when all fetches have been read
+    clock.resetTimef();
+    while(i>0 || prefetch_i>0)
     {
-        *reinterpret_cast< uint64_t* >( &key1[0] ) = i;
-        if (queueDepth>0) {
-          map.fetch( key1, buffer, 65536 ); // async fetch
-          uint64_t prev_i = i+queueDepth;
-          if (prev_i<=wOps) {
-              *reinterpret_cast< uint64_t* >( &key2[0] ) = prev_i;
-              map[key2]; // read the actual value from N fetches ago
-          }
+        // i is the index we are fetching
+        if (i>0) {
+            *reinterpret_cast< uint64_t* >( &key1[0] ) = i;
+            if (queueDepth>0) {
+//              std::cout << "Async fetch for key " << *reinterpret_cast< uint64_t* >( &key1[0] ) << std::endl;
+                map.fetch( key1, &buffer[i*16], 16 ); // async fetch
+            }
+            else {
+                map[key1]; // not async, so just read directly
+            }
+            --i;
         }
-        else {
-          map[key1]; // read the actual value from N fetches ago
+        // prefetch_i is the index from N iterations ago
+        if (prefetch_i<=wOps) {
+            *reinterpret_cast< uint64_t* >( &key2[0] ) = prefetch_i;
+//            std::cout << "Async get for key " << *reinterpret_cast< uint64_t* >( &key2[0] ) << std::endl;
+            map[key2]; // read the actual value from N fetches ago
         }
-        --i;
+        --prefetch_i;
     }
-
     const float readTime = clock.resetTimef();
-    const uint64_t rOps = wOps - i;
-    std::cout << rOps / readTime << ", " << wOps / insertTime
-              << " r+w ops/ms on " << uri << " " << queueDepth << " async writes"
-              << std::endl;
+    std::cout << std::setprecision(5) << std::setw(6)
+              << "write, " << wOps / insertTime  << ", "
+              << "read,  " << wOps / readTime    << ", "
+              << queueDepth << ", "
+              << " ops/ms, " << uri << std::endl;
 
-    // check contents of store
-    for( uint64_t j = 0; j < wOps; ++j )
+    // check contents of store (not all to save time on bigger tests)
+    for( uint64_t j = 0; j < wOps && clock.getTimef() < time_per_loop*5.0; ++j )
     {
         key1.assign( reinterpret_cast< char* >( &j ), 8 );
         TESTINFO( map.get< uint64_t >( key1 ) == j,
@@ -196,7 +209,7 @@ void testLevelDBFailures()
 
 int main( int, char* argv[] )
 {
-    float time_per_loop = 500.0;
+    float time_per_loop = 50.0;
     const bool perfTest = std::string( argv[0] ).find( "perf_" ) !=
                           std::string::npos;
     try

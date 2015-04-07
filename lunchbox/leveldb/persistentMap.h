@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-//#ifdef LUNCHBOX_USE_LEVELDB
+#ifdef LUNCHBOX_USE_LEVELDB
 #include <lunchbox/compiler.h>
 #include <lunchbox/log.h>
 
@@ -68,19 +68,7 @@ public:
         return std::string();
     }
 
-    uint64_t fetch(const std::string& , char *, int )
-    {
-      // not implemented
-      return false;
-    }
-
-    std::string getfetched(uint64_t )
-    {
-      // not implemented
-      return "";
-    }
-
-     bool contains( const std::string& key ) const final
+    bool contains( const std::string& key ) const final
     {
         std::string value;
         return _db->Get( db::ReadOptions(), key, &value ).ok();
@@ -94,4 +82,4 @@ private:
 }
 }
 
-//#endif
+#endif

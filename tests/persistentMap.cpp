@@ -15,7 +15,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#define TEST_RUNTIME 240 //seconds
 #include <test.h>
+#include <lunchbox/clock.h>
+#include <lunchbox/os.h>
 #include <lunchbox/persistentMap.h>
 #ifdef LUNCHBOX_USE_LEVELDB
 #  include <leveldb/db.h>
@@ -23,12 +26,15 @@
 #ifdef LUNCHBOX_USE_SKV
 #  include <FxLogger/FxLogger.hpp>
 #endif
+#include <boost/format.hpp>
 #include <stdexcept>
+#include <deque>
 
 using lunchbox::PersistentMap;
 
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
+const int64_t loopTime = 1000;
 
 template< class T > void insertVector( PersistentMap& map )
 {
@@ -64,6 +70,14 @@ void setup( const std::string& uri )
     TEST( map.insert( "hans", std::string( "dampf" )));
     TESTINFO( map[ "hans" ] == "dampf", map[ "hans" ] );
 
+    const bool bValue = true;
+    TEST( map.insert( "bValue", bValue ));
+    TEST( map.get< bool >( "bValue" ) == bValue );
+
+    const int iValue = 42;
+    TEST( map.insert( "iValue", iValue ));
+    TEST( map.get< int >( "iValue" ) == iValue );
+
     insertVector< int >( map );
     insertVector< uint16_t >( map );
     readVector< int >( map );
@@ -78,6 +92,8 @@ void read( const std::string& uri )
     PersistentMap map( uri );
     TEST( map[ "foo" ] == "bar" );
     TEST( map[ "bar" ].empty( ));
+    TEST( map.get< bool >( "bValue" ) == true );
+    TEST( map.get< int >( "iValue" ) == 42 );
 
     readVector< int >( map );
     readVector< uint16_t >( map );
@@ -87,6 +103,76 @@ void read( const std::string& uri )
     for( size_t i = 0; i < numInts; ++i )
         TESTINFO( set.find( ints[i] ) != set.end(),
                   ints[i] << " not found in set" );
+}
+
+void benchmark( const std::string& uri, const size_t queueDepth )
+{
+    PersistentMap map( uri );
+    map.setQueueDepth( queueDepth );
+    map.setValueBufferSize(32);
+
+    // Prepare keys
+    lunchbox::Strings keys;
+    keys.resize( queueDepth + 1 );
+    for( uint64_t i = 0; i <= queueDepth; ++i )
+        keys[i].assign( reinterpret_cast< char* >( &i ), 8 );
+
+    // write performance
+    lunchbox::Clock clock;
+    uint64_t i = 0;
+    while( clock.getTime64() < loopTime )
+    {
+        std::string& key = keys[ i % (queueDepth+1) ];
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
+        map.insert( key, key );
+        ++i;
+    }
+    map.flush();
+    const float insertTime = clock.getTimef();
+    const uint64_t wOps = i;
+    TEST( i > queueDepth );
+
+    // read performance
+    std::string key;
+    key.assign( reinterpret_cast< char* >( &i ), 8 );
+
+    clock.reset();
+    for( i = 0; i < queueDepth; ++i ) // prefetch queueDepth keys
+    {
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
+        TEST( map.fetch( key ));
+    }
+
+    for( ; i < wOps && clock.getTime64() < loopTime; ++i ) // read keys
+    {
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i - queueDepth;
+        map[ key ];
+
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
+        TEST( map.fetch( key ));
+    }
+
+    for( uint64_t j = i - queueDepth; j <= i; ++j ) // drain fetched keys
+    {
+        *reinterpret_cast< uint64_t* >( &key[0] ) = j;
+        map[ key ];
+    }
+
+    const float readTime = clock.getTimef();
+    std::cout << boost::format(
+        "write %6.2f, read %6.2f ops/ms, queue-depth %6i") % (wOps/insertTime)
+        % (i/readTime) % queueDepth << std::endl;
+
+    // check contents of store (not all to save time on bigger tests)
+    for( uint64_t j = 0; j < wOps && clock.getTime64() < loopTime; ++j )
+    {
+        *reinterpret_cast< uint64_t* >( &key[0] ) = j;
+        TESTINFO( map.get< uint64_t >( key ) == j,
+                  j << " = " << map.get< uint64_t >( key ));
+    }
+
+    // try to make sure there's nothing outstanding if we messed up i our test.
+    map.flush();
 }
 
 void testGenericFailures()
@@ -117,22 +203,32 @@ void testLevelDBFailures()
 #endif
 }
 
-int main( int, char** argv LB_UNUSED )
+int main( int, char* argv[] )
 {
+    const bool perfTest LB_UNUSED
+        = std::string( argv[0] ).find( "perf_" ) != std::string::npos;
     try
     {
-#ifdef LUNCHBOX_USE_LEVELDB
+#ifdef __LUNCHBOX_USE_LEVELDB
         setup( "" );
         setup( "leveldb://" );
         setup( "leveldb://persistentMap2.leveldb" );
         read( "" );
         read( "leveldb://" );
         read( "leveldb://persistentMap2.leveldb" );
+        if( perfTest )
+            benchmark( "leveldb://", 0 );
 #endif
 #ifdef LUNCHBOX_USE_SKV
-        FxLogger_Init( argv[ 0 ] );
+        FxLogger_Init( argv[0] );
         setup( "skv://" );
         read( "skv://" );
+        if( perfTest )
+        {
+            benchmark( "skv://", 0 );
+            for( size_t i=1; i < 100000; i = i<<1 )
+                benchmark( "skv://", i );
+        }
 #endif
     }
 #ifdef LUNCHBOX_USE_LEVELDB

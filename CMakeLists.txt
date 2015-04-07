@@ -25,6 +25,10 @@ set(COMMON_PROJECT_DOMAIN ch.eyescale)
 # set(ENABLE_CLANGCHECK_TESTS ON)
 
 include(Common)
+#if(BLUEGENE)
+  include(SubProject)
+  git_subproject(skv https://github.com/eile/skv.git 6142ebd)
+#endif()
 
 list(APPEND CPPCHECK_EXTRA_ARGS -DLB_GCC_4_1_OR_LATER=1)
 if(LUNCHBOX_BUILD_V2_API)

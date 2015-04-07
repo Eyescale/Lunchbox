@@ -15,6 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#define TEST_RUNTIME 240 //seconds
 #include <test.h>
 #include <lunchbox/clock.h>
 #include <lunchbox/os.h>
@@ -25,12 +26,15 @@
 #ifdef LUNCHBOX_USE_SKV
 #  include <FxLogger/FxLogger.hpp>
 #endif
+#include <boost/format.hpp>
 #include <stdexcept>
+#include <deque>
 
 using lunchbox::PersistentMap;
 
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
+const int64_t loopTime = 1000;
 
 template< class T > void insertVector( PersistentMap& map )
 {
@@ -101,7 +105,7 @@ void read( const std::string& uri )
                   ints[i] << " not found in set" );
 }
 
-void benchmark( const std::string& uri, const size_t queueDepth, float time_per_loop )
+void benchmark( const std::string& uri, const size_t queueDepth )
 {
     PersistentMap map( uri );
     map.setQueueDepth( queueDepth );
@@ -115,43 +119,59 @@ void benchmark( const std::string& uri, const size_t queueDepth, float time_per_
     // write performance
     lunchbox::Clock clock;
     uint64_t i = 0;
-    while( clock.getTimef() < time_per_loop )
+    while( clock.getTime64() < loopTime )
     {
         std::string& key = keys[ i % (queueDepth+1) ];
-        (*reinterpret_cast< uint64_t* >( &key[0] ) = i);
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
         map.insert( key, key );
-
         ++i;
-        ++(*reinterpret_cast< uint64_t* >( &key[0] ));
     }
-
     map.flush();
-    const float insertTime = clock.resetTimef();
+    const float insertTime = clock.getTimef();
     const uint64_t wOps = i;
+    TEST( i > queueDepth );
+
+    // read performance
     std::string key;
     key.assign( reinterpret_cast< char* >( &i ), 8 );
 
-    // read performance
-    while( i > 0 && clock.getTimef() < time_per_loop )
+    clock.reset();
+    for( i = 0; i < queueDepth; ++i ) // prefetch queueDepth keys
     {
-        map[ key ];
-        --(*reinterpret_cast< uint64_t* >( &key[0] ));
-        --i;
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
+        TEST( map.fetch( key ));
     }
 
-    const float readTime = clock.resetTimef();
-    const uint64_t rOps = wOps - i;
-    std::cout << rOps / readTime << ", " << wOps / insertTime
-              << " r+w ops/ms on " << uri << " " << queueDepth << " async writes"
-              << std::endl;
-
-    // check contents of store
-    for( uint64_t j = 0; j < wOps; ++j )
+    for( ; i < wOps && clock.getTime64() < loopTime; ++i ) // read keys
     {
-        key.assign( reinterpret_cast< char* >( &j ), 8 );
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i - queueDepth;
+        map[ key ];
+
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
+        TEST( map.fetch( key ));
+    }
+
+    for( uint64_t j = i - queueDepth; j <= i; ++j ) // drain fetched keys
+    {
+        *reinterpret_cast< uint64_t* >( &key[0] ) = j;
+        map[ key ];
+    }
+
+    const float readTime = clock.getTimef();
+    std::cout << boost::format(
+        "write %6.2f, read %6.2f ops/ms, queue-depth %6i") % (wOps/insertTime)
+        % (i/readTime) % queueDepth << std::endl;
+
+    // check contents of store (not all to save time on bigger tests)
+    for( uint64_t j = 0; j < wOps && clock.getTime64() < loopTime; ++j )
+    {
+        *reinterpret_cast< uint64_t* >( &key[0] ) = j;
         TESTINFO( map.get< uint64_t >( key ) == j,
                   j << " = " << map.get< uint64_t >( key ));
     }
+
+    // try to make sure there's nothing outstanding if we messed up i our test.
+    map.flush();
 }
 
 void testGenericFailures()
@@ -184,12 +204,11 @@ void testLevelDBFailures()
 
 int main( int, char* argv[] )
 {
-    float time_per_loop = 1000.0;
-    const bool perfTest = std::string( argv[0] ).find( "perf_" ) !=
-                          std::string::npos;
+    const bool perfTest LB_UNUSED
+        = std::string( argv[0] ).find( "perf_" ) != std::string::npos;
     try
     {
-#ifdef LUNCHBOX_USE_LEVELDB
+#ifdef __LUNCHBOX_USE_LEVELDB
         setup( "" );
         setup( "leveldb://" );
         setup( "leveldb://persistentMap2.leveldb" );
@@ -197,7 +216,7 @@ int main( int, char* argv[] )
         read( "leveldb://" );
         read( "leveldb://persistentMap2.leveldb" );
         if( perfTest )
-            benchmark( "leveldb://", 0, time_per_loop );
+            benchmark( "leveldb://", 0 );
 #endif
 #ifdef LUNCHBOX_USE_SKV
         FxLogger_Init( argv[0] );
@@ -205,9 +224,9 @@ int main( int, char* argv[] )
         read( "skv://" );
         if( perfTest )
         {
-            benchmark( "skv://", 0, time_per_loop );
+            benchmark( "skv://", 0 );
             for( size_t i=1; i < 100000; i = i<<1 )
-                benchmark( "skv://", i, time_per_loop );
+                benchmark( "skv://", i );
         }
 #endif
     }

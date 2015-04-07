@@ -20,7 +20,7 @@
 #include <lunchbox/compiler.h>
 #include <lunchbox/futureFunction.h>
 #include <lunchbox/log.h>
-#include <boost/bind.hpp>
+#include <lunchbox/stdExt.h>
 
 #define SKV_CLIENT_UNI
 #define SKV_NON_MPI
@@ -31,7 +31,8 @@ namespace lunchbox
 {
 namespace
 {
-typedef std::deque< skv_client_cmd_ext_hdl_t > PendingOperations;
+typedef std::deque< skv_client_cmd_ext_hdl_t > PendingPuts;
+static const size_t bufferSize = 65536;
 }
 
 namespace skv
@@ -70,6 +71,9 @@ public:
         _client.Close( &_namespace );
         _client.Disconnect();
         _client.Finalize();
+
+        LBASSERTINFO( _reads.empty(), _reads.size() << " pending reads" );
+        LBASSERT( _writes.empty( ));
     }
 
     static bool handles( const URI& uri ) { return uri.getScheme() == "skv"; }
@@ -104,7 +108,7 @@ public:
         }
 
         if( useAsync )
-            _pending.push_back( handle );
+            _writes.push_back( handle );
         return _flush( _maxPendingOps );
     }
 
@@ -115,6 +119,31 @@ public:
         if( status != SKV_SUCCESS )
             value.clear();
         return value;
+    }
+
+    bool fetch( const std::string& key )
+    {
+        // when we make an async get, we must store the buffer pointer so that
+        // we can retrieve the value, also the length of the value which is
+        // written by the iRetrieve call into an int so we store the pointer
+        AsyncRead& asyncRead = _reads[ key ];
+        if( !asyncRead.value.empty( ))
+            return true; // fetch for key already pending
+
+        asyncRead.value.resize( bufferSize );
+        const skv_status_t status =
+            _client.iRetrieve( &_namespace,
+                               const_cast< char* >( key.c_str( )), key.length(),
+                               const_cast< char* >( asyncRead.value.c_str( )),
+                               asyncRead.value.length(), &asyncRead.size, 0,
+                               SKV_COMMAND_RIU_FLAGS_NONE, &asyncRead.handle );
+
+        if( status == SKV_SUCCESS )
+            return true;
+
+        LBWARN << "skv fetch failed: " << skv_status_to_string( status )
+               << std::endl;
+        return false;
     }
 
     bool contains( const std::string& key ) const final
@@ -128,30 +157,56 @@ public:
 private:
     mutable skv_client_t _client;
     mutable skv_pds_id_t _namespace;
-    PendingOperations _pending;
+    PendingPuts _writes;
+
+    struct AsyncRead
+    {
+        AsyncRead() : handle( 0 ), size( 0 ) {}
+
+        skv_client_cmd_ext_hdl_t  handle;
+        std::string               value;
+        int                       size;
+    };
+
+    typedef stde::hash_map< std::string, AsyncRead > ReadMap;
+    typedef ReadMap::iterator ReadMapIter;
+
+    mutable ReadMap _reads;
     size_t _maxPendingOps;
 
     skv_status_t _retrieve( const std::string& key, std::string& value ) const
     {
-        static const size_t bufferSize = 65536;
-        char buffer[ bufferSize ];
-        int valueSize = 0;
+        ReadMapIter i = _reads.find( key );
+        if( i == _reads.end( )) // no async fetch pending
+        {
+            char buffer[ bufferSize ];
+            int valueSize = 0;
+            const skv_status_t status =
+                _client.Retrieve( &_namespace,
+                                  const_cast< char* >( key.c_str( )),
+                                  key.length(),
+                                  buffer, bufferSize, &valueSize, 0,
+                                  SKV_COMMAND_RIU_FLAGS_NONE );
+            value.assign( buffer, valueSize );
+            return status;
+        }
 
-        const skv_status_t status =
-            _client.Retrieve( &_namespace,
-                              const_cast< char* >( key.c_str( )), key.length(),
-                              buffer, bufferSize, &valueSize, 0,
-                              SKV_COMMAND_RIU_FLAGS_NONE );
-        value.assign( buffer, valueSize );
+        // asking for a key when there are pending gets, check async receives
+        AsyncRead& asyncRead = i->second;
+        const skv_status_t status = _client.Wait( asyncRead.handle );
+
+        asyncRead.value.resize( asyncRead.size );
+        value.swap( asyncRead.value );
+        _reads.erase( i );
         return status;
     }
 
     bool _flush( const size_t maxPending )
     {
-        while( _pending.size() > maxPending )
+        while( _writes.size() > maxPending )
         {
-            skv_client_cmd_ext_hdl_t handle = _pending.front();
-            _pending.pop_front();
+            skv_client_cmd_ext_hdl_t handle = _writes.front();
+            _writes.pop_front();
             if( _client.Wait( handle ) != SKV_SUCCESS )
                 return false;
         }
@@ -161,5 +216,4 @@ private:
 
 }
 }
-
 #endif

@@ -30,6 +30,7 @@ public:
     virtual bool insert( const std::string& key, const void* data,
                          const size_t size ) = 0;
     virtual std::string operator [] ( const std::string& key ) const = 0;
+    virtual bool fetch( const std::string& ) { return true; }
     virtual bool contains( const std::string& key ) const = 0;
     virtual bool flush() = 0;
 };
@@ -117,6 +118,11 @@ bool PersistentMap::_insert( const std::string& key, const void* data,
 std::string PersistentMap::operator [] ( const std::string& key ) const
 {
     return (*_impl)[ key ];
+}
+
+bool PersistentMap::fetch( const std::string& key )
+{
+    return _impl->fetch( key );
 }
 
 bool PersistentMap::contains( const std::string& key ) const

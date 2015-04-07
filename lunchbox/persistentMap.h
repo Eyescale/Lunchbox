@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,6 +23,7 @@
 #include <lunchbox/log.h> // LBTHROW
 #include <lunchbox/types.h>
 
+#include <boost/lexical_cast.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/type_traits.hpp>
 
@@ -142,8 +143,7 @@ public:
      * @return the value, or an empty string if the key is not available.
      * @version 1.9.2
      */
-    template< class V > V get( const std::string& key )
-        { return _get< V >( key ); }
+    template< class V > V get( const std::string& key ) { return _get< V >( key ); }
 
     /**
      * Retrieve a value as a vector for a key.
@@ -162,6 +162,15 @@ public:
      * @version 1.9.2
      */
     template< class V > std::set< V > getSet( const std::string& key );
+
+    /**
+     * Asynchronously retrieve a value which can be read later using get.
+     *
+     * @param key the key to retrieve.
+     * @return false on error, true otherwise.
+     * @version 1.9.2
+     */
+    bool fetch( const std::string& key );
 
     /** @return true if the key exists. @version 1.9.2 */
     LUNCHBOX_API bool contains( const std::string& key ) const;
@@ -211,8 +220,10 @@ private:
             LBTHROW( std::runtime_error( "Can't retrieve pointers" ));
 
         const std::string& value = (*this)[ k ];
-        LBASSERTINFO( value.size() == sizeof( V ),
-                      value.size() << " != " << sizeof( V ) << " for " << k );
+        if( value.size() != sizeof( V ))
+            LBTHROW( std::runtime_error( std::string( "Wrong value size " ) +
+                                       boost::lexical_cast< std::string >( value.size( ))));
+
         return *reinterpret_cast< const V* >( &value[0] );
     }
 };

@@ -101,7 +101,8 @@ void read( const std::string& uri )
                   ints[i] << " not found in set" );
 }
 
-void benchmark( const std::string& uri, const size_t queueDepth )
+void benchmark( const std::string& uri, const size_t queueDepth,
+                const float loopTime )
 {
     PersistentMap map( uri );
     map.setQueueDepth( queueDepth );
@@ -109,19 +110,17 @@ void benchmark( const std::string& uri, const size_t queueDepth )
     // Prepare keys
     lunchbox::Strings keys;
     keys.resize( queueDepth + 1 );
-    for( uint64_t i = 0; i <= queueDepth; ++i )
-        keys[i].assign( reinterpret_cast< char* >( &i ), 8 );
 
     // write performance
     lunchbox::Clock clock;
     uint64_t i = 0;
-    while( clock.getTimef() < 1000.f )
+    while( clock.getTimef() < loopTime )
     {
         std::string& key = keys[ i % (queueDepth+1) ];
+        (*reinterpret_cast< uint64_t* >( &key[0] ) = i);
         map.insert( key, key );
 
         ++i;
-        ++(*reinterpret_cast< uint64_t* >( &key[0] ));
     }
 
     map.flush();
@@ -131,7 +130,7 @@ void benchmark( const std::string& uri, const size_t queueDepth )
     key.assign( reinterpret_cast< char* >( &i ), 8 );
 
     // read performance
-    while( i > 0 && clock.getTimef() < 1000.f )
+    while( i > 0 && clock.getTimef() < loopTime )
     {
         map[ key ];
         --(*reinterpret_cast< uint64_t* >( &key[0] ));
@@ -185,6 +184,7 @@ int main( int, char* argv[] )
 {
     const bool perfTest LB_UNUSED
         = std::string( argv[0] ).find( "perf_" ) != std::string::npos;
+    const float loopTime = 1000.0;
     try
     {
 #ifdef LUNCHBOX_USE_LEVELDB
@@ -195,7 +195,7 @@ int main( int, char* argv[] )
         read( "leveldb://" );
         read( "leveldb://persistentMap2.leveldb" );
         if( perfTest )
-            benchmark( "leveldb://", 0 );
+            benchmark( "leveldb://", 0, loopTime );
 #endif
 #ifdef LUNCHBOX_USE_SKV
         FxLogger_Init( argv[0] );
@@ -203,9 +203,9 @@ int main( int, char* argv[] )
         read( "skv://" );
         if( perfTest )
         {
-            benchmark( "skv://", 0 );
+            benchmark( "skv://", 0, loopTime );
             for( size_t i=1; i < 100000; i = i<<1 )
-                benchmark( "skv://", i );
+                benchmark( "skv://", i, loopTime );
         }
 #endif
     }

@@ -109,6 +109,7 @@ void benchmark( const std::string& uri, const size_t queueDepth )
 {
     PersistentMap map( uri );
     map.setQueueDepth( queueDepth );
+    map.setValueBufferSize(32);
 
     // Prepare keys
     lunchbox::Strings keys;

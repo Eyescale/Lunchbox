@@ -27,6 +27,7 @@ class PersistentMap
 public:
     virtual ~PersistentMap() {}
     virtual size_t setQueueDepth( const size_t ) { return 0; }
+    virtual size_t setValueBufferSize(const size_t ) { return 0; }
     virtual bool insert( const std::string& key, const void* data,
                          const size_t size ) = 0;
     virtual std::string operator [] ( const std::string& key ) const = 0;
@@ -107,6 +108,11 @@ bool PersistentMap::handles( const URI& uri )
 size_t PersistentMap::setQueueDepth( const size_t depth )
 {
     return _impl->setQueueDepth( depth );
+}
+
+size_t PersistentMap::setValueBufferSize( const size_t size )
+{
+    return _impl->setValueBufferSize( size );
 }
 
 bool PersistentMap::_insert( const std::string& key, const void* data,

@@ -87,7 +87,14 @@ public:
      * @return the queue depth chosen by the implementation, smaller or equal to
      *         the given depth.
      */
-    size_t setQueueDepth( const size_t depth );
+    LUNCHBOX_API size_t setQueueDepth( const size_t depth );
+
+    /**
+     * Set the size reserved for each value when performing asynchronous gets
+     *
+     * @return the buffer size chosen by the implementation
+     */
+    LUNCHBOX_API size_t setValueBufferSize(const size_t size);
 
     /**
      * Insert or update a value in the database.

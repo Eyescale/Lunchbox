@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifdef LUNCHBOX_USE_SKV
+//#ifdef LUNCHBOX_USE_SKV
 
 #include <lunchbox/compiler.h>
 #include <lunchbox/futureFunction.h>
@@ -32,7 +32,7 @@ namespace lunchbox
 namespace
 {
 typedef std::deque< skv_client_cmd_ext_hdl_t > PendingPuts;
-static const size_t bufferSize = 65536;
+static const size_t fixedBufferSize = 65536;
 }
 
 namespace skv
@@ -85,6 +85,13 @@ public:
         return depth;
     }
 
+    LUNCHBOX_API size_t setValueBufferSize(const size_t size)
+    {
+        _bufferSize = size;
+        LBASSERT(size>0);
+        return _bufferSize;
+    }
+
     bool insert( const std::string& key, const void* data, const size_t size )
         final
     {
@@ -130,7 +137,7 @@ public:
         if( !asyncRead.value.empty( ))
             return true; // fetch for key already pending
 
-        asyncRead.value.resize( bufferSize );
+        asyncRead.value.resize( _bufferSize );
         const skv_status_t status =
             _client.iRetrieve( &_namespace,
                                const_cast< char* >( key.c_str( )), key.length(),
@@ -173,19 +180,20 @@ private:
 
     mutable ReadMap _reads;
     size_t _maxPendingOps;
+    size_t _bufferSize;
 
     skv_status_t _retrieve( const std::string& key, std::string& value ) const
     {
         ReadMapIter i = _reads.find( key );
         if( i == _reads.end( )) // no async fetch pending
         {
-            char buffer[ bufferSize ];
+            char buffer[ fixedBufferSize ];
             int valueSize = 0;
             const skv_status_t status =
                 _client.Retrieve( &_namespace,
                                   const_cast< char* >( key.c_str( )),
                                   key.length(),
-                                  buffer, bufferSize, &valueSize, 0,
+                                  buffer, fixedBufferSize, &valueSize, 0,
                                   SKV_COMMAND_RIU_FLAGS_NONE );
             value.assign( buffer, valueSize );
             return status;
@@ -216,4 +224,4 @@ private:
 
 }
 }
-#endif
+//#endif

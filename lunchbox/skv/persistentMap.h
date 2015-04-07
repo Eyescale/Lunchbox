@@ -15,12 +15,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifdef LUNCHBOX_USE_SKV
+//#ifdef LUNCHBOX_USE_SKV
 
 #include <lunchbox/compiler.h>
 #include <lunchbox/futureFunction.h>
 #include <lunchbox/log.h>
 #include <boost/bind.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #define SKV_CLIENT_UNI
 #define SKV_NON_MPI
@@ -31,7 +32,9 @@ namespace lunchbox
 {
 namespace
 {
-typedef std::deque< skv_client_cmd_ext_hdl_t > PendingOperations;
+  typedef boost::tuple<skv_client_cmd_ext_hdl_t, int*, char *> PendingGetType;
+  typedef std::map< std::string, PendingGetType >     PendingGetOperations;
+  typedef std::deque< skv_client_cmd_ext_hdl_t >      PendingPutOperations;
 }
 
 namespace skv
@@ -76,7 +79,9 @@ public:
 
     size_t setQueueDepth( const size_t depth ) final
     {
-        _maxPendingOps = depth;
+        _maxPendingOps     = depth;
+        _pendingGetCounter = 0;
+        _pendingGets.resize(depth);
         LBCHECK( _flush( depth ));
         return depth;
     }
@@ -117,6 +122,50 @@ public:
         return value;
     }
 
+    uint64_t fetch(const std::string& key, char *buffer, int buflength)
+    {
+        // calling fetch on a non async map should not be allowed?
+        LBCHECK( (_maxPendingOps>0) );
+        // when we make an async get, we must store the buffer pointer
+        // so that we can retrieve the value, also the length of the value
+        // which is written by the iRetrieve call into an int so we store the pointer
+        get_operation &op_data = _pendingGets[_pendingGetCounter % _maxPendingOps];
+        const skv_status_t status = _client.iRetrieve(
+            &_namespace,
+            const_cast< char* >( key.c_str( )), key.length(),
+            buffer, buflength,
+            &op_data.value_size, 0, SKV_COMMAND_RIU_FLAGS_NONE, &op_data.handle );
+        //
+        op_data.value_buffer = buffer;
+//        std::cout << "fetch handle is " << _pendingGetCounter << " skv handle is " << *((uint64_t*)op_data.handle) << std::endl;
+
+        if( status != SKV_SUCCESS )
+        {
+            LBINFO << "skv fetch failed: " << skv_status_to_string( status )
+                   << std::endl;
+            return 0xFFFFFF;
+        }
+        return _pendingGetCounter++;
+    }
+
+    std::string getfetched(uint64_t handle)
+    {
+        get_operation &op_data = _pendingGets[handle % _maxPendingOps];
+        // asking for a key when there are pending gets, check async receives
+//        std::cout << "handle is " << handle << " skv handle is " << *((uint64_t*)op_data.handle) << std::endl;
+        const skv_status_t status = _client.Wait( op_data.handle );
+        if( status != SKV_SUCCESS ) {
+            std::cout << "An error occurred in async get "
+                << skv_status_to_string( status ) << std::endl;
+            return "";
+        }
+        std::string value;
+        value.assign( op_data.value_buffer, op_data.value_size);
+//        std::cout << "Async get ok, length " << op_data.value_size
+//            << " value " << *reinterpret_cast< const uint64_t* >( &value[0] ) << std::endl;
+        return value;
+    }
+
     bool contains( const std::string& key ) const final
     {
         std::string value;
@@ -126,10 +175,18 @@ public:
     bool flush() final { return _flush( 0 ); }
 
 private:
-    mutable skv_client_t _client;
-    mutable skv_pds_id_t _namespace;
-    PendingOperations _pending;
-    size_t _maxPendingOps;
+    mutable skv_client_t        _client;
+    mutable skv_pds_id_t        _namespace;
+    PendingPutOperations        _pending;
+    typedef struct _get_operation {
+      skv_client_cmd_ext_hdl_t  handle;
+      int                       value_size;
+      char                     *value_buffer;
+      _get_operation() : handle(0), value_size(0), value_buffer(NULL) {}
+    } get_operation;
+    std::vector<get_operation>  _pendingGets;
+    uint64_t                    _pendingGetCounter;
+    size_t                      _maxPendingOps;
 
     skv_status_t _retrieve( const std::string& key, std::string& value ) const
     {
@@ -162,4 +219,4 @@ private:
 }
 }
 
-#endif
+//#endif

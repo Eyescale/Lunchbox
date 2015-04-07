@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifdef LUNCHBOX_USE_LEVELDB
+//#ifdef LUNCHBOX_USE_LEVELDB
 #include <lunchbox/compiler.h>
 #include <lunchbox/log.h>
 
@@ -68,7 +68,19 @@ public:
         return std::string();
     }
 
-    bool contains( const std::string& key ) const final
+    uint64_t fetch(const std::string& , char *, int )
+    {
+      // not implemented
+      return false;
+    }
+
+    std::string getfetched(uint64_t )
+    {
+      // not implemented
+      return "";
+    }
+
+     bool contains( const std::string& key ) const final
     {
         std::string value;
         return _db->Get( db::ReadOptions(), key, &value ).ok();
@@ -82,4 +94,4 @@ private:
 }
 }
 
-#endif
+//#endif

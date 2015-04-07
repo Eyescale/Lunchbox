@@ -163,6 +163,17 @@ public:
      */
     template< class V > std::set< V > getSet( const std::string& key );
 
+    /**
+     * Asynchronously retrieve a value which can be read later using get.
+     *
+     * @param key the key to retrieve.
+     * @return none
+     * @version 1.9.2
+     */
+    uint64_t fetch(const std::string& key, char *buffer, int buflength);
+    std::string getfetched(uint64_t handle);
+
+
     /** @return true if the key exists. @version 1.9.2 */
     LUNCHBOX_API bool contains( const std::string& key ) const;
 

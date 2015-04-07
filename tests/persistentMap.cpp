@@ -15,6 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#define TEST_RUNTIME 240 //seconds
 #include <test.h>
 #include <lunchbox/clock.h>
 #include <lunchbox/os.h>
@@ -26,12 +27,14 @@
 #  include <FxLogger/FxLogger.hpp>
 #endif
 #include <stdexcept>
+#include <deque>
+#include <boost/format.hpp>
 
 using lunchbox::PersistentMap;
 
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
-const int64_t loopTime = 1000;
+const int64_t loopTime = 200;
 
 template< class T > void insertVector( PersistentMap& map )
 {
@@ -117,39 +120,67 @@ void benchmark( const std::string& uri, const size_t queueDepth )
     while( clock.getTime64() < loopTime )
     {
         std::string& key = keys[ i % (queueDepth+1) ];
-        (*reinterpret_cast< uint64_t* >( &key[0] ) = i);
+        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
         map.insert( key, key );
-
         ++i;
     }
-
     map.flush();
     const float insertTime = clock.resetTimef();
     const uint64_t wOps = i;
-    std::string key;
-    key.assign( reinterpret_cast< char* >( &i ), 8 );
+
+    // reserve space in keys
+    std::string key1;
+    key1.assign( reinterpret_cast< char* >( &i ), 8 );
+
+    // we need space for queueDepth * sizeof values results, for this test, just
+    // make a buffer
+    std::vector<char> buffer(16*queueDepth, 0);
+    std::deque<int> requests;
 
     // read performance
-    while( i > 0 && clock.getTime64() < loopTime )
+    // we will not stop after a fixed time as we do not want to leave incomplete
+    // requests in the queue fetch i, then N iterations later get it, maintain
+    // two counters and stop when all fetches have been read
+    clock.resetTimef();
+    for( i=0; i < wOps+queueDepth-1; ++i )
     {
-        map[ key ];
-        --(*reinterpret_cast< uint64_t* >( &key[0] ));
-        --i;
+        *reinterpret_cast< uint64_t* >( &key1[0] ) = i;
+        if (queueDepth==0)
+            map[key1];
+        else
+        {
+            if( i<wOps )
+            {
+                if( queueDepth > 0 )
+                {
+                    uint64_t request =
+                        map.fetch( key1, &buffer[(i%(queueDepth+1))*16], 16 );
+                    requests.push_back(request);
+                }
+            }
+            if (i>=(queueDepth-1))
+            {
+                uint64_t request = requests.front();
+                map.getfetched(request);
+                requests.pop_front();
+            }
+        }
     }
-
     const float readTime = clock.resetTimef();
-    const uint64_t rOps = wOps - i;
-    std::cout << rOps / readTime << ", " << wOps / insertTime
-              << " r+w ops/ms on " << uri << " " << queueDepth
-              << " async writes" << std::endl;
+    std::cout << boost::format(
+        "write %6.2f, read %6.2f ops/ms, queue-depth %6i") % (wOps/insertTime)
+        % (wOps/readTime) % queueDepth << std::endl;
 
-    // check contents of store
-    for( uint64_t j = 0; j < wOps; ++j )
+    // check contents of store (not all to save time on bigger tests)
+    for( uint64_t j = 0; j < wOps && clock.getTimef() < time_per_loop*5.0; ++j )
     {
-        key.assign( reinterpret_cast< char* >( &j ), 8 );
-        TESTINFO( map.get< uint64_t >( key ) == j,
-                  j << " = " << map.get< uint64_t >( key ));
+        key1.assign( reinterpret_cast< char* >( &j ), 8 );
+        TESTINFO( map.get< uint64_t >( key1 ) == j,
+                  j << " = " << map.get< uint64_t >( key1 ));
     }
+
+    // try to make sure there's nothing outstanding if we messed up i our test.
+    map.flush();
 }
 
 void testGenericFailures()
@@ -186,7 +217,7 @@ int main( int, char* argv[] )
         = std::string( argv[0] ).find( "perf_" ) != std::string::npos;
     try
     {
-#ifdef LUNCHBOX_USE_LEVELDB
+#ifdef __LUNCHBOX_USE_LEVELDB
         setup( "" );
         setup( "leveldb://" );
         setup( "leveldb://persistentMap2.leveldb" );

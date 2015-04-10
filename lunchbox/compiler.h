@@ -33,6 +33,9 @@
 #      define override
 #    endif
 #  endif
+#  if __cplusplus > 199711L
+#    define SUPPORT_FOR_CPP11
+#  endif
 #endif
 
 // align macros

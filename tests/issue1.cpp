@@ -64,7 +64,6 @@ int main( int, char** )
     while( --nOps )
     {
         monitor = valid1;
-        // cppcheck-suppress redundantAssignment
         monitor = valid2;
     }
     monitor = big;

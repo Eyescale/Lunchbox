@@ -130,7 +130,7 @@ public:
     }
 
     lunchbox::Servus::Result beginBrowsing(
-                                  const lunchbox::Servus::Interface addr ) final
+        const ::lunchbox::Servus::Interface addr ) final
     {
         if( _browser )
             return lunchbox::Servus::Result( lunchbox::Servus::Result::PENDING);
@@ -184,7 +184,7 @@ public:
 
     bool isBrowsing() const final { return _browser; }
 
-    Strings discover( const lunchbox::Servus::Interface addr,
+    Strings discover( const ::lunchbox::Servus::Interface addr,
                       const unsigned browseTime ) final
     {
         const lunchbox::Servus::Result& result = beginBrowsing( addr );

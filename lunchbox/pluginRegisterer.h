@@ -71,6 +71,7 @@ template< typename T > struct hasInitDataT
     // when no InitDataT is defined.
     template<typename U> static char (&test(typename U::InitDataT const*))[1];
     template<typename U> static char (&test(...))[2];
+    // cppcheck-suppress sizeofCalculation
     static const bool value = (sizeof(test<T>(0)) == 1);
 };
 

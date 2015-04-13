@@ -80,6 +80,7 @@ public:
     }
 
     Vector_t* vector;
+    // cppcheck-suppress operatorEqVarError
     Reader& operator=( const Reader& ) { return *this; }
 };
 
@@ -113,6 +114,7 @@ public:
     }
 
     Vector_t* vector;
+    // cppcheck-suppress operatorEqVarError
     Writer& operator=( const Writer& ) { return *this; }
 };
 
@@ -143,6 +145,7 @@ public:
     }
 
     Vector_t* vector;
+    // cppcheck-suppress operatorEqVarError
     Pusher& operator=( const Pusher& ) { return *this; }
 };
 
@@ -162,6 +165,7 @@ public:
         }
     Vector_t* vector;
 
+    // cppcheck-suppress operatorEqVarError
     Copier& operator=( const Copier& ) { return *this; }
 };
 
@@ -182,6 +186,7 @@ public:
         }
     Vector_t* vector;
 
+    // cppcheck-suppress operatorEqVarError
     Eraser& operator=( const Eraser& ) { return *this; }
 };
 
@@ -200,6 +205,7 @@ public:
             }
         }
     Vector_t* vector;
+    // cppcheck-suppress operatorEqVarError
     Flusher& operator=( const Flusher& ) { return *this; }
 };
 

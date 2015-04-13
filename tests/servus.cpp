@@ -47,7 +47,7 @@ int main( int, char** )
                   std::string( "Can't setup avahi client: Daemon not running"));
             return EXIT_SUCCESS;
         }
-        throw e;
+        throw;
     }
 
     lunchbox::Servus service( serviceName.str( ));

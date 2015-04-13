@@ -92,7 +92,7 @@ public:
     }
 
     lunchbox::Servus::Result beginBrowsing(
-        const lunchbox::Servus::Interface addr ) final
+        const ::lunchbox::Servus::Interface addr ) final
     {
         if( _in )
             return lunchbox::Servus::Result( lunchbox::Servus::Result::PENDING);
@@ -120,7 +120,7 @@ public:
         return _in != 0;
     }
 
-    Strings discover( const lunchbox::Servus::Interface addr,
+    Strings discover( const ::lunchbox::Servus::Interface addr,
                       const unsigned browseTime ) final
     {
         const lunchbox::Servus::Result& result = beginBrowsing( addr );
@@ -141,7 +141,7 @@ private:
     std::string _browsedName;
 
 
-    lunchbox::Servus::Result _browse( const lunchbox::Servus::Interface addr )
+    lunchbox::Servus::Result _browse( const ::lunchbox::Servus::Interface addr )
     {
         LBASSERT( !_in );
         const DNSServiceErrorType error =

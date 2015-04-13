@@ -33,7 +33,12 @@ static const size_t nThreads = 16;
 class TaskThread : public lunchbox::Thread
 {
 public:
-    TaskThread() : size( LB_1GB ) {}
+    TaskThread()
+        : memcpyTime( 0 )
+        , memmoveTime( 0 )
+        , memsetTime( 0 )
+        , size( LB_1GB )
+    {}
 
     void run() override
     {
@@ -47,16 +52,19 @@ public:
 
         task.waitGE( TASK_MEMCPY );
         clock.reset();
+        // cppcheck-suppress redundantCopy
         ::memcpy( to, from, size );
         memcpyTime = clock.getTimef();
 
         task.waitGE( TASK_MEMMOVE );
         clock.reset();
+        // cppcheck-suppress redundantCopy
         ::memmove( to, from, size );
         memmoveTime = clock.getTimef();
 
         task.waitGE( TASK_MEMSET );
         clock.reset();
+        // cppcheck-suppress redundantCopy
         ::memset( to, 42, size );
         memsetTime = clock.getTimef();
 

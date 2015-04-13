@@ -34,10 +34,10 @@ class TaskThread : public lunchbox::Thread
 {
 public:
     TaskThread()
-        : memcpyTime( 0 )
+        : size( LB_1GB )
+        , memcpyTime( 0 )
         , memmoveTime( 0 )
         , memsetTime( 0 )
-        , size( LB_1GB )
     {}
 
     void run() override

@@ -33,8 +33,6 @@ int main( int, char ** )
         TESTINFO( uri.getPath() == "/path/", uri.getPath( ));
         TESTINFO( uri.getQuery() == "key=value,foo=bar", uri.getQuery( ));
         TESTINFO( uri.getFragment() == "fragment", uri.getFragment( ));
-        TEST( uri == uri );
-        TEST( !( uri != uri ));
         TEST( uri != lunchbox::URI(
                   "http://bob@www.example.com:8080/path/?key=value" ));
         TEST( uri != lunchbox::URI(

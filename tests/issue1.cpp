@@ -63,7 +63,7 @@ int main( int, char** )
     TEST( thread.start( ));
     while( --nOps )
     {
-        monitor = valid1;
+        monitor = valid1; // cppcheck-suppress redundantAssignment
         monitor = valid2;
     }
     monitor = big;

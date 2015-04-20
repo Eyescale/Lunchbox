@@ -26,6 +26,15 @@ set(COMMON_PROJECT_DOMAIN ch.eyescale)
 
 include(Common)
 
+if(BLUEGENE)
+  option(LUNCHBOX_USE_SKV "Enable SKV functionality if found" ON)
+else()
+  option(LUNCHBOX_USE_SKV "Enable SKV functionality if found" OFF)
+endif()
+if(LUNCHBOX_USE_SKV)
+  git_subproject(skv https://github.com/eile/skv.git 2e7e137)
+endif()
+
 list(APPEND CPPCHECK_EXTRA_ARGS -DLB_GCC_4_1_OR_LATER=1)
 if(LUNCHBOX_BUILD_V2_API)
   list(APPEND FIND_PACKAGES_DEFINES LUNCHBOX_USE_V2_API)

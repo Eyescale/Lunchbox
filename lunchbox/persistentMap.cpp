@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -25,12 +25,18 @@ namespace detail
 class PersistentMap
 {
 public:
+    PersistentMap() : swap( false ) {}
     virtual ~PersistentMap() {}
+    virtual size_t setQueueDepth( const size_t ) { return 0; }
     virtual bool insert( const std::string& key, const void* data,
                          const size_t size ) = 0;
     virtual std::string operator [] ( const std::string& key ) const = 0;
+    virtual bool fetch( const std::string&, const size_t ) const
+        { return true; }
     virtual bool contains( const std::string& key ) const = 0;
     virtual bool flush() = 0;
+
+    bool swap;
 };
 }
 }
@@ -102,6 +108,11 @@ bool PersistentMap::handles( const URI& uri )
     return false;
 }
 
+size_t PersistentMap::setQueueDepth( const size_t depth )
+{
+    return _impl->setQueueDepth( depth );
+}
+
 bool PersistentMap::_insert( const std::string& key, const void* data,
                              const size_t size )
 {
@@ -113,6 +124,11 @@ std::string PersistentMap::operator [] ( const std::string& key ) const
     return (*_impl)[ key ];
 }
 
+bool PersistentMap::fetch( const std::string& key, const size_t sizeHint ) const
+{
+    return _impl->fetch( key, sizeHint );
+}
+
 bool PersistentMap::contains( const std::string& key ) const
 {
     return _impl->contains( key );
@@ -121,6 +137,16 @@ bool PersistentMap::contains( const std::string& key ) const
 bool PersistentMap::flush()
 {
     return _impl->flush();
+}
+
+void PersistentMap::setByteswap( const bool swap )
+{
+    _impl->swap = swap;
+}
+
+bool PersistentMap::_swap() const
+{
+    return _impl->swap;
 }
 
 }

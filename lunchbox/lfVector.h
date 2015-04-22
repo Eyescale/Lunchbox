@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2014, EPFL/Blue Brain Project
+/* Copyright (c) 2011-2015, EPFL/Blue Brain Project
  *                          Stefan Eilemann <stefan.eilemann@epfl.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
@@ -48,7 +48,7 @@ namespace lunchbox
  * Not all std::vector methods are implemented. Serializable using
  * boost.serialization.
  *
- * Example: @include tests/lfVector.cpp
+ * Example: @include tests/perf/lfVector.cpp
  */
 template< class T, int32_t nSlots = 32 > class LFVector
 {

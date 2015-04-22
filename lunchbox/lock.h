@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2015, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -31,7 +31,7 @@ namespace detail { class Lock; }
  * @sa ScopedMutex
  * @deprecated Use boost::mutex
  *
- * Example: @include tests/lock.cpp
+ * Example: @include tests/perf/lock.cpp
  */
 class Lock : public boost::noncopyable
 {

@@ -107,7 +107,7 @@ public:
      * Insert or update a vector of values in the database.
      *
      * @param key the key to store the value.
-     * @param value the values stored at the key.
+     * @param values the values stored at the key.
      * @return true on success, false otherwise
      * @throw std::runtime_error if the vector values are not copyable
      * @version 1.9.2
@@ -120,7 +120,7 @@ public:
      * Insert or update a set of values in the database.
      *
      * @param key the key to store the value.
-     * @param value the values stored at the key.
+     * @param values the values stored at the key.
      * @return true on success, false otherwise
      * @throw std::runtime_error if the set values are not copyable
      * @version 1.9.2

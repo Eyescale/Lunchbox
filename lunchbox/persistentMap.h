@@ -89,7 +89,7 @@ public:
      * @return the queue depth chosen by the implementation, smaller or equal to
      *         the given depth.
      */
-    size_t setQueueDepth( const size_t depth );
+    LUNCHBOX_API size_t setQueueDepth( const size_t depth );
 
     /**
      * Insert or update a value in the database.
@@ -177,7 +177,7 @@ public:
      * @return false on error, true otherwise.
      * @version 1.9.2
      */
-    bool fetch( const std::string& key, size_t sizeHint = 0 ) const;
+    LUNCHBOX_API bool fetch( const std::string& key, size_t sizeHint = 0 ) const;
 
     /** @return true if the key exists. @version 1.9.2 */
     LUNCHBOX_API bool contains( const std::string& key ) const;

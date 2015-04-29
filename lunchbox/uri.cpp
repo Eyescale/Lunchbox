@@ -36,13 +36,13 @@ struct URIData
 
     bool operator == ( const URIData& rhs ) const
     {
-        return (userinfo == rhs.userinfo &&
-                host == rhs.host &&
-                port == rhs.port &&
-                path == rhs.path &&
-                query == rhs.query &&
-                fragment == rhs.fragment &&
-                queryMap == rhs.queryMap);
+        return ( userinfo == rhs.userinfo &&
+                 host == rhs.host &&
+                 port == rhs.port &&
+                 path == rhs.path &&
+                 query == rhs.query &&
+                 fragment == rhs.fragment &&
+                 queryMap == rhs.queryMap );
     }
 
     std::string scheme;
@@ -160,6 +160,8 @@ public:
             _uriData.queryMap[ pair.substr( 0, eq ) ] = pair.substr( eq + 1 );
         }
     }
+
+    URI( const URI& from ) : _uriData( from._uriData ) {}
 
     URIData& getData() { return _uriData; }
     const URIData& getData() const { return _uriData; }

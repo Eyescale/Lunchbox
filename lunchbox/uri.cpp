@@ -251,6 +251,16 @@ void URI::setScheme( const std::string& scheme )
     _impl->getData().scheme = scheme;
 }
 
+void URI::setHost( const std::string& host )
+{
+    _impl->getData().host = host;
+}
+
+void URI::setPort( const uint16_t port )
+{
+    _impl->getData().port = port;
+}
+
 URI::ConstKVIter URI::queryBegin() const
 {
     return _impl->getData().queryMap.begin();

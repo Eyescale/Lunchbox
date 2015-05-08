@@ -55,11 +55,6 @@ endif()
 
 add_definitions("-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
-if(APPLE)
-  # WAR needed when CMAKE_OSX_SYSROOT is set to find /usr/include/turbojpeg.h
-  include_directories(SYSTEM /usr/local/../include)
-endif()
-
 include(InstallSymlink)
 include(pthreads/CMakeLists.txt)
 

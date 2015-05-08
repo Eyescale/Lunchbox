@@ -110,7 +110,11 @@ int main( int, char ** )
         TEST( file5.getScheme() == "host" );
 
         file5.setScheme( "foo" );
+        file5.setHost( "bar" );
+        file5.setPort( 4242 );
         TEST( file5.getScheme() == "foo" );
+        TEST( file5.getHost() == "bar" );
+        TEST( file5.getPort() == 4242 );
     }
     catch( std::exception& exception )
     {

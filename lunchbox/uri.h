@@ -1,5 +1,5 @@
-/* Copyright (c) 2013-2014, ahmet.bilgili@epfl.ch
- *                    2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2015, Ahmet.Bilgili@epfl.ch
+ *                        , Stefan.Eilemann@epfl.ch
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
  *
@@ -100,6 +100,8 @@ public:
     /** @name Setters for uri data @version 1.10 */
     //@{
     LUNCHBOX_API void setScheme( const std::string& scheme );
+    LUNCHBOX_API void setHost( const std::string& host );
+    LUNCHBOX_API void setPort( uint16_t port );
     //@}
 
     /** @name Access to key-value data in query @version 1.9.2 */

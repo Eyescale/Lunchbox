@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2006-2013, Stefan Eilemann <eile@equalizergraphics.com>
- *               2010-2014, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2006-2015, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -30,6 +30,7 @@
 #include <lunchbox/compiler.h>
 #include <lunchbox/uint128_t.h>
 
+#include <boost/config.hpp>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -38,24 +39,26 @@
 #endif
 
 //----- Common extensions of the STL
-#ifdef CXX_UNORDERED_MAP_SUPPORTED
-#  define LB_STDEXT_STD
-#  define LB_STDEXT_STD11
-#elif defined __GNUC__
-#  if defined LB_GCC_4_3_OR_LATER && !defined __INTEL_COMPILER
+#ifdef BOOST_NO_STD_UNORDERED
+#  if defined __GNUC__
+#    if defined LB_GCC_4_3_OR_LATER && !defined __INTEL_COMPILER
+#      define LB_STDEXT_TR1
+#    elif defined __clang__
+#      define LB_STDEXT_TR1
+#    else
+#      define LB_STDEXT_EXT
+#    endif
+#  elif defined _MSC_VER
+#    define LB_STDEXT_MSVC
+#  elif defined __xlC__
 #    define LB_STDEXT_TR1
-#  elif defined __clang__
-#    define LB_STDEXT_TR1
+#    define LB_STDEXT_TR1_BOOST
 #  else
-#    define LB_STDEXT_EXT
+#    define LB_STDEXT_STD
 #  endif
-#elif defined _MSC_VER
-#  define LB_STDEXT_MSVC
-#elif defined __xlC__
-#  define LB_STDEXT_TR1
-#  define LB_STDEXT_TR1_BOOST
 #else
 #  define LB_STDEXT_STD
+#  define LB_STDEXT_STD11
 #endif
 
 #ifdef LB_STDEXT_TR1

@@ -1,4 +1,4 @@
-# Copyright (c) 2012 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2015 Stefan Eilemann <eile@eyescale.ch>
 
 # Info: http://www.itk.org/Wiki/CMake:Component_Install_With_CPack
 
@@ -14,6 +14,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
 
 set(CPACK_MACPORTS_CATEGORY devel)
 set(CPACK_MACPORTS_DEPENDS boost)
+set(CPACK_PACKAGE_LICENSE LGPL)
 
 include(CommonCPack)
 include(OSSCPack)

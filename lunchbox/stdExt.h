@@ -196,14 +196,6 @@ template<> inline size_t hash_compare< lunchbox::uint128_t >::operator()
 
 template<> inline size_t hash_value( const lunchbox::uint128_t& key )
     { return static_cast< size_t >( key.high() ^ key.low() ); }
-#else // MSVC
-
-/** uint128_t hash function. @version 1.0 */
-template<> struct hash< lunchbox::uint128_t >
-{
-    size_t operator()( const lunchbox::uint128_t& key ) const
-        { return key.high() ^ key.low(); }
-};
 #endif //! MSVC
 
 /** @deprecated use lunchbox::usort() */

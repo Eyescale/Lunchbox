@@ -209,6 +209,15 @@ typedef struct WGLEWContextStruct WGLEWContext;
 #define LB_DLLIMPORT LUNCHBOX_DLLIMPORT
 /** @endcond */
 
+#ifdef LUNCHBOX_USE_V1_API
+namespace servus
+{
+class Servus;
+class uint128_t;
+class URI;
+}
+#endif
+
 namespace lunchbox
 {
 /** A vector of std::strings @version 1.0 */
@@ -222,10 +231,7 @@ class Lock;
 class NonCopyable;
 class Referenced;
 class RequestHandler;
-class Servus;
 class SpinLock;
-class URI;
-class uint128_t;
 
 template< class > class Array;
 template< class > class Atomic;
@@ -251,7 +257,11 @@ typedef Future< void > f_void_t; //!< A future signed size promise
 typedef std::vector< DSO* > DSOs; /** A vector of DSO @version 1.11.0 */
 
 #ifdef LUNCHBOX_USE_V1_API
-typedef uint128_t UUID;
+using servus::Servus;
+using servus::uint128_t;
+using servus::URI;
+
+typedef servus::uint128_t UUID;
 #endif
 }
 

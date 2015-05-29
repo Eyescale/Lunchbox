@@ -52,8 +52,12 @@ macro(COMMON_PACKAGE Name)
 endmacro()
 
 common_package(Boost 1.41.0 COMPONENTS regex serialization filesystem system thread unit_test_framework QUIET)
+common_package(Servus 1.0 QUIET )
 if(NOT Boost_FOUND AND NOT BOOST_FOUND)
   set(FIND_REQUIRED_FAILED "${FIND_REQUIRED_FAILED} Boost")
+endif()
+if(NOT Servus_FOUND AND NOT SERVUS_FOUND)
+  set(FIND_REQUIRED_FAILED "${FIND_REQUIRED_FAILED} Servus")
 endif()
 
 if(FIND_REQUIRED_FAILED)

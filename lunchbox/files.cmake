@@ -58,7 +58,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   rng.h
   scopedMutex.h
   serializable.h
-  servus.h
   sleep.h
   spinLock.h
   stdExt.h
@@ -67,23 +66,25 @@ set(LUNCHBOX_PUBLIC_HEADERS
   timedLock.h
   tls.h
   types.h
-  uint128_t.h
   unorderedIntervalSet.h
   unorderedIntervalSet.ipp
-  uri.h
   visitorResult.h
   )
+if(NOT LUNCHBOX_BUILD_V2_API)
+  list(APPEND LUNCHBOX_PUBLIC_HEADERS
+    servus.h
+    uint128_t.h
+    uri.h
+    )
+endif()
 
 if(Boost_VERSION VERSION_LESS 1.43.0)
   list(APPEND LUNCHBOX_PUBLIC_HEADERS factory.hpp)
 endif()
 
 set(LUNCHBOX_HEADERS
-  avahi/servus.h
   detail/threadID.h
-  dnssd/servus.h
   leveldb/persistentMap.h
-  none/servus.h
   skv/persistentMap.h
   time.h
 )
@@ -102,7 +103,6 @@ set(LUNCHBOX_SOURCES
   launcher.cpp
   lock.cpp
   log.cpp
-  md5/md5.cc
   memoryMap.cpp
   mpi.cpp
   omp.cpp
@@ -111,13 +111,10 @@ set(LUNCHBOX_SOURCES
   referenced.cpp
   requestHandler.cpp
   rng.cpp
-  servus.cpp
   sleep.cpp
   spinLock.cpp
   thread.cpp
   threadID.cpp
   timedLock.cpp
   tls.cpp
-  uint128_t.cpp
-  uri.cpp
   )

@@ -10,9 +10,9 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
 include(GitExternal)
 
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "11")
+set(VERSION_MINOR "12")
 set(VERSION_PATCH "0")
-set(VERSION_ABI 3)
+set(VERSION_ABI 4)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 option(LUNCHBOX_USE_MPI "Enable MPI functionality if found" ON)
@@ -45,6 +45,9 @@ endif()
 set(PROJECT_INCLUDE_NAME lunchbox)
 include(FindPackages)
 set(LUNCHBOX_DEPENDENT_LIBRARIES Boost)
+if(NOT LUNCHBOX_BUILD_V2_API)
+  list(APPEND LUNCHBOX_DEPENDENT_LIBRARIES Servus)
+endif()
 
 if(OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")

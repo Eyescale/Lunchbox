@@ -68,7 +68,6 @@ add_subdirectory(doc)
 include(DoxygenRule) # must be after all targets
 include(LunchboxCPack)
 include(PackageConfig)
-include(GNUModules)
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION ${CTEST_CUSTOM_WARNING_EXCEPTION}
   # http://public.kitware.com/Bug/view.php?id=10179

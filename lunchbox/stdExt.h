@@ -187,15 +187,6 @@ size_t hash_compare< std::string >::operator() ( const std::string& key ) const
     { return hash_value( key.c_str( )); }
 
 #  endif
-
-template<> inline size_t hash_compare< lunchbox::uint128_t >::operator()
-    ( const lunchbox::uint128_t& key ) const
-{
-    return static_cast< size_t >( key.high() ^ key.low() );
-}
-
-template<> inline size_t hash_value( const lunchbox::uint128_t& key )
-    { return static_cast< size_t >( key.high() ^ key.low() ); }
 #endif //! MSVC
 
 /** @deprecated use lunchbox::usort() */

@@ -4,7 +4,7 @@ Release:	1%{?dist}
 Summary:	Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.
 
 Group:		Development/Libraries
-License:	
+License:	LGPL
 URL:		http://www.equalizergraphics.com/
 Source0:	http://www.equalizergraphics.com/downloads/Lunchbox-%{version}.tar.gz
 #Patch0:		Lunchbox-1.12.0-build-fix.patch

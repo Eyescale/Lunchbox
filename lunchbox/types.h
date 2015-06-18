@@ -193,12 +193,25 @@ typedef SSIZE_T    ssize_t;
 #define LB_100MB (104857600)
 #define LB_1GB   (1073741824)
 
+#define LB_2KB   (2048)
+#define LB_4KB   (4096)
+#define LB_8KB   (8192)
 #define LB_16KB  (16384)
 #define LB_32KB  (32768)
 #define LB_64KB  (65536)
 #define LB_128KB (131072)
+#define LB_256KB (262144)
+#define LB_512KB (524288)
+#define LB_2MB   (2097152)
+#define LB_4MB   (4194304)
+#define LB_8MB   (8388608)
+#define LB_16MB  (16777216)
+#define LB_32MB  (33554432)
 #define LB_48MB  (50331648)
 #define LB_64MB  (67108864)
+#define LB_128MB (134217728)
+#define LB_256MB (268435456)
+#define LB_512MB (536870912)
 
 /** @cond IGNORE */
 struct GLEWContextStruct;

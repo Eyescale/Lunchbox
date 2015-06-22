@@ -46,9 +46,6 @@ public:
     /** Destruct the random number generator. @version 1.0 */
     LUNCHBOX_API ~RNG();
 
-    /** Re-initialize the seed value for pseudo RNG's. @version 1.0 */
-    LUNCHBOX_API void reseed();
-
     /**
      * Generate a random number.
      *
@@ -58,19 +55,14 @@ public:
      * @version 1.0
      */
     template< typename T > T get()
-        {
-            T value;
-            if( !_get( &value, sizeof( T )))
-                return T();
-            return value;
-        }
+    {
+        T value;
+        if( !_get( &value, sizeof( T )))
+            return T();
+        return value;
+    }
 
 private:
-    detail::RNG* const _impl;
-
-    static LUNCHBOX_API bool _init();
-    static void _exit();
-    friend LUNCHBOX_API bool init( const int argc, char** argv );
     LUNCHBOX_API bool _get( void* data, size_t size );
 }; // LB_DEPRECATED;
 

@@ -1,13 +1,13 @@
 # Copyright (c) 2010 Daniel Pfeifer <daniel@pfeifer-mail.de>
 #               2011-2013 Stefan Eilemann <eile@eyescale.ch>
 
-find_package(Threads REQUIRED)
+find_package(Threads REQUIRED QUIET)
 
 set(PTHREAD_LIBRARIES pthread)
 
 if(CMAKE_USE_PTHREADS_INIT)
   return()
-endif(CMAKE_USE_PTHREADS_INIT)
+endif()
 
 IF(NOT WIN32)
   message(FATAL_ERROR "Lunchbox requires pthreads.")

@@ -2,7 +2,6 @@
 # Copyright (c) 2012-2014 Stefan Eilemann <eile@eyescale.ch>
 
 set(LUNCHBOX_PUBLIC_HEADERS
-  ${COMMON_INCLUDES}
   algorithm.h
   any.h
   anySerialization.h
@@ -90,7 +89,6 @@ set(LUNCHBOX_HEADERS
 )
 
 set(LUNCHBOX_SOURCES
-  ${COMMON_SOURCES}
   any.cpp
   atomic.cpp
   clock.cpp

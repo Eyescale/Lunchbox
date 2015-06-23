@@ -1,7 +1,7 @@
 
-/* Copyright (c) 2008-2012, Stefan Eilemann <eile@equalizergraphics.com>
- *                    2010, Cedric Stalder <cedric.stalder@gmail.com>
- *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2008-2015, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Cedric Stalder <cedric.stalder@gmail.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -68,12 +68,6 @@ bool init( const int argc, char** argv )
 
     LBINFO << "Log level " << Log::getLogLevelString() << " topics "
            << Log::topics << " date " << gmtString << std::flush;
-
-    if( !RNG::_init( ))
-    {
-        LBERROR << "Failed to initialize random number generator" << std::endl;
-        return false;
-    }
 
     Thread::pinCurrentThread();
     return true;

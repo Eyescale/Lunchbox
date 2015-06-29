@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
- *                    2011, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2005-2015, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,7 +18,7 @@
 
 /**
  * @file lunchbox/log.h
- * This file contains logging classes. The macros LBERROR, LBWARN, LBINFO and
+ * This file contains logging classes. The macros LBERROR, LBINFO, LBDEBUG and
  * LBVERB output messages at their respective logging level, if the level is
  * active. They use a per-thread lunchbox::Log instance, which is a
  * std::ostream. LBVERB is always inactive in release builds.
@@ -42,9 +42,10 @@ namespace lunchbox
 /** The logging levels. @version 1.0 */
 enum LogLevel
 {
-    LOG_ERROR = 1, //!< Output critical errors
-    LOG_WARN,      //!< Output potentially critical warnings
+    LOG_ERROR = 1, //!< Output critical errors and warnings
+    LOG_WARN = LOG_ERROR,      //!< @deprecated
     LOG_INFO,      //!< Output informational messages
+    LOG_DEBUG,     //!< Output debugging information
     LOG_VERB,      //!< Be noisy
     LOG_ALL
 };
@@ -68,7 +69,7 @@ namespace detail { class Log; }
 /**
  * The logging class.
  *
- * Should be accessed through the LBVERB, LBINFO, LBWARN, LBERROR and LBLOG
+ * Should be accessed through the LBVERB, LBDEBUG, LBINFO, LBERROR and LBLOG
  * macros, which manage per-thread instances and their invocation state.
  */
 class Log : public std::ostream
@@ -190,11 +191,13 @@ inline std::ostream& stopBlock( std::ostream& os )
 /** Output an error message to the per-thread Log stream. @version 1.0 */
 #define LBERROR (lunchbox::Log::level >= lunchbox::LOG_ERROR) &&    \
     lunchbox::Log::instance( __FILE__, __LINE__ )
-/** Output a warning message to the per-thread Log stream. @version 1.0 */
-#define LBWARN  (lunchbox::Log::level >= lunchbox::LOG_WARN)  &&    \
-    lunchbox::Log::instance( __FILE__, __LINE__ )
+/** @deprecated */
+#define LBWARN LBERROR
 /** Output an informational message to the per-thread Log. @version 1.0 */
 #define LBINFO  (lunchbox::Log::level >= lunchbox::LOG_INFO)  &&    \
+    lunchbox::Log::instance( __FILE__, __LINE__ )
+/** Output a warning message to the per-thread Log stream. @version 1.0 */
+#define LBDEBUG  (lunchbox::Log::level >= lunchbox::LOG_DEBUG)  &&    \
     lunchbox::Log::instance( __FILE__, __LINE__ )
 
 #ifdef NDEBUG

@@ -154,9 +154,6 @@ public:
     LUNCHBOX_API static void yield();
 
     /** @internal */
-    static void pinCurrentThread();
-
-    /** @internal */
     LUNCHBOX_API static void setName( const std::string& name );
 
     /** @internal

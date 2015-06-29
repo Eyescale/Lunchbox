@@ -114,7 +114,6 @@ void* Thread::runChild( void* arg )
 void Thread::_runChild()
 {
     setName( boost::lexical_cast< std::string >( _impl->index ));
-    pinCurrentThread();
     _impl->id._impl->pthread = pthread_self();
 
     if( !init( ))
@@ -127,7 +126,7 @@ void Thread::_runChild()
     }
 
     _impl->state = STATE_RUNNING;
-    LBINFO << "Thread #" << _impl->index << " type " << className( *this )
+    LBDEBUG << "Thread #" << _impl->index << " type " << className( *this )
            << " successfully initialized" << std::endl;
 
     run();
@@ -232,60 +231,6 @@ void Thread::yield()
     ::pthread_yield_np();
 #else
     ::sched_yield();
-#endif
-}
-
-void Thread::pinCurrentThread()
-{
-#ifdef LB_WIN32_THREAD_AFFINITY
-    static Lock lock;
-    ScopedMutex<> mutex( lock );
-
-    static DWORD_PTR processMask = 0;
-    static DWORD_PTR processor   = 0;
-    if( processMask == 0 )
-    {
-        // Get available processors
-        DWORD_PTR systemMask;
-        if( GetProcessAffinityMask( GetCurrentProcess(), &processMask,
-            &systemMask ) == 0 )
-        {
-            LBWARN << "Can't get usable processor mask" << std::endl;
-            return;
-        }
-        LBINFO << "Available processors 0x" << hex << processMask << dec <<endl;
-
-        // Choose random starting processor: Multiple Eq apps on the same node
-        // would otherwise use the same processor for the same thread
-        unsigned nProcessors = 0;
-        for( DWORD_PTR i = 1; i != 0; i <<= 1 )
-        {
-            if( processMask & i )
-                ++nProcessors;
-        }
-        LBINFO << nProcessors << " available processors" << std::endl;
-
-        unsigned chance = RNG().get< unsigned >();
-        processor = 1 << (chance % nProcessors);
-        LBINFO << "Starting with processor " << processor << std::endl;
-    }
-    LBASSERT( processMask != 0 );
-
-    while( true )
-    {
-        processor <<= 1;
-        if( processor == 0 ) // wrap around
-            processor = 1;
-
-        if( processor & processMask ) // processor is available
-        {
-            if( SetThreadAffinityMask( GetCurrentThread(), processor ) == 0 )
-                LBWARN << "Can't set thread processor" << std::endl;
-            LBINFO << "Pinned thread to processor 0x" << hex << processor << dec
-                   << std::endl;
-            return;
-        }
-    }
 #endif
 }
 

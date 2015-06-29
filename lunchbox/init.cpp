@@ -46,9 +46,9 @@ bool init( const int argc, char** argv )
     {
         // verbose options
         if( std::string( argv[i] ) == "-vv" )
-            Log::level = LOG_VERB;
+            Log::level += 2;
         else if( std::string( argv[i] ) == "-v" )
-            Log::level = LOG_INFO;
+            ++Log::level;
     }
 
     if( ++_initialized > 1 ) // not first
@@ -66,10 +66,8 @@ bool init( const int argc, char** argv )
     setenv( "AVAHI_COMPAT_NOWARN", "1", 0 ); // get rid of annoying avahi warning
 #endif
 
-    LBINFO << "Log level " << Log::getLogLevelString() << " topics "
-           << Log::topics << " date " << gmtString << std::flush;
-
-    Thread::pinCurrentThread();
+    LBDEBUG << "Log level " << Log::getLogLevelString() << " topics "
+            << Log::topics << " date " << gmtString << std::flush;
     return true;
 }
 

@@ -90,8 +90,8 @@ bool DSO::open( const std::string& fileName )
 #endif
         if( !_impl->dso )
         {
-            LBINFO << "Can't open library " << fileName << ": " << LB_DL_ERROR
-                   << std::endl;
+            LBDEBUG << "Can't open library " << fileName << ": " << LB_DL_ERROR
+                    << std::endl;
             return false;
         }
     }

@@ -96,7 +96,7 @@ public:
     }
 
 protected:
-    virtual int_type overflow( Log::int_type c ) override
+    int_type overflow( Log::int_type c ) override
     {
         if( c == EOF )
             return EOF;
@@ -105,8 +105,11 @@ protected:
         {
             if( !_noHeader )
             {
-                _stringStream << getpid()  << "." << _thread << " " << _file
-                              << " " << _clock->getTime64() << " ";
+                if( lunchbox::Log::level > LOG_INFO )
+                    _stringStream << getpid()  << "." << _thread << " " << _file
+                                  << " " << _clock->getTime64() << " ";
+                else
+                    _stringStream << _clock->getTime64() << " ";
             }
 
             for( int i=0; i<_indent; ++i )
@@ -118,7 +121,7 @@ protected:
         return c;
     }
 
-    virtual int sync() override
+    int sync() override
     {
         if( !_blocked )
         {
@@ -177,13 +180,14 @@ public:
 };
 
 #define LOG_TABLE_ENTRY( name ) LogTable( LOG_ ## name, std::string( #name ))
-#define LOG_TABLE_SIZE (5)
+#define LOG_TABLE_SIZE (6)
 
 static LogTable _logTable[ LOG_TABLE_SIZE ] =
 {
     LOG_TABLE_ENTRY( ERROR ),
-    LOG_TABLE_ENTRY( WARN ),
+    LogTable( LOG_ERROR, "WARN" ),
     LOG_TABLE_ENTRY( INFO ),
+    LOG_TABLE_ENTRY( DEBUG ),
     LOG_TABLE_ENTRY( VERB ),
     LOG_TABLE_ENTRY( ALL )
 };
@@ -276,9 +280,9 @@ int Log::getLogLevel( const char* text )
     }
 
 #ifdef NDEBUG
-    return LOG_WARN;
-#else
     return LOG_INFO;
+#else
+    return LOG_DEBUG;
 #endif
 }
 
@@ -317,7 +321,7 @@ Log& Log::instance()
         log = new Log();
         _logInstance = log;
         static bool first = true;
-        if( first )
+        if( first && lunchbox::Log::level > LOG_INFO )
         {
             first = false;
             log->disableHeader();
@@ -381,7 +385,7 @@ bool Log::setOutput( const std::string& file )
         return true;
     }
 
-    LBWARN << "Can't open log file " << file << ": " << sysError << std::endl;
+    LBERROR << "Can't open log file " << file << ": " << sysError << std::endl;
     delete newLog;
     return false;
 }

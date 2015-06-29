@@ -56,7 +56,10 @@ public:
     explicit Log( std::ostream& stream )
         : _indent(0), _blocked(0), _noHeader(0),
           _newLine(true), _stream(stream)
-    { _file[0] = 0; }
+    {
+        _file[0] = 0;
+        setThreadName( "Unknown" );
+    }
 
     virtual ~Log() {}
 
@@ -106,10 +109,12 @@ protected:
             if( !_noHeader )
             {
                 if( lunchbox::Log::level > LOG_INFO )
-                    _stringStream << getpid()  << "." << _thread << " " << _file
-                                  << " " << _clock->getTime64() << " ";
+                    _stringStream << getpid() << "." << _thread << " " << _file
+                                  << " " << std::right << std::setw(8)
+                                  << _clock->getTime64() << " ";
                 else
-                    _stringStream << _clock->getTime64() << " ";
+                    _stringStream << std::right << std::setw(8)
+                                  << _clock->getTime64() << " ";
             }
 
             for( int i=0; i<_indent; ++i )

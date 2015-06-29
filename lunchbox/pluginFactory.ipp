@@ -128,15 +128,15 @@ void PluginFactory< PluginT, InitDataT >::_load( DSOs& result,
 
         if( !getVersion || !registerFunc || !matchesVersion )
         {
-            LBINFO << "Disable " << lib << ": "
-                   << ( getVersion ? "" :
+            LBERROR << "Disable " << lib << ": "
+                    << ( getVersion ? "" :
                         "Symbol for LunchboxPluginGetVersion missing " )
-                   << ( registerFunc ? "" :
+                    << ( registerFunc ? "" :
                         "Symbol for LunchboxPluginRegister missing " );
             if( getVersion && !matchesVersion )
-                LBINFO << "Plugin version " << getVersion() << " does not"
-                       << " match application version " << version;
-            LBINFO << std::endl;
+                LBERROR << "Plugin version " << getVersion() << " does not"
+                        << " match application version " << version;
+            LBERROR << std::endl;
 
             delete dso;
             continue;
@@ -146,7 +146,7 @@ void PluginFactory< PluginT, InitDataT >::_load( DSOs& result,
         {
             _libraries.insert( std::make_pair( dso, _plugins.back( )));
             result.push_back( dso );
-            LBINFO << "Enabled " << lib << std::endl;
+            LBINFO << "Enabled plugin " << lib << std::endl;
         }
         else
             delete dso;

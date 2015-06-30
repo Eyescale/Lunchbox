@@ -40,12 +40,15 @@
 
 namespace lunchbox
 {
-static const size_t threadNameLength = 8;
-
 static unsigned getLogTopics();
 static Clock    _defaultClock;
 static Clock*   _clock = &_defaultClock;
 static Lock     _lock; // The write lock
+
+const size_t LENGTH_PID = 5;
+const size_t LENGTH_THREAD = 8;
+const size_t LENGTH_FILE = 29;
+const size_t LENGTH_TIME = 6;
 
 namespace detail
 {
@@ -79,9 +82,7 @@ public:
     void setThreadName( const std::string& name )
     {
         LBASSERT( !name.empty( ));
-        _thread = name.substr( 0, threadNameLength );
-        while( _thread.size() < threadNameLength )
-            _thread += std::string( " " );
+        _thread = name.substr( 0, LENGTH_THREAD );
     }
 
     const std::string& getThreadName() const { return _thread; }
@@ -92,10 +93,10 @@ public:
         std::string file( f );
         const size_t length = file.length();
 
-        if( length > 29 )
-            file = file.substr( length - 29, length );
+        if( length > LENGTH_FILE )
+            file = file.substr( length - LENGTH_FILE, length );
 
-        snprintf( _file, 35, "%29s:%-4d", file.c_str(), line );
+        snprintf( _file, LENGTH_FILE+6, "%29s:%-4d", file.c_str(), line );
     }
 
 protected:
@@ -109,11 +110,14 @@ protected:
             if( !_noHeader )
             {
                 if( lunchbox::Log::level > LOG_INFO )
-                    _stringStream << getpid() << "." << _thread << " " << _file
-                                  << " " << std::right << std::setw(8)
+                    _stringStream << std::right << std::setw( LENGTH_PID )
+                                  << getpid() << "."
+                                  << std::left << std::setw( LENGTH_THREAD )
+                                  << _thread << " " << _file << " "
+                                  << std::right << std::setw( LENGTH_TIME )
                                   << _clock->getTime64() << " ";
                 else
-                    _stringStream << std::right << std::setw(8)
+                    _stringStream << std::right << std::setw( LENGTH_TIME )
                                   << _clock->getTime64() << " ";
             }
 
@@ -331,8 +335,11 @@ Log& Log::instance()
             first = false;
             log->disableHeader();
             log->disableFlush();
-            *log << "  PID.Thread   | Filename:line                  | ms | Message"
-                 << std::endl;
+            *log << std::setw( LENGTH_PID ) << std::right << "PID" << "."
+                 << std::setw( LENGTH_THREAD ) << std::left << "Thread " << "|"
+                 << std::setw( LENGTH_FILE+5 ) << " Filename:line " << "|"
+                 << std::right << std::setw( LENGTH_TIME ) << " ms " << "|"
+                 << " Message" << std::endl;
             log->enableFlush();
             log->enableHeader();
         }

@@ -23,7 +23,7 @@
 #include <lunchbox/thread.h>
 #include <iostream>
 
-using lunchbox::uint128_t;
+using servus::uint128_t;
 
 lunchbox::Monitor< int64_t > monitor;
 lunchbox::Monitor< bool > boolMonitor;

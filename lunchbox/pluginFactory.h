@@ -27,7 +27,7 @@
 #include <lunchbox/debug.h> // LBTHROW
 #include <lunchbox/dso.h> // used inline
 #include <lunchbox/file.h> // searchDirectory() used inline
-#include <lunchbox/uri.h> // Default template type
+#include <servus/uri.h> // Default template type
 
 #include <boost/foreach.hpp> // used inline
 #include <boost/lexical_cast.hpp> // used inline
@@ -55,7 +55,7 @@ namespace lunchbox
  *
  * @version 1.11.0
  */
-template< class PluginT, class InitDataT = URI >
+template< class PluginT, class InitDataT = servus::URI >
 class PluginFactory : public boost::noncopyable
 {
 public:

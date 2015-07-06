@@ -37,7 +37,7 @@ namespace lunchbox
 {
 /**
  * Helper class to statically register derived plugin classes. If MyInitDataType
- * is not given, default value is lunchbox::URI.
+ * is not given, default value is servus::URI.
  *
  * The following code can be placed in a plugin's cpp file:
  * @code
@@ -55,7 +55,7 @@ namespace lunchbox
  * public:
  *     typedef MyPluginInterface PluginT;
  *     typedef MyPluginInitData InitDataT;
- *              ( optional for InitDataT == lunchbox::URI )
+ *              ( optional for InitDataT == servus::URI )
  * }
  * @endcode
  *

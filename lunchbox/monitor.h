@@ -225,7 +225,7 @@ public:
      * @param value the exact value to monitor.
      * @param timeout the timeout in milliseconds to wait for not the value.
      * @return true on success, false on timeout.
-     * @version 1.3.3
+     * @version 1.10
      */
     bool timedWaitNE( const T& value, const uint32_t timeout ) const
         {
@@ -471,10 +471,10 @@ Monitor< bool >& Monitor< bool >::operator |= ( const bool& value )
 }
 }
 
-#include <lunchbox/uint128_t.h>
+#include <servus/uint128_t.h>
 namespace lunchbox
 {
-template<> inline Monitor< uint128_t >::Monitor() {}
+template<> inline Monitor< servus::uint128_t >::Monitor() {}
 }
 
 #endif //LUNCHBOX_MONITOR_H

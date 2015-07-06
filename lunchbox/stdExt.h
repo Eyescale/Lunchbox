@@ -28,7 +28,11 @@
 
 #include <lunchbox/algorithm.h> // usort
 #include <lunchbox/compiler.h>
-#include <lunchbox/uint128_t.h>
+#ifdef LUNCHBOX_USE_V1_API
+#  include <lunchbox/uint128_t.h>
+#else
+#  include <servus/uint128_t.h>
+#endif
 
 #include <boost/config.hpp>
 #include <algorithm>

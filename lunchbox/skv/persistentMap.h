@@ -43,7 +43,7 @@ namespace skv
 class PersistentMap : public detail::PersistentMap
 {
 public:
-    PersistentMap( const URI& uri )
+    PersistentMap( const servus::URI& uri )
         : _maxPendingOps( 0 )
     {
 #ifdef SKV_CLIENT_UNI
@@ -79,7 +79,8 @@ public:
         LBASSERT( _writes.empty( ));
     }
 
-    static bool handles( const URI& uri ) { return uri.getScheme() == "skv"; }
+    static bool handles( const servus::URI& uri )
+        { return uri.getScheme() == "skv"; }
 
     size_t setQueueDepth( const size_t depth ) final
     {

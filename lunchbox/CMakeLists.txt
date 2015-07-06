@@ -3,7 +3,8 @@
 
 include(files.cmake)
 
-list(APPEND LUNCHBOX_LINK_LIBRARIES ${PTHREAD_LIBRARIES} ${Boost_LIBRARIES})
+list(APPEND LUNCHBOX_LINK_LIBRARIES
+  ${PTHREAD_LIBRARIES} ${Boost_LIBRARIES} ${SERVUS_LIBRARIES})
 if(WIN32)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ws2_32 mswsock imagehlp)
 endif(WIN32)
@@ -34,10 +35,6 @@ if(SKV_FOUND)
       ${PTHREAD_LIBRARIES})
   endif()
 endif()
-if(NOT LUNCHBOX_BUILD_V2_API)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES ${SERVUS_LIBRARIES})
-endif()
-
 
 common_library(Lunchbox)
 

@@ -29,7 +29,7 @@ namespace leveldb
 {
 namespace
 {
-db::DB* _open( const URI& uri )
+db::DB* _open( const servus::URI& uri )
 {
     db::DB* db = 0;
     db::Options options;
@@ -46,11 +46,11 @@ db::DB* _open( const URI& uri )
 class PersistentMap : public detail::PersistentMap
 {
 public:
-    PersistentMap( const URI& uri ) : _db( _open( uri )) {}
+    PersistentMap( const servus::URI& uri ) : _db( _open( uri )) {}
 
     virtual ~PersistentMap() { delete _db; }
 
-    static bool handles( const URI& uri )
+    static bool handles( const servus::URI& uri )
         { return uri.getScheme() == "leveldb"; }
 
     bool insert( const std::string& key, const void* data, const size_t size )

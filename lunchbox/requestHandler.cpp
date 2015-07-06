@@ -170,7 +170,8 @@ bool RequestHandler::waitRequest( const uint32_t requestID, uint32_t& rUint32,
     return true;
 }
 
-bool RequestHandler::waitRequest( const uint32_t requestID, uint128_t& rUint128,
+bool RequestHandler::waitRequest( const uint32_t requestID,
+                                  servus::uint128_t& rUint128,
                                   const uint32_t timeout )
 {
     Record::Result result;
@@ -260,7 +261,7 @@ void RequestHandler::serveRequest( const uint32_t requestID, bool result )
 }
 
 void RequestHandler::serveRequest( const uint32_t requestID,
-                                   const uint128_t& result )
+                                   const servus::uint128_t& result )
 {
     Record* request = 0;
     {

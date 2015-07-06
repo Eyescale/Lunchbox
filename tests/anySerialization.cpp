@@ -36,7 +36,7 @@ int main( int, char** )
     testValues.push_back( float( 5.42f ));
     testValues.push_back( double( 17.56789 ));
     testValues.push_back( std::string( "blablub" ));
-    testValues.push_back( lunchbox::uint128_t( lunchbox::make_uint128( "bla")));
+    testValues.push_back( servus::uint128_t( servus::make_uint128( "bla")));
     Foo foo = {42, 1.5f, false, "blablub"};
     testValues.push_back( foo );
 

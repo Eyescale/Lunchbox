@@ -23,7 +23,7 @@
 #include <lunchbox/types.h>
 #include <lunchbox/pluginFactory.h>
 #include <lunchbox/pluginRegisterer.h>
-#include <lunchbox/uri.h>
+#include <servus/uri.h>
 
 #include <boost/test/unit_test.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -33,7 +33,7 @@
 
 struct InitData
 {
-    lunchbox::URI uri;
+    servus::URI uri;
 };
 
 namespace boost
@@ -64,8 +64,8 @@ public:
 class MyPlugin : public PluginInterface
 {
 public:
-    MyPlugin( const lunchbox::URI& ) {}
-    static bool handles( const lunchbox::URI& ) { return true; }
+    MyPlugin( const servus::URI& ) {}
+    static bool handles( const servus::URI& ) { return true; }
     int getValue() final { return VALID_VALUE; }
 };
 
@@ -80,8 +80,8 @@ public:
 class MyDummyPlugin : public PluginInterface
 {
 public:
-    MyDummyPlugin( const lunchbox::URI& ) {}
-    static bool handles( const lunchbox::URI& ) { return false; }
+    MyDummyPlugin( const servus::URI& ) {}
+    static bool handles( const servus::URI& ) { return false; }
     int getValue() final { return INVALID_VALUE; }
 };
 
@@ -103,7 +103,7 @@ typedef boost::scoped_ptr< TypedPluginInterface > TypedPluginInterfacePtr;
 void tryCreatePlugin( PluginInterfacePtr& plugin )
 {
     MyPluginFactory& factory = MyPluginFactory::getInstance();
-    plugin.reset( factory.create( lunchbox::URI( "XYZ" )));
+    plugin.reset( factory.create( servus::URI( "XYZ" )));
 }
 
 void tryCreateTypedPlugin( TypedPluginInterfacePtr& plugin )

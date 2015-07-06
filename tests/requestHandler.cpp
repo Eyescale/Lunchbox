@@ -25,13 +25,13 @@
 #include <lunchbox/requestHandler.h>
 #include <lunchbox/sleep.h>
 #include <lunchbox/thread.h>
-#include <lunchbox/uint128_t.h>
+#include <servus/uint128_t.h>
 
-using lunchbox::uint128_t;
+using servus::uint128_t;
 
 lunchbox::RequestHandler handler_;
 lunchbox::MTQueue< uint32_t > requestQ_;
-const uint128_t uuid = lunchbox::make_UUID();
+const uint128_t uuid = servus::make_UUID();
 
 class Thread : public lunchbox::Thread
 {

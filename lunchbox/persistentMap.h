@@ -23,6 +23,7 @@
 #include <lunchbox/debug.h> // className
 #include <lunchbox/log.h> // LBTHROW
 #include <lunchbox/types.h>
+#include <servus/uri.h>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -53,7 +54,7 @@ public:
      * Depending on the URI scheme an implementation backend is chosen. If no
      * URI is given, a default one is selected. Available implementations are:
      * * leveldb://path (if LUNCHBOX_USE_LEVELDB is defined)
-     * * skv://path_to_config#pdsname (if LUNCHBOX_USE_SKV is defined)
+     * * skv://path_to_config\#pdsname (if LUNCHBOX_USE_SKV is defined)
      *
      * @param uri the storage backend and destination.
      * @throw std::runtime_error if no suitable implementation is found.
@@ -66,7 +67,7 @@ public:
      * Construct a persistent map using an URI. See other ctor for details.
      * @version 1.9.2
      */
-    LUNCHBOX_API explicit PersistentMap( const URI& uri );
+    LUNCHBOX_API explicit PersistentMap( const servus::URI& uri );
 
     /** Destruct the persistent map. @version 1.9.2 */
     LUNCHBOX_API ~PersistentMap();
@@ -75,7 +76,7 @@ public:
      * @return true if an implementation for the given URI is available.
      * @version 1.9.2
      */
-    LUNCHBOX_API static bool handles( const URI& uri );
+    LUNCHBOX_API static bool handles( const servus::URI& uri );
 
     /**
      * Set the maximum number of asynchronous outstanding write operations.
@@ -88,6 +89,7 @@ public:
      *
      * @return the queue depth chosen by the implementation, smaller or equal to
      *         the given depth.
+     * @version 1.11
      */
     LUNCHBOX_API size_t setQueueDepth( const size_t depth );
 
@@ -143,7 +145,7 @@ public:
      *
      * @param key the key to retrieve.
      * @return the value, or an empty string if the key is not available.
-     * @version 1.9.2
+     * @version 1.11
      */
     template< class V > V get( const std::string& key ) const
         { return _get< V >( key ); }
@@ -175,17 +177,17 @@ public:
      * @param key the key to retrieve.
      * @param sizeHint the size of the value, may be ignored by implementation.
      * @return false on error, true otherwise.
-     * @version 1.9.2
+     * @version 1.11
      */
     LUNCHBOX_API bool fetch( const std::string& key, size_t sizeHint = 0 ) const;
 
     /** @return true if the key exists. @version 1.9.2 */
     LUNCHBOX_API bool contains( const std::string& key ) const;
 
-    /** Flush outstanding operations to the backend storage. @version 1.10 */
+    /** Flush outstanding operations to the backend storage. @version 1.11 */
     LUNCHBOX_API bool flush();
 
-    /** Enable or disable endianness conversion on reads. @version 1.9.2 */
+    /** Enable or disable endianness conversion on reads. @version 1.11 */
     LUNCHBOX_API void setByteswap( const bool swap );
 
 private:

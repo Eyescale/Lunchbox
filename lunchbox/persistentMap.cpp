@@ -16,7 +16,7 @@
  */
 
 #include "persistentMap.h"
-#include "uri.h"
+#include <servus/uri.h>
 
 namespace lunchbox
 {
@@ -47,7 +47,7 @@ public:
 
 namespace
 {
-lunchbox::detail::PersistentMap* _newImpl( const lunchbox::URI& uri )
+lunchbox::detail::PersistentMap* _newImpl( const servus::URI& uri )
 {
     // Update handles() below on any change here!
 #ifdef LUNCHBOX_USE_LEVELDB
@@ -76,10 +76,10 @@ lunchbox::detail::PersistentMap* _newImpl( const lunchbox::URI& uri )
 namespace lunchbox
 {
 PersistentMap::PersistentMap( const std::string& uri )
-    : _impl( _newImpl( URI( uri )))
+    : _impl( _newImpl( servus::URI( uri )))
 {}
 
-PersistentMap::PersistentMap( const URI& uri )
+PersistentMap::PersistentMap( const servus::URI& uri )
     : _impl( _newImpl( uri ))
 {}
 
@@ -88,7 +88,7 @@ PersistentMap::~PersistentMap()
     delete _impl;
 }
 
-bool PersistentMap::handles( const URI& uri )
+bool PersistentMap::handles( const servus::URI& uri )
 {
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))

@@ -54,7 +54,7 @@ LUNCHBOX_API std::string getDirname( const std::string& filename )
 
 /**
  * @return the absolute path to the current executable.
- * @version 1.10
+ * @version 1.11
  */
 LUNCHBOX_API std::string getExecutablePath();
 

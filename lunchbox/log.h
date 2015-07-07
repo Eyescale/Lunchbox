@@ -50,12 +50,7 @@ enum LogLevel
     LOG_ALL
 };
 
-/**
- * The logging topics.
- *
- * @sa net/log.h, client/log.h
- * @version 1.0
- */
+/** The logging topics. @version 1.0 */
 enum LogTopic
 {
     LOG_EXCEPTION = 0x01,    //!< Log exception within LBTHROW

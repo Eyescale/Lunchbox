@@ -22,7 +22,7 @@
 #ifndef LUNCHBOX_PLUGIN_H
 #define LUNCHBOX_PLUGIN_H
 
-#include <lunchbox/uint128_t.h> // member
+#include <servus/uint128_t.h> // member
 #include <boost/function.hpp> // Plugin functions
 #include <boost/function_equal.hpp> // operator ==
 
@@ -44,7 +44,7 @@ namespace lunchbox
  *
  * @version 1.11.0
  */
-template< class PluginT, class InitDataT = URI > class Plugin
+template< class PluginT, class InitDataT = servus::URI > class Plugin
 {
 public:
     /**
@@ -67,7 +67,8 @@ public:
      * @version 1.11.0
      */
     Plugin( const Constructor& constructor_, const HandlesFunc& handles_ )
-        : constructor( constructor_ ), handles( handles_ ), tag( make_UUID( )) {}
+        : constructor( constructor_ ), handles( handles_ )
+        , tag( servus::make_UUID( )) {}
 
     /** @return true if the plugins wrap the same plugin. @version 1.11.0 */
     bool operator == ( const Plugin& rhs ) const
@@ -82,7 +83,7 @@ private:
     HandlesFunc handles;
 
     // Makes Plugin comparable. See http://stackoverflow.com/questions/18665515
-    uint128_t tag;
+    servus::uint128_t tag;
 };
 
 }

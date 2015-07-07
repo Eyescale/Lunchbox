@@ -20,7 +20,7 @@
 
 #include <lunchbox/any.h>
 #include <lunchbox/types.h>
-#include <lunchbox/uint128_t.h>
+#include <servus/uint128_t.h>
 
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/for_each.hpp>
@@ -46,7 +46,7 @@ typedef boost::mpl::list< int8_t, uint8_t,
                           int32_t, uint32_t,
                           int64_t, uint64_t,
                           float, double,
-                          bool, std::string, uint128_t > podTypes;
+                          bool, std::string, servus::uint128_t > podTypes;
 
 /** @cond IGNORE */
 /**

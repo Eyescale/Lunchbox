@@ -10,7 +10,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
 include(GitExternal)
 
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "12")
+set(VERSION_MINOR "11")
 set(VERSION_PATCH "0")
 set(VERSION_ABI 4)
 option(LUNCHBOX_BUILD_V2_API
@@ -65,6 +65,8 @@ add_subdirectory(lunchbox)
 add_subdirectory(tests)
 add_subdirectory(doc)
 
+set(DOXYGEN_MAINPAGE_MD README.md)
+set(DOXYGEN_EXTRA_INPUT ${PROJECT_SOURCE_DIR}/README.md)
 include(DoxygenRule) # must be after all targets
 include(LunchboxCPack)
 include(PackageConfig)

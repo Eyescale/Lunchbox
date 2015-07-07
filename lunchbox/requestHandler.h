@@ -21,6 +21,7 @@
 #include <lunchbox/api.h>       // LUNCHBOX_API definition
 #include <lunchbox/thread.h>    // thread-safety macros
 #include <lunchbox/types.h>
+#include <servus/uint128_t.h>
 
 namespace lunchbox
 {
@@ -107,7 +108,8 @@ public:
     LUNCHBOX_API bool waitRequest( const uint32_t requestID, bool& result,
                                const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
     /** Wait for a request with an uint128_t result. @version 1.0 */
-    LUNCHBOX_API bool waitRequest(const uint32_t requestID, uint128_t& result,
+    LUNCHBOX_API bool waitRequest( const uint32_t requestID,
+                                   servus::uint128_t& result,
                                const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
     /** Wait for a request without a result. @version 1.0 */
     LUNCHBOX_API bool waitRequest( const uint32_t requestID );
@@ -146,7 +148,7 @@ public:
     LUNCHBOX_API void serveRequest( const uint32_t requestID, bool result );
     /** Serve a request with an uint128_t result. @version 1.0 */
     LUNCHBOX_API void serveRequest( const uint32_t requestID,
-                                    const uint128_t& result );
+                                    const servus::uint128_t& result );
     /**
      * @return true if this request handler has pending requests.
      * @version 1.0

@@ -20,29 +20,6 @@
  * Basic type definitions not provided by the operating system.
  */
 
-/** @mainpage Lunchbox API Documentation
- *
- * Welcome to Lunchbox, a C++ library for multi-threaded programming. Lunchbox
- * provides the following functionality:
- *
- * - Operating System Abstraction: lunchbox::Atomic, lunchbox::Condition,
- *   lunchbox::DSO, @ref bitops "bit operations", lunchbox::daemonize(),
- *   (lunchbox::Clock, lunchbox::MemoryMap, lunchbox::PerThread, lunchbox::RNG,
- *   lunchbox::Thread)
- * - High-Performance Threading Primitives: lunchbox::Buffer, lunchbox::LFQueue,
- *   lunchbox::LFVector, lunchbox::Monitor, lunchbox::MTQueue,
- *   lunchbox::RequestHandler, lunchbox::SpinLock, (lunchbox::Lock,
- *   lunchbox::TimedLock)
- * - Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
- *   lunchbox::uint128_t, lunchbox::UnorderedIntervalSet, lunchbox::Future,
- *   lunchbox::Servus, lunchbox::URI, lunchbox::PersistentMap,
- *   (lunchbox::ScopedMutex)
- *
- * @ref RelNotes
- * <br><a class="el" href="CoverageReport/index.html">Test Code Coverage
- * Report</a> (may be missing from documentation)
- */
-
 /**
  * @namespace lunchbox
  * @brief Abstraction layer and common utilities for multi-threaded programming.

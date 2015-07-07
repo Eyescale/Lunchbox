@@ -21,12 +21,12 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/monitor.h>
 #include <lunchbox/thread.h>
-#include <lunchbox/uint128_t.h>
+#include <servus/uint128_t.h>
 #include <iostream>
 
 #define NLOOPS 200000
 
-using lunchbox::uint128_t;
+using servus::uint128_t;
 
 lunchbox::Monitor< uint128_t > monitor;
 const uint128_t big( 10, 10 );

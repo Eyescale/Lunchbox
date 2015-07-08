@@ -37,7 +37,7 @@ namespace lunchbox
 /** Perform a full memory barrier. */
 inline void memoryBarrier()
 {
-#ifdef LB_GCC_4_1_OR_LATER
+#ifdef __GNUC__
     __sync_synchronize();
 #elif defined(_MSC_VER)
     _ReadWriteBarrier();
@@ -168,7 +168,7 @@ private:
 };
 
 // Implementation
-#ifdef LB_GCC_4_1_OR_LATER
+#ifdef __GNUC__
 template< class T > T Atomic< T >::getAndAdd( T& value, const T increment )
 {
     return __sync_fetch_and_add( &value, increment );

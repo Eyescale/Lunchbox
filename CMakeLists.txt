@@ -22,8 +22,6 @@ set(DPUT_HOST "ppa:eilemann/equalizer-dev")
 
 set(LUNCHBOX_DESCRIPTION "Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.")
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
-set(LUNCHBOX_INCLUDE_NAME lunchbox)
-# set(ENABLE_CLANGCHECK_TESTS ON)
 
 include(Common)
 

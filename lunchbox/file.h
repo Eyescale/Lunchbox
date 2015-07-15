@@ -53,6 +53,11 @@ LUNCHBOX_API std::string getDirname( const std::string& filename )
     LB_DEPRECATED;
 
 /**
+ * Get the absolute path to the current executable.
+ *
+ * On Mac OS X, this returns the path to the app bundle, i.e., the directory
+ * where the Foo.app is located, not Foo.app/Contents/MacOS.
+ *
  * @return the absolute path to the current executable.
  * @version 1.11
  */

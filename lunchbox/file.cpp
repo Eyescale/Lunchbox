@@ -134,7 +134,16 @@ std::string getExecutablePath()
     const ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
     const std::string execPath( result, count > 0 ? count : 0 );
 #endif
+
     const boost::filesystem::path path( execPath );
+#ifdef __APPLE__
+    if( boost::algorithm::ends_with( path.parent_path().string(),
+                                     "Contents/MacOS" ))
+    {
+        return
+          path.parent_path().parent_path().parent_path().parent_path().string();
+    }
+#endif
     return path.parent_path().string();
 }
 

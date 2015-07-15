@@ -1,5 +1,11 @@
 # Changelog
 
+
+# git master {#master}
+
+* [213](https://github.com/Eyescale/Lunchbox/pull/213):
+  getExecutablePath: More sensible behaviour for OS X app bundles
+
 # Release 1.11 (07-07-2015) {#Release111}
 
 * [208](https://github.com/Eyescale/Lunchbox/pull/208),

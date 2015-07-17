@@ -217,7 +217,7 @@ inline std::ostream& stopBlock( std::ostream& os )
  */
 #define LBTHROW(exc)                                                \
     {                                                               \
-        LBINFO << exc.what() << std::endl;                          \
+        LBDEBUG << exc.what() << std::endl;                         \
         throw exc;                                                  \
     }
 

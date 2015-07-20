@@ -196,8 +196,9 @@ Strings getLibraryPaths()
     if( !env )
         return paths;
 
+    const std::string envString( env );
     const boost::tokenizer< boost::char_separator< char > >
-        tokens( std::string( env ), separator );
+        tokens( envString, separator );
     BOOST_FOREACH( const std::string& token, tokens )
         paths.push_back( token );
 

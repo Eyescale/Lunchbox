@@ -3,6 +3,8 @@
 
 # git master {#master}
 
+* [216]()https://github.com/Eyescale/Lunchbox/pull/216:
+  getLibraryPaths: Fixes library path results for OSX and linux
 * [213](https://github.com/Eyescale/Lunchbox/pull/213):
   getExecutablePath: More sensible behaviour for OS X app bundles
 

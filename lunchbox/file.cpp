@@ -180,23 +180,25 @@ Strings getLibraryPaths()
         paths.push_back( appPath );
 
 #ifdef _MSC_VER
-    const char* env = ::getenv( "PATH" );
-    boost::char_separator< char > separator(";");
     paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/bin" );
+    const char* env = ::getenv( "PATH" );
 #elif __APPLE__
-    const char* env = ::getenv( "LD_LIBRARY_PATH" );
-    boost::char_separator< char > separator(":");
     paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/lib" );
-#else
     const char* env = ::getenv( "DYLD_LIBRARY_PATH" );
-    boost::char_separator< char > separator(":");
+#else
     paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/lib" );
+    const char* env = ::getenv( "LD_LIBRARY_PATH" );
 #endif
 
     if( !env )
         return paths;
 
     const std::string envString( env );
+#ifdef _MSC_VER
+    boost::char_separator< char > separator(";");
+#else
+    boost::char_separator< char > separator(":");
+#endif
     const boost::tokenizer< boost::char_separator< char > >
         tokens( envString, separator );
     BOOST_FOREACH( const std::string& token, tokens )

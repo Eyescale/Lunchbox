@@ -1,5 +1,5 @@
 Name:		Lunchbox
-Version:	1.11.1
+Version:	1.12.0
 Release:	1%{?dist}
 Summary:	Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.
 
@@ -7,7 +7,7 @@ Group:		Development/Libraries
 License:	LGPL
 URL:		http://www.equalizergraphics.com/
 Source0:	http://www.equalizergraphics.com/downloads/Lunchbox-%{version}.tar.gz
-#Patch0:		Lunchbox-1.11.1-build-fix.patch
+#Patch0:		Lunchbox-1.12.0-build-fix.patch
 BuildRequires:	cmake boost-devel
 
 %description

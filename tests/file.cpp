@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Daniel.Nachbaur@epfl.ch
+/* Copyright (c) 2014-2015, Daniel.Nachbaur@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -27,5 +27,12 @@ int main( int, char** argv )
     const boost::filesystem::path path( argv[0] );
     const std::string argvPath( path.parent_path().string( ));
     TEST( boost::algorithm::ends_with( execPath, argvPath ));
+
+    boost::filesystem::path referenceRootPath( execPath );
+    referenceRootPath = referenceRootPath.parent_path();
+#ifdef _MSC_VER
+    referenceRootPath = referenceRootPath.parent_path();
+#endif
+    TEST( lunchbox::getRootPath() == referenceRootPath.string() );
     return EXIT_SUCCESS;
 }

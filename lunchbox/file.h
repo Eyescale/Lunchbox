@@ -1,6 +1,7 @@
 
-/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
- *               2009-2014, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2015, Cedric Stalder <cedric.stalder@gmail.com>
+ *                          Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -62,6 +63,22 @@ LUNCHBOX_API std::string getDirname( const std::string& filename )
  * @version 1.11
  */
 LUNCHBOX_API std::string getExecutablePath();
+
+/**
+ * Get the absolute path to the root path of the current executable.
+ *
+ * On all platforms, this returns the root path of the installation/distribution
+ * of the current executable. Can be empty, if getExecutablePath() is empty.
+ *
+ * On Linux and Mac OS X, this returns the path one level up of
+ * getExecutablePath().
+ * On Windows, this returns the path one or two levels up of
+ * getExecutablePath(), depending if <BuildType> is in the path.
+ *
+ * @return the absolute root path of the current executable.
+ * @version 1.12
+ */
+LUNCHBOX_API std::string getRootPath();
 
 /**
  * @return the absolute path to the libraries of the current executable.

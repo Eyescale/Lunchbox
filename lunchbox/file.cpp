@@ -147,6 +147,28 @@ std::string getExecutablePath()
     return path.parent_path().string();
 }
 
+std::string getRootPath()
+{
+    const std::string& exePath = getExecutablePath();
+    if( exePath.empty( ))
+        return exePath;
+
+    const boost::filesystem::path path( exePath );
+#ifdef _MSC_VER
+    const Strings buildTypes { "debug", "relwithdebinfo", "release",
+                               "minsizerel" };
+    std::string buildType( path.stem().string( ));
+    std::transform( buildType.begin(), buildType.end(), buildType.begin(),
+                    ::tolower );
+    if( std::find( buildTypes.begin(), buildTypes.end(),
+                   buildType ) != buildTypes.end( ))
+    {
+        return path.parent_path().parent_path().string();
+    }
+#endif
+    return path.parent_path().string();
+}
+
 std::string getLibraryPath()
 {
     const std::string& exePath = getExecutablePath();

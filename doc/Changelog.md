@@ -3,6 +3,8 @@
 
 # git master {#master}
 * [218](https://github.com/Eyescale/Lunchbox/pull/218):
+  Fix write to lunchbox::MemoryMap on MSVC
+* [218](https://github.com/Eyescale/Lunchbox/pull/218):
   Fix missing file:line print in backtrace() on MSVC
 * [217](https://github.com/Eyescale/Lunchbox/pull/217):
   Implement lunchbox::getRootPath()

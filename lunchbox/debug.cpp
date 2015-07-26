@@ -104,7 +104,8 @@ static void backtrace_( std::ostream& os, const size_t skipFrames )
         {
             os << symbol->Name << " - ";
             IMAGEHLP_LINE64 line = { sizeof(IMAGEHLP_LINE64) };
-            if( !SymGetLineFromAddr64( hProcess, (DWORD64)stack[i], 0, &line ))
+            DWORD displ;
+            if( !SymGetLineFromAddr64( hProcess, (DWORD64)stack[i], &displ, &line ))
                 os << std::hex << "0x" << symbol->Address << std::dec;
             else
                 os << line.FileName << ":" << line.LineNumber;

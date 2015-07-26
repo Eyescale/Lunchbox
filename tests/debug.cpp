@@ -21,7 +21,9 @@
 
 int main( int, char** )
 {
+#if !defined(_MSC_VER) || !defined(NDEBUG)
     const std::string& backtrace = lunchbox::backtrace( 0 );
     TEST( backtrace.find( "testMain" ) != std::string::npos );
+#endif
     return EXIT_SUCCESS;
 }

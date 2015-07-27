@@ -89,7 +89,11 @@ int main( int, char** )
         TEST( initThreads[i].start( ));
         TEST( initThreads[i].initLeft == true );
     }
+#ifdef _MSC_VER // resolution of Sleep is not high enough...
+    TESTINFO( clock.getTimef() + 1.f > NTHREADS * 10, clock.getTimef( ));
+#else
     TESTINFO( clock.getTimef() > NTHREADS * 10, clock.getTimef( ));
+#endif
 
     for( size_t i=0; i<NTHREADS; ++i )
         TEST( initThreads[i].join( ));

@@ -23,16 +23,16 @@
 
 int main( int, char** argv )
 {
-    const std::string& execPath = lunchbox::getExecutablePath();
     const boost::filesystem::path path( argv[0] );
-    const std::string argvPath( path.parent_path().string( ));
-    TEST( boost::algorithm::ends_with( execPath, argvPath ));
+    const std::string argvPath( path.parent_path().generic_string( ));
+    const boost::filesystem::path execPath( lunchbox::getExecutablePath( ));
+    TEST( boost::algorithm::ends_with( execPath.generic_string(), argvPath ));
 
     boost::filesystem::path referenceRootPath( execPath );
     referenceRootPath = referenceRootPath.parent_path();
 #ifdef _MSC_VER
     referenceRootPath = referenceRootPath.parent_path();
 #endif
-    TEST( lunchbox::getRootPath() == referenceRootPath.string() );
+    TEST( lunchbox::getRootPath() == referenceRootPath.string( ));
     return EXIT_SUCCESS;
 }

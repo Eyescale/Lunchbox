@@ -90,12 +90,14 @@ private:
         map_ = ::CreateFileMapping( file, 0, mode, 0, 0, 0 );
         if( !map_ )
         {
+            ::CloseHandle( file );
             LBWARN << "File mapping failed: " << sysError << std::endl;
             return;
         }
 
         // get a view of the mapping
-        ptr = ::MapViewOfFile( map_, FILE_MAP_READ, 0, 0, 0 );
+        ptr = ::MapViewOfFile( map_, size_ ? FILE_MAP_WRITE :
+                                             FILE_MAP_READ, 0, 0, 0 );
 
         // get size
         DWORD highSize;

@@ -118,10 +118,11 @@ public:
     //@}
 
 private:
+#pragma warning( disable: 4251 )
     Plugins _plugins;
-
     typedef boost::unordered_map< DSO*, PluginHolder > PluginMap;
     PluginMap _libraries;
+#pragma warning( default: 4251 )
 
     void _load( DSOs& result, const int version, const std::string& path,
                 const std::string& pattern );

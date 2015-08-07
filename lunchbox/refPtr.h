@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
- *               2012-2013, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2005-2015, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -42,10 +42,10 @@ template< class T > class RefPtr
 
 public:
     /** Construct a new, empty reference pointer. @version 1.0 */
-    RefPtr()                     : _ptr( 0 )         {}
+    RefPtr() : _ptr( 0 ) {}
 
     /** Construct a reference pointer from a C pointer. @version 1.0 */
-    RefPtr( T* const ptr )       : _ptr( ptr )       { _ref(); }
+    explicit RefPtr( T* const ptr ) : _ptr( ptr ) { _ref(); }
 
     /** Construct a copy of a reference pointer. @version 1.0 */
     RefPtr( const RefPtr& from ) : _ptr( from._ptr ) { _ref(); }
@@ -54,7 +54,7 @@ public:
      * Construct a copy of a reference pointer of a different type.
      * @version 1.0
      */
-    template< class O > RefPtr( RefPtr< O > from )
+    template< class O > explicit RefPtr( RefPtr< O > from )
         : _ptr( from.get( )) { _ref(); }
 
     /** Destruct this reference pointer. @version 1.0 */

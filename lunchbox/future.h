@@ -70,7 +70,7 @@ public:
     explicit Future( Impl impl ) : impl_( impl ){}
 
     /** Destruct the future. */
-     ~Future(){}
+    ~Future() {}
 
     /**
      * Wait for the promise to be fullfilled.

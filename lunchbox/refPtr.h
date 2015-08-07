@@ -45,7 +45,8 @@ public:
     RefPtr() : _ptr( 0 ) {}
 
     /** Construct a reference pointer from a C pointer. @version 1.0 */
-    explicit RefPtr( T* const ptr ) : _ptr( ptr ) { _ref(); }
+    // cppcheck-suppress noExplicitConstructor
+    RefPtr( T* const ptr ) : _ptr( ptr ) { _ref(); }
 
     /** Construct a copy of a reference pointer. @version 1.0 */
     RefPtr( const RefPtr& from ) : _ptr( from._ptr ) { _ref(); }
@@ -54,7 +55,8 @@ public:
      * Construct a copy of a reference pointer of a different type.
      * @version 1.0
      */
-    template< class O > explicit RefPtr( RefPtr< O > from )
+    // cppcheck-suppress noExplicitConstructor
+    template< class O > RefPtr( RefPtr< O > from )
         : _ptr( from.get( )) { _ref(); }
 
     /** Destruct this reference pointer. @version 1.0 */

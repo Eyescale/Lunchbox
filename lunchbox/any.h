@@ -73,8 +73,8 @@ public:
     LUNCHBOX_API Any();
 
     /** Construct a new Any with the given value. @version 1.5.0 */
-    template< typename ValueType >
-    explicit Any( const ValueType& value )
+    // cppcheck-suppress noExplicitConstructor
+    template< typename ValueType > Any( const ValueType& value )
         : content( new holder< ValueType >( value ))
     {}
 

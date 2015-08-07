@@ -31,7 +31,7 @@ lunchbox::Monitor< bool > boolMonitor;
 class Thread1 : public lunchbox::Thread
 {
 public:
-    Thread1( int64_t loops ) : _loops( loops ) {}
+    explicit Thread1( int64_t loops ) : _loops( loops ) {}
     virtual ~Thread1() {}
     virtual void run()
         {
@@ -78,7 +78,7 @@ void testSimpleMonitor()
 class Thread2 : public lunchbox::Thread
 {
 public:
-    Thread2( size_t loops )
+    explicit Thread2( size_t loops )
         : innerLoops( 0 )
         , _outerLoops( loops )
     {}

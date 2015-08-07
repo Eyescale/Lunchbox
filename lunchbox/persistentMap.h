@@ -61,7 +61,7 @@ public:
      * @throw std::runtime_error if opening the leveldb failed.
      * @version 1.9.2
      */
-    LUNCHBOX_API PersistentMap( const std::string& uri = std::string( ));
+    LUNCHBOX_API explicit PersistentMap( const std::string& uri =std::string());
 
     /**
      * Construct a persistent map using an URI. See other ctor for details.

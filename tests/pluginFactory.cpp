@@ -64,7 +64,7 @@ public:
 class MyPlugin : public PluginInterface
 {
 public:
-    MyPlugin( const servus::URI& ) {}
+    explicit MyPlugin( const servus::URI& ) {}
     static bool handles( const servus::URI& ) { return true; }
     int getValue() final { return VALID_VALUE; }
 };
@@ -72,7 +72,7 @@ public:
 class MyTypedPlugin : public TypedPluginInterface
 {
 public:
-    MyTypedPlugin( const InitData&  ) {}
+    explicit MyTypedPlugin( const InitData&  ) {}
     static bool handles( const InitData& ) { return true; }
     int getValue() final { return VALID_VALUE; }
 };
@@ -80,7 +80,7 @@ public:
 class MyDummyPlugin : public PluginInterface
 {
 public:
-    MyDummyPlugin( const servus::URI& ) {}
+    explicit MyDummyPlugin( const servus::URI& ) {}
     static bool handles( const servus::URI& ) { return false; }
     int getValue() final { return INVALID_VALUE; }
 };
@@ -88,7 +88,7 @@ public:
 class MyTypedDummyPlugin : public TypedPluginInterface
 {
 public:
-    MyTypedDummyPlugin( const InitData&  ) {}
+    explicit MyTypedDummyPlugin( const InitData&  ) {}
     static bool handles( const InitData& ) { return false; }
     int getValue() final { return INVALID_VALUE; }
 };

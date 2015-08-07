@@ -54,7 +54,7 @@ public:
     LUNCHBOX_API Thread();
 
     /** Copy constructor. @version 1.1.2 */
-    LUNCHBOX_API Thread( const Thread& from );
+    LUNCHBOX_API explicit Thread( const Thread& from );
 
     /** Destruct the thread. @version 1.0 */
     LUNCHBOX_API virtual ~Thread();

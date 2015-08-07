@@ -63,61 +63,55 @@ public:
     //@{
     /** Increment the monitored value, prefix only. @version 1.0 */
     Monitor& operator++ ()
-        {
-            ScopedCondition mutex( _cond );
-            ++_value;
-            _cond.broadcast();
-            return *this;
-        }
+    {
+        ScopedCondition mutex( _cond );
+        ++_value;
+        _cond.broadcast();
+        return *this;
+    }
 
     /** Decrement the monitored value, prefix only. @version 1.0 */
     Monitor& operator-- ()
-        {
-            ScopedCondition mutex( _cond );
-            --_value;
-            _cond.broadcast();
-            return *this;
-        }
+    {
+        ScopedCondition mutex( _cond );
+        --_value;
+        _cond.broadcast();
+        return *this;
+    }
 
     /** Assign a new value. @version 1.0 */
     Monitor& operator = ( const T& value )
-        {
-            set( value );
-            return *this;
-        }
+        { set( value ); return *this; }
 
     /** Assign a new value. @version 1.1.5 */
     const Monitor& operator = ( const Monitor< T >& from )
-        {
-            set( from._value );
-            return *this;
-        }
+        { set( from._value ); return *this; }
 
     /** Perform an or operation on the value. @version 1.0 */
     Monitor& operator |= ( const T& value )
-        {
-            ScopedCondition mutex( _cond );
-            _value |= value;
-            _cond.broadcast();
-            return *this;
-        }
+    {
+        ScopedCondition mutex( _cond );
+        _value |= value;
+        _cond.broadcast();
+        return *this;
+    }
 
     /** Perform an and operation on the value. @version 1.7 */
     Monitor& operator &= ( const T& value )
-        {
-            ScopedCondition mutex( _cond );
-            _value &= value;
-            _cond.broadcast();
-            return *this;
-        }
+    {
+        ScopedCondition mutex( _cond );
+        _value &= value;
+        _cond.broadcast();
+        return *this;
+    }
 
     /** Set a new value. @version 1.0 */
     void set( const T& value )
-        {
-            ScopedCondition mutex( _cond );
-            _value = value;
-            _cond.broadcast();
-        }
+    {
+        ScopedCondition mutex( _cond );
+        _value = value;
+        _cond.broadcast();
+    }
     //@}
 
     /** @name Monitor the value. */
@@ -128,10 +122,9 @@ public:
      * @version 1.0
      */
     const T waitEQ( const T& value ) const
-        {
-            return _waitPredicate(
-                boost::bind( std::equal_to< T >(), value, _1 ));
-        }
+    {
+        return _waitPredicate( boost::bind( std::equal_to<T>(), value, _1 ));
+    }
 
     /**
      * Block until the monitor has not the given value.
@@ -139,10 +132,9 @@ public:
      * @version 1.0
      */
     const T waitNE( const T& value ) const
-        {
-            return _waitPredicate(
-                boost::bind( std::not_equal_to< T >(), value, _1 ));
-        }
+    {
+        return _waitPredicate( boost::bind( std::not_equal_to<T>(), value, _1));
+    }
 
     /**
      * Block until the monitor has none of the given values.
@@ -150,18 +142,18 @@ public:
      * @version 1.0
      */
     const T waitNE( const T& v1, const T& v2 ) const
+    {
+        if( sizeof( T ) <= 8 ) // issue #1
         {
-            if( sizeof( T ) <= 8 ) // issue #1
-            {
-                const T current = _value;
-                if( current != v1 && current != v2 )
-                    return current;
-            }
-            ScopedCondition mutex( _cond );
-            while( _value == v1 || _value == v2 )
-                _cond.wait();
-            return _value;
+            const T current = _value;
+            if( current != v1 && current != v2 )
+                return current;
         }
+        ScopedCondition mutex( _cond );
+        while( _value == v1 || _value == v2 )
+            _cond.wait();
+        return _value;
+    }
 
     /**
      * Block until the monitor has a value greater or equal to the given value.
@@ -169,20 +161,18 @@ public:
      * @version 1.0
      */
     const T waitGE( const T& value ) const
-        {
-            return _waitPredicate(
-                boost::bind( std::greater_equal< T >(), _1, value ));
-        }
+    {
+        return _waitPredicate( boost::bind( std::greater_equal<T>(), _1,
+                                            value ));
+    }
+
     /**
      * Block until the monitor has a value less or equal to the given value.
      * @return the value when reaching the condition.
      * @version 1.0
      */
     const T waitLE( const T& value ) const
-        {
-            return _waitPredicate(
-                boost::bind( std::less_equal< T >(), _1, value ));
-        }
+    { return _waitPredicate( boost::bind( std::less_equal<T>(), _1, value )); }
 
     /**
      * Block until the monitor has a value greater than the given value.
@@ -190,20 +180,15 @@ public:
      * @version 1.10
      */
     const T waitGT( const T& value ) const
-        {
-            return _waitPredicate(
-                boost::bind( std::greater< T >(), _1, value ));
-        }
+    { return _waitPredicate( boost::bind( std::greater<T>(), _1, value )); }
+
     /**
      * Block until the monitor has a value less than the given value.
      * @return the value when reaching the condition.
      * @version 1.10
      */
     const T waitLT( const T& value ) const
-        {
-            return _waitPredicate(
-                boost::bind( std::less< T >(), _1, value ));
-        }
+    { return _waitPredicate( boost::bind( std::less<T>(), _1, value )); }
 
     /** @name Monitor the value with a timeout. */
     //@{
@@ -215,10 +200,10 @@ public:
      * @version 1.1
      */
     bool timedWaitEQ( const T& value, const uint32_t timeout ) const
-        {
-            return _timedWaitPredicate(
-                boost::bind( std::equal_to< T >(), _1, value ), timeout);
-        }
+    {
+        return _timedWaitPredicate( boost::bind( std::equal_to<T>(), _1,
+                                                 value ), timeout );
+    }
 
     /**
      * Block until the monitor has not the given value.
@@ -228,10 +213,10 @@ public:
      * @version 1.10
      */
     bool timedWaitNE( const T& value, const uint32_t timeout ) const
-        {
-            return _timedWaitPredicate(
-                boost::bind( std::not_equal_to< T >(), _1, value ), timeout);
-        }
+    {
+        return _timedWaitPredicate( boost::bind( std::not_equal_to<T>(), _1,
+                                                 value ), timeout );
+    }
 
     /**
      * Block until the monitor has a value greater or equal to the given value.
@@ -241,10 +226,10 @@ public:
      * @version 1.1
      */
     bool timedWaitGE( const T& value, const uint32_t timeout ) const
-        {
-            return _timedWaitPredicate(
-                boost::bind( std::greater_equal< T >(), _1, value ), timeout);
-        }
+    {
+        return _timedWaitPredicate( boost::bind( std::greater_equal<T>(), _1,
+                                                 value ), timeout );
+    }
 
     /**
      * Block until the monitor has a value less or equal to the given value.
@@ -254,10 +239,10 @@ public:
      * @version 1.10
      */
     bool timedWaitLE( const T& value, const uint32_t timeout ) const
-        {
-            return _timedWaitPredicate(
-                boost::bind( std::less_equal< T >(), _1, value ), timeout);
-        }
+    {
+        return _timedWaitPredicate( boost::bind( std::less_equal<T>(), _1,
+                                                 value ), timeout );
+    }
 
     /**
      * Block until the monitor has a value greater than the given value.
@@ -267,10 +252,10 @@ public:
      * @version 1.10
      */
     bool timedWaitGT( const T& value, const uint32_t timeout ) const
-        {
-            return _timedWaitPredicate(
-                boost::bind( std::greater< T >(), _1, value ), timeout);
-        }
+    {
+        return _timedWaitPredicate( boost::bind( std::greater<T>(), _1,
+                                                 value ), timeout );
+    }
 
     /**
      * Block until the monitor has a value less than the given value.
@@ -280,10 +265,10 @@ public:
      * @version 1.10
      */
     bool timedWaitLT( const T& value, const uint32_t timeout ) const
-        {
-            return _timedWaitPredicate(
-                boost::bind( std::less< T >(), _1, value ), timeout);
-        }
+    {
+        return _timedWaitPredicate( boost::bind( std::less<T>(), _1, value ),
+                                    timeout );
+    }
 
     //@}
 

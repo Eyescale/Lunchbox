@@ -28,6 +28,7 @@ int main( int, char** )
     TEST( clock.getTimef() - copy.getTimef() <= 0.f );
     TEST( clock.getTimef() - copy.getTimef() > -1.f );
 
+    lunchbox::sleep( 10.f );
     TEST( clock.resetTimef() > 0.f );
     lunchbox::sleep( 100.f );
     TEST( clock.getTimef() >  99.f );

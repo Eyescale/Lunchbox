@@ -15,9 +15,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#define TEST_RUNTIME 600 // seconds
 #include "test.h"
 
 #include <lunchbox/lunchbox.h>
+#include <boost/lexical_cast.hpp>
 #include <string.h>
 
 enum Task
@@ -28,13 +30,16 @@ enum Task
     TASK_MEMSET
 };
 lunchbox::Monitor< Task > task;
-static const size_t nThreads = 16;
+static const size_t nThreads = 32;
+static const size_t maxSize = 4 * size_t( LB_1GB );
+
+using boost::lexical_cast;
 
 class TaskThread : public lunchbox::Thread
 {
 public:
     TaskThread()
-        : size( LB_1GB )
+        : size( maxSize )
         , memcpyTime( 0 )
         , memmoveTime( 0 )
         , memsetTime( 0 )
@@ -68,8 +73,8 @@ public:
         ::memset( to, 42, size );
         memsetTime = clock.getTimef();
 
-        free( to );
-        free( from );
+        ::free( to );
+        ::free( from );
     }
 
     size_t size;
@@ -93,7 +98,7 @@ int main( int argc, char **argv )
         task = TASK_INITIAL;
         for( size_t j = 0; j < i; ++j )
         {
-            threads[ j ].size = LB_1GB / i;
+            threads[ j ].size = maxSize / i;
             threads[ j ].start();
         }
 
@@ -111,20 +116,36 @@ int main( int argc, char **argv )
         for( size_t j = 0; j < i; ++j )
         {
             threads[ j ].join();
-            TESTINFO( threads[ j ].memcpyTime < 500.f,
-                      threads[ j ].memcpyTime );
-            TESTINFO( threads[ j ].memmoveTime < 500.f,
-                      threads[ j ].memmoveTime);
-            TESTINFO( threads[ j ].memsetTime < 500.f,
-                      threads[ j ].memsetTime);
-
             memcpyTime = std::max( memcpyTime, threads[ j ].memcpyTime );
             memmoveTime = std::max( memmoveTime, threads[ j ].memmoveTime );
             memsetTime = std::max( memsetTime, threads[ j ].memsetTime );
         }
-        std::cout << i << ", " << 1.f / memcpyTime * 1000.f << ", "
-                  << 1.f / memmoveTime * 1000.f << ", "
-                  << 1.f / memsetTime * 1000.f << std::endl;
+        const float sizeGB = double( maxSize ) / 1024. / 1024. / 1024.;
+        std::cout << i << ", " << sizeGB / memcpyTime * 1000.f << ", "
+                  << sizeGB / memmoveTime * 1000.f << ", "
+                  << sizeGB / memsetTime * 1000.f << std::endl;
+    }
+
+    std::cout << std::endl
+              << "size, memcpy, memmove, memset (GB/s)" << std::endl;
+    TaskThread worker;
+    for( size_t i = maxSize; i != 0; i = i >> 1 )
+    {
+        task = TASK_MEMSET;
+        worker.size = i;
+        worker.run();
+
+        const float sizeGB = double( i ) / 1024. / 1024. / 1024.;
+        const std::string size =
+            i >= LB_1GB ? lexical_cast< std::string >( i >> 30 ) + " GB" :
+            i >= LB_1MB ? lexical_cast< std::string >( i >> 20 ) + " MB" :
+            i >= LB_1KB ? lexical_cast< std::string >( i >> 10 ) + " KB" :
+            lexical_cast< std::string >( i ) + " B";
+
+        std::cout << size << ", "
+                  << sizeGB / worker.memcpyTime * 1000.f << ", "
+                  << sizeGB / worker.memmoveTime * 1000.f << ", "
+                  << sizeGB / worker.memsetTime * 1000.f << std::endl;
     }
 
     TEST( lunchbox::exit( ));

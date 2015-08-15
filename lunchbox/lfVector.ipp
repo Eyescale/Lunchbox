@@ -49,7 +49,7 @@ LFVector< T, nSlots >::LFVector( const size_t n, const T& t )
     LBASSERT( n != 0 );
     setZero( slots_, nSlots * sizeof( T* ));
     const int32_t s = getIndexOfLastBit( uint64_t( n ));
-    for( int32_t i = 0; i <= s; ++i )
+    for( size_t i = 0; i <= size_t(s); ++i )
     {
         const size_t sz = 1<<i;
         slots_[ i ] = new T[ sz ];
@@ -95,7 +95,7 @@ LFVector< T, nSlots >::operator = ( const LFVector< T, nSlots >& from )
     ScopedWrite mutex1( lock_ ); // DEADLOCK when doing a=b and b=a
     ScopedWrite mutex2( from.lock_ ); // consider trySet/yield approach
     size_ = 0;
-    for( int32_t i = 0; i < nSlots; ++i )
+    for( size_t i = 0; i < size_t(nSlots); ++i )
     {
         if( from.slots_[i] )
         {
@@ -329,9 +329,9 @@ void LFVector< T, nSlots >::assign_( const LFVector< T, fromSlots >& from )
             return;
         }
 
-        const size_t sz = 1<<i;
+        const int32_t sz = 1<<i;
         slots_[ i ] = new T[ sz ];
-        for( size_t j = 0; size_ < from.size_ && j < sz ; ++j )
+        for( int32_t j = 0; size_ < from.size_ && j < sz ; ++j )
         {
             slots_[ i ][ j ] = from.slots_[ i ][ j ];
             ++size_;

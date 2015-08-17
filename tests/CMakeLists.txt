@@ -7,6 +7,9 @@ include(InstallFiles)
 include_directories(${PROJECT_SOURCE_DIR}/tests)
 
 set(TEST_LIBRARIES Lunchbox ${Boost_LIBRARIES})
+if(MPI_FOUND)
+  list(APPEND TEST_LIBRARIES ${MPI_LIBRARIES})
+endif()
 if(COVERAGE AND TRAVIS)
   list(APPEND EXCLUDE_FROM_TESTS anySerialization.cpp) #timeout in lcov gather
 endif()

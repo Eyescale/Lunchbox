@@ -43,6 +43,7 @@ endif()
 
 common_library(Lunchbox)
 
+target_include_directories(Lunchbox PUBLIC ${Boost_INCLUDE_DIRS})
 source_group(\\ FILES CMakeLists.txt)
 source_group(lunchbox FILES ${LUNCHBOX_PUBLIC_HEADERS} ${LUNCHBOX_HEADERS}
   ${LUNCHBOX_SOURCES})

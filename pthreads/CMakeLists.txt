@@ -57,6 +57,7 @@ set_target_properties(pthread PROPERTIES COMPILE_DEFINITIONS PTW32_BUILD=1
 target_link_libraries(pthread ws2_32)
 
 install(TARGETS pthread
+  EXPORT LunchboxTargets
   ARCHIVE DESTINATION lib COMPONENT codev
   LIBRARY DESTINATION lib COMPONENT codev
   RUNTIME DESTINATION bin COMPONENT colib

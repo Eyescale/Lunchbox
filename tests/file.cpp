@@ -31,7 +31,16 @@ int main( int, char** argv )
     boost::filesystem::path referenceRootPath( execPath );
     referenceRootPath = referenceRootPath.parent_path();
 #ifdef _MSC_VER
-    referenceRootPath = referenceRootPath.parent_path();
+    const lunchbox::Strings buildTypes { "debug", "relwithdebinfo", "release",
+                                         "minsizerel" };
+    std::string buildType( path.stem().string( ));
+    std::transform( buildType.begin(), buildType.end(), buildType.begin(),
+                    ::tolower );
+    if( std::find( buildTypes.begin(), buildTypes.end(),
+                   buildType ) != buildTypes.end( ))
+    {
+        referenceRootPath = referenceRootPath.parent_path();
+    }
 #endif
     TEST( lunchbox::getRootPath() == referenceRootPath.string( ));
     return EXIT_SUCCESS;

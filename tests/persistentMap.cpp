@@ -153,6 +153,13 @@ void setup( const std::string& uri )
 
 void benchmark( const std::string& uri, const uint64_t queueDepth )
 {
+    static std::string lastURI;
+    if( uri != lastURI )
+    {
+        std::cout << uri << std::endl;
+        lastURI = uri;
+    }
+
     PersistentMap map( uri );
     map.setQueueDepth( queueDepth );
 
@@ -275,7 +282,7 @@ void testLevelDBFailures()
 int main( int, char* argv[] )
 {
     const bool perfTest LB_UNUSED
-        = std::string( argv[0] ).find( "perf_" ) != std::string::npos;
+        = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
     if( perfTest )
         std::cout << "  async,    read,   write,   fetch" << std::endl;
 

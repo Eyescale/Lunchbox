@@ -1,5 +1,5 @@
 
-# Copyright (c) 2012-2014 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2015 Stefan Eilemann <eile@eyescale.ch>
 
 include(files.cmake)
 
@@ -34,8 +34,8 @@ if(LEVELDB_FOUND)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ${LEVELDB_LIBRARIES})
 endif()
 if(SKV_FOUND)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES ${SKV_CLIENT_LIBRARY}
-    ${SKV_COMMON_LIBRARY} ${IT_API_LIBRARY} ${FXLOGGER_LIBRARY})
+  list(APPEND LUNCHBOX_LINK_LIBRARIES skv_client fxlogger
+    ${SKV_COMMON_LIBRARY} ${IT_API_LIBRARY})
   if(SKV_OFED_FOUND)
     list(APPEND LUNCHBOX_LINK_LIBRARIES ${SKV_OFED_LIBRARIES}
       ${PTHREAD_LIBRARIES})

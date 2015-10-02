@@ -31,7 +31,7 @@ else()
   option(LUNCHBOX_USE_SKV "Enable SKV functionality if found" OFF)
 endif()
 if(LUNCHBOX_USE_SKV)
-  git_subproject(skv https://github.com/eile/skv.git fe5eb5c)
+  git_subproject(skv https://github.com/BlueBrain/skv.git master)
 endif()
 
 if(LUNCHBOX_BUILD_V2_API)

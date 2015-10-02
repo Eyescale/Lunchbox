@@ -34,6 +34,7 @@ using lunchbox::PersistentMap;
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
 const int64_t loopTime = 1000;
+const size_t valueSize = LB_4KB;
 
 template< class T > void insertVector( PersistentMap& map )
 {
@@ -163,9 +164,10 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
     PersistentMap map( uri );
     map.setQueueDepth( queueDepth );
 
-    // Prepare keys
+    // Prepare keys and value
     lunchbox::Strings keys;
     keys.resize( queueDepth + 1 );
+    const std::string value( valueSize, char( queueDepth ));
     for( uint64_t i = 0; i <= queueDepth; ++i )
         keys[i].assign( reinterpret_cast< char* >( &i ), 8 );
 
@@ -176,11 +178,11 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
     {
         std::string& key = keys[ i % (queueDepth+1) ];
         *reinterpret_cast< uint64_t* >( &key[0] ) = i;
-        map.insert( key, key );
+        map.insert( key, value );
         ++i;
     }
     map.flush();
-    const float insertTime = clock.getTimef();
+    const float writeTime = clock.getTimef() / 1000.f;
     const uint64_t wOps = i;
     TEST( i > queueDepth );
 
@@ -202,7 +204,7 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
         for( i = 0; i < queueDepth; ++i ) // prefetch queueDepth keys
         {
             *reinterpret_cast< uint64_t* >( &key[0] ) = i;
-            TEST( map.fetch( key, 8 ) );
+            TEST( map.fetch( key, valueSize ) );
         }
 
         for( ; i < wOps && clock.getTime64() < loopTime; ++i ) // read keys
@@ -211,7 +213,7 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
             map[ key ];
 
             *reinterpret_cast< uint64_t* >( &key[0] ) = i;
-            TEST( map.fetch( key, 8 ));
+            TEST( map.fetch( key, valueSize ));
         }
 
         for( uint64_t j = i - queueDepth; j <= i; ++j ) // drain fetched keys
@@ -221,33 +223,27 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
         }
     }
 
-    const float readTime = clock.getTimef();
+    const float readTime = clock.getTimef() / 1000.f;
     const size_t rOps = i;
 
-    // fetch performance
-    clock.reset();
-    for( i = 0; i < wOps && clock.getTime64() < loopTime && i < LB_128KB; ++i )
-    {
-        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
-        TEST( map.fetch( key, 8 ) );
-    }
-    const float fetchTime = clock.getTimef();
-    const size_t fOps = i;
-
-    std::cout << boost::format( "%7.2f, %7.2f, %7.2f, %6i")
+    std::cout << boost::format( "%6i, %9.2f, %9.2f, %9.2f, %9.2f")
         // cppcheck-suppress zerodivcond
-        % queueDepth % (rOps/insertTime) % (wOps/readTime) % (fOps/fetchTime)
-              << std::endl;
+        % queueDepth % (rOps/readTime) % (wOps/writeTime)
+        % (rOps/1024.f/1024.f*valueSize/readTime)
+        % (wOps/1024.f/1024.f*valueSize/writeTime) << std::endl;
+
 
     // check contents of store (not all to save time on bigger tests)
     for( uint64_t j = 0; j < wOps && clock.getTime64() < loopTime; ++j )
     {
         *reinterpret_cast< uint64_t* >( &key[0] ) = j;
-        TESTINFO( map.get< uint64_t >( key ) == j,
-                  j << " = " << map.get< uint64_t >( key ));
+        const std::string& val = map[ key ];
+        TESTINFO( val.size() == valueSize,
+                  val.size() << " != " << valueSize );
+        TEST( val == value );
     }
 
-    // try to make sure there's nothing outstanding if we messed up i our test.
+    // try to make sure there's nothing outstanding if we messed up in our test
     map.flush();
 }
 
@@ -284,8 +280,8 @@ int main( int, char* argv[] )
     const bool perfTest LB_UNUSED
         = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
     if( perfTest )
-        std::cout << "  async,    read,   write,   fetch" << std::endl;
-
+        std::cout << "  async,  reads/s,  writes/s, read MB/s, write MB/s"
+                  << std::endl;
     try
     {
 #ifdef LUNCHBOX_USE_LEVELDB

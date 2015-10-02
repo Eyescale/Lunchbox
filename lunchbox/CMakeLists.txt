@@ -34,12 +34,7 @@ if(LEVELDB_FOUND)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ${LEVELDB_LIBRARIES})
 endif()
 if(SKV_FOUND)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES skv_client fxlogger
-    ${SKV_COMMON_LIBRARY} ${IT_API_LIBRARY})
-  if(SKV_OFED_FOUND)
-    list(APPEND LUNCHBOX_LINK_LIBRARIES ${SKV_OFED_LIBRARIES}
-      ${PTHREAD_LIBRARIES})
-  endif()
+  list(APPEND LUNCHBOX_LINK_LIBRARIES skv_client fxlogger)
 endif()
 
 common_library(Lunchbox)

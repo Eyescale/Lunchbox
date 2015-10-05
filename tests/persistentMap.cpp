@@ -20,6 +20,7 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/os.h>
 #include <lunchbox/persistentMap.h>
+#include <lunchbox/rng.h>
 #ifdef LUNCHBOX_USE_LEVELDB
 #  include <leveldb/db.h>
 #endif
@@ -167,18 +168,20 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
     // Prepare keys and value
     lunchbox::Strings keys;
     keys.resize( queueDepth + 1 );
-    const std::string value( valueSize, char( queueDepth ));
     for( uint64_t i = 0; i <= queueDepth; ++i )
         keys[i].assign( reinterpret_cast< char* >( &i ), 8 );
+
+    std::string value( valueSize, '*' );
+    lunchbox::RNG rng;
+    for( size_t i = 0; i < valueSize; ++i )
+        value[i] = rng.get<char>();
 
     // write performance
     lunchbox::Clock clock;
     uint64_t i = 0;
     while( clock.getTime64() < loopTime )
     {
-        std::string& key = keys[ i % (queueDepth+1) ];
-        *reinterpret_cast< uint64_t* >( &key[0] ) = i;
-        map.insert( key, value );
+        map.insert( keys[ i % (queueDepth+1) ], value );
         ++i;
     }
     map.flush();
@@ -187,40 +190,25 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
     TEST( i > queueDepth );
 
     // read performance
-    std::string key;
-    key.assign( reinterpret_cast< char* >( &i ), 8 );
-
     clock.reset();
     if( queueDepth == 0 ) // sync read
     {
         for( i = 0; i < wOps && clock.getTime64() < loopTime; ++i ) // read keys
-        {
-            *reinterpret_cast< uint64_t* >( &key[0] ) = i - queueDepth;
-            map[ key ];
-        }
+            map[ keys[ i % (queueDepth+1) ]];
     }
     else // fetch + async read
     {
         for( i = 0; i < queueDepth; ++i ) // prefetch queueDepth keys
-        {
-            *reinterpret_cast< uint64_t* >( &key[0] ) = i;
-            TEST( map.fetch( key, valueSize ) );
-        }
+            TEST( map.fetch( keys[ i % (queueDepth+1) ], valueSize ) );
 
         for( ; i < wOps && clock.getTime64() < loopTime; ++i ) // read keys
         {
-            *reinterpret_cast< uint64_t* >( &key[0] ) = i - queueDepth;
-            map[ key ];
-
-            *reinterpret_cast< uint64_t* >( &key[0] ) = i;
-            TEST( map.fetch( key, valueSize ));
+            map[ keys[ (i - queueDepth) % (queueDepth+1) ] ];
+            TEST( map.fetch( keys[ i % (queueDepth+1) ], valueSize ));
         }
 
         for( uint64_t j = i - queueDepth; j <= i; ++j ) // drain fetched keys
-        {
-            *reinterpret_cast< uint64_t* >( &key[0] ) = j;
-            map[ key ];
-        }
+            map[ keys[ j % (queueDepth+1) ]];
     }
 
     const float readTime = clock.getTimef() / 1000.f;
@@ -236,8 +224,7 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
     // check contents of store (not all to save time on bigger tests)
     for( uint64_t j = 0; j < wOps && clock.getTime64() < loopTime; ++j )
     {
-        *reinterpret_cast< uint64_t* >( &key[0] ) = j;
-        const std::string& val = map[ key ];
+        const std::string& val = map[ keys[ j % (queueDepth+1) ]];
         TESTINFO( val.size() == valueSize,
                   val.size() << " != " << valueSize );
         TEST( val == value );

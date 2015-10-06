@@ -18,6 +18,8 @@
 #include "persistentMap.h"
 #include <servus/uri.h>
 
+// #define HISTOGRAM
+
 namespace lunchbox
 {
 namespace detail
@@ -37,6 +39,10 @@ public:
     virtual bool flush() = 0;
 
     bool swap;
+#ifdef HISTOGRAM
+    std::map< size_t, size_t > keys;
+    std::map< size_t, size_t > values;
+#endif
 };
 }
 }
@@ -85,6 +91,14 @@ PersistentMap::PersistentMap( const servus::URI& uri )
 
 PersistentMap::~PersistentMap()
 {
+#ifdef HISTOGRAM
+    std::cout << std::endl << "keys" << std::endl;
+    for( std::pair< size_t, size_t > i : _impl->keys )
+        std::cout << i.first << ", " << i.second << std::endl;
+    std::cout << std::endl << "values" << std::endl;
+    for( std::pair< size_t, size_t > i : _impl->values )
+        std::cout << i.first << ", " << i.second << std::endl;
+#endif
     delete _impl;
 }
 
@@ -116,6 +130,10 @@ size_t PersistentMap::setQueueDepth( const size_t depth )
 bool PersistentMap::_insert( const std::string& key, const void* data,
                              const size_t size )
 {
+#ifdef HISTOGRAM
+    ++_impl->keys[ key.size() ];
+    ++_impl->values[ size ];
+#endif
     return _impl->insert( key, data, size );
 }
 

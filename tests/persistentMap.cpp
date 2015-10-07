@@ -35,7 +35,7 @@ using lunchbox::PersistentMap;
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
 const int64_t loopTime = 1000;
-const size_t valueSize = LB_4KB;
+bool perfTest = false;
 
 template< class T > void insertVector( PersistentMap& map )
 {
@@ -153,7 +153,8 @@ void setup( const std::string& uri )
     read( map );
 }
 
-void benchmark( const std::string& uri, const uint64_t queueDepth )
+void benchmark( const std::string& uri, const uint64_t queueDepth,
+                const size_t valueSize )
 {
     static std::string lastURI;
     if( uri != lastURI )
@@ -214,20 +215,23 @@ void benchmark( const std::string& uri, const uint64_t queueDepth )
     const float readTime = clock.getTimef() / 1000.f;
     const size_t rOps = i;
 
-    std::cout << boost::format( "%6i, %9.2f, %9.2f, %9.2f, %9.2f")
+    std::cout << boost::format( "%6i, %6i, %9.2f, %9.2f, %9.2f, %9.2f")
         // cppcheck-suppress zerodivcond
-        % queueDepth % (rOps/readTime) % (wOps/writeTime)
+        % queueDepth % valueSize % (rOps/readTime) % (wOps/writeTime)
         % (rOps/1024.f/1024.f*valueSize/readTime)
         % (wOps/1024.f/1024.f*valueSize/writeTime) << std::endl;
 
 
-    // check contents of store (not all to save time on bigger tests)
-    for( uint64_t j = 0; j < wOps && clock.getTime64() < loopTime; ++j )
+    if( !perfTest )
     {
-        const std::string& val = map[ keys[ j % (queueDepth+1) ]];
-        TESTINFO( val.size() == valueSize,
-                  val.size() << " != " << valueSize );
-        TEST( val == value );
+        // check contents of store (not all to save time on bigger tests)
+        for( uint64_t j = 0; j < wOps && clock.getTime64() < loopTime; ++j )
+        {
+            const std::string& val = map[ keys[ j % (queueDepth+1) ]];
+            TESTINFO( val.size() == valueSize,
+                      val.size() << " != " << valueSize );
+            TEST( val == value );
+        }
     }
 
     // try to make sure there's nothing outstanding if we messed up in our test
@@ -264,11 +268,11 @@ void testLevelDBFailures()
 
 int main( int, char* argv[] )
 {
-    const bool perfTest LB_UNUSED
-        = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
+    perfTest = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
     if( perfTest )
-        std::cout << "  async,  reads/s,  writes/s, read MB/s, write MB/s"
-                  << std::endl;
+        std::cout
+            << " async,  value,   reads/s,  writes/s, read MB/s, write MB/s"
+            << std::endl;
     try
     {
 #ifdef LUNCHBOX_USE_LEVELDB
@@ -279,7 +283,8 @@ int main( int, char* argv[] )
         read( "leveldb://" );
         read( "leveldb://persistentMap2.leveldb" );
         if( perfTest )
-            benchmark( "leveldb://", 0 );
+            for( size_t i=1; i <= 65536; i = i<<2 )
+                benchmark( "leveldb://", 0, i );
 #endif
 #ifdef LUNCHBOX_USE_SKV
         FxLogger_Init( argv[0] );
@@ -287,9 +292,11 @@ int main( int, char* argv[] )
         read( "skv://" );
         if( perfTest )
         {
-            benchmark( "skv://", 0 );
-            for( size_t i=1; i < 100000; i = i<<1 )
-                benchmark( "skv://", i );
+            benchmark( "skv://", 0, 64 );
+            for( size_t i=1; i <= 65536; i = i<<1 )
+                benchmark( "skv://", i, 64 );
+            for( size_t i=1; i <= 65536; i = i<<2 )
+                benchmark( "skv://", 65536, i );
         }
 #endif
     }

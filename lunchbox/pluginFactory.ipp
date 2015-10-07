@@ -30,6 +30,12 @@ PluginFactory< PluginT, InitDataT >::getInstance()
 }
 
 template< typename PluginT, typename InitDataT >
+PluginFactory< PluginT, InitDataT >::~PluginFactory()
+{
+    deregisterAll(); // unload the DSO libraries
+}
+
+template< typename PluginT, typename InitDataT >
 PluginT* PluginFactory< PluginT, InitDataT >::create( const InitDataT& initData )
 {
     BOOST_FOREACH( PluginHolder& plugin, _plugins )

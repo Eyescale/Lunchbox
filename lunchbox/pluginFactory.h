@@ -126,6 +126,8 @@ private:
 
     void _load( DSOs& result, const int version, const std::string& path,
                 const std::string& pattern );
+
+    ~PluginFactory();
 };
 
 }

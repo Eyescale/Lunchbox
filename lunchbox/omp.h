@@ -26,23 +26,29 @@
 
 namespace lunchbox
 {
-    /** Base class for OpenMP functionality */
-    class OMP
-    {
-    public:
-        /**
-         * @return the number of threads used in a parallel region.
-         * @version 1.0
-         */
-        LUNCHBOX_API static unsigned getNThreads();
+/**
+ * Base class for OpenMP functionality.
+ *
+ * Implements dummy calls if the compiler does not support OpenMP
+ */
+class OMP
+{
+public:
+    /**
+     * @return the number of threads used in a parallel region.
+     * @version 1.0
+     */
+    LUNCHBOX_API static unsigned getNThreads();
 
-        /**
-         * @return the id of the current OpenMP thread, or 0 if OpenMP is not
-         *         used.
-         * @version 1.11
-         */
-        LUNCHBOX_API static int getThreadNum();
-    };
+    /** Set the maximum number of threads. @version 1.12 */
+    LUNCHBOX_API static void setNThreads( unsigned nThreads );
+
+    /**
+     * @return the id of the current OpenMP thread, or 0 if OpenMP is not used.
+     * @version 1.11
+     */
+    LUNCHBOX_API static int getThreadNum();
+};
 }
 
 #endif //LUNCHBOX_OMP_H

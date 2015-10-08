@@ -53,7 +53,7 @@ unsigned OMP::getNThreads()
     return _nThreads;
 }
 
-void OMP::setNThreads( unsigned nThreads )
+void OMP::setNThreads( unsigned nThreads LB_UNUSED )
 {
 #ifdef LUNCHBOX_USE_OPENMP
     omp_set_num_threads( nThreads );

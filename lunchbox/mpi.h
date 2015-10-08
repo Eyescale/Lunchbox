@@ -34,9 +34,9 @@ public:
      * Construct an MPI handler with command line arguments.
      *
      * Calls MPI_Init_thread requesting MPI_THREAD_MULTIPLE, unless MPI is
-     * already initialized. Initialized the thread support to false depending on
-     * the obtained thread support. Will signal not to support threads if MPI
-     * was initialized externally.
+     * already initialized. Will initialize the thread support to false
+     * depending on the obtained thread support. Will signal not to support
+     * threads if MPI was initialized externally.
      *
      * NOTE: Be aware that MPI_THREAD_MULTIPLE is only lightly tested and likely
      * still has some bugs. Please, refer the below links:
@@ -45,7 +45,7 @@ public:
      *
      * @version 1.1.1
      */
-    LUNCHBOX_API MPI( int& argc, char**& argv );
+    LUNCHBOX_API MPI( int argc, char** argv );
 
     /** Construct a new MPI handler.
      *

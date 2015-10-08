@@ -39,7 +39,7 @@ namespace detail
 class MPI
 {
 public:
-    MPI( int* argc LB_UNUSED, char*** argv LB_UNUSED )
+    MPI( int argc LB_UNUSED, char** argv LB_UNUSED )
         : rank( -1 )
         , size( -1 )
         , initCalled( false )
@@ -50,7 +50,7 @@ public:
         if( !initialized )
         {
             int threadLevel = -1;
-            if( MPI_SUCCESS != MPI_Init_thread( argc, argv,
+            if( MPI_SUCCESS != MPI_Init_thread( &argc, &argv,
                                                 MPI_THREAD_MULTIPLE,
                                                 &threadLevel ))
             {
@@ -112,8 +112,8 @@ MPI::MPI()
     : _impl( new detail::MPI( 0, 0 ))
 {}
 
-MPI::MPI( int& argc, char**& argv )
-    : _impl( new detail::MPI( &argc, &argv ))
+MPI::MPI( const int argc, char** argv )
+    : _impl( new detail::MPI( argc, argv ))
 {}
 
 MPI::~MPI()

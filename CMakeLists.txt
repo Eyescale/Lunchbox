@@ -12,7 +12,7 @@ include(GitExternal)
 set(VERSION_MAJOR "1")
 set(VERSION_MINOR "12")
 set(VERSION_PATCH "0")
-set(VERSION_ABI 4)
+set(VERSION_ABI 5)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 option(LUNCHBOX_USE_MPI "Enable MPI functionality if found" ON)

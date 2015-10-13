@@ -98,9 +98,11 @@ public:
 
         const bool requestServed = request->lock.set( timeout );
         if( requestServed )
+        {
             result = request->result;
+            unregisterRequest( requestID_ );
+        }
 
-        unregisterRequest( requestID_ );
         return requestServed;
     }
 

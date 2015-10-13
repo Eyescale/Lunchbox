@@ -53,8 +53,7 @@ public:
     /**
      * Register a request.
      *
-     * @param data a pointer to user-specific data for the request, can be
-     *             0.
+     * @param data a pointer to user-specific data for the request, can be 0.
      * @return A Future which will be fulfilled on serveRequest().
      * @version 1.9.1
      */
@@ -63,14 +62,12 @@ public:
     /**
      * Register a request.
      *
-     * @param data a pointer to user-specific data for the request, can be
-     *             0.
+     * @param data a pointer to user-specific data for the request, can be 0.
      * @return the request identifier.
      * @version 1.0
      * @deprecated use the future-based registerRequest()
      */
-    uint32_t registerRequest( void* data = 0 ) LB_DEPRECATED
-        { return _register( data ); }
+    uint32_t registerRequest( void* data = 0 ) { return _register( data ); }
 
     /**
      * Unregister a request.

@@ -2,6 +2,10 @@
 
 
 # git master {#master}
+* [233]((https://github.com/Eyescale/Lunchbox/pull/233):
+  Fix RequestHandler::waitRequest to not unregister the request if it
+  times out.
+  Request::relinquished replaced by Request::unregister.
 * [218](https://github.com/Eyescale/Lunchbox/pull/218):
   Fix write to lunchbox::MemoryMap on MSVC
 * [218](https://github.com/Eyescale/Lunchbox/pull/218):

@@ -49,11 +49,12 @@ public:
     /**
      * Abandon the request.
      *
-     * If called, wait will not be called at destruction and wait() will throw.
-     * If the future has already been resolved this function has no effect.
+     * If called, wait will not be called at destruction and the request will be
+     * unregistered. If the future has already been resolved this function has
+     * no effect.
      * @version 1.9.1
      */
-    void relinquish();
+    void unregister();
 };
 
 }
@@ -74,24 +75,25 @@ public:
         , result( 0 )
         , handler_( handler )
         , done_( false )
-        , relinquished_( false )
     {}
     virtual ~Impl() {}
 
     const uint32_t request;
     value_t result;
 
-    void relinquish() { relinquished_ = true; }
-    bool isRelinquished() const { return relinquished_; }
+    void unregister()
+    {
+        if( done_ )
+            return;
+        done_ = true;
+        handler_.unregisterRequest( request );
+    }
 
 protected:
     T wait( const uint32_t timeout ) final
     {
         if( !done_ )
         {
-            if( relinquished_ )
-                LBUNREACHABLE;
-
             if ( !handler_.waitRequest( request, result, timeout ))
                 throw FutureTimeout();
             done_ = true;
@@ -101,22 +103,18 @@ protected:
 
     bool isReady() const final
     {
-        return done_ || ( !relinquished_ && handler_.isRequestReady( request ));
+        return done_ || handler_.isRequestReady( request );
     }
 
 private:
     RequestHandler& handler_;
     bool done_; //!< waitRequest finished
-    bool relinquished_;
 };
 
 template<> inline void Request< void >::Impl::wait( const uint32_t timeout )
 {
     if( !done_ )
     {
-        if( relinquished_ )
-            LBUNREACHABLE;
-
         if ( !handler_.waitRequest( request, result, timeout ))
             throw FutureTimeout();
         done_ = true;
@@ -130,8 +128,7 @@ Request< T >::Request( RequestHandler& handler, const uint32_t request )
 
 template< class T > inline Request< T >::~Request()
 {
-    if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
-        this->wait();
+    this->wait();
 }
 
 template< class T > inline uint32_t Request< T >::getID() const
@@ -139,9 +136,9 @@ template< class T > inline uint32_t Request< T >::getID() const
     return static_cast< const Impl* >( this->impl_.get( ))->request;
 }
 
-template< class T > inline void Request< T >::relinquish()
+template< class T > inline void Request< T >::unregister()
 {
-    static_cast< Impl* >( this->impl_.get( ))->relinquish();
+    static_cast< Impl* >( this->impl_.get( ))->unregister();
 }
 
 }

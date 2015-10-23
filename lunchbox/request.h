@@ -25,6 +25,12 @@
 namespace lunchbox
 {
 
+class UnregisteredRequest : public std::runtime_error
+{
+public:
+    UnregisteredRequest() : std::runtime_error("") {}
+};
+
 /**
  * A Future implementation for a RequestHandler request.
  * @version 1.9.1
@@ -47,13 +53,13 @@ public:
     uint32_t getID() const;
 
     /**
-     * Abandon the request.
+     * Unregister this request from the request handler.
      *
      * If called, wait will not be called at destruction and wait() will throw.
      * If the future has already been resolved this function has no effect.
-     * @version 1.9.1
+     * @version 1.13
      */
-    void relinquish();
+    void unregister();
 };
 
 }
@@ -73,53 +79,78 @@ public:
         : request( req )
         , result( 0 )
         , handler_( handler )
-        , done_( false )
-        , relinquished_( false )
+        , state_( UNRESOLVED )
     {}
     virtual ~Impl() {}
 
     const uint32_t request;
     value_t result;
 
-    void relinquish() { relinquished_ = true; }
-    bool isRelinquished() const { return relinquished_; }
+    void unregister()
+    {
+        if( state_ == UNRESOLVED )
+        {
+            state_ = UNREGISTERED;
+            handler_.unregisterRequest( request );
+        }
+    }
+
+    bool isUnresolved() const
+    {
+        return state_ == UNRESOLVED;
+    }
 
 protected:
     T wait( const uint32_t timeout ) final
     {
-        if( !done_ )
+        switch( state_ )
         {
-            if( relinquished_ )
-                LBUNREACHABLE;
-
-            if ( !handler_.waitRequest( request, result, timeout ))
-                throw FutureTimeout();
-            done_ = true;
+        case UNREGISTERED:
+            // Can't wait or return any meaningful result
+            throw UnregisteredRequest();
+        case UNRESOLVED:
+             if ( !handler_.waitRequest( request, result, timeout ))
+                 throw FutureTimeout();
+            state_ = DONE;
+            // No break
+        default: // DONE
+            return result;
         }
-        return result;
     }
 
     bool isReady() const final
     {
-        return done_ || ( !relinquished_ && handler_.isRequestReady( request ));
+        switch( state_ )
+        {
+        case UNRESOLVED:
+            return handler_.isRequestReady( request );
+        case UNREGISTERED:
+            return false;
+        default: // DONE:
+            return true;
+        }
     }
 
 private:
     RequestHandler& handler_;
-    bool done_; //!< waitRequest finished
-    bool relinquished_;
+    enum State { UNRESOLVED = 0, DONE, UNREGISTERED };
+    State state_;
 };
 
 template<> inline void Request< void >::Impl::wait( const uint32_t timeout )
 {
-    if( !done_ )
+    switch( state_ )
     {
-        if( relinquished_ )
-            LBUNREACHABLE;
-
+    case UNREGISTERED:
+        // Can't wait or return any meaningful result
+        throw UnregisteredRequest();
+    case UNRESOLVED:
         if ( !handler_.waitRequest( request, result, timeout ))
             throw FutureTimeout();
-        done_ = true;
+        state_ = DONE;
+        // No break
+    case DONE:
+        ;
     }
 }
 
@@ -130,7 +161,7 @@ Request< T >::Request( RequestHandler& handler, const uint32_t request )
 
 template< class T > inline Request< T >::~Request()
 {
-    if( !static_cast< const Impl* >( this->impl_.get( ))->isRelinquished( ))
+    if( static_cast< const Impl* >( this->impl_.get( ))->isUnresolved( ))
         this->wait();
 }
 
@@ -139,9 +170,9 @@ template< class T > inline uint32_t Request< T >::getID() const
     return static_cast< const Impl* >( this->impl_.get( ))->request;
 }
 
-template< class T > inline void Request< T >::relinquish()
+template< class T > inline void Request< T >::unregister()
 {
-    static_cast< Impl* >( this->impl_.get( ))->relinquish();
+    static_cast< Impl* >( this->impl_.get( ))->unregister();
 }
 
 }

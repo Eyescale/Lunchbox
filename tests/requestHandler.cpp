@@ -63,6 +63,10 @@ public:
         request = requestQ_.pop();
         TEST( handler_.getRequestData( request ) == ++payload );
         handler_.serveRequest( request, uuid );
+
+        request = requestQ_.pop();
+        TEST( handler_.getRequestData( request ) == ++payload );
+        handler_.serveRequest( request );
     }
 };
 
@@ -98,6 +102,36 @@ int main( int, char** )
     TEST( future.wait( ));
     TEST( uint128Future.wait() == uuid );
     TEST( handler_.isRequestServed( voidFuture.getID( )));
+    TEST( voidFuture.isReady( ));
+    voidFuture.wait( );
+
+    {
+        lunchbox::Request< void > waitAtDestructor =
+            handler_.registerRequest< void >( ++payload );
+        requestQ_.push( waitAtDestructor.getID( ));
+    }
+
+    {
+        lunchbox::Request< void > wontBeServed =
+            handler_.registerRequest< void >( ++payload );
+        try
+        {
+            wontBeServed.wait( 1 );
+            lunchbox::abort();
+        }
+        catch( const lunchbox::FutureTimeout& ) {}
+
+        TEST( handler_.hasPendingRequests( ))
+        wontBeServed.unregister();
+        TEST( !handler_.hasPendingRequests( ))
+
+        try
+        {
+            wontBeServed.wait();
+            lunchbox::abort();
+        }
+        catch( const lunchbox::UnregisteredRequest& ) {}
+    }
 
     TEST( thread.join( ));
     return EXIT_SUCCESS;

@@ -12,6 +12,10 @@
   getLibraryPaths: Fixes library path results for OSX and linux
 * [213](https://github.com/Eyescale/Lunchbox/pull/213):
   getExecutablePath: More sensible behaviour for OS X app bundles
+* [233]((https://github.com/Eyescale/Lunchbox/pull/233):
+  Fix RequestHandler::waitRequest to not unregister the request if it
+  times out.
+  Request::relinquished replaced by Request::unregister.
 
 # Release 1.11 (07-07-2015) {#Release111}
 

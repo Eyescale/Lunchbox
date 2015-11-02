@@ -54,11 +54,12 @@ platforms and build environments are tested:
 * Windows: 7 (Visual Studio 2012)
 * Mac OS X: 10.8 (Makefile, Ninja)
 
-~~~
-git clone https://github.com/Eyescale/Lunchbox.git
-cd Lunchbox
-mkdir build
-cd build
-cmake ..
-make
-~~~
+Building from source is as simple as:
+
+    git clone https://github.com/Eyescale/Lunchbox.git
+    mkdir Lunchbox/build
+    cd Lunchbox/build
+    cmake ..
+    make
+
+

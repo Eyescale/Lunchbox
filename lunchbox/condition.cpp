@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2010-2012, Stefan Eilemann <eile@eyescale.ch> 
+/* Copyright (c) 2010-2015, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -68,7 +68,7 @@ Condition::~Condition()
     int error = pthread_mutex_destroy( &_impl->mutex );
     if( error )
         LBERROR << "Error destroying pthread mutex: " << strerror( error )
-                << std::endl;
+                << " at " << backtrace << std::endl;
 
     error = pthread_cond_destroy( &_impl->cond );
     if( error )

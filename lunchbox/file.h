@@ -73,7 +73,7 @@ LUNCHBOX_API std::string getExecutablePath();
  * On Linux and Mac OS X, this returns the path one level up of
  * getExecutablePath().
  * On Windows, this returns the path one or two levels up of
- * getExecutablePath(), depending if <BuildType> is in the path.
+ * getExecutablePath(), depending if ${BuildType} is in the path.
  *
  * @return the absolute root path of the current executable.
  * @version 1.12

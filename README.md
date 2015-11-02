@@ -10,10 +10,10 @@ intended for all application developers creating high-performance multi-threaded
 programs.
 
 The
-[API documentation](http://eyescale.github.io/Lunchbox-1.11/index.html) can be
+[API documentation](http://eyescale.github.io/Lunchbox-1.12/index.html) can be
 found on [eyescale.github.io](http://eyescale.github.io/). As with any open
 source project, the available source code, in particular the
-[unit tests](https://github.com/Eyescale/Lunchbox/tree/1.11/tests) provide a
+[unit tests](https://github.com/Eyescale/Lunchbox/tree/1.12/tests) provide a
 reference for developing applications.
 
 Technical questions can be posted to the Equalizer
@@ -41,6 +41,7 @@ development and deployment of multi-threaded applications:
 * Utility classes: lunchbox::Any, lunchbox::Log, lunchbox::Pool,
   lunchbox::UnorderedIntervalSet, lunchbox::Future, lunchbox::PersistentMap,
   (lunchbox::ScopedMutex)
+* Detailed @ref Changelog
 
 # Building {#Building}
 

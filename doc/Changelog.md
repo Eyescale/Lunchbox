@@ -4,7 +4,7 @@
 
 # Release 1.12 (02-11-2015) {#Release112}
 
-* [233]((https://github.com/Eyescale/Lunchbox/pull/233):
+* [233](https://github.com/Eyescale/Lunchbox/pull/233):
   Fix RequestHandler::waitRequest to not unregister the request if it
   times out.
   Request::relinquish() replaced by Request::unregister().

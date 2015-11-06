@@ -134,20 +134,22 @@
 #  define LB_LIKELY(x)       x
 #  define LB_UNLIKELY(x)     x
 #endif
-#ifdef LB_DEPRECATED
-#  define LB_PUSH_DEPRECATED                                          \
-    _Pragma("clang diagnostic push")                                  \
-    _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"") \
-    _Pragma("GCC diagnostic push")                                    \
+#ifndef LB_PUSH_DEPRECATED
+#  ifdef LB_DEPRECATED
+#    define LB_PUSH_DEPRECATED                                          \
+    _Pragma("clang diagnostic push")                                    \
+    _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")   \
+    _Pragma("GCC diagnostic push")                                      \
     _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
 
-#  define LB_POP_DEPRECATED                                         \
-    _Pragma("clang diagnostic pop")                                 \
+#    define LB_POP_DEPRECATED                                         \
+    _Pragma("clang diagnostic pop")                                   \
     _Pragma("GCC diagnostic pop")
-#else
-#  define LB_DEPRECATED
-#  define LB_PUSH_DEPRECATED
-#  define LB_POP_DEPRECATED
+#  else
+#    define LB_DEPRECATED
+#    define LB_PUSH_DEPRECATED
+#    define LB_POP_DEPRECATED
+#  endif
 #endif
 
 #endif //LUNCHBOX_COMPILER_H

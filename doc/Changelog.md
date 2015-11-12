@@ -2,6 +2,9 @@
 
 # git master {#master}
 
+* [239](https://github.com/Eyescale/Lunchbox/pull/239):
+  Fixed a potential buffer overrun bug in getFilename.
+
 # Release 1.12 (02-11-2015) {#Release112}
 
 * [233](https://github.com/Eyescale/Lunchbox/pull/233):

@@ -93,27 +93,30 @@ Strings searchDirectory( const std::string& directory,
 
 std::string getFilename( const std::string& filename )
 {
-    size_t lastSeparator = 0;
-    const size_t length = filename.length();
-
-    for( size_t i = 0; i < length; ++i )
-        if( filename[ i ] == '/' || filename[i] == '\\' )
-            lastSeparator = i+1;
-
-    return lastSeparator == 0 ? filename :
-                                filename.substr( lastSeparator, length );
+#ifdef _MSC_VER
+    const size_t lastSeparator = filename.find_last_of('\\');
+#else
+    const size_t lastSeparator = filename.find_last_of('/');
+#endif
+    if( lastSeparator == std::string::npos )
+        return filename;
+    // lastSeparator + 1 may be at most equal to filename.size(), which is good
+    return filename.substr( lastSeparator + 1 );
 }
 
 std::string getDirname( const std::string& filename )
 {
-    size_t lastSeparator = 0;
-    const size_t length = filename.length();
-
-    for( size_t i = 0; i < length; ++i )
-        if( filename[ i ] == '/' || filename[i] == '\\' )
-            lastSeparator = i+1;
-
-    return lastSeparator == 0 ? "." : filename.substr( 0, lastSeparator );
+#ifdef _MSC_VER
+    const size_t lastSeparator = filename.find_last_of('\\');
+#else
+    const size_t lastSeparator = filename.find_last_of('/');
+#endif
+    if( lastSeparator == std::string::npos )
+        return "./"; // The final separator is always in the output.
+    // The separator will be part of the output.
+    // If lastSeparator == 0 (e.g. /file-or-dir) it will assume that the rest
+    // of the path is a filename.
+    return filename.substr( 0, lastSeparator + 1 );
 }
 
 std::string getExecutablePath()
@@ -132,7 +135,13 @@ std::string getExecutablePath()
 #else
     char result[PATH_MAX];
     const ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
-    const std::string execPath( result, count > 0 ? count : 0 );
+    if( count < 0 )
+    {
+        // Not all UNIX have /proc/self/exe
+        LBWARN << "Could not find absolute executable path" << std::endl;
+        return "";
+    }
+    const std::string execPath( result, count );
 #endif
 
     const boost::filesystem::path path( execPath );

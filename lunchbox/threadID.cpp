@@ -59,6 +59,15 @@ bool ThreadID::operator != ( const ThreadID& rhs ) const
     return !pthread_equal( _impl->pthread, rhs._impl->pthread );
 }
 
+bool ThreadID::operator < ( const ThreadID& rhs ) const
+{
+#ifdef PTW32_VERSION
+    return _impl->pthread.p < rhs._impl->pthread.p;
+#else
+    return _impl->pthread < rhs._impl->pthread;
+#endif
+}
+
 std::ostream& operator << ( std::ostream& os, const ThreadID& threadID )
 {
 #ifdef PTW32_VERSION

@@ -33,7 +33,7 @@ namespace lunchbox
  * @internal
  * Used to trap into an infinite loop to allow debugging of assertions
  */
-LUNCHBOX_API void abort();
+LUNCHBOX_API void abort( bool dumpThreads = false );
 
 /**
  * @internal

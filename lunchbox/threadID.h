@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2010-2013, Stefan Eilemann <eile@eyescale.ch>
- *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2010-2015, Stefan Eilemann <eile@eyescale.ch>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -28,10 +28,7 @@ namespace lunchbox
 {
 namespace detail { class ThreadID; }
 
-/**
- * An utility class to wrap OS-specific thread identifiers.
- * @deprecated Use Boost.Thread
- */
+/** An utility class to wrap OS-specific thread identifiers. */
 class ThreadID
 {
 public:
@@ -56,13 +53,16 @@ public:
      */
     LUNCHBOX_API bool operator != ( const ThreadID& rhs ) const;
 
+    /** @internal */
+    bool operator < ( const ThreadID& rhs ) const;
+
 private:
     detail::ThreadID* const _impl;
     friend class Thread;
 
     friend LUNCHBOX_API
     std::ostream& operator << ( std::ostream& os, const ThreadID& );
-};// LB_DEPRECATED;
+};
 
 /** Print the thread to the given output stream. */
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const ThreadID& );

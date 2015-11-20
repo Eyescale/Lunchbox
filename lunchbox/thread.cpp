@@ -34,11 +34,16 @@
 #include <pthread.h>
 #include <algorithm>
 #include <map>
+#include <set>
 
 // Experimental Win32 thread pinning
 #ifdef _WIN32
 //#  define LB_WIN32_THREAD_AFFINITY
 #  pragma message ("Thread affinity not supported on WIN32")
+#endif
+
+#ifndef _MSC_VER
+#  include <signal.h>
 #endif
 
 #ifdef __linux__
@@ -64,6 +69,15 @@ enum ThreadState //!< The current state of a thread.
     STATE_RUNNING,
     STATE_STOPPING  // child no longer active, join() not yet called
 };
+
+#ifndef _MSC_VER
+static Lockable< std::set< ThreadID >, SpinLock > _threads;
+void _sigUserHandler( int, siginfo_t*, void* )
+{
+    LBERROR << ":" << backtrace << std::endl;
+}
+#endif
+
 }
 
 namespace detail
@@ -115,6 +129,18 @@ void Thread::_runChild()
 {
     setName( boost::lexical_cast< std::string >( _impl->index ));
     _impl->id._impl->pthread = pthread_self();
+#ifndef _MSC_VER
+    {
+        ScopedFastWrite mutex( _threads );
+        _threads->insert( _impl->id );
+    }
+    // install signal handler to dump thread state for debugging
+    struct sigaction sa;
+    ::sigfillset( &sa.sa_mask );
+    sa.sa_flags = SA_SIGINFO;
+    sa.sa_sigaction = _sigUserHandler;
+    ::sigaction( SIGUSR1, &sa, 0 );
+#endif
 
     if( !init( ))
     {
@@ -131,6 +157,12 @@ void Thread::_runChild()
 
     run();
     LBVERB << "Thread " << className( this ) << " finished" << std::endl;
+#ifndef _MSC_VER
+    {
+        ScopedFastWrite mutex( _threads );
+        _threads->erase( _impl->id );
+    }
+#endif
     this->exit();
 
     LBUNREACHABLE;
@@ -367,6 +399,15 @@ void Thread::setAffinity( const int32_t affinity )
 #else
     LBWARN << "Thread::setAffinity not implemented, hwloc library missing"
            << std::endl;
+#endif
+}
+
+void Thread::_dumpAll()
+{
+#ifndef _MSC_VER
+    ScopedFastRead mutex( _threads );
+    for( const ThreadID& id : _threads.data )
+        pthread_kill( id._impl->pthread, SIGUSR1 );
 #endif
 }
 

@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
- *               2009-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2007-2015, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,6 +20,8 @@
 
 #include "os.h" // must come before atomic.h, ordering issue
 #include "atomic.h"
+#include "sleep.h"
+#include "thread.h"
 
 #include <errno.h>
 
@@ -39,9 +41,17 @@
 namespace lunchbox
 {
 
-void abort()
+void abort( const bool dumpThreads )
 {
-    LBERROR << "  in: " << backtrace << std::endl;
+    LBERROR << "  in: " << backtrace << "\n";
+    if( dumpThreads )
+    {
+        LBERROR << "\nThreads:" << std::endl;
+        Thread::_dumpAll();
+        sleep( 100 ); // threads need a bit to print
+    }
+    else
+        LBERROR << std::endl;
 
     // if LB_ABORT_WAIT is set, spin forever to allow identifying and debugging
     // crashed nodes.
@@ -154,7 +164,7 @@ static void backtrace_( std::ostream& os, const size_t skipFrames )
                 os << name;
         }
     }
-    os << std::endl;
+    os << "\n";
     ::free( names );
 #endif
 }

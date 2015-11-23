@@ -175,7 +175,10 @@ private:
 
     static void* runChild( void* arg );
     void        _runChild();
-};// LB_DEPRECATED;
+
+    friend void lunchbox::abort( bool );
+    static void _dumpAll();
+};
 
 /** Output the affinity setting in human-readable form. @version 1.7.1 */
 LUNCHBOX_API std::ostream& operator << ( std::ostream&, const Thread::Affinity );

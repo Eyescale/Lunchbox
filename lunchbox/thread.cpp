@@ -42,11 +42,8 @@
 #  pragma message ("Thread affinity not supported on WIN32")
 #endif
 
-#ifndef _MSC_VER
-#  include <signal.h>
-#endif
-
 #ifdef __linux__
+#  include <signal.h>
 #  include <sys/prctl.h>
 #endif
 
@@ -70,7 +67,7 @@ enum ThreadState //!< The current state of a thread.
     STATE_STOPPING  // child no longer active, join() not yet called
 };
 
-#ifndef _MSC_VER
+#ifdef __linux__
 static Lockable< std::set< ThreadID >, SpinLock > _threads;
 void _sigUserHandler( int, siginfo_t*, void* )
 {
@@ -129,7 +126,7 @@ void Thread::_runChild()
 {
     setName( boost::lexical_cast< std::string >( _impl->index ));
     _impl->id._impl->pthread = pthread_self();
-#ifndef _MSC_VER
+#ifdef __linux__
     {
         ScopedFastWrite mutex( _threads );
         _threads->insert( _impl->id );
@@ -157,7 +154,7 @@ void Thread::_runChild()
 
     run();
     LBVERB << "Thread " << className( this ) << " finished" << std::endl;
-#ifndef _MSC_VER
+#ifdef __linux__
     {
         ScopedFastWrite mutex( _threads );
         _threads->erase( _impl->id );
@@ -404,7 +401,7 @@ void Thread::setAffinity( const int32_t affinity )
 
 void Thread::_dumpAll()
 {
-#ifndef _MSC_VER
+#ifdef __linux__
     ScopedFastRead mutex( _threads );
     for( const ThreadID& id : _threads.data )
         pthread_kill( id._impl->pthread, SIGUSR1 );

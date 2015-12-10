@@ -68,7 +68,8 @@ enum ThreadState //!< The current state of a thread.
 };
 
 #ifdef __linux__
-static Lockable< std::set< ThreadID >, SpinLock > _threads;
+typedef std::set< ThreadID > ThreadIDSet;
+static Lockable< ThreadIDSet, SpinLock > _threads;
 void _sigUserHandler( int, siginfo_t*, void* )
 {
     LBERROR << ":" << backtrace << std::endl;
@@ -403,8 +404,11 @@ void Thread::_dumpAll()
 {
 #ifdef __linux__
     ScopedFastRead mutex( _threads );
-    for( const ThreadID& id : _threads.data )
-        pthread_kill( id._impl->pthread, SIGUSR1 );
+    for( ThreadIDSet::const_iterator i = _threads.data.begin();
+         i != _threads.data.end(); ++i )
+    {
+        pthread_kill( i->_impl->pthread, SIGUSR1 );
+    }
 #endif
 }
 

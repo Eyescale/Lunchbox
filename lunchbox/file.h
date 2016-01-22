@@ -91,6 +91,22 @@ LUNCHBOX_API std::string getLibraryPath();
  * @version 1.11
  */
 LUNCHBOX_API Strings getLibraryPaths();
+
+/** Save binary to file. @return true on success, false otherwise. */
+LUNCHBOX_API bool saveBinary( const servus::Serializable& object,
+                              const std::string& filename );
+
+/** Load from binary file. @return true on success, false otherwise. */
+LUNCHBOX_API bool loadBinary( servus::Serializable& object,
+                              const std::string& filename );
+
+/** Save ascii (JSON) to file. @return true on success, false otherwise. */
+LUNCHBOX_API bool saveAscii( const servus::Serializable& object,
+                             const std::string& filename );
+
+/** Load from ascii (JSON) file. @return true on success, false otherwise.*/
+LUNCHBOX_API bool loadAscii( servus::Serializable& object,
+                             const std::string& filename );
 }
 
 #endif //LUNCHBOX_FILE_H

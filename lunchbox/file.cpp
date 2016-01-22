@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2009, Cedric Stalder <cedric.stalder@gmail.com>
- *               2009-2015, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2016, Cedric Stalder <cedric.stalder@gmail.com>
+ *                          Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,8 +19,11 @@
 #include "file.h"
 
 #include "debug.h"
+#include "memoryMap.h"
 #include "os.h"
 
+#include <servus/serializable.h>
+#include <servus/uint128_t.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
@@ -236,6 +239,57 @@ Strings getLibraryPaths()
         paths.push_back( token );
 
     return paths;
+}
+
+bool saveBinary( const servus::Serializable& object, const std::string& file )
+{
+    object.notifyRequested();
+    const auto& data = object.toBinary();
+    MemoryMap mmap( file, sizeof( uint128_t ) + data.size );
+    if( !mmap.getAddress( ))
+        return false;
+    const uint128_t& id = object.getTypeIdentifier();
+    ::memcpy( mmap.getAddress(), &id, sizeof( id ));
+    ::memcpy( mmap.getAddress< uint8_t >() + sizeof( id ),
+              data.ptr.get(), data.size );
+    return true;
+}
+
+bool loadBinary( servus::Serializable& object, const std::string& file )
+{
+    const MemoryMap mmap( file );
+    if( !mmap.getAddress() || mmap.getSize() < sizeof( uint128_t ) ||
+        *mmap.getAddress< uint128_t >() != object.getTypeIdentifier( ))
+    {
+        return false;
+    }
+
+    object.fromBinary( mmap.getAddress< uint8_t >() + sizeof( uint128_t ),
+                       mmap.getSize() - sizeof( uint128_t ));
+    object.notifyUpdated();
+    return true;
+}
+
+bool saveAscii( const servus::Serializable& object, const std::string& file )
+{
+    object.notifyRequested();
+    const std::string& data = object.toJSON();
+    MemoryMap mmap( file, data.length( ));
+    if( !mmap.getAddress( ))
+        return false;
+    ::memcpy( mmap.getAddress(), &data[0], data.length( ));
+    return true;
+}
+
+bool loadAscii( servus::Serializable& object, const std::string& file )
+{
+    const MemoryMap mmap( file );
+    if( !mmap.getAddress( ))
+        return false;
+    const uint8_t* ptr = mmap.getAddress< uint8_t >();
+    object.fromJSON( std::string( ptr, ptr + mmap.getSize( )));
+    object.notifyUpdated();
+    return true;
 }
 
 

@@ -244,7 +244,7 @@ Strings getLibraryPaths()
 bool saveBinary( const servus::Serializable& object, const std::string& file )
 {
     object.notifyRequested();
-    const auto& data = object.toBinary();
+    const servus::Serializable::Data& data = object.toBinary();
     MemoryMap mmap( file, sizeof( uint128_t ) + data.size );
     if( !mmap.getAddress( ))
         return false;

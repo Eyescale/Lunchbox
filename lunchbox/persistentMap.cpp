@@ -51,6 +51,7 @@ public:
 }
 
 // Impls - need detail::PersistentMap interface above
+#include "ceph/persistentMap.h"
 #include "leveldb/persistentMap.h"
 #include "memcached/persistentMap.h"
 
@@ -59,6 +60,10 @@ namespace
 lunchbox::detail::PersistentMap* _newImpl( const servus::URI& uri )
 {
     // Update handles() below on any change here!
+#ifdef LUNCHBOX_USE_RADOS
+    if( lunchbox::ceph::PersistentMap::handles( uri ))
+        return new lunchbox::ceph::PersistentMap( uri );
+#endif
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
         return new lunchbox::leveldb::PersistentMap( uri );
@@ -102,6 +107,13 @@ PersistentMapPtr PersistentMap::createCache()
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
     if( ::getenv( "MEMCACHED_SERVERS" ))
         return PersistentMapPtr( new PersistentMap( "memcached://" ));
+#ifdef LUNCHBOX_USE_RADOS
+    if( lunchbox::ceph::PersistentMap::handles( uri ))
+        return true;
+#endif
+#ifdef LUNCHBOX_USE_LEVELDB
+    if( lunchbox::leveldb::PersistentMap::handles( uri ))
+        return true;
 #endif
 #ifdef LUNCHBOX_USE_LEVELDB
     const char* leveldb = ::getenv( "LEVELDB_CACHE" );

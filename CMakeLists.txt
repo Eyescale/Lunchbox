@@ -42,6 +42,9 @@ if(NOT COMMON_USE_CXX03)
 endif()
 common_find_package(Servus REQUIRED)
 common_find_package_post()
+set(RADOS_FOUND TRUE) # TBD RADOS finder
+add_definitions(-DLUNCHBOX_USE_RADOS) # TBD done be common_package
+common_package_post()
 
 set(LUNCHBOX_DEPENDENT_LIBRARIES Boost)
 if(NOT LUNCHBOX_BUILD_V2_API)

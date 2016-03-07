@@ -71,6 +71,7 @@ public:
      *
      * Depending on the URI scheme an implementation backend is chosen. If no
      * URI is given, a default one is selected. Available implementations are:
+     * * ceph://path_to_ceph.conf (if LUNCHBOX_USE_RADOS is defined)
      * * leveldb://path (if LUNCHBOX_USE_LEVELDB is defined)
      * * memcached://[server] (if LUNCHBOX_USE_LIBMEMCACHED is defined)
      * * skv://path_to_config\#pdsname (if LUNCHBOX_USE_SKV is defined)

@@ -331,6 +331,13 @@ int main( int, char* argv[] )
                     benchmark( "memcached://", 0, i );
         }
 #endif
+#ifdef LUNCHBOX_USE_RADOS
+        setup( "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf" );
+        // read( "ceph://" );
+        // if( perfTest )
+        //     for( size_t i=1; i <= 65536; i = i<<2 )
+        //         benchmark( "ceph://", 0, i );
+#endif
     }
 #ifdef LUNCHBOX_USE_LEVELDB
     catch( const leveldb::Status& status )

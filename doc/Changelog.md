@@ -1,16 +1,19 @@
 # Changelog {#Changelog}
 
-# git master {#master}
+# git master
 
+# Release 1.13 (02-11-2015)
+
+* [249](https://github.com/Eyescale/Lunchbox/pull/249):
+  load/save binary/ascii for servus::Serializable
 * [239](https://github.com/Eyescale/Lunchbox/pull/239):
-  Fixed a potential buffer overrun bug in getFilename.
+  Fixed a potential buffer overrun bug in getFilename
 
-# Release 1.12 (02-11-2015) {#Release112}
+# Release 1.12 (02-11-2015)
 
 * [233](https://github.com/Eyescale/Lunchbox/pull/233):
   Fix RequestHandler::waitRequest to not unregister the request if it
-  times out.
-  Request::relinquish() replaced by Request::unregister().
+  times out, Request::relinquish() replaced by Request::unregister()
 * [218](https://github.com/Eyescale/Lunchbox/pull/218):
   Fix write to lunchbox::MemoryMap on MSVC
 * [218](https://github.com/Eyescale/Lunchbox/pull/218):
@@ -22,7 +25,7 @@
 * [213](https://github.com/Eyescale/Lunchbox/pull/213):
   getExecutablePath: More sensible behaviour for OS X app bundles
 
-# Release 1.11 (07-07-2015) {#Release111}
+# Release 1.11 (07-07-2015)
 
 * [208](https://github.com/Eyescale/Lunchbox/pull/208),
   [207](https://github.com/Eyescale/Lunchbox/pull/207):
@@ -64,7 +67,7 @@
   Add lunchbox::getExecutablePath() to find resources based on installation
   folder
 
-# Release 1.10 (09-10-2014) {#Release110}
+# Release 1.10 (09-10-2014)
 
 * Added API for continuous browsing to lunchbox::Servus
 * Added lunchbox::getHostname function

@@ -2,7 +2,7 @@
 
 # git master
 
-# Release 1.13 (02-11-2015)
+# Release 1.13 (07-03-2016)
 
 * [249](https://github.com/Eyescale/Lunchbox/pull/249):
   load/save binary/ascii for servus::Serializable

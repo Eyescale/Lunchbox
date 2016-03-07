@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013 Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2016 Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -26,6 +26,7 @@ int main( int, char** )
 {
     MemoryMap map( "foo.mmap", MAP_SIZE );
     TESTINFO( map.getSize() == MAP_SIZE, map.getSize( ));
+    TEST( map.recreate(  "foo.mmap", MAP_SIZE ));
 
     uint8_t* writePtr = map.getAddress< uint8_t >();
     TEST( writePtr );
@@ -35,10 +36,12 @@ int main( int, char** )
     map.unmap();
 
     const void* noPtr = map.map( "foo.map" );
-    TEST( !noPtr );
+    TEST( noPtr == 0 );
     TEST( map.getSize() == 0 );
 
-    map.map( "foo.mmap" );
+    TEST( map.map( "foo.mmap" ));
+    TEST( !map.map( "foo.mmap" ));
+    TEST( map.remap( "foo.mmap" ));
     const uint8_t* readPtr = map.getAddress< uint8_t >();
     TEST( readPtr );
     TEST( map.getSize() == MAP_SIZE );

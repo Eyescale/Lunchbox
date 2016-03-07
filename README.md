@@ -1,6 +1,5 @@
-[TOC]
 
-# Introduction {#Introduction}
+# Introduction
 
 Welcome to Lunchbox, a C++ library for multi-threaded programming. Lunchbox was
 formerly known as eq::base or co::base, the foundation for the
@@ -26,7 +25,7 @@ available from [Eyescale](http://www.eyescale.ch). Please contact
 [info@eyescale.ch](mailto:info@eyescale.ch?subject=Lunchbox%20support)
 for further information.
 
-# Features {#Features}
+# Features
 
 Lunchbox provides the following major features to facilitate the
 development and deployment of multi-threaded applications:
@@ -43,7 +42,7 @@ development and deployment of multi-threaded applications:
   (lunchbox::ScopedMutex)
 * Detailed @ref Changelog
 
-# Building {#Building}
+# Building
 
 Lunchbox is a cross-platform library, designed to run on any modern operating
 system, including all Unix variants and the Windows operating system. Lunchbox

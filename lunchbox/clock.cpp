@@ -187,21 +187,4 @@ double Clock::getTimed() const
 #endif
 }
 
-float Clock::getMilliSecondsf() const
-{
-#if defined (__APPLE__) || defined (_WIN32)
-    double time = getTimed();
-    return static_cast<float>
-        (time - static_cast<unsigned>(time/1000.) * 1000);
-#else
-    struct timespec now;
-    clock_gettime( CLOCK_REALTIME, &now );
-
-    if( now.tv_nsec < _impl->start.tv_nsec )
-        return ( 1000.f + 0.000001f*(now.tv_nsec - _impl->start.tv_nsec));
-
-    return ( 0.000001f * ( now.tv_nsec - _impl->start.tv_nsec ));
-#endif
-}
-
 }

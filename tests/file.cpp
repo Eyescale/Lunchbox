@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014-2015, Daniel.Nachbaur@epfl.ch
+/* Copyright (c) 2014-2016, Daniel.Nachbaur@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -17,9 +17,9 @@
 
 #include "test.h"
 
+#include <lunchbox/file.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/path.hpp>
-#include <lunchbox/file.h>
 
 int main( int, char** argv )
 {
@@ -43,5 +43,13 @@ int main( int, char** argv )
     }
 #endif
     TEST( lunchbox::getRootPath() == referenceRootPath.string( ));
+
+    const std::string filename = path.filename().generic_string();
+    TEST( filename == lunchbox::getFilename( argv[0] ));
+
+    const lunchbox::Strings files = lunchbox::searchDirectory( argvPath, ".*" );
+    TEST( files.size() > 1 );
+    TEST( std::find( files.begin(), files.end(), filename ) != files.end( ));
+
     return EXIT_SUCCESS;
 }

@@ -77,17 +77,6 @@ public :
      */
     LUNCHBOX_API double getTimed() const;
 
-    /**
-     * Returns the millisecond part of the time elapsed since the last
-     * reset.
-     *
-     * Obviously the returned time overflows once per second.
-     *
-     * @return the millisecond part of the time elapsed.
-     * @deprecated
-     */
-    LUNCHBOX_API float getMilliSecondsf() const;
-
 private:
     detail::Clock* const _impl;
 };

@@ -1,5 +1,5 @@
 
-# Copyright (c) 2012-2015 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2016 Stefan Eilemann <eile@eyescale.ch>
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(Lunchbox)
@@ -10,14 +10,13 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
 include(GitExternal)
 
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "12")
+set(VERSION_MINOR "13")
 set(VERSION_PATCH "0")
-set(VERSION_ABI 5)
+set(VERSION_ABI 6)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 option(LUNCHBOX_USE_MPI "Enable MPI functionality if found" ON)
 
-set(GITTARGETS_RELEASE_BRANCH minor)
 set(DPUT_HOST "ppa:eilemann/equalizer-dev")
 
 set(LUNCHBOX_DESCRIPTION "Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.")

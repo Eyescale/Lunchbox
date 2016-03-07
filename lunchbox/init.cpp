@@ -75,9 +75,15 @@ bool exit()
 {
     if( --_initialized > 0 ) // not last
         return true;
-    LBASSERT( _initialized == 0 );
 
     Log::reset();
+
+    if( _initialized < 0 )
+    {
+        LBERROR << "init/exit call mismatch" << std::endl;
+        _initialized = 0;
+        return false;
+    }
     return true;
 }
 

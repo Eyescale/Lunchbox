@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2016, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -17,23 +17,17 @@
 
 #include "test.h"
 
-#include <lunchbox/clock.h>
-#include <lunchbox/sleep.h>
+#include <lunchbox/init.h>
 
-int main( int, char** )
+int main( const int argc, char** argv )
 {
-    lunchbox::Clock clock;
-    lunchbox::Clock copy( clock );
+    TEST( lunchbox::init( 0, 0 ));
+    TEST( lunchbox::init( argc, argv ));
+    TEST( lunchbox::exit( ));
+    TEST( lunchbox::exit( ));
+    TEST( !lunchbox::exit( ));
 
-    TEST( clock.getTimef() - copy.getTimef() <= 0.f );
-    TEST( clock.getTimef() - copy.getTimef() > -1.f );
-
-    lunchbox::sleep( 10.f );
-    TEST( clock.resetTimef() > 0.f );
-    lunchbox::sleep( 100.f );
-    TEST( clock.getTimef() >  99.f );
-    TEST( clock.getTimef() < 110.f );
-    TEST( clock.getTimed() < 110.f );
-
+    TEST( lunchbox::init( argc, argv ));
+    TEST( lunchbox::exit( ));
     return EXIT_SUCCESS;
 }

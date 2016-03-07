@@ -27,11 +27,7 @@
 
 #include <boost/bind.hpp> // used inline
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 104300
-#  include <boost/functional/factory.hpp>
-#else
-#  include <lunchbox/factory.hpp>
-#endif
+#include <boost/functional/factory.hpp>
 
 namespace lunchbox
 {

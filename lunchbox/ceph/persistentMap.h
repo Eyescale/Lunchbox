@@ -82,6 +82,21 @@ public:
     {
         librados::bufferlist bl;
         bl.append( (const char*)data, size );
+        librados::AioCompletion* op = librados::Rados::aio_create_completion();
+        if( _maxPendingOps > 0 )
+        {
+            const int write = _context.aio_write( key, op, bl, size, 0 );
+            if( write < 0 )
+            {
+                std::cerr <<  "Write failed: " << ::strerror( -write )
+                          << std::endl;
+                delete op;
+                return false;
+            }
+            _writes.push_back( op );
+            return _flush( _maxPendingOps );
+        }
+
         const int write = _context.write_full( key, bl );
         if( write >= 0 )
             return true;
@@ -172,25 +187,54 @@ public:
         return _context.stat( key, &size, &time ) >= 0;
     }
 
-    bool flush() final { /*NOP?*/ return true; }
+    bool flush() final { return _flush( 0 ); }
 
 private:
     librados::Rados _cluster;
     mutable librados::IoCtx _context;
     size_t _maxPendingOps;
 
+    typedef boost::scoped_ptr< librados::AioCompletion > AioPtr;
+
     struct AsyncRead
     {
         AsyncRead() {}
-        boost::scoped_ptr< librados::AioCompletion > op;
+        AioPtr op;
         librados::bufferlist bl;
     };
 
     typedef stde::hash_map< std::string, AsyncRead > ReadMap;
-    typedef std::vector< int > Writes;
+    typedef std::deque< librados::AioCompletion* > Writes;
 
     mutable ReadMap _reads;
     Writes _writes;
+
+    bool _flush( const size_t maxPending )
+    {
+        bool ok = true;
+        while( _writes.size() + _reads.size() > maxPending )
+        {
+            if( _writes.empty( ))
+            {
+                ReadMap::iterator i = _reads.begin();
+                i->second.op->wait_for_complete();
+                _reads.erase( i );
+                continue;
+            }
+
+            _writes.front()->wait_for_complete();
+            const int write = _writes.front()->get_return_value();
+            if( write < 0 )
+            {
+                std::cerr <<  "Finish write failed: " << ::strerror( -write )
+                          << std::endl;
+                ok = false;
+            }
+            delete _writes.front();
+            _writes.pop_front();
+        }
+        return ok;
+    }
 };
 }
 }

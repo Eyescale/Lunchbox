@@ -224,7 +224,7 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
     map.flush();
     const float writeTime = clock.getTimef() / 1000.f;
     const uint64_t wOps = i;
-    TEST( i > queueDepth );
+    TESTINFO( i > queueDepth, i );
 
     // read performance
     clock.reset();
@@ -302,6 +302,13 @@ void testLevelDBFailures()
 #endif
 }
 
+size_t rotr( const size_t value, size_t bits )
+{
+    const size_t mask = ( 8 /*bits/byte*/ * sizeof( value ) - 1 );
+    bits &= mask;
+    return ( value >> bits ) | ( value << ( (-bits) & mask ));
+}
+
 int main( int, char* argv[] )
 {
     perfTest = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
@@ -310,14 +317,13 @@ int main( int, char* argv[] )
             << " async,  value,   reads/s,  writes/s, read MB/s, write MB/s"
             << std::endl;
 
-    typedef std::pair< std::string, bool > TestURI;
+    typedef std::pair< std::string, size_t > TestURI; // uri, max queue depth
     typedef std::vector< TestURI > TestURIs;
     TestURIs tests;
 #ifdef LUNCHBOX_USE_LEVELDB
-    tests.push_back( std::make_pair( "", false ));
-    tests.push_back( std::make_pair( "leveldb://", false ));
-    tests.push_back( std::make_pair( "leveldb://persistentMap2.leveldb",
-                                     false ));
+    tests.push_back( std::make_pair( "", 0 ));
+    tests.push_back( std::make_pair( "leveldb://", 0 ));
+    tests.push_back( std::make_pair( "leveldb://persistentMap2.leveldb", 0 ));
 #endif
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
         if( testAvailable( "memcached://" ))
@@ -331,9 +337,27 @@ int main( int, char* argv[] )
 #endif
 #ifdef LUNCHBOX_USE_RADOS
     tests.push_back( std::make_pair(
-        "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf",
-        true ));
+        "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf", 65536 ));
 #endif
+
+    try
+    {
+        while( !tests.empty( ))
+        {
+            const TestURI test = tests.back();
+            const std::string& uri = test.first;
+            tests.pop_back();
+
+            setup( uri );
+            read( uri );
+            if( perfTest )
+            {
+                for( size_t i = 65536; i <= 65536; i = rotr( i, 2 ))
+                    benchmark( uri, test.second, i );
+                for( size_t i = test.second; i <= test.second; i = rotr( i, 1 ))
+                    benchmark( uri, i, 64 );
+            }
+        }
     }
 #ifdef LUNCHBOX_USE_LEVELDB
     catch( const leveldb::Status& status )

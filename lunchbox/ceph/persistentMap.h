@@ -85,7 +85,7 @@ public:
         librados::AioCompletion* op = librados::Rados::aio_create_completion();
         if( _maxPendingOps > 0 )
         {
-            const int write = _context.aio_write( key, op, bl, size, 0 );
+            const int write = _context.aio_write_full( key, op, bl );
             if( write < 0 )
             {
                 std::cerr <<  "Write failed: " << ::strerror( -write )
@@ -211,17 +211,25 @@ private:
 
     bool _flush( const size_t maxPending )
     {
-        bool ok = true;
-        while( _writes.size() + _reads.size() > maxPending )
+        if( maxPending == 0 )
         {
-            if( _writes.empty( ))
+            const int flushAll = _context.aio_flush();
+            while( !_writes.empty( ))
             {
-                ReadMap::iterator i = _reads.begin();
-                i->second.op->wait_for_complete();
-                _reads.erase( i );
-                continue;
+                delete _writes.front();
+                _writes.pop_front();
             }
+            if( flushAll >= 0 )
+                return true;
 
+            std::cerr <<  "Flush all writes failed: " << ::strerror( -flushAll )
+                      << std::endl;
+            return false;
+        }
+
+        bool ok = true;
+        while( _writes.size() > maxPending )
+        {
             _writes.front()->wait_for_complete();
             const int write = _writes.front()->get_return_value();
             if( write < 0 )

@@ -59,7 +59,8 @@ template< class T > void insertVector( PersistentMap& map, const size_t elems )
     TEST( map.insert( std::string( "bulk" ) + typeid( vector ).name(), vector ));
 }
 
-template< class T > void readVector( const PersistentMap& map, const size_t elems )
+template< class T >
+void readVector( const PersistentMap& map, const size_t elems )
 {
     const std::vector< T >& vector =
         map.getVector< T >( std::string( "bulk" ) + typeid( vector ).name());
@@ -332,11 +333,13 @@ int main( int, char* argv[] )
         }
 #endif
 #ifdef LUNCHBOX_USE_RADOS
-        setup( "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf" );
-        // read( "ceph://" );
-        // if( perfTest )
-        //     for( size_t i=1; i <= 65536; i = i<<2 )
-        //         benchmark( "ceph://", 0, i );
+        const std::string cephURI(
+            "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf" );
+        setup( cephURI );
+        read( cephURI );
+        if( perfTest )
+            for( size_t i=1; i <= 65536; i = i<<2 )
+                benchmark( cephURI, 0, i );
 #endif
     }
 #ifdef LUNCHBOX_USE_LEVELDB

@@ -16,10 +16,11 @@
  */
 
 #ifdef LUNCHBOX_USE_RADOS
-#include <lunchbox/compiler.h>
 #include <lunchbox/log.h>
+#include <lunchbox/stdExt.h>
 
 #include <rados/librados.hpp>
+#include <boost/scoped_ptr.hpp>
 
 namespace lunchbox
 {
@@ -37,9 +38,10 @@ class PersistentMap : public detail::PersistentMap
 {
 public:
     PersistentMap( const servus::URI& uri )
+        : _maxPendingOps( 0 )
     {
         const int init = _cluster.init2( uri.getUserinfo().c_str(),
-                                         uri.getHost().c_str(),
+                                         "ceph",
                                          0 /*flags*/ );
         if( init < 0 )
             _throw( "Cannot initialize rados cluster", init );
@@ -51,36 +53,144 @@ public:
         const int conn = _cluster.connect();
         if( conn < 0 )
             _throw( "Could not connect rados cluster", conn );
+
+        const int ctx = _cluster.ioctx_create( uri.getHost().c_str(),
+                                               _context );
+        if( ctx < 0 )
+            _throw( "Could not create io context", ctx );
+
     }
 
     virtual ~PersistentMap()
     {
+        _context.close();
         _cluster.shutdown();
     }
 
     static bool handles( const servus::URI& uri )
         { return uri.getScheme() == "ceph"; }
 
-    bool insert( const std::string& /*key*/, const void* /*data*/, const size_t /*size*/ )
+    size_t setQueueDepth( const size_t depth ) final
+    {
+        _maxPendingOps = depth;
+        //LBCHECK( _flush( _maxPendingOps ));
+        return _maxPendingOps;
+    }
+
+    bool insert( const std::string& key, const void* data, const size_t size )
         final
     {
+        librados::bufferlist bl;
+        bl.append( (const char*)data, size );
+        const int write = _context.write_full( key.c_str(), bl );
+        if( write >= 0 )
+            return true;
+
+        std::cerr <<  "Write failed: " << ::strerror( -write ) << std::endl;
         return false;
     }
 
-    std::string operator [] ( const std::string& /*key*/ ) const final
+    bool fetch( const std::string& key, const size_t sizeHint ) const final
     {
-        return std::string();
+        if( _reads.size() >= _maxPendingOps )
+            return true;
+
+        AsyncRead& asyncRead = _reads[ key ];
+        if( asyncRead.op )
+            return true; // fetch for key already pending
+
+        asyncRead.op.reset( librados::Rados::aio_create_completion( ));
+        uint64_t size = sizeHint;
+        if( size == 0 )
+        {
+            time_t time;
+            const int stat = _context.stat( key.c_str(), &size, &time );
+            if( stat < 0 || size == 0 )
+            {
+                std::cerr << "Stat " << key << " failed: "
+                          << ::strerror( -stat ) << std::endl;
+                return false;
+            }
+        }
+
+        const int read = _context.aio_read( key.c_str(), asyncRead.op.get(),
+                                            &asyncRead.bl, size, 0 );
+        if( read >= 0 )
+            return true;
+
+        std::cerr <<  "Fetch failed: " << ::strerror( -read ) << std::endl;
+        return false;
     }
 
-    bool contains( const std::string& /*key*/ ) const final
+    std::string operator [] ( const std::string& key ) const final
     {
-        return false;
+        ReadMap::iterator i = _reads.find( key );
+        librados::bufferlist bl;
+        if( i == _reads.end( ))
+        {
+            uint64_t size = 0;
+            time_t time;
+            const int stat = _context.stat( key.c_str(), &size, &time );
+            if( stat < 0 || size == 0 )
+            {
+                std::cerr << "Stat '" << key << "' failed: "
+                          << ::strerror( -stat ) << std::endl;
+                return std::string();
+            }
+
+            const int read = _context.read( key, bl, size, 0 );
+            if( read < 0 )
+            {
+                std::cerr << "Read '" << key << "' failed: "
+                          << ::strerror( -read ) << std::endl;
+                return std::string();
+            }
+        }
+        else
+        {
+            i->second.op->wait_for_complete();
+            const int read = i->second.op->get_return_value();
+            if( read < 0 )
+            {
+                std::cerr <<  "Finish read failed: " << ::strerror( -read )
+                          << std::endl;
+                return std::string();
+            }
+
+            i->second.bl.swap( bl );
+            _reads.erase( i );
+        }
+        std::string value;
+        bl.copy( 0, bl.length(), value );
+        return value;
+    }
+
+    bool contains( const std::string& key ) const final
+    {
+        uint64_t size;
+        time_t time;
+        return _context.stat( key.c_str(), &size, &time ) >= 0;
     }
 
     bool flush() final { /*NOP?*/ return true; }
 
 private:
     librados::Rados _cluster;
+    mutable librados::IoCtx _context;
+    size_t _maxPendingOps;
+
+    struct AsyncRead
+    {
+        AsyncRead() {}
+        boost::scoped_ptr< librados::AioCompletion > op;
+        librados::bufferlist bl;
+    };
+
+    typedef stde::hash_map< std::string, AsyncRead > ReadMap;
+    typedef std::vector< int > Writes;
+
+    mutable ReadMap _reads;
+    Writes _writes;
 };
 }
 }

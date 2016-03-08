@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define TEST_RUNTIME 240 //seconds
+#define TEST_RUNTIME 2400 //seconds
 #include <lunchbox/test.h>
 #include <lunchbox/clock.h>
 #include <lunchbox/os.h>
@@ -216,7 +216,7 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
     // write performance
     lunchbox::Clock clock;
     uint64_t i = 0;
-    while( clock.getTime64() < loopTime )
+    while( clock.getTime64() < loopTime || i <= queueDepth )
     {
         map.insert( keys[ i % (queueDepth+1) ], value );
         ++i;
@@ -224,7 +224,6 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
     map.flush();
     const float writeTime = clock.getTimef() / 1000.f;
     const uint64_t wOps = i;
-    TESTINFO( i > queueDepth, i );
 
     // read performance
     clock.reset();

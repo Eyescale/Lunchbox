@@ -167,8 +167,8 @@ public:
             const int read = i->second.op->get_return_value();
             if( read < 0 )
             {
-                std::cerr <<  "Finish read failed: " << ::strerror( -read )
-                          << std::endl;
+                std::cerr <<  "Finish read '" << key << "' failed: "
+                          << ::strerror( -read ) << std::endl;
                 return std::string();
             }
 

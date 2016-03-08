@@ -82,7 +82,7 @@ public:
     {
         librados::bufferlist bl;
         bl.append( (const char*)data, size );
-        const int write = _context.write_full( key.c_str(), bl );
+        const int write = _context.write_full( key, bl );
         if( write >= 0 )
             return true;
 
@@ -104,7 +104,7 @@ public:
         if( size == 0 )
         {
             time_t time;
-            const int stat = _context.stat( key.c_str(), &size, &time );
+            const int stat = _context.stat( key, &size, &time );
             if( stat < 0 || size == 0 )
             {
                 std::cerr << "Stat " << key << " failed: "
@@ -113,7 +113,7 @@ public:
             }
         }
 
-        const int read = _context.aio_read( key.c_str(), asyncRead.op.get(),
+        const int read = _context.aio_read( key, asyncRead.op.get(),
                                             &asyncRead.bl, size, 0 );
         if( read >= 0 )
             return true;
@@ -130,7 +130,7 @@ public:
         {
             uint64_t size = 0;
             time_t time;
-            const int stat = _context.stat( key.c_str(), &size, &time );
+            const int stat = _context.stat( key, &size, &time );
             if( stat < 0 || size == 0 )
             {
                 std::cerr << "Stat '" << key << "' failed: "
@@ -169,7 +169,7 @@ public:
     {
         uint64_t size;
         time_t time;
-        return _context.stat( key.c_str(), &size, &time ) >= 0;
+        return _context.stat( key, &size, &time ) >= 0;
     }
 
     bool flush() final { /*NOP?*/ return true; }

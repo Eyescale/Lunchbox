@@ -309,18 +309,15 @@ int main( int, char* argv[] )
         std::cout
             << " async,  value,   reads/s,  writes/s, read MB/s, write MB/s"
             << std::endl;
-    try
-    {
+
+    typedef std::pair< std::string, bool > TestURI;
+    typedef std::vector< TestURI > TestURIs;
+    TestURIs tests;
 #ifdef LUNCHBOX_USE_LEVELDB
-        setup( "" );
-        setup( "leveldb://" );
-        setup( "leveldb://persistentMap2.leveldb" );
-        read( "" );
-        read( "leveldb://" );
-        read( "leveldb://persistentMap2.leveldb" );
-        if( perfTest )
-            for( size_t i=1; i <= 65536; i = i<<2 )
-                benchmark( "leveldb://", 0, i );
+    tests.push_back( std::make_pair( "", false ));
+    tests.push_back( std::make_pair( "leveldb://", false ));
+    tests.push_back( std::make_pair( "leveldb://persistentMap2.leveldb",
+                                     false ));
 #endif
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
         if( testAvailable( "memcached://" ))
@@ -333,13 +330,9 @@ int main( int, char* argv[] )
         }
 #endif
 #ifdef LUNCHBOX_USE_RADOS
-        const std::string cephURI(
-            "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf" );
-        setup( cephURI );
-        read( cephURI );
-        if( perfTest )
-            for( size_t i=1; i <= 65536; i = i<<2 )
-                benchmark( cephURI, 0, i );
+    tests.push_back( std::make_pair(
+        "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf",
+        true ));
 #endif
     }
 #ifdef LUNCHBOX_USE_LEVELDB

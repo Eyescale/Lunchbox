@@ -31,7 +31,7 @@ using lunchbox::PersistentMap;
 
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
-const int64_t loopTime = 1000;
+const int64_t loopTime = 300;
 bool perfTest = false;
 
 template< class T > void insertVector( PersistentMap& map )
@@ -308,21 +308,30 @@ size_t rotr( const size_t value, size_t bits )
     return ( value >> bits ) | ( value << ( (-bits) & mask ));
 }
 
+struct TestSpec
+{
+    TestSpec( const std::string& uri_, const size_t depth_, const size_t size_ )
+        : uri( uri_ ), depth( depth_ ), size( size_ ) {}
+
+    std::string uri;
+    size_t depth;
+    size_t size;
+};
+
 int main( int, char* argv[] )
 {
     perfTest = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
     if( perfTest )
         std::cout
-            << " async,  value,   reads/s,  writes/s, read MB/s, write MB/s"
+            << " depth,   size,   reads/s,  writes/s, read MB/s, write MB/s"
             << std::endl;
 
-    typedef std::pair< std::string, size_t > TestURI; // uri, max queue depth
-    typedef std::vector< TestURI > TestURIs;
-    TestURIs tests;
+    typedef std::vector< TestSpec > TestSpecs;
+    TestSpecs tests;
 #ifdef LUNCHBOX_USE_LEVELDB
-    tests.push_back( std::make_pair( "", 0 ));
-    tests.push_back( std::make_pair( "leveldb://", 0 ));
-    tests.push_back( std::make_pair( "leveldb://persistentMap2.leveldb", 0 ));
+    tests.push_back( TestSpec( "", 0, 65536 ));
+    tests.push_back( TestSpec( "leveldb://", 0, 65536 ));
+    tests.push_back( TestSpec( "leveldb://persistentMap2.leveldb", 0, 65536 ));
 #endif
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
         if( testAvailable( "memcached://" ))
@@ -335,26 +344,26 @@ int main( int, char* argv[] )
         }
 #endif
 #ifdef LUNCHBOX_USE_RADOS
-    tests.push_back( std::make_pair(
-        "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf", 65536 ));
+    tests.push_back( TestSpec(
+                   "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf",
+                   65536, LB_1MB ));
 #endif
 
     try
     {
         while( !tests.empty( ))
         {
-            const TestURI test = tests.back();
-            const std::string& uri = test.first;
+            const TestSpec test = tests.back();
             tests.pop_back();
 
-            setup( uri );
-            read( uri );
+            setup( test.uri );
+            read( test.uri );
             if( perfTest )
             {
-                for( size_t i = 65536; i <= 65536; i = rotr( i, 2 ))
-                    benchmark( uri, test.second, i );
-                for( size_t i = test.second; i <= test.second; i = rotr( i, 1 ))
-                    benchmark( uri, i, 64 );
+                for( size_t i = 1; i <= test.size; i = i << 2 )
+                    benchmark( test.uri, test.depth, i );
+                for( size_t i = test.depth; i <= test.depth; i = rotr( i, 1 ))
+                    benchmark( test.uri, i, 64 );
             }
         }
     }

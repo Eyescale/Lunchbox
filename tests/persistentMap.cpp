@@ -195,7 +195,10 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
     static std::string lastURI;
     if( uri != lastURI )
     {
-        std::cout << uri << std::endl;
+        std::cout
+            << uri << std::endl
+            << " depth,     size,   reads/s,  writes/s, read MB/s, write MB/s"
+            << std::endl;
         lastURI = uri;
     }
 
@@ -250,7 +253,7 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
     const float readTime = clock.getTimef() / 1000.f;
     const size_t rOps = i;
 
-    std::cout << boost::format( "%6i, %6i, %9.2f, %9.2f, %9.2f, %9.2f")
+    std::cout << boost::format( "%6i, %8i, %9.2f, %9.2f, %9.2f, %9.2f")
         // cppcheck-suppress zerodivcond
         % queueDepth % valueSize % (rOps/readTime) % (wOps/writeTime)
         % (rOps/1024.f/1024.f*valueSize/readTime)
@@ -301,11 +304,9 @@ void testLevelDBFailures()
 #endif
 }
 
-size_t rotr( const size_t value, size_t bits )
+size_t dup( const size_t value )
 {
-    const size_t mask = ( 8 /*bits/byte*/ * sizeof( value ) - 1 );
-    bits &= mask;
-    return ( value >> bits ) | ( value << ( (-bits) & mask ));
+    return value == 0 ? 1 : value << 1;
 }
 
 struct TestSpec
@@ -318,13 +319,15 @@ struct TestSpec
     size_t size;
 };
 
-int main( int, char* argv[] )
+int main( const int argc, char* argv[] )
 {
+    if( argc == 4 )
+    {
+        benchmark( argv[1], atoi( argv[2] ), atoi( argv[3] ));
+        return EXIT_SUCCESS;
+    }
+
     perfTest = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
-    if( perfTest )
-        std::cout
-            << " depth,   size,   reads/s,  writes/s, read MB/s, write MB/s"
-            << std::endl;
 
     typedef std::vector< TestSpec > TestSpecs;
     TestSpecs tests;
@@ -362,7 +365,7 @@ int main( int, char* argv[] )
             {
                 for( size_t i = 1; i <= test.size; i = i << 2 )
                     benchmark( test.uri, test.depth, i );
-                for( size_t i = test.depth; i <= test.depth; i = rotr( i, 1 ))
+                for( size_t i = 0; i <= test.depth; i = dup( i ))
                     benchmark( test.uri, i, 64 );
             }
         }

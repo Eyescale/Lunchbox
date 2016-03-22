@@ -82,27 +82,28 @@ public:
     {
         librados::bufferlist bl;
         bl.append( (const char*)data, size );
-        librados::AioCompletion* op = librados::Rados::aio_create_completion();
-        if( _maxPendingOps > 0 )
+
+        if( _maxPendingOps == 0 ) // sync write
         {
-            const int write = _context.aio_write_full( key, op, bl );
-            if( write < 0 )
-            {
-                std::cerr <<  "Write failed: " << ::strerror( -write )
-                          << std::endl;
-                delete op;
-                return false;
-            }
-            _writes.push_back( op );
-            return _flush( _maxPendingOps );
+            const int write = _context.write_full( key, bl );
+            if( write >= 0 )
+                return true;
+
+            std::cerr <<  "Write failed: " << ::strerror( -write ) << std::endl;
+            return false;
         }
 
-        const int write = _context.write_full( key, bl );
-        if( write >= 0 )
-            return true;
-
-        std::cerr <<  "Write failed: " << ::strerror( -write ) << std::endl;
-        return false;
+        librados::AioCompletion* op = librados::Rados::aio_create_completion();
+        const int write = _context.aio_write_full( key, op, bl );
+        if( write < 0 )
+        {
+            std::cerr <<  "Write failed: " << ::strerror( -write )
+                      << std::endl;
+            delete op;
+            return false;
+        }
+        _writes.push_back( op );
+        return _flush( _maxPendingOps );
     }
 
     bool fetch( const std::string& key, const size_t sizeHint ) const final

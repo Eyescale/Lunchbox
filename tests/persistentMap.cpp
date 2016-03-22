@@ -32,7 +32,6 @@ using lunchbox::PersistentMap;
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
 const int64_t loopTime = 300;
-bool perfTest = false;
 
 template< class T > void insertVector( PersistentMap& map )
 {
@@ -196,11 +195,15 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
     if( uri != lastURI )
     {
         std::cout
-            << uri << std::endl
-            << " depth,     size,   reads/s,  writes/s, read MB/s, write MB/s"
+            << " " << uri << std::endl
+            << " depth,     size,  writes/s,     MB/s,  reads/s,      MB/s"
             << std::endl;
         lastURI = uri;
     }
+
+    // cppcheck-suppress zerodivcond
+    std::cout << boost::format( "%6i, %8i,") % queueDepth % valueSize
+              << std::flush;
 
     PersistentMap map( uri );
     map.setQueueDepth( queueDepth );
@@ -225,8 +228,12 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
         ++i;
     }
     map.flush();
-    const float writeTime = clock.getTimef() / 1000.f;
+    float time = clock.getTimef() / 1000.f;
     const uint64_t wOps = i;
+
+    // cppcheck-suppress zerodivcond
+    std::cout << boost::format( "%9.2f, %9.2f,") % (wOps/time)
+        % (wOps/1024.f/1024.f * valueSize / time) << std::flush;
 
     // read performance
     clock.reset();
@@ -249,28 +256,10 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
         for( uint64_t j = i - queueDepth; j <= i; ++j ) // drain fetched keys
             map[ keys[ j % (queueDepth+1) ]];
     }
+    time = clock.getTimef() / 1000.f;
 
-    const float readTime = clock.getTimef() / 1000.f;
-    const size_t rOps = i;
-
-    std::cout << boost::format( "%6i, %8i, %9.2f, %9.2f, %9.2f, %9.2f")
-        // cppcheck-suppress zerodivcond
-        % queueDepth % valueSize % (rOps/readTime) % (wOps/writeTime)
-        % (rOps/1024.f/1024.f*valueSize/readTime)
-        % (wOps/1024.f/1024.f*valueSize/writeTime) << std::endl;
-
-
-    if( !perfTest )
-    {
-        // check contents of store (not all to save time on bigger tests)
-        for( uint64_t j = 0; j < wOps && clock.getTime64() < loopTime; ++j )
-        {
-            const std::string& val = map[ keys[ j % (queueDepth+1) ]];
-            TESTINFO( val.size() == valueSize,
-                      val.size() << " != " << valueSize );
-            TEST( val == value );
-        }
-    }
+    std::cout << boost::format( "%9.2f, %9.2f") % (i/time)
+        % (i/1024.f/1024.f * valueSize / time) << std::endl;
 
     // try to make sure there's nothing outstanding if we messed up in our test
     map.flush();
@@ -327,8 +316,6 @@ int main( const int argc, char* argv[] )
         return EXIT_SUCCESS;
     }
 
-    perfTest = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
-
     typedef std::vector< TestSpec > TestSpecs;
     TestSpecs tests;
 #ifdef LUNCHBOX_USE_LEVELDB
@@ -348,9 +335,12 @@ int main( const int argc, char* argv[] )
 #endif
 #ifdef LUNCHBOX_USE_RADOS
     tests.push_back( TestSpec(
-                   "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf",
-                   65536, LB_1MB ));
+                    "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf",
+                     8192, LB_4MB ));
 #endif
+
+    const bool perfTest =
+        std::string( argv[0] ).find( "perf-" ) != std::string::npos;
 
     try
     {
@@ -366,7 +356,7 @@ int main( const int argc, char* argv[] )
                 for( size_t i = 1; i <= test.size; i = i << 2 )
                     benchmark( test.uri, test.depth, i );
                 for( size_t i = 0; i <= test.depth; i = dup( i ))
-                    benchmark( test.uri, i, 64 );
+                    benchmark( test.uri, i, 1024 );
             }
         }
     }

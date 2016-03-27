@@ -72,8 +72,8 @@ int main( int argc, char **argv )
 
     TESTLOOP( int8_t,  -126,       127 );
     TESTLOOP( int16_t, -32000,     32000 );
-    TESTLOOP( int32_t, -1<<5,      1<<5 );
-    TESTLOOP( int64_t, -1<<10,     1<<10 );
+    TESTLOOP( int32_t, -(1<<5),      1<<5 );
+    TESTLOOP( int64_t, -(1<<10),     1<<10 );
 
     TESTLOOP( float,  0.1f, 0.9f );
     TESTLOOP( double, 0.1,  0.9 );

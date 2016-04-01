@@ -10,9 +10,9 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
 include(GitExternal)
 
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "13")
+set(VERSION_MINOR "14")
 set(VERSION_PATCH "0")
-set(VERSION_ABI 6)
+set(VERSION_ABI 7)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 option(LUNCHBOX_USE_MPI "Enable MPI functionality if found" ON)

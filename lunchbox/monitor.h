@@ -105,12 +105,14 @@ public:
         return *this;
     }
 
-    /** Set a new value. @version 1.0 */
-    void set( const T& value )
+    /** Set a new value. @return the old value @version 1.0 */
+    T set( const T& value )
     {
         ScopedCondition mutex( _cond );
+        const T old = _value;
         _value = value;
         _cond.broadcast();
+        return old;
     }
     //@}
 
@@ -172,7 +174,7 @@ public:
      * @version 1.0
      */
     const T waitLE( const T& value ) const
-    { return _waitPredicate( boost::bind( std::less_equal<T>(), _1, value )); }
+     { return _waitPredicate( boost::bind( std::less_equal<T>(), _1, value )); }
 
     /**
      * Block until the monitor has a value greater than the given value.
@@ -180,7 +182,7 @@ public:
      * @version 1.10
      */
     const T waitGT( const T& value ) const
-    { return _waitPredicate( boost::bind( std::greater<T>(), _1, value )); }
+        { return _waitPredicate( boost::bind( std::greater<T>(), _1, value )); }
 
     /**
      * Block until the monitor has a value less than the given value.
@@ -188,7 +190,7 @@ public:
      * @version 1.10
      */
     const T waitLT( const T& value ) const
-    { return _waitPredicate( boost::bind( std::less<T>(), _1, value )); }
+        { return _waitPredicate( boost::bind( std::less<T>(), _1, value )); }
 
     /** @name Monitor the value with a timeout. */
     //@{
@@ -275,72 +277,72 @@ public:
     /** @name Comparison Operators. @version 1.0 */
     //@{
     bool operator == ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value == value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value == value;
+    }
     bool operator != ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value != value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value != value;
+    }
     bool operator < ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value < value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value < value;
+    }
     bool operator > ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value > value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value > value;
+    }
     bool operator <= ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value <= value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value <= value;
+    }
     bool operator >= ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value >= value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value >= value;
+    }
 
     bool operator == ( const Monitor<T>& rhs ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value == rhs._value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value == rhs._value;
+    }
     bool operator != ( const Monitor<T>& rhs ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value != rhs._value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value != rhs._value;
+    }
     bool operator < ( const Monitor<T>& rhs ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value < rhs._value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value < rhs._value;
+    }
     bool operator > ( const Monitor<T>& rhs ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value > rhs._value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value > rhs._value;
+    }
     bool operator <= ( const Monitor<T>& rhs ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value <= rhs._value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value <= rhs._value;
+    }
     bool operator >= ( const Monitor<T>& rhs ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value >= rhs._value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value >= rhs._value;
+    }
     /** @return a bool conversion of the result. @version 1.9.1 */
     operator bool_t()
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value ? &Monitor< T >::bool_true : 0;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value ? &Monitor< T >::bool_true : 0;
+    }
     //@}
 
     /** @name Data Access. */
@@ -353,24 +355,24 @@ public:
 
     /** @return the current plus the given value. @version 1.0 */
     T operator + ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return _value + value;
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return _value + value;
+    }
 
     /** @return the current or'ed with the given value. @version 1.0 */
     T operator | ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return static_cast< T >( _value | value );
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return static_cast< T >( _value | value );
+    }
 
     /** @return the current and the given value. @version 1.0 */
     T operator & ( const T& value ) const
-        {
-            ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
-            return static_cast< T >( _value & value );
-        }
+    {
+        ScopedCondition mutex( sizeof(T)>8 ? &_cond : 0 ); // issue #1
+        return static_cast< T >( _value & value );
+    }
     //@}
 
 private:
@@ -379,38 +381,38 @@ private:
 
     template< typename F >
     const T _waitPredicate( const F& predicate ) const
+    {
+        if( sizeof( T ) <= 8 ) // issue #1
         {
-            if( sizeof( T ) <= 8 ) // issue #1
-            {
-                const T current = _value;
-                if( predicate( current ))
-                    return current;
-            }
-            ScopedCondition mutex( _cond );
-            while( !predicate( _value ))
-                _cond.wait();
-            return _value;
+            const T current = _value;
+            if( predicate( current ))
+                return current;
         }
+        ScopedCondition mutex( _cond );
+        while( !predicate( _value ))
+            _cond.wait();
+        return _value;
+    }
 
     template< typename F >
     bool _timedWaitPredicate( const F& predicate, const uint32_t timeout ) const
+    {
+        if( sizeof( T ) <= 8 ) // issue #1
         {
-            if( sizeof( T ) <= 8 ) // issue #1
-            {
-                const T current = _value;
-                if( predicate( current ))
-                    return true;
-            }
-            ScopedCondition mutex( _cond );
-            while( !predicate( _value ))
-            {
-                if( !_cond.timedWait( timeout ) )
-                {
-                    return false;
-                }
-            }
-            return true;
+            const T current = _value;
+            if( predicate( current ))
+                return true;
         }
+        ScopedCondition mutex( _cond );
+        while( !predicate( _value ))
+        {
+            if( !_cond.timedWait( timeout ) )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 };
 
 typedef Monitor< bool >     Monitorb; //!< A boolean monitor variable

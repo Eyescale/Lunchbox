@@ -2,6 +2,9 @@
 
 # git master
 
+* [252](https://github.com/Eyescale/Lunchbox/pull/252):
+  Monitor::set() returns old value
+
 # Release 1.13 (07-03-2016)
 
 * [249](https://github.com/Eyescale/Lunchbox/pull/249):

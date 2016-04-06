@@ -15,11 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifdef WARN_DEPRECATED
-#  undef WARN_DEPRECATED
-#endif
-
-#include "test.h"
+#include <lunchbox/test.h>
 
 #include <lunchbox/mtQueue.h>
 #include <lunchbox/requestHandler.h>
@@ -101,7 +97,6 @@ int main( int, char** )
     TEST( future.wait( ) == 0xC0FFEE );
     TEST( future.wait( ));
     TEST( uint128Future.wait() == uuid );
-    TEST( handler_.isRequestServed( voidFuture.getID( )));
     TEST( voidFuture.isReady( ));
     voidFuture.wait( );
 

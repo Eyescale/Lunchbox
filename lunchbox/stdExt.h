@@ -118,7 +118,7 @@ LB_STDEXT_NAMESPACE_OPEN
 //----- Our extensions of the STL
 #if defined LB_STDEXT_TR1 || defined LB_STDEXT_STD11
 #  ifndef LB_HAVE_HASH_MAP
-#    ifdef CXX_TEMPLATE_ALIAS_SUPPORTED
+#    ifndef LUNCHBOX_USE_CXX03 // have alias templates
 template< class K, class T, class H = hash< K >, class P = std::equal_to< K >,
           class A = std::allocator< std::pair< const K, T > > >
 using hash_map = unordered_map< K, T, H, P, A >;
@@ -129,7 +129,7 @@ class hash_map : public unordered_map< K, T, H, P, A > {};
 #    endif
 #  endif // LB_HAVE_HASH_MAP
 #  ifndef LB_HAVE_HASH_SET
-#    ifdef CXX_TEMPLATE_ALIAS_SUPPORTED
+#    ifndef LUNCHBOX_USE_CXX03 // have alias templates
 template< class T, class H = hash< T >,
           class P = std::equal_to< T >, class A = std::allocator< T > >
 using hash_set = unordered_set< T, H, P, A >;

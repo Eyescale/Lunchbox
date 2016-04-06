@@ -108,7 +108,7 @@ public:
 private:
     ScopedMutex();
     L* _lock;
-}; // LB_DEPRECATED;
+};
 
 /** A scoped mutex for a fast uncontended read operation. @version 1.1.2 */
 typedef ScopedMutex< SpinLock, ReadOp > ScopedFastRead;

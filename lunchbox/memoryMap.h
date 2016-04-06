@@ -125,7 +125,7 @@ public:
 
 private:
     detail::MemoryMap* const impl_;
-};// LB_DEPRECATED;
+};
 
 inline std::ostream& operator << ( std::ostream& os, const MemoryMap& m )
 {

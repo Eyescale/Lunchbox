@@ -64,7 +64,7 @@ public:
 
 private:
     LUNCHBOX_API bool _get( void* data, size_t size );
-}; // LB_DEPRECATED;
+};
 
 template<> inline float RNG::get()
 {

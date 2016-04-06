@@ -16,7 +16,7 @@
  */
 
 #define TEST_RUNTIME 600 // seconds, needed for NighlyMemoryCheck
-#include "test.h"
+#include <lunchbox/test.h>
 
 #include <lunchbox/atomic.h>
 #include <lunchbox/clock.h>

@@ -17,7 +17,7 @@
  */
 
 #define TEST_RUNTIME 600 // seconds
-#include "test.h"
+#include <lunchbox/test.h>
 
 #pragma warning (push)
 #pragma warning (disable: 4985) // http://www.softwareverify.com/blog/?p=671

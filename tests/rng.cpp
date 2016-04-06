@@ -17,7 +17,7 @@
 
 // Tests the functionality of the random number generator
 
-#include <test.h>
+#include <lunchbox/test.h>
 
 #include <lunchbox/clock.h>
 #include <lunchbox/init.h>

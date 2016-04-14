@@ -25,7 +25,7 @@ if(NOT EXISTS ${PTHREADS_DIR})
 endif()
 
 file(COPY ${PTHREADS_DIR}/pthread.h ${PTHREADS_DIR}/sched.h
-     DESTINATION ${OUTPUT_INCLUDE_DIR})
+     DESTINATION ${PROJECT_BINARY_DIR}/include)
 
 add_definitions(/wd4267) # conversion from 'size_t' to 'long'
 

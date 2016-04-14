@@ -22,10 +22,10 @@
 #  include <boost/config.hpp>
 
 // C++11 features 'backported' to C++03
-#  if !defined(CXX_NULLPTR_SUPPORTED) && !defined(nullptr)
-#    define nullptr 0
-#  endif
-#  ifndef CXX_FINAL_OVERRIDE_SUPPORTED
+#  ifdef LUNCHBOX_USE_CXX03
+#    ifndef nullptr
+#      define nullptr 0
+#    endif
 #    ifndef final
 #      define final
 #    endif
@@ -39,24 +39,14 @@
 #ifdef _MSC_VER
 #  define LB_ALIGN8( var )  __declspec (align (8)) var;
 #  define LB_ALIGN16( var ) __declspec (align (16)) var;
-#  if defined(_M_PPC)
-#    define LB_BIGEENDIAN
-#  else
-#    define LB_LITTLEENDIAN
-#  endif
 #elif defined (__GNUC__)
 #  define LB_ALIGN8( var )  var __attribute__ ((aligned (8)));
 #  define LB_ALIGN16( var ) var __attribute__ ((aligned (16)));
 #  define LB_UNUSED __attribute__((unused))
 #  define LB_LIKELY(x)       __builtin_expect( (x), 1 )
 #  define LB_UNLIKELY(x)     __builtin_expect( (x), 0 )
-#  ifdef WARN_DEPRECATED // Set CMake option ENABLE_WARN_DEPRECATED
+#  ifdef WARN_DEPRECATED // Set CMake option COMMON_WARN_DEPRECATED
 #    define LB_DEPRECATED __attribute__((deprecated))
-#  endif
-#  ifdef __BIG_ENDIAN__
-#    define LB_BIGEENDIAN
-#  else
-#    define LB_LITTLEENDIAN
 #  endif
 #  if (( __GNUC__ > 4 ) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 0)) )
 #    define LB_GCC_4_0_OR_LATER
@@ -120,11 +110,6 @@
 #  warning Unknown compiler, taking guesses
 #  define LB_ALIGN8( var )  var __attribute__ ((aligned (8)));
 #  define LB_ALIGN16( var ) var __attribute__ ((aligned (16)));
-#  ifdef __BIG_ENDIAN__
-#    define LB_BIGEENDIAN
-#  else
-#    define LB_LITTLEENDIAN
-#  endif
 #endif // GCC
 
 #ifndef LB_UNUSED

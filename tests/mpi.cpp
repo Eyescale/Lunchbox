@@ -20,7 +20,7 @@
 #  include <mpi.h>
 #endif
 
-#include "test.h"
+#include <lunchbox/test.h>
 
 #include <lunchbox/mpi.h>
 

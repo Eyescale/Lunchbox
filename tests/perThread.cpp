@@ -15,12 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifdef WARN_DEPRECATED
-#  undef WARN_DEPRECATED
-#endif
-
 #include <pthread.h>
-#include <test.h>
+#include <lunchbox/test.h>
 
 #include <lunchbox/atomic.h>
 #include <lunchbox/perThread.h>

@@ -16,7 +16,7 @@
  */
 
 #define TEST_RUNTIME 240 //seconds
-#include <test.h>
+#include <lunchbox/test.h>
 #include <lunchbox/clock.h>
 #include <lunchbox/os.h>
 #include <lunchbox/persistentMap.h>

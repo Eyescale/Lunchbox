@@ -219,7 +219,6 @@ typedef Strings::iterator StringsIter;
 class Clock;
 class DSO;
 class Lock;
-class NonCopyable;
 class Referenced;
 class RequestHandler;
 class SpinLock;

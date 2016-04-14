@@ -175,7 +175,7 @@ private:
 #endif
         }
     }
-};// LB_DEPRECATED;
+};
 
 /** Print the reference pointer to the given output stream. */
 template< class T >

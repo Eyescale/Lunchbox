@@ -36,7 +36,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   mpi.h
   mtQueue.h
   mtQueue.ipp
-  nonCopyable.h
   omp.h
   os.h
   perThread.h
@@ -82,6 +81,7 @@ set(LUNCHBOX_HEADERS
   leveldb/persistentMap.h
   skv/persistentMap.h
   time.h
+  test.h
 )
 
 set(LUNCHBOX_SOURCES
@@ -143,3 +143,4 @@ if(SKV_FOUND)
 endif()
 
 common_library(Lunchbox)
+install_files(include/lunchbox FILES test.h COMPONENT dev)

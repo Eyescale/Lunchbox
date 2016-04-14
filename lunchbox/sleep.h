@@ -29,6 +29,6 @@ namespace lunchbox
  * @version 1.0
  * @deprecated Use boost::this_thread::sleep()
  */
-LUNCHBOX_API void sleep( const uint32_t milliSeconds );// LB_DEPRECATED;
+LUNCHBOX_API void sleep( const uint32_t milliSeconds );
 }
 #endif  // LUNCHBOX_SLEEP_H

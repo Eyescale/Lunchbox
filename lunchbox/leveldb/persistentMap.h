@@ -46,7 +46,7 @@ db::DB* _open( const servus::URI& uri )
 class PersistentMap : public detail::PersistentMap
 {
 public:
-    PersistentMap( const servus::URI& uri ) : _db( _open( uri )) {}
+    explicit PersistentMap( const servus::URI& uri ) : _db( _open( uri )) {}
 
     virtual ~PersistentMap() { delete _db; }
 

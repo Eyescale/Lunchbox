@@ -76,6 +76,6 @@ public:
 
 private:
     detail::Lock* const _impl;
-};// LB_DEPRECATED;
+};
 }
 #endif //LUNCHBOX_LOCK_H

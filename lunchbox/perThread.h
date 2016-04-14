@@ -106,7 +106,7 @@ public:
 
 private:
     TLS tls_;
-}; // LB_DEPRECATED;
+};
 
 }
 

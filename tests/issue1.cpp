@@ -16,7 +16,7 @@
  */
 
 #define TEST_RUNTIME 300 // seconds
-#include "test.h"
+#include <lunchbox/test.h>
 
 #include <lunchbox/clock.h>
 #include <lunchbox/monitor.h>

@@ -72,6 +72,6 @@ public:
 
 private:
     detail::TimedLock* const _impl;
-}; // LB_DEPRECATED;
+};
 }
 #endif //LUNCHBOX_TIMEDLOCK_H

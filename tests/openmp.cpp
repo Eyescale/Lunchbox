@@ -24,7 +24,7 @@
 #define NTHREADS 4
 #define LOOPSIZE 100000
 
-#include "test.h"
+#include <lunchbox/test.h>
 #include <pthread.h>
 
 #ifdef LUNCHBOX_USE_OPENMP

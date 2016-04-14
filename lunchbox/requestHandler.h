@@ -112,15 +112,6 @@ public:
     LUNCHBOX_API bool waitRequest( const uint32_t requestID );
 
     /**
-     * Poll for the completion of a request.
-     *
-     * @version 1.0
-     * @deprecated use Request::isReady()
-     */
-    bool isRequestServed( const uint32_t id ) const LB_DEPRECATED
-        { return isRequestReady( id ); }
-
-    /**
      * Retrieve the user-specific data for a request.
      *
      * @param requestID the request identifier.

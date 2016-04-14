@@ -1,18 +1,15 @@
 
 # Copyright (c) 2012-2016 Stefan Eilemann <eile@eyescale.ch>
 
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project(Lunchbox)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+project(Lunchbox VERSION 1.14.0)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
                               ${CMAKE_SOURCE_DIR}/CMake/common)
 
 include(GitExternal)
 
-set(VERSION_MAJOR "1")
-set(VERSION_MINOR "14")
-set(VERSION_PATCH "0")
-set(VERSION_ABI 7)
+set(Lunchbox_VERSION_ABI 7)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 option(LUNCHBOX_USE_MPI "Enable MPI functionality if found" ON)
@@ -22,27 +19,32 @@ set(DPUT_HOST "ppa:eilemann/equalizer-dev")
 set(LUNCHBOX_DESCRIPTION "Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.")
 set(LUNCHBOX_MAINTAINER "Stefan Eilemann <eile@eyescale.ch>")
 set(LUNCHBOX_LICENSE LGPL)
+set(LUNCHBOX_DEB_DEPENDS libboost-regex-dev libboost-serialization-dev
+  libboost-filesystem-dev libboost-system-dev libboost-test-dev
+  libboost-thread-dev libhwloc-dev avahi-daemon libavahi-client-dev
+  libleveldb-dev libopenmpi-dev openmpi-bin)
+set(LUNCHBOX_PORT_DEPENDS boost)
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
 
 include(Common)
 
 if(LUNCHBOX_BUILD_V2_API)
-  list(APPEND COMMON_PACKAGE_DEFINES LUNCHBOX_USE_V2_API)
+  list(APPEND COMMON_FIND_PACKAGE_DEFINES LUNCHBOX_USE_V2_API)
 else()
-  list(APPEND COMMON_PACKAGE_DEFINES LUNCHBOX_USE_V1_API)
+  list(APPEND COMMON_FIND_PACKAGE_DEFINES LUNCHBOX_USE_V1_API)
 endif()
 
-common_package(Boost REQUIRED COMPONENTS regex serialization filesystem system
+common_find_package(Boost REQUIRED COMPONENTS regex serialization filesystem system
                                          thread unit_test_framework)
-common_package(hwloc)
-common_package(leveldb)
+common_find_package(hwloc)
+common_find_package(leveldb)
 if(LUNCHBOX_USE_MPI)
-  common_package(MPI)
+  common_find_package(MPI)
 endif()
-common_package(OpenMP)
-common_package(Servus REQUIRED)
-common_package(skv)
-common_package_post()
+common_find_package(OpenMP)
+common_find_package(Servus REQUIRED)
+common_find_package(skv)
+common_find_package_post()
 
 set(LUNCHBOX_DEPENDENT_LIBRARIES Boost)
 if(NOT LUNCHBOX_BUILD_V2_API)
@@ -51,7 +53,6 @@ endif()
 
 add_definitions("-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
-include(InstallSymlink)
 include(pthreads/CMakeLists.txt)
 
 add_subdirectory(lunchbox)

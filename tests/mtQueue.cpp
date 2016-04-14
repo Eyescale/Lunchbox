@@ -17,7 +17,7 @@
  */
 
 #include <pthread.h>
-#include <test.h>
+#include <lunchbox/test.h>
 #include <lunchbox/clock.h>
 #include <lunchbox/compiler.h>
 #include <lunchbox/mtQueue.h>

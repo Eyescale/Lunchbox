@@ -18,7 +18,7 @@
 #ifndef LUNCHBOX_SERIALIZE_H
 #define LUNCHBOX_SERIALIZE_H
 
-#include "test.h"
+#include <lunchbox/test.h>
 
 #include <lunchbox/anySerialization.h>
 

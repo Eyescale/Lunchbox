@@ -16,7 +16,7 @@
  */
 
 #define TEST_RUNTIME 600 // seconds
-#include "test.h"
+#include <lunchbox/test.h>
 
 #include <lunchbox/lunchbox.h>
 #include <boost/lexical_cast.hpp>

@@ -54,6 +54,7 @@ add_library(pthread SHARED
 
 set_target_properties(pthread PROPERTIES COMPILE_DEFINITIONS PTW32_BUILD=1
   FOLDER "${PROJECT_NAME}")
+target_include_directories(pthread PRIVATE ${PTHREADS_DIR})
 target_link_libraries(pthread ws2_32)
 
 install(TARGETS pthread

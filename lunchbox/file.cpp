@@ -96,11 +96,7 @@ Strings searchDirectory( const std::string& directory,
 
 std::string getFilename( const std::string& filename )
 {
-#ifdef _MSC_VER
-    const size_t lastSeparator = filename.find_last_of('\\');
-#else
-    const size_t lastSeparator = filename.find_last_of('/');
-#endif
+    const size_t lastSeparator = filename.find_last_of("/\\");
     if( lastSeparator == std::string::npos )
         return filename;
     // lastSeparator + 1 may be at most equal to filename.size(), which is good
@@ -109,11 +105,7 @@ std::string getFilename( const std::string& filename )
 
 std::string getDirname( const std::string& filename )
 {
-#ifdef _MSC_VER
-    const size_t lastSeparator = filename.find_last_of('\\');
-#else
-    const size_t lastSeparator = filename.find_last_of('/');
-#endif
+    const size_t lastSeparator = filename.find_last_of("/\\");
     if( lastSeparator == std::string::npos )
         return "./"; // The final separator is always in the output.
     // The separator will be part of the output.

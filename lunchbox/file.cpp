@@ -235,7 +235,6 @@ Strings getLibraryPaths()
 
 bool saveBinary( const servus::Serializable& object, const std::string& file )
 {
-    object.notifyRequested();
     const servus::Serializable::Data& data = object.toBinary();
     MemoryMap mmap( file, sizeof( uint128_t ) + data.size );
     if( !mmap.getAddress( ))
@@ -258,13 +257,11 @@ bool loadBinary( servus::Serializable& object, const std::string& file )
 
     object.fromBinary( mmap.getAddress< uint8_t >() + sizeof( uint128_t ),
                        mmap.getSize() - sizeof( uint128_t ));
-    object.notifyUpdated();
     return true;
 }
 
 bool saveAscii( const servus::Serializable& object, const std::string& file )
 {
-    object.notifyRequested();
     const std::string& data = object.toJSON();
     MemoryMap mmap( file, data.length( ));
     if( !mmap.getAddress( ))
@@ -280,7 +277,6 @@ bool loadAscii( servus::Serializable& object, const std::string& file )
         return false;
     const uint8_t* ptr = mmap.getAddress< uint8_t >();
     object.fromJSON( std::string( ptr, ptr + mmap.getSize( )));
-    object.notifyUpdated();
     return true;
 }
 

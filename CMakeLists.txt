@@ -21,7 +21,7 @@ set(LUNCHBOX_LICENSE LGPL)
 set(LUNCHBOX_DEB_DEPENDS libboost-filesystem-dev libboost-regex-dev
   libboost-serialization-dev libboost-system-dev libboost-test-dev
   libhwloc-dev avahi-daemon libavahi-client-dev
-  libleveldb-dev libmemcached-dev libmemcached-tools memcached)
+  libleveldb-dev libmemcached-dev libmemcached-tools librados-dev memcached)
 set(LUNCHBOX_PORT_DEPENDS boost libmemcached memcached)
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
 

@@ -3,13 +3,13 @@
 
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(Lunchbox VERSION 1.14.0)
+set(Lunchbox_VERSION_ABI 7)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
                               ${CMAKE_SOURCE_DIR}/CMake/common)
 
 include(GitExternal)
 
-set(Lunchbox_VERSION_ABI 7)
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
 option(LUNCHBOX_USE_MPI "Enable MPI functionality if found" ON)

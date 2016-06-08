@@ -4,7 +4,6 @@
 set(LUNCHBOX_PUBLIC_HEADERS
   algorithm.h
   any.h
-  anySerialization.h
   array.h
   atomic.h
   bitOperation.h

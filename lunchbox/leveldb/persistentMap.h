@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2016, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -66,12 +66,6 @@ public:
         if( _db->Get( db::ReadOptions(), key, &value ).ok( ))
             return value;
         return std::string();
-    }
-
-    bool contains( const std::string& key ) const final
-    {
-        std::string value;
-        return _db->Get( db::ReadOptions(), key, &value ).ok();
     }
 
     bool flush() final { /*NOP?*/ return true; }

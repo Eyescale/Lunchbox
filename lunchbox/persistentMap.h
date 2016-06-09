@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2016, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -28,6 +28,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/type_traits.hpp>
 
 #include <iostream>
@@ -39,6 +40,9 @@
 namespace lunchbox
 {
 namespace detail { class PersistentMap; }
+
+class PersistentMap;
+typedef boost::shared_ptr< PersistentMap > PersistentMapPtr;
 
 /**
  * Unified interface to save key-value pairs in a persistent store.
@@ -54,7 +58,17 @@ public:
      * Depending on the URI scheme an implementation backend is chosen. If no
      * URI is given, a default one is selected. Available implementations are:
      * * leveldb://path (if LUNCHBOX_USE_LEVELDB is defined)
+     * * memcached://[server] (if LUNCHBOX_USE_LIBMEMCACHED is defined)
      * * skv://path_to_config\#pdsname (if LUNCHBOX_USE_SKV is defined)
+     *
+     * If no path is given for leveldb, the implementation uses
+     * persistentMap.leveldb in the current working directory.
+     *
+     * If no servers are given for memcached, the implementation uses all
+     * servers in the MEMCACHED_SERVERS environment variable, or
+     * 127.0.0.1. MEMCACHED_SERVERS contains a comma-separated list of
+     * servers. Each server contains the address, and optionally a
+     * colon-separated port number.
      *
      * @param uri the storage backend and destination.
      * @throw std::runtime_error if no suitable implementation is found.
@@ -77,6 +91,24 @@ public:
      * @version 1.9.2
      */
     LUNCHBOX_API static bool handles( const servus::URI& uri );
+
+    /**
+     * Create a map which can be used for caching IO on the local system.
+     *
+     * The concrete implementation used depends on the system setup and
+     * available backend implementations. If no suitable implementation is
+     * found, a null pointer is returned.
+     *
+     * The current implementation returns:
+     * * A memcached-backed cache if libmemcached is available and the
+     *   environment variable MEMCACHED_SERVERS is set (see constructor
+     *   documentation for details).
+     * * A leveldb-backed cache if leveldb is available and LEVELDB_CACHE is set
+     *   to the path for the leveldb storage.
+     *
+     * @return a PersistentMap for caching IO, or 0.
+     */
+    LUNCHBOX_API static PersistentMapPtr createCache();
 
     /**
      * Set the maximum number of asynchronous outstanding write operations.
@@ -104,6 +136,8 @@ public:
      */
     template< class V > bool insert( const std::string& key, const V& value )
         { return _insert( key, value, boost::has_trivial_assign< V >( )); }
+    LUNCHBOX_API bool insert( const std::string& key, const void* data,
+                              size_t size );
 
     /**
      * Insert or update a vector of values in the database.
@@ -179,10 +213,7 @@ public:
      * @return false on error, true otherwise.
      * @version 1.11
      */
-    LUNCHBOX_API bool fetch( const std::string& key, size_t sizeHint = 0 ) const;
-
-    /** @return true if the key exists. @version 1.9.2 */
-    LUNCHBOX_API bool contains( const std::string& key ) const;
+    LUNCHBOX_API bool fetch( const std::string& key, size_t sizeHint=0 ) const;
 
     /** Flush outstanding operations to the backend storage. @version 1.11 */
     LUNCHBOX_API bool flush();
@@ -193,8 +224,6 @@ public:
 private:
     detail::PersistentMap* const _impl;
 
-    LUNCHBOX_API bool _insert( const std::string& key, const void* data,
-                               const size_t size );
     LUNCHBOX_API bool _swap() const;
 
 
@@ -204,7 +233,7 @@ private:
     template< size_t N > bool
     _insert( const std::string& k, char const (& v)[N], const boost::true_type&)
     {
-        return _insert( k, (void*)v, N - 1 ); // strip '0'
+        return insert( k, (void*)v, N - 1 ); // strip '0'
     }
 
     template< class V >
@@ -212,7 +241,7 @@ private:
     {
         if( boost::is_pointer< V >::value )
             LBTHROW( std::runtime_error( "Can't insert pointers" ));
-        return _insert( k, &v, sizeof( V ));
+        return insert( k, &v, sizeof( V ));
     }
 
     template< class V >
@@ -222,7 +251,7 @@ private:
     template< class V >
     bool _insert( const std::string& key, const std::vector< V >& values,
                   const boost::true_type& )
-        { return _insert( key, values.data(), values.size() * sizeof( V )); }
+        { return insert( key, values.data(), values.size() * sizeof( V )); }
 
     template< class V > V _get( const std::string& k ) const
     {
@@ -249,7 +278,7 @@ template<> inline
 bool PersistentMap::_insert( const std::string& k, const std::string& v,
                              const boost::false_type& )
 {
-    return _insert( k, v.data(), v.length( ));
+    return insert( k, v.data(), v.length( ));
 }
 
 template< class V > inline

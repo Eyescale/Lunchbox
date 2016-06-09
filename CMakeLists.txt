@@ -22,8 +22,9 @@ set(LUNCHBOX_LICENSE LGPL)
 set(LUNCHBOX_DEB_DEPENDS libboost-regex-dev libboost-serialization-dev
   libboost-filesystem-dev libboost-system-dev libboost-test-dev
   libboost-thread-dev libhwloc-dev avahi-daemon libavahi-client-dev
-  libleveldb-dev libopenmpi-dev openmpi-bin)
-set(LUNCHBOX_PORT_DEPENDS boost)
+  libleveldb-dev libopenmpi-dev openmpi-bin libmemcached-dev libmemcached-tools
+  memcached)
+set(LUNCHBOX_PORT_DEPENDS boost libmemcached memcached)
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
 
 include(Common)
@@ -34,8 +35,8 @@ else()
   list(APPEND COMMON_FIND_PACKAGE_DEFINES LUNCHBOX_USE_V1_API)
 endif()
 
-common_find_package(Boost REQUIRED COMPONENTS regex serialization filesystem system
-                                         thread unit_test_framework)
+common_find_package(Boost REQUIRED COMPONENTS
+  filesystem regex serialization system thread unit_test_framework)
 common_find_package(hwloc)
 common_find_package(leveldb)
 if(LUNCHBOX_USE_MPI)
@@ -43,6 +44,7 @@ if(LUNCHBOX_USE_MPI)
 endif()
 common_find_package(OpenMP)
 common_find_package(Servus REQUIRED)
+common_find_package(libmemcached)
 common_find_package(skv)
 common_find_package_post()
 

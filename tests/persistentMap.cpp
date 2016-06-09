@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2016, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -100,11 +100,26 @@ void read( const std::string& uri )
     read( map );
 }
 
+bool testAvailable( const std::string& uri )
+{
+    try
+    {
+        PersistentMap map( uri );
+        if( !map.insert( "foo", "bar" ))
+            return false;
+        return map[ "foo" ] == "bar";
+    }
+    catch( ... )
+    {
+        return false;
+    }
+    return true;
+}
+
 void setup( const std::string& uri )
 {
     PersistentMap map( uri );
     TEST( map.insert( "foo", "bar" ));
-    TEST( map.contains( "foo" ));
     TESTINFO( map[ "foo" ] == "bar",
               map[ "foo" ] << " length " << map[ "foo" ].length( ));
     TEST( map[ "bar" ].empty( ));
@@ -285,6 +300,16 @@ int main( int, char* argv[] )
         if( perfTest )
             for( size_t i=1; i <= 65536; i = i<<2 )
                 benchmark( "leveldb://", 0, i );
+#endif
+#ifdef LUNCHBOX_USE_LIBMEMCACHED
+        if( testAvailable( "memcached://" ))
+        {
+            setup( "memcached://" );
+            read( "memcached://" );
+            if( perfTest )
+                for( size_t i=1; i <= 65536; i = i<<2 )
+                    benchmark( "memcached://", 0, i );
+        }
 #endif
 #ifdef LUNCHBOX_USE_SKV
         FxLogger_Init( argv[0] );

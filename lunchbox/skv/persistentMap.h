@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2016, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -149,12 +149,6 @@ public:
         LBWARN << "skv fetch failed: " << skv_status_to_string( status )
                << std::endl;
         return false;
-    }
-
-    bool contains( const std::string& key ) const final
-    {
-        std::string value;
-        return _retrieve( key, value ) == SKV_SUCCESS;
     }
 
     bool flush() final { return _flush( 0 ); }

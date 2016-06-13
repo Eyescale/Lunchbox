@@ -2,6 +2,9 @@
 
 # git master
 
+* [263](https://github.com/Eyescale/Lunchbox/pull/263):
+  Add memcached PersistentMap backend, add 
+  PersistentMap::createCache
 * [252](https://github.com/Eyescale/Lunchbox/pull/252):
   Monitor::set() returns old value
 

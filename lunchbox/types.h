@@ -219,6 +219,7 @@ typedef Strings::iterator StringsIter;
 class Clock;
 class DSO;
 class Lock;
+class PersistentMap;
 class Referenced;
 class RequestHandler;
 class SpinLock;
@@ -244,7 +245,7 @@ typedef Future< uint32_t > f_uint32_t; //!< A future 32 bit unsigned promise
 typedef Future< ssize_t > f_ssize_t; //!< A future signed size promise
 typedef Future< void > f_void_t; //!< A future signed size promise
 
-typedef std::vector< DSO* > DSOs; /** A vector of DSO @version 1.11.0 */
+typedef std::vector< DSO* > DSOs; //!< A vector of DSO @version 1.11.0
 
 #ifdef LUNCHBOX_USE_V1_API
 using servus::Servus;

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014-2015, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2016, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -35,7 +35,6 @@ public:
     virtual std::string operator [] ( const std::string& key ) const = 0;
     virtual bool fetch( const std::string&, const size_t ) const
         { return true; }
-    virtual bool contains( const std::string& key ) const = 0;
     virtual bool flush() = 0;
 
     bool swap;
@@ -49,6 +48,7 @@ public:
 
 // Impls - need detail::PersistentMap interface above
 #include "leveldb/persistentMap.h"
+#include "memcached/persistentMap.h"
 #include "skv/persistentMap.h"
 
 namespace
@@ -59,6 +59,10 @@ lunchbox::detail::PersistentMap* _newImpl( const servus::URI& uri )
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
         return new lunchbox::leveldb::PersistentMap( uri );
+#endif
+#ifdef LUNCHBOX_USE_LIBMEMCACHED
+    if( lunchbox::memcached::PersistentMap::handles( uri ))
+        return new lunchbox::memcached::PersistentMap( uri );
 #endif
 #ifdef LUNCHBOX_USE_SKV
     if( lunchbox::skv::PersistentMap::handles( uri ))
@@ -102,10 +106,30 @@ PersistentMap::~PersistentMap()
     delete _impl;
 }
 
+PersistentMapPtr PersistentMap::createCache()
+{
+#ifdef LUNCHBOX_USE_LIBMEMCACHED
+    if( ::getenv( "MEMCACHED_SERVERS" ))
+        return PersistentMapPtr( new PersistentMap( "memcached://" ));
+#endif
+#ifdef LUNCHBOX_USE_LEVELDB
+    const char* leveldb = ::getenv( "LEVELDB_CACHE" );
+    if( leveldb )
+        return PersistentMapPtr( new PersistentMap(
+                                     std::string( "leveldb://" ) + leveldb ));
+#endif
+
+    return PersistentMapPtr();
+}
+
 bool PersistentMap::handles( const servus::URI& uri )
 {
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
+        return true;
+#endif
+#ifdef LUNCHBOX_USE_LIBMEMCACHED
+    if( lunchbox::memcached::PersistentMap::handles( uri ))
         return true;
 #endif
 #ifdef LUNCHBOX_USE_SKV
@@ -127,8 +151,8 @@ size_t PersistentMap::setQueueDepth( const size_t depth )
     return _impl->setQueueDepth( depth );
 }
 
-bool PersistentMap::_insert( const std::string& key, const void* data,
-                             const size_t size )
+bool PersistentMap::insert( const std::string& key, const void* data,
+                            const size_t size )
 {
 #ifdef HISTOGRAM
     ++_impl->keys[ key.size() ];
@@ -145,11 +169,6 @@ std::string PersistentMap::operator [] ( const std::string& key ) const
 bool PersistentMap::fetch( const std::string& key, const size_t sizeHint ) const
 {
     return _impl->fetch( key, sizeHint );
-}
-
-bool PersistentMap::contains( const std::string& key ) const
-{
-    return _impl->contains( key );
 }
 
 bool PersistentMap::flush()

@@ -17,6 +17,8 @@
 
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
 #include <libmemcached/memcached.h>
+#include <lunchbox/lock.h>
+#include <lunchbox/scopedMutex.h>
 
 namespace lunchbox
 {
@@ -92,6 +94,7 @@ public:
     bool insert( const std::string& key, const void* data, const size_t size )
         final
     {
+        lunchbox::ScopedWrite mutex( _lock );
         const std::string& hash = servus::make_uint128( key ).getString();
         const memcached_return_t ret =
             memcached_set( _instance, hash.c_str(), hash.length(),
@@ -109,6 +112,7 @@ public:
 
     std::string operator [] ( const std::string& key ) const final
     {
+        lunchbox::ScopedWrite mutex( _lock );
         const std::string& hash = servus::make_uint128( key ).getString();
         size_t size = 0;
         uint32_t flags = 0;
@@ -129,6 +133,7 @@ public:
 private:
     memcached_st* const _instance;
     memcached_return_t _lastError;
+    mutable lunchbox::Lock _lock;
 };
 }
 }

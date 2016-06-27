@@ -1,5 +1,10 @@
 # Changelog {#Changelog}
 
+# git master
+
+* [266](https://github.com/Eyescale/Lunchbox/pull/266):
+  Add PersistentMap::getValues and PersistentMap::takeValues
+
 # Release 1.14 (30-06-2016)
 
 * [263](https://github.com/Eyescale/Lunchbox/pull/263):

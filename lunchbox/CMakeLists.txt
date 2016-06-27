@@ -79,6 +79,7 @@ endif()
 set(LUNCHBOX_HEADERS
   detail/threadID.h
   leveldb/persistentMap.h
+  memcached/persistentMap.h
   skv/persistentMap.h
   time.h
   test.h
@@ -138,7 +139,7 @@ endif()
 if(LEVELDB_FOUND)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ${LEVELDB_LIBRARIES})
 endif()
-if(LIBMEMCACHED_FOUND)
+if(libmemcached_FOUND)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ${libmemcached_LIBRARIES})
 endif()
 if(SKV_FOUND)

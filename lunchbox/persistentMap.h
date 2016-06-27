@@ -26,6 +26,7 @@
 #include <servus/uri.h>
 
 #include <boost/foreach.hpp>
+#include <boost/function/function3.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -43,6 +44,19 @@ namespace detail { class PersistentMap; }
 
 class PersistentMap;
 typedef boost::shared_ptr< PersistentMap > PersistentMapPtr;
+
+/**
+ * Callback for PersistentMap::takeValues(), providing the key, pointer and size
+ * of the value.
+ */
+typedef boost::function< void( const std::string&, char*, size_t ) > ValueFunc;
+
+/**
+ * Callback for PersistentMap::getValues(), providing the key, pointer and size
+ * of the value.
+ */
+typedef boost::function< void( const std::string&, const char*,
+                               size_t ) > ConstValueFunc;
 
 /**
  * Unified interface to save key-value pairs in a persistent store.
@@ -214,6 +228,38 @@ public:
      * @version 1.11
      */
     LUNCHBOX_API bool fetch( const std::string& key, size_t sizeHint=0 ) const;
+
+    /**
+     * Retrieve values from a list of keys and calls back for each found value.
+     *
+     * Depending on the backend implementation, this is more optimal than
+     * calling get() for each key.
+     *
+     * The ownership of the returned data in the callback is not transfered, so
+     * the value needs to be copied if needed.
+     *
+     * @param keys list of keys to obtain
+     * @param func callback function which is called for each found key
+     * @version 1.14
+     */
+    LUNCHBOX_API void getValues( const Strings& keys,
+                                 const ConstValueFunc& func ) const;
+
+    /**
+     * Retrieve values from a list of keys and calls back for each found value.
+     *
+     * Depending on the backend implementation, this is more optimal than
+     * calling get() for each key.
+     *
+     * The ownership of the returned data in the callback is transfered, so the
+     * data must be free'd by the caller.
+     *
+     * @param keys list of keys to obtain
+     * @param func callback function which is called for each found key
+     * @version 1.14
+     */
+    LUNCHBOX_API void takeValues( const Strings& keys,
+                                  const ValueFunc& func ) const;
 
     /** Flush outstanding operations to the backend storage. @version 1.11 */
     LUNCHBOX_API bool flush();

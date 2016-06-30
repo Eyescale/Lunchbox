@@ -1,6 +1,6 @@
 # Changelog {#Changelog}
 
-# git master
+# Release 1.14 (30-06-2016)
 
 * [263](https://github.com/Eyescale/Lunchbox/pull/263):
   Add memcached PersistentMap backend, add 

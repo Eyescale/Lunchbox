@@ -18,6 +18,8 @@
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
 #include <libmemcached/memcached.h>
 
+#include <unordered_map>
+
 namespace lunchbox
 {
 namespace memcached
@@ -64,6 +66,7 @@ memcached_st* _getInstance( const servus::URI& uri )
     else
         memcached_server_add( instance, host.c_str(), port );
 
+    memcached_behavior_set( instance, MEMCACHED_BEHAVIOR_NO_BLOCK, 1 );
     return instance;
 }
 }
@@ -124,9 +127,60 @@ public:
         return value;
     }
 
-    bool flush() final { /*NOP?*/ return true; }
+    void takeValues( const Strings& keys, const ValueFunc& func ) const final
+    {
+        _multiGet( keys, func, []( memcached_result_st* fetched )
+                           { return memcached_result_take_value( fetched ); } );
+    }
+
+    void getValues( const Strings& keys, const ConstValueFunc& func ) const
+        final
+    {
+        _multiGet( keys, func, []( memcached_result_st* fetched )
+                                { return memcached_result_value( fetched ); } );
+    }
+
+    bool flush() final
+    {
+        return memcached_flush_buffers( _instance ) == MEMCACHED_SUCCESS;
+    }
 
 private:
+    template< typename F, typename T >
+    void _multiGet( const Strings& keys, const F& func, const T& getFunc ) const
+    {
+        std::vector< const char* > keysArray;
+        std::vector< size_t > keyLengths;
+        keysArray.reserve( keys.size( ));
+        keyLengths.reserve( keys.size( ));
+        std::unordered_map< std::string, std::string > hashes;
+
+        for( const auto& key : keys )
+        {
+            const std::string hash = servus::make_uint128( key ).getString();
+            keysArray.push_back( hash.c_str( ));
+            keyLengths.push_back( hash.length( ));
+            hashes[hash] = key;
+        }
+
+        memcached_return ret = memcached_mget( _instance, keysArray.data(),
+                                               keyLengths.data(),
+                                               keysArray.size( ));
+
+        memcached_result_st* fetched;
+        while( (fetched = memcached_fetch_result( _instance, nullptr, &ret )) )
+        {
+            if( ret == MEMCACHED_SUCCESS )
+            {
+                const std::string key( memcached_result_key_value( fetched ),
+                                       memcached_result_key_length( fetched ));
+                func( hashes[key], getFunc( fetched ),
+                      memcached_result_length( fetched ));
+            }
+            memcached_result_free( fetched );
+        }
+    }
+
     memcached_st* const _instance;
     memcached_return_t _lastError;
 };

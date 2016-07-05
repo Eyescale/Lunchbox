@@ -113,7 +113,6 @@ bool testAvailable( const std::string& uri )
     {
         return false;
     }
-    return true;
 }
 
 void setup( const std::string& uri )
@@ -165,7 +164,31 @@ void setup( const std::string& uri )
         bigSet.insert( i );
     TEST( map.insert( "std::set< uint32_t >", bigSet ));
 
-    read( map );
+#ifdef LUNCHBOX_USE_CXX11
+    const lunchbox::Strings keys = { "hans", "coffee" };
+    size_t numResults = 0;
+    map.takeValues( keys, [&]( const std::string& key, char* data,
+                               const size_t size )
+    {
+        TEST( std::find( keys.begin(), keys.end(), key) != keys.end( ));
+        TEST( data );
+        TEST( size > 0 );
+        ++numResults;
+        free( data );
+    });
+    TEST( numResults == keys.size( ));
+
+    numResults = 0;
+    map.getValues( keys, [&]( const std::string& key, const char* data,
+                              const size_t size )
+    {
+        TEST( std::find( keys.begin(), keys.end(), key) != keys.end( ));
+        TEST( data );
+        TEST( size > 0 );
+        ++numResults;
+    });
+    TEST( numResults == keys.size( ));
+#endif
 }
 
 void benchmark( const std::string& uri, const uint64_t queueDepth,

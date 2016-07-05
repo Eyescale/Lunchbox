@@ -35,6 +35,10 @@ public:
     virtual std::string operator [] ( const std::string& key ) const = 0;
     virtual bool fetch( const std::string&, const size_t ) const
         { return true; }
+    virtual void getValues( const Strings& keys,
+                            const ConstValueFunc& func ) const = 0;
+    virtual void takeValues( const Strings& keys,
+                             const ValueFunc& func ) const = 0;
     virtual bool flush() = 0;
 
     bool swap;
@@ -169,6 +173,18 @@ std::string PersistentMap::operator [] ( const std::string& key ) const
 bool PersistentMap::fetch( const std::string& key, const size_t sizeHint ) const
 {
     return _impl->fetch( key, sizeHint );
+}
+
+void PersistentMap::getValues( const Strings& keys,
+                               const ConstValueFunc& func ) const
+{
+    _impl->getValues( keys, func );
+}
+
+void PersistentMap::takeValues( const Strings& keys,
+                                const ValueFunc& func ) const
+{
+    _impl->takeValues( keys, func );
 }
 
 bool PersistentMap::flush()

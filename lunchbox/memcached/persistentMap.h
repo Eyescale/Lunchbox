@@ -154,13 +154,16 @@ private:
         keysArray.reserve( keys.size( ));
         keyLengths.reserve( keys.size( ));
         std::unordered_map< std::string, std::string > hashes;
+        Strings hashCopy;
+        hashCopy.reserve( keys.size( ));
 
         for( const auto& key : keys )
         {
             const std::string hash = servus::make_uint128( key ).getString();
-            keysArray.push_back( hash.c_str( ));
-            keyLengths.push_back( hash.length( ));
             hashes[hash] = key;
+            hashCopy.push_back( hash );
+            keysArray.push_back( hashCopy.back().c_str( ));
+            keyLengths.push_back( hashCopy.back().length( ));
         }
 
         memcached_return ret = memcached_mget( _instance, keysArray.data(),

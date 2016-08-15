@@ -80,7 +80,6 @@ set(LUNCHBOX_HEADERS
   detail/threadID.h
   leveldb/persistentMap.h
   memcached/persistentMap.h
-  skv/persistentMap.h
   time.h
   test.h
 )
@@ -141,9 +140,6 @@ if(LEVELDB_FOUND)
 endif()
 if(libmemcached_FOUND)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ${libmemcached_LIBRARIES})
-endif()
-if(SKV_FOUND)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES skv_client fxlogger)
 endif()
 
 common_library(Lunchbox)

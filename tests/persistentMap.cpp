@@ -24,9 +24,6 @@
 #ifdef LUNCHBOX_USE_LEVELDB
 #  include <leveldb/db.h>
 #endif
-#ifdef LUNCHBOX_USE_SKV
-#  include <FxLogger/FxLogger.hpp>
-#endif
 #include <boost/format.hpp>
 #include <stdexcept>
 
@@ -334,19 +331,6 @@ int main( int, char* argv[] )
                     benchmark( "memcached://", 0, i );
         }
 #endif
-#ifdef LUNCHBOX_USE_SKV
-        FxLogger_Init( argv[0] );
-        setup( "skv://" );
-        read( "skv://" );
-        if( perfTest )
-        {
-            benchmark( "skv://", 0, 64 );
-            for( size_t i=1; i <= 65536; i = i<<1 )
-                benchmark( "skv://", i, 64 );
-            for( size_t i=1; i <= 65536; i = i<<2 )
-                benchmark( "skv://", 65536, i );
-        }
-#endif
     }
 #ifdef LUNCHBOX_USE_LEVELDB
     catch( const leveldb::Status& status )
@@ -356,13 +340,7 @@ int main( int, char* argv[] )
 #endif
     catch( const std::runtime_error& error )
     {
-#ifdef LUNCHBOX_USE_SKV
-        if( error.what() !=
-            std::string( "skv init failed: SKV_ERRNO_CONN_FAILED" ))
-#endif
-        {
-            TESTINFO( !"exception", error.what( ));
-        }
+        TESTINFO( !"exception", error.what( ));
     }
 
     testGenericFailures();

@@ -47,7 +47,6 @@ if(LUNCHBOX_USE_MPI)
 endif()
 common_find_package(OpenMP)
 common_find_package(Servus REQUIRED)
-common_find_package(skv)
 common_find_package_post()
 
 set(LUNCHBOX_DEPENDENT_LIBRARIES Boost)

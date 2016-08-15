@@ -53,7 +53,6 @@ public:
 // Impls - need detail::PersistentMap interface above
 #include "leveldb/persistentMap.h"
 #include "memcached/persistentMap.h"
-#include "skv/persistentMap.h"
 
 namespace
 {
@@ -67,10 +66,6 @@ lunchbox::detail::PersistentMap* _newImpl( const servus::URI& uri )
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
     if( lunchbox::memcached::PersistentMap::handles( uri ))
         return new lunchbox::memcached::PersistentMap( uri );
-#endif
-#ifdef LUNCHBOX_USE_SKV
-    if( lunchbox::skv::PersistentMap::handles( uri ))
-        return new lunchbox::skv::PersistentMap( uri );
 #endif
 
     if( !uri.getScheme().empty( ))
@@ -134,10 +129,6 @@ bool PersistentMap::handles( const servus::URI& uri )
 #endif
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
     if( lunchbox::memcached::PersistentMap::handles( uri ))
-        return true;
-#endif
-#ifdef LUNCHBOX_USE_SKV
-    if( lunchbox::skv::PersistentMap::handles( uri ))
         return true;
 #endif
 

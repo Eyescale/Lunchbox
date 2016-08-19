@@ -91,8 +91,7 @@ void Buffer< T >::append( const T* data, const uint64_t size )
 
 template< class T > void Buffer< T >::append( const T& element )
 {
-    resize( _size + 1 );
-    _data[ _size - 1 ] = element;
+    append( &element, 1 );
 }
 
 template< class T >

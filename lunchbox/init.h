@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2008-2014, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2008-2016, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -25,7 +25,11 @@ namespace lunchbox
 /**
  * Initialize the Lunchbox base classes.
  *
- * exit() should be called independent of the return value of this function.
+ * exit() should be called independent of the return value of this function. The
+ * following arguments are parsed:
+ * * -v[v]: Increase log verbosity
+ * * --lb-logfile [filename]: redirect log to the given file or to
+ *   ApplicationName.log
  *
  * @param argc the command line argument count.
  * @param argv the command line argument values.

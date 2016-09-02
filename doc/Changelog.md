@@ -2,6 +2,8 @@
 
 # git master
 
+* [271](https://github.com/Eyescale/Lunchbox/pull/271):
+  Add '--lb-logfile' command line option
 * Removed obsolete SKV backend for PersistentMap
 * [266](https://github.com/Eyescale/Lunchbox/pull/266):
   Add PersistentMap::getValues and PersistentMap::takeValues

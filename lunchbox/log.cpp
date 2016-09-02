@@ -384,22 +384,22 @@ void Log::setOutput( std::ostream& stream )
 
 bool Log::setOutput( const std::string& file )
 {
-    std::ostream* oldLog = _logStream;
     std::ofstream* newLog = new std::ofstream( file.c_str( ));
 
-    if( newLog->is_open( ))
+    if( !newLog->is_open( ))
     {
-        setOutput( *newLog );
-        *oldLog << "Redirected log to " << file << std::endl;
-
-        delete _logFile;
-        _logFile = newLog;
-        return true;
+        LBERROR << "Can't open log file " << file << ": " << sysError
+                << std::endl;
+        delete newLog;
+        return false;
     }
 
-    LBERROR << "Can't open log file " << file << ": " << sysError << std::endl;
-    delete newLog;
-    return false;
+    getOutput() << "Redirect log to " << file << std::endl;
+    setOutput( *newLog );
+
+    delete _logFile;
+    _logFile = newLog;
+    return true;
 }
 
 void Log::setClock( Clock* clock )

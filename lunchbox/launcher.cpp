@@ -1,5 +1,5 @@
-/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
- *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2005-2016, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -110,7 +110,6 @@ bool Launcher::run( const std::string& command )
     argv[ argc ] = 0;
 
     LBDEBUG << "Executing: " << stringStream.str() << std::endl;
-    //::exit( EXIT_SUCCESS );
     int nTries = 10;
     while( nTries-- )
     {

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2008-2015, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2008-2016, Stefan Eilemann <eile@equalizergraphics.com>
  *                          Cedric Stalder <cedric.stalder@gmail.com>
  *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
@@ -20,9 +20,10 @@
 #include "init.h"
 
 #include "atomic.h"
-#include "rng.h"
+#include "file.h"
 #include "thread.h"
 
+#include <fstream>
 #include <stdlib.h>
 #include <time.h>
 
@@ -30,18 +31,11 @@ namespace lunchbox
 {
 namespace
 {
-    static a_int32_t _initialized;
+static a_int32_t _initialized;
 }
 
 bool init( const int argc, char** argv )
 {
-#ifndef NDEBUG
-    LBVERB << "Options: ";
-    for( int i = 1; i < argc; ++i )
-        LBVERB << argv[i] << ", ";
-    LBVERB << std::endl;
-#endif
-
     for( int i = 1; i < argc; ++i )
     {
         // verbose options
@@ -49,6 +43,13 @@ bool init( const int argc, char** argv )
             Log::level += 2;
         else if( std::string( argv[i] ) == "-v" )
             ++Log::level;
+        else if( std::string( argv[i] ) == "--lb-logfile" )
+        {
+            std::string logfile = getFilename( argv[0] ) + ".log";
+            if( i+1 < argc )
+                logfile = argv[++i];
+            Log::setOutput( logfile );
+        }
     }
 
     if( ++_initialized > 1 ) // not first

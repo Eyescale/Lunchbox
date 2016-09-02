@@ -109,7 +109,7 @@ bool Launcher::run( const std::string& command )
 
     argv[ argc ] = 0;
 
-    LBINFO << "Executing: " << stringStream.str() << std::endl;
+    LBDEBUG << "Executing: " << stringStream.str() << std::endl;
     //::exit( EXIT_SUCCESS );
     int nTries = 10;
     while( nTries-- )

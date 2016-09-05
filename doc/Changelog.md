@@ -3,7 +3,7 @@
 # git master
 
 * [272](https://github.com/Eyescale/Lunchbox/pull/272):
-  Add getWorkPath()
+  Add getWorkDir()
 * [271](https://github.com/Eyescale/Lunchbox/pull/271):
   Add '--lb-logfile' command line option
 * Removed obsolete SKV backend for PersistentMap

@@ -56,7 +56,15 @@ LUNCHBOX_API std::string getDirname( const std::string& filename );
  * @return the absolute path to the current executable.
  * @version 1.11
  */
-LUNCHBOX_API std::string getExecutablePath();
+LUNCHBOX_API std::string getExecutableDir();
+/** @deprecated */
+inline std::string getExecutablePath() { return getExecutableDir(); }
+
+/**
+ * @return the absolute path to the current working directory
+ * @version 1.14
+ */
+LUNCHBOX_API std::string getWorkDir();
 
 /**
  * Get the absolute path to the root path of the current executable.
@@ -72,7 +80,8 @@ LUNCHBOX_API std::string getExecutablePath();
  * @return the absolute root path of the current executable.
  * @version 1.12
  */
-LUNCHBOX_API std::string getRootPath();
+LUNCHBOX_API std::string getRootDir();
+inline std::string getRootPath() { return getRootDir(); } //!< @deprecated
 
 /**
  * @return the absolute path to the libraries of the current executable.

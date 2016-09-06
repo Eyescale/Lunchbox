@@ -32,6 +32,8 @@
 #include <sys/stat.h>
 #ifdef _MSC_VER
 #  include <windows.h>
+#  include <direct.h>
+#  define getcwd _getcwd
 #elif __APPLE__
 #  include <dirent.h>
 #  include <mach-o/dyld.h>
@@ -114,7 +116,7 @@ std::string getDirname( const std::string& filename )
     return filename.substr( 0, lastSeparator + 1 );
 }
 
-std::string getExecutablePath()
+std::string getExecutableDir()
 {
     // http://stackoverflow.com/questions/933850
 #ifdef _MSC_VER
@@ -151,13 +153,19 @@ std::string getExecutablePath()
     return path.parent_path().string();
 }
 
-std::string getRootPath()
+std::string getWorkDir()
 {
-    const std::string& exePath = getExecutablePath();
-    if( exePath.empty( ))
-        return exePath;
+    char cwd[ MAXPATHLEN ];
+    return ::getcwd( cwd, MAXPATHLEN );
+}
 
-    const boost::filesystem::path path( exePath );
+std::string getRootDir()
+{
+    const std::string& exeDir = getExecutableDir();
+    if( exeDir.empty( ))
+        return exeDir;
+
+    const boost::filesystem::path path( exeDir );
 #ifdef _MSC_VER
     const Strings buildTypes { "debug", "relwithdebinfo", "release",
                                "minsizerel" };
@@ -175,22 +183,22 @@ std::string getRootPath()
 
 std::string getLibraryPath()
 {
-    const std::string& exePath = getExecutablePath();
-    if( exePath.empty( ))
-        return exePath;
+    const std::string& exeDir = getExecutableDir();
+    if( exeDir.empty( ))
+        return exeDir;
 
 #ifdef _MSC_VER
-    return exePath;
+    return exeDir;
 #elif __APPLE__
-    const boost::filesystem::path path( exePath );
+    const boost::filesystem::path path( exeDir );
 
     // foo.app/Contents/MacOS/foo
-    if( boost::algorithm::ends_with( exePath, ".app/Contents/MacOS" ))
+    if( boost::algorithm::ends_with( exeDir, ".app/Contents/MacOS" ))
         return path.parent_path().parent_path().parent_path().parent_path().
                    string() + "/lib";
     return path.parent_path().string() + "/lib";
 #else
-    const boost::filesystem::path path( exePath );
+    const boost::filesystem::path path( exeDir );
     return path.parent_path().string() + "/lib";
 #endif
 }

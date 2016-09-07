@@ -394,7 +394,7 @@ bool Log::setOutput( const std::string& file )
         return false;
     }
 
-    getOutput() << "Redirect log to " << file << std::endl;
+    LBDEBUG << "Redirect log to " << file << std::endl;
     setOutput( *newLog );
 
     delete _logFile;

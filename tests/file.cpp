@@ -25,7 +25,7 @@ int main( int, char** argv )
 {
     const boost::filesystem::path path( argv[0] );
     const std::string argvPath( path.parent_path().generic_string( ));
-    const boost::filesystem::path execPath( lunchbox::getExecutablePath( ));
+    const boost::filesystem::path execPath( lunchbox::getExecutableDir( ));
     TEST( boost::algorithm::ends_with( execPath.generic_string(), argvPath ));
 
     boost::filesystem::path referenceRootPath( execPath );
@@ -42,7 +42,8 @@ int main( int, char** argv )
         referenceRootPath = referenceRootPath.parent_path();
     }
 #endif
-    TEST( lunchbox::getRootPath() == referenceRootPath.string( ));
+    TEST( lunchbox::getRootDir() == referenceRootPath.string( ));
+    TEST( lunchbox::getExecutableDir() == lunchbox::getWorkDir( ));
 
     const std::string filename = path.filename().generic_string();
     TEST( filename == lunchbox::getFilename( argv[0] ));

@@ -48,31 +48,41 @@ LUNCHBOX_API std::string getFilename( const std::string& filename );
 LUNCHBOX_API std::string getDirname( const std::string& filename );
 
 /**
- * Get the absolute path to the current executable.
+ * Get the absolute directory of the current executable.
  *
  * On Mac OS X, this returns the path to the app bundle, i.e., the directory
  * where the Foo.app is located, not Foo.app/Contents/MacOS.
  *
- * @return the absolute path to the current executable.
+ * @return the absolute directory of the current executable.
  * @version 1.11
  */
-LUNCHBOX_API std::string getExecutablePath();
+LUNCHBOX_API std::string getExecutableDir();
+/** @deprecated */
+inline std::string getExecutablePath() { return getExecutableDir(); }
 
 /**
- * Get the absolute path to the root path of the current executable.
+ * @return the absolute directory of the current working directory
+ * @version 1.14
+ */
+LUNCHBOX_API std::string getWorkDir();
+
+/**
+ * Get the absolute path to the root directory of the current executable.
  *
- * On all platforms, this returns the root path of the installation/distribution
- * of the current executable. Can be empty, if getExecutablePath() is empty.
+ * On all platforms, this returns the root directory of the
+ * installation/distribution of the current executable. Can be empty, if
+ * getExecutableDir() is empty.
  *
- * On Linux and Mac OS X, this returns the path one level up of
- * getExecutablePath().
- * On Windows, this returns the path one or two levels up of
- * getExecutablePath(), depending if ${BuildType} is in the path.
+ * On Linux and Mac OS X, this returns the directory one level up of
+ * getExecutableDir().
+ * On Windows, this returns the directory one or two levels up of
+ * getExecutableDir(), depending if ${BuildType} is in the path.
  *
- * @return the absolute root path of the current executable.
+ * @return the absolute root directory of the current executable.
  * @version 1.12
  */
-LUNCHBOX_API std::string getRootPath();
+LUNCHBOX_API std::string getRootDir();
+inline std::string getRootPath() { return getRootDir(); } //!< @deprecated
 
 /**
  * @return the absolute path to the libraries of the current executable.

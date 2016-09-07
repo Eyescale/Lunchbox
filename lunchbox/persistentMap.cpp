@@ -68,14 +68,6 @@ lunchbox::detail::PersistentMap* _newImpl( const servus::URI& uri )
         return new lunchbox::memcached::PersistentMap( uri );
 #endif
 
-    if( !uri.getScheme().empty( ))
-        LBTHROW( std::runtime_error(
-                     std::string( "No suitable implementation found for: " ) +
-                         boost::lexical_cast< std::string >( uri )));
-
-#ifdef LUNCHBOX_USE_LEVELDB
-    return new lunchbox::leveldb::PersistentMap( uri );
-#endif
     LBTHROW( std::runtime_error(
                  std::string( "No suitable implementation found for: " ) +
                      boost::lexical_cast< std::string >( uri )));
@@ -121,7 +113,7 @@ PersistentMapPtr PersistentMap::createCache()
     return PersistentMapPtr();
 }
 
-bool PersistentMap::handles( const servus::URI& uri )
+bool PersistentMap::handles( const servus::URI& uri LB_UNUSED )
 {
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
@@ -130,13 +122,6 @@ bool PersistentMap::handles( const servus::URI& uri )
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
     if( lunchbox::memcached::PersistentMap::handles( uri ))
         return true;
-#endif
-
-    if( !uri.getScheme().empty( ))
-        return false;
-
-#ifdef LUNCHBOX_USE_LEVELDB
-    return true;
 #endif
     return false;
 }

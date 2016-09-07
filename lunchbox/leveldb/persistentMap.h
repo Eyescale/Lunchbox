@@ -53,7 +53,7 @@ public:
     virtual ~PersistentMap() { delete _db; }
 
     static bool handles( const servus::URI& uri )
-        { return uri.getScheme() == "leveldb"; }
+        { return uri.getScheme() == "leveldb" || uri.getScheme().empty(); }
 
     bool insert( const std::string& key, const void* data, const size_t size )
         final

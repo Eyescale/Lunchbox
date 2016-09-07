@@ -113,7 +113,7 @@ PersistentMapPtr PersistentMap::createCache()
     return PersistentMapPtr();
 }
 
-bool PersistentMap::handles( const servus::URI& uri )
+bool PersistentMap::handles( const servus::URI& uri LB_UNUSED )
 {
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))

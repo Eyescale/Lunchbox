@@ -432,7 +432,7 @@ std::ostream& exdent( std::ostream& os )
     Log* log = dynamic_cast<Log*>(&os);
     if( log )
         log->exdent();
-        return os;
+    return os;
 }
 
 std::ostream& disableFlush( std::ostream& os )

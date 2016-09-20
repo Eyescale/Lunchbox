@@ -40,7 +40,7 @@ common_find_package(Boost REQUIRED COMPONENTS
 common_find_package(hwloc)
 common_find_package(leveldb)
 if(NOT COMMON_USE_CXX03)
-  common_find_package(libmemcached 1.1)
+  common_find_package(libmemcached 1.0.12)
 endif()
 if(LUNCHBOX_USE_MPI)
   common_find_package(MPI)

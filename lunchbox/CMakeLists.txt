@@ -33,10 +33,8 @@ set(LUNCHBOX_PUBLIC_HEADERS
   log.h
   memoryMap.h
   monitor.h
-  mpi.h
   mtQueue.h
   mtQueue.ipp
-  omp.h
   os.h
   perThread.h
   perThread.ipp
@@ -98,8 +96,6 @@ set(LUNCHBOX_SOURCES
   lock.cpp
   log.cpp
   memoryMap.cpp
-  mpi.cpp
-  omp.cpp
   os.cpp
   persistentMap.cpp
   referenced.cpp

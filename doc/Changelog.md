@@ -2,6 +2,8 @@
 
 # git master
 
+* [](https://github.com/Eyescale/Lunchbox/pull/):
+  Remove obsolete MPI and OpenMP classes
 * [272](https://github.com/Eyescale/Lunchbox/pull/272):
   Add getWorkDir()
 * [271](https://github.com/Eyescale/Lunchbox/pull/271):

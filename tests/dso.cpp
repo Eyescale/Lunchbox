@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2014, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2014-2016, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -43,7 +43,7 @@ int main( int, char** )
     libraries.push_back( "/usr/lib/libc.dylib" );
     libraries.push_back( "/usr/lib/libtermcap.dylib" );
 #else
-    libraries.push_back( LIBPTHREAD_SO );
+    libraries.push_back( LIBC_SO );
     libraries.push_back( LIBM_SO );
 #endif
 
@@ -63,7 +63,8 @@ int main( int, char** )
     TEST( one == three );
 
     TEST( one.getFunctionPointer( forkFun ));
-    TEST( one.getFunctionPointer( forkFun ) == &fork );
+    TESTINFO( one.getFunctionPointer( forkFun ) == &fork,
+              one.getFunctionPointer( forkFun ) << " != " << (void*)&fork );
     TEST( !one.getFunctionPointer( "fooBar" ));
 
     one.close();

@@ -19,6 +19,10 @@ endif()
 if(COVERAGE AND TRAVIS)
   list(APPEND EXCLUDE_FROM_TESTS anySerialization.cpp) #timeout in lcov gather
 endif()
+if(COMMON_USE_CXX03)
+  list(APPEND EXCLUDE_FROM_TESTS perf/mutex.cpp)
+endif()
+
 set(UNIT_AND_PERF_TESTS persistentMap.cpp)
 
 include(CommonCTest)

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2016, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2016, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -21,10 +21,8 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/debug.h>
 #include <lunchbox/init.h>
-#include <lunchbox/lock.h>
-#include <lunchbox/spinLock.h>
-#include <lunchbox/timedLock.h>
 
+#include <mutex>
 #include <iostream>
 
 #define MAXTHREADS 256
@@ -36,9 +34,9 @@ bool _running = false;
 template< class T > class Thread : public lunchbox::Thread
 {
 public:
-    Thread() : lock( 0 ), ops( 0 ) {}
+    Thread() : mutex( 0 ), ops( 0 ) {}
 
-    T* lock;
+    T* mutex;
     size_t ops;
 
     virtual void run()
@@ -46,8 +44,8 @@ public:
         ops = 0;
         while( LB_LIKELY( _running ))
         {
-            lock->set();
-            lock->unset();
+            mutex->lock();
+            mutex->unlock();
             ++ops;
         }
     }
@@ -57,8 +55,8 @@ template< class T > void _test()
 {
     const size_t nThreads = 16;
 
-    T lock;
-    lock.set();
+    T mutex;
+    mutex.lock();
 
     Thread< T > threads[MAXTHREADS];
     for( size_t i = 1; i <= nThreads; i = i << 1 )
@@ -66,13 +64,13 @@ template< class T > void _test()
         _running = true;
         for( size_t j = 0; j < i; ++j )
         {
-            threads[j].lock = &lock;
+            threads[j].mutex = &mutex;
             TEST( threads[j].start( ));
         }
         lunchbox::sleep( 10 ); // let threads initialize
 
         _clock.reset();
-        lock.unset();
+        mutex.unlock();
         lunchbox::sleep( TIME ); // let threads run
         _running = false;
 
@@ -80,16 +78,13 @@ template< class T > void _test()
             TEST( threads[j].join( ));
         const float time = _clock.getTimef();
 
-#ifndef NDEBUG
-        TEST( !lock.isSet( ));
-#endif
-        lock.set();
+        mutex.lock();
 
         size_t ops = 0;
         for( size_t j = 0; j < nThreads; ++j )
             ops += threads[j].ops;
 
-        std::cout << std::setw(20) << lunchbox::className( lock ) << ", "
+        std::cout << std::setw(20) << lunchbox::className( mutex ) << ", "
                   << std::setw(12) << /*set, test, unset*/ 3 * ops / time
                   << ", " << std::setw(3) << i << std::endl;
     }
@@ -100,14 +95,10 @@ int main( int argc, char **argv )
     TEST( lunchbox::init( argc, argv ));
 
     std::cout << "               Class,       ops/ms, threads" << std::endl;
-    _test< lunchbox::SpinLock >();
+    _test< std::mutex >();
     std::cout << std::endl;
 
-    _test< lunchbox::Lock >();
-    std::cout << std::endl;
-
-    _test< lunchbox::TimedLock >();
+    _test< std::timed_mutex >();
     TEST( lunchbox::exit( ));
-
     return EXIT_SUCCESS;
 }

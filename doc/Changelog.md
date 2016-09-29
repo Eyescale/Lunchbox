@@ -2,7 +2,9 @@
 
 # git master
 
-* [](https://github.com/Eyescale/Lunchbox/pull/):
+* [276](https://github.com/Eyescale/Lunchbox/pull/276):
+  Renamed UnorderedIntervalSet to IntervalSet
+* [275](https://github.com/Eyescale/Lunchbox/pull/275):
   Remove obsolete MPI and OpenMP classes
 * [272](https://github.com/Eyescale/Lunchbox/pull/272):
   Add getWorkDir()

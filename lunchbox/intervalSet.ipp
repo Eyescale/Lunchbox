@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2008, Juan Hernando <jhernando@fi.upm.es>
- *               2013, Daniel Nachbaur <danielnachbaur@epfl.ch>
+/* Copyright (c) 2008-2016, Juan Hernando <jhernando@fi.upm.es>
+ *                          Daniel Nachbaur <danielnachbaur@epfl.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -25,10 +25,9 @@ namespace lunchbox
 {
 
 template< typename T >
-class UnorderedIntervalSet< T >::const_iterator :
-    public boost::iterator_facade<
-        typename UnorderedIntervalSet< T >::const_iterator,
-        T, std::forward_iterator_tag, T >
+class IntervalSet< T >::const_iterator :
+    public boost::iterator_facade< typename IntervalSet< T >::const_iterator,
+                                   T, std::forward_iterator_tag, T >
 {
 public:
     // Default constructor to an end() iterator.
@@ -37,13 +36,12 @@ public:
 
 private:
     friend class boost::iterator_core_access;
-    friend class UnorderedIntervalSet;
+    friend class IntervalSet;
 
-    typedef typename UnorderedIntervalSet< T >::EdgeSet::const_iterator
+    typedef typename IntervalSet< T >::EdgeSet::const_iterator
                      edge_iterator;
 
-    const_iterator( const UnorderedIntervalSet& set,
-                    const edge_iterator& interval)
+    const_iterator( const IntervalSet& set, const edge_iterator& interval )
         : _intervalIteratorEnd( set._intervals.end( ))
         , _startEdge( interval )
     {
@@ -51,13 +49,12 @@ private:
             _value = _startEdge->first;
     }
 
-    const_iterator( const UnorderedIntervalSet & set,
-                    const edge_iterator & interval, const T& current )
+    const_iterator( const IntervalSet & set, const edge_iterator & interval,
+                    const T& current )
         : _value( current )
         , _intervalIteratorEnd( set._intervals.end( ))
         , _startEdge( interval )
-    {
-    }
+    {}
 
     void increment()
     {
@@ -95,26 +92,22 @@ private:
     edge_iterator _startEdge;
 };
 
-template < typename T >
-UnorderedIntervalSet< T >::UnorderedIntervalSet()
+template < typename T > IntervalSet< T >::IntervalSet()
     : _size( 0 )
 {}
 
-template < typename T >
-void UnorderedIntervalSet< T >::insert( const T& element )
+template < typename T > void IntervalSet< T >::insert( const T& element )
 {
     insert( element, element );
 }
 
-template < typename T >
-void UnorderedIntervalSet< T >::erase( const T& element )
+template < typename T > void IntervalSet< T >::erase( const T& element )
 {
     erase( element, element );
 }
 
-template < typename T >
-void UnorderedIntervalSet< T >::insert( const T& startElement,
-                                        const T& endElement )
+template < typename T > void IntervalSet< T >::insert( const T& startElement,
+                                                       const T& endElement )
 {
     LBASSERT( startElement <= endElement );
 
@@ -227,9 +220,8 @@ void UnorderedIntervalSet< T >::insert( const T& startElement,
     LBASSERT( _intervals.size() % 2 == 0 );
 }
 
-template < typename T >
-void UnorderedIntervalSet< T >::erase( const T& startElement,
-                                       const T& endElement )
+template < typename T > void IntervalSet< T >::erase( const T& startElement,
+                                                      const T& endElement )
 {
     LBASSERT( startElement <= endElement );
 
@@ -310,8 +302,7 @@ void UnorderedIntervalSet< T >::erase( const T& startElement,
     LBASSERT( _intervals.size() % 2 == 0 );
 }
 
-template < typename T >
-void UnorderedIntervalSet< T >::insert( const UnorderedIntervalSet& rhs )
+template < typename T > void IntervalSet< T >::insert( const IntervalSet& rhs )
 {
     for( typename EdgeSet::const_iterator i = rhs._intervals.begin();
          i != rhs._intervals.end(); ++i )
@@ -320,22 +311,19 @@ void UnorderedIntervalSet< T >::insert( const UnorderedIntervalSet& rhs )
     }
 }
 
-template < typename T >
-void UnorderedIntervalSet< T >::clear()
+template < typename T > void IntervalSet< T >::clear()
 {
     _intervals.clear();
     _size = 0;
 }
 
-template < typename T >
-bool UnorderedIntervalSet< T >::exists( const T& element ) const
+template < typename T > bool IntervalSet< T >::exists( const T& element ) const
 {
     return find( element ) != end();
 }
 
-template < typename T >
-typename UnorderedIntervalSet< T >::const_iterator
-UnorderedIntervalSet< T >::find( const T& element ) const
+template < typename T > typename IntervalSet< T >::const_iterator
+IntervalSet< T >::find( const T& element ) const
 {
     if( _intervals.empty( ))
         return end();
@@ -356,36 +344,31 @@ UnorderedIntervalSet< T >::find( const T& element ) const
     return end();
 }
 
-template < typename T >
-typename UnorderedIntervalSet< T >::const_iterator
-UnorderedIntervalSet< T >::begin() const
+template < typename T > typename IntervalSet< T >::const_iterator
+IntervalSet< T >::begin() const
 {
     if( _intervals.empty( ))
         return end();
     return const_iterator( *this, _intervals.begin( ));
 }
 
-template < typename T >
-typename UnorderedIntervalSet< T >::const_iterator
-UnorderedIntervalSet< T >::end() const
+template < typename T > typename IntervalSet< T >::const_iterator
+IntervalSet< T >::end() const
 {
     return const_iterator( *this, _intervals.end());
 }
 
-template < typename T >
-size_t UnorderedIntervalSet< T >::size() const
+template < typename T > size_t IntervalSet< T >::size() const
 {
     return _size;
 }
 
-template < typename T >
-bool UnorderedIntervalSet< T >::empty() const
+template < typename T > bool IntervalSet< T >::empty() const
 {
     return size() == 0;
 }
 
-template < typename T >
-void UnorderedIntervalSet< T >::swap( UnorderedIntervalSet& rhs )
+template < typename T > void IntervalSet< T >::swap( IntervalSet& rhs )
 {
     _intervals.swap( rhs._intervals );
 }

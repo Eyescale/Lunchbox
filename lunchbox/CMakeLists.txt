@@ -22,6 +22,8 @@ set(LUNCHBOX_PUBLIC_HEADERS
   hash.h
   indexIterator.h
   init.h
+  intervalSet.h
+  intervalSet.ipp
   launcher.h
   lfQueue.h
   lfQueue.ipp
@@ -62,8 +64,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   timedLock.h
   tls.h
   types.h
-  unorderedIntervalSet.h
-  unorderedIntervalSet.ipp
   visitorResult.h
   )
 if(NOT LUNCHBOX_BUILD_V2_API)

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2014, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2011-2016, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,7 +23,6 @@
 #include <lunchbox/debug.h>
 #include <lunchbox/init.h>
 #include <lunchbox/lock.h>
-#include <lunchbox/omp.h>
 #include <lunchbox/spinLock.h>
 #include <lunchbox/timedLock.h>
 
@@ -104,14 +103,10 @@ public:
 
 template< class T, uint32_t hold > void _test()
 {
+    const size_t nThreads = 16;
+
     T* lock = new T;
     lock->set();
-
-#ifdef LUNCHBOX_USE_OPENMP
-    const size_t nThreads = LB_MIN( lunchbox::OMP::getNThreads()*3, MAXTHREADS );
-#else
-    const size_t nThreads = 16;
-#endif
 
     WriteThread< T, hold > writers[MAXTHREADS];
     ReadThread< T, hold > readers[MAXTHREADS];

@@ -12,7 +12,6 @@ include(GitExternal)
 
 option(LUNCHBOX_BUILD_V2_API
   "Enable for pure 2.0 API (breaks compatibility with 1.x API)" OFF)
-option(LUNCHBOX_USE_MPI "Enable MPI functionality if found" ON)
 
 set(DPUT_HOST "ppa:eilemann/equalizer-dev")
 
@@ -22,8 +21,7 @@ set(LUNCHBOX_LICENSE LGPL)
 set(LUNCHBOX_DEB_DEPENDS libboost-regex-dev libboost-serialization-dev
   libboost-filesystem-dev libboost-system-dev libboost-test-dev
   libboost-thread-dev libhwloc-dev avahi-daemon libavahi-client-dev
-  libleveldb-dev libopenmpi-dev openmpi-bin libmemcached-dev libmemcached-tools
-  memcached)
+  libleveldb-dev libmemcached-dev libmemcached-tools memcached)
 set(LUNCHBOX_PORT_DEPENDS boost libmemcached memcached)
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
 
@@ -42,10 +40,6 @@ common_find_package(leveldb)
 if(NOT COMMON_USE_CXX03)
   common_find_package(libmemcached 1.0.12)
 endif()
-if(LUNCHBOX_USE_MPI)
-  common_find_package(MPI)
-endif()
-common_find_package(OpenMP)
 common_find_package(Servus REQUIRED)
 common_find_package_post()
 

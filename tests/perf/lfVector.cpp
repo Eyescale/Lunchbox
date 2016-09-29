@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2011-2014, Stefan Eilemann <stefan.eilemann@epfl.ch>
- *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2011-2016, Stefan Eilemann <stefan.eilemann@epfl.ch>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
@@ -27,7 +27,6 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/init.h>
 #include <lunchbox/monitor.h>
-#include <lunchbox/omp.h>
 #include <lunchbox/thread.h>
 
 #include <limits>
@@ -291,11 +290,7 @@ template< class V, class T > void _runSerialTest()
 
 int main( int, char** )
 {
-#ifdef LUNCHBOX_USE_OPENMP
-    const size_t nThreads = lunchbox::OMP::getNThreads() * 3;
-#else
     const size_t nThreads = 16;
-#endif
 
     std::cout << "       read,       write,        push,      copy,     erase, "
               << " flush/ms,  rd, other #threads" << std::endl;

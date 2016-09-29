@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013, Daniel Nachbaur <daniel.nachbaur@epfl.ch>
+/* Copyright (c) 2013-2016, Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -16,11 +16,11 @@
  */
 
 #include <lunchbox/test.h>
-#include <lunchbox/unorderedIntervalSet.h>
+#include <lunchbox/intervalSet.h>
 
 int main( int, char** )
 {
-    typedef lunchbox::UnorderedIntervalSet< size_t > SetType;
+    typedef lunchbox::IntervalSet< size_t > SetType;
     SetType set;
     TEST( set.empty( ));
 

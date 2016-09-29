@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2008, Juan Hernando <jhernando@fi.upm.es>
- *               2013, Daniel Nachbaur <danielnachbaur@epfl.ch>
+/* Copyright (c) 2008-2016, Juan Hernando <jhernando@fi.upm.es>
+ *                          Daniel Nachbaur <danielnachbaur@epfl.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -16,8 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef LUNCHBOX_UNORDEREDINTERVALSET_H
-#define LUNCHBOX_UNORDEREDINTERVALSET_H
+#ifndef LUNCHBOX_INTERVALSET_H
+#define LUNCHBOX_INTERVALSET_H
 
 #include <lunchbox/types.h>
 #include <set>
@@ -29,19 +29,18 @@ namespace lunchbox
  * A container to store intervals of elements efficently.
  *
  * The type can be any class or typename which has the semantics of natural
- * numbers for addition and comparison operations. The intervals are stored in
- * an unordered fashion. Not thread-safe.
+ * numbers for addition and comparison operations. Not thread-safe.
  *
- * Example: @include tests/unorderedIntervalSet.cpp
+ * Example: @include tests/IntervalSet.cpp
  */
-template< typename T > class UnorderedIntervalSet
+template< typename T > class IntervalSet
 {
 public:
     /** Element iterator which points to a current element of type T. */
     class const_iterator;
 
     /** Construct a new interval set. @version 1.7.1 */
-    UnorderedIntervalSet();
+    IntervalSet();
 
     /** Insert a new element. @version 1.7.1 */
     void insert( const T& element );
@@ -50,7 +49,7 @@ public:
     void insert( const T& startElement, const T& endElement );
 
     /** Insert another interval set into this. @version 1.7.1 */
-    void insert( const UnorderedIntervalSet& rhs );
+    void insert( const IntervalSet& rhs );
 
     /** Remove the given element. @version 1.7.1 */
     void erase( const T& element );
@@ -62,7 +61,7 @@ public:
     void clear();
 
     /** Swap this container with another one. @version 1.7.1 */
-    void swap( UnorderedIntervalSet& rhs );
+    void swap( IntervalSet& rhs );
 
     /** @return true if element exists. @version 1.7.1 */
     bool exists( const T& element ) const;
@@ -109,6 +108,6 @@ private:
 };
 }
 
-#include "unorderedIntervalSet.ipp" // template implementation
+#include "intervalSet.ipp" // template implementation
 
-#endif // LUNCHBOX_UNORDEREDINTERVALSET_H
+#endif // LUNCHBOX_INTERVALSET_H

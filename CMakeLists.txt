@@ -18,9 +18,9 @@ set(DPUT_HOST "ppa:eilemann/equalizer-dev")
 set(LUNCHBOX_DESCRIPTION "Multi-threaded C++ toolbox library for all application developers creating high-performance multi-threaded programs.")
 set(LUNCHBOX_MAINTAINER "Stefan Eilemann <eile@eyescale.ch>")
 set(LUNCHBOX_LICENSE LGPL)
-set(LUNCHBOX_DEB_DEPENDS libboost-regex-dev libboost-serialization-dev
-  libboost-filesystem-dev libboost-system-dev libboost-test-dev
-  libboost-thread-dev libhwloc-dev avahi-daemon libavahi-client-dev
+set(LUNCHBOX_DEB_DEPENDS libboost-filesystem-dev libboost-regex-dev
+  libboost-serialization-dev libboost-system-dev libboost-test-dev
+  libhwloc-dev avahi-daemon libavahi-client-dev
   libleveldb-dev libmemcached-dev libmemcached-tools memcached)
 set(LUNCHBOX_PORT_DEPENDS boost libmemcached memcached)
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
@@ -34,7 +34,7 @@ else()
 endif()
 
 common_find_package(Boost REQUIRED COMPONENTS
-  filesystem regex serialization system thread unit_test_framework)
+  filesystem regex serialization system unit_test_framework)
 common_find_package(hwloc)
 common_find_package(leveldb)
 if(NOT COMMON_USE_CXX03)

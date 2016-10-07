@@ -55,12 +55,12 @@ namespace lunchbox
  *
  * @version 1.11.0
  */
-template< class PluginT, class InitDataT = servus::URI >
+template< class T, class InitDataT = servus::URI >
 class PluginFactory : public boost::noncopyable
 {
 public:
-    typedef Plugin< PluginT, InitDataT > PluginHolder;
-    typedef std::vector< PluginHolder > Plugins;
+    typedef Plugin< T, InitDataT > PluginT;
+    typedef std::vector< PluginT > Plugins;
 
     /** Get the single class instance. @version 1.11.0 */
     static PluginFactory& getInstance();
@@ -73,13 +73,13 @@ public:
      * @throws std::runtime_error if no plugin can handle the initData.
      * @version 1.11.0
      */
-    PluginT* create( const InitDataT& initData );
+    T* create( const InitDataT& initData );
 
     /** Register a plugin type. @version 1.11.0 */
-    void register_( const Plugin< PluginT, InitDataT >& plugin );
+    void register_( const Plugin< T, InitDataT >& plugin );
 
     /** Deregister a plugin type. @version 1.11.0 */
-    bool deregister( const Plugin< PluginT, InitDataT >& plugin );
+    bool deregister( const Plugin< T, InitDataT >& plugin );
 
     /** Unregister all plugin types. @version 1.11.0 */
     void deregisterAll();
@@ -120,7 +120,7 @@ public:
 private:
 #pragma warning( disable: 4251 )
     Plugins _plugins;
-    typedef boost::unordered_map< DSO*, PluginHolder > PluginMap;
+    typedef boost::unordered_map< DSO*, PluginT > PluginMap;
     PluginMap _libraries;
 #pragma warning( default: 4251 )
 

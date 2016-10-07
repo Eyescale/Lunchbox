@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2015, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2016, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -21,16 +21,16 @@
 
 namespace lunchbox
 {
-template< typename PluginT, typename InitDataT >
-PluginFactory< PluginT, InitDataT >&
-PluginFactory< PluginT, InitDataT >::getInstance()
+template< typename T, typename InitDataT >
+PluginFactory< T, InitDataT >&
+PluginFactory< T, InitDataT >::getInstance()
 {
-    static PluginFactory< PluginT, InitDataT > factory;
+    static PluginFactory< T, InitDataT > factory;
     return factory;
 }
 
-template< typename PluginT, typename InitDataT >
-PluginFactory< PluginT, InitDataT >::~PluginFactory()
+template< typename T, typename InitDataT >
+PluginFactory< T, InitDataT >::~PluginFactory()
 {
     // Do not do this: dtor is called in atexit(), at which point the other DSOs
     // might be unloaded already, causing dlclose to trip. It's pointless
@@ -39,10 +39,10 @@ PluginFactory< PluginT, InitDataT >::~PluginFactory()
     //   deregisterAll(); // unload the DSO libraries
 }
 
-template< typename PluginT, typename InitDataT >
-PluginT* PluginFactory< PluginT, InitDataT >::create( const InitDataT& initData )
+template< typename T, typename InitDataT >
+T* PluginFactory< T, InitDataT >::create( const InitDataT& initData )
 {
-    BOOST_FOREACH( PluginHolder& plugin, _plugins )
+    BOOST_FOREACH( PluginT& plugin, _plugins )
         if( plugin.handles( initData ))
             return plugin.constructor( initData );
 
@@ -50,19 +50,19 @@ PluginT* PluginFactory< PluginT, InitDataT >::create( const InitDataT& initData 
                                  boost::lexical_cast<std::string>( initData )));
 }
 
-template< typename PluginT, typename InitDataT >
-void PluginFactory< PluginT, InitDataT >::register_(
-    const Plugin< PluginT, InitDataT >& plugin )
+template< typename T, typename InitDataT >
+void PluginFactory< T, InitDataT >::register_(
+    const Plugin< T, InitDataT >& plugin )
 {
     _plugins.push_back( plugin );
 }
 
-template< typename PluginT, typename InitDataT >
-bool PluginFactory< PluginT, InitDataT >::deregister(
-    const Plugin< PluginT, InitDataT >& plugin )
+template< typename T, typename InitDataT >
+bool PluginFactory< T, InitDataT >::deregister(
+    const Plugin< T, InitDataT >& plugin )
 {
-    typename Plugins::iterator i =
-        std::find( _plugins.begin(), _plugins.end(), plugin );
+    typename Plugins::iterator i = std::find( _plugins.begin(), _plugins.end(),
+                                              plugin );
     if( i == _plugins.end( ))
         return false;
 
@@ -70,8 +70,8 @@ bool PluginFactory< PluginT, InitDataT >::deregister(
     return true;
 }
 
-template< typename PluginT, typename InitDataT >
-void PluginFactory< PluginT, InitDataT >::deregisterAll()
+template< typename T, typename InitDataT >
+void PluginFactory< T, InitDataT >::deregisterAll()
 {
     _plugins.clear();
     BOOST_FOREACH( typename PluginMap::value_type& plugin, _libraries )
@@ -79,8 +79,8 @@ void PluginFactory< PluginT, InitDataT >::deregisterAll()
     _libraries.clear();
 }
 
-template< typename PluginT, typename InitDataT >
-DSOs PluginFactory< PluginT, InitDataT >::load( const int version,
+template< typename T, typename InitDataT >
+DSOs PluginFactory< T, InitDataT >::load( const int version,
                                                 const Strings& paths,
                                                 const std::string& pattern )
 {
@@ -93,8 +93,8 @@ DSOs PluginFactory< PluginT, InitDataT >::load( const int version,
     return result;
 }
 
-template< typename PluginT, typename InitDataT >
-DSOs PluginFactory< PluginT, InitDataT >::load( const int version,
+template< typename T, typename InitDataT >
+DSOs PluginFactory< T, InitDataT >::load( const int version,
                                                 const std::string& path,
                                                 const std::string& pattern )
 {
@@ -103,8 +103,8 @@ DSOs PluginFactory< PluginT, InitDataT >::load( const int version,
     return loaded;
 }
 
-template< typename PluginT, typename InitDataT >
-void PluginFactory< PluginT, InitDataT >::_load( DSOs& result,
+template< typename T, typename InitDataT >
+void PluginFactory< T, InitDataT >::_load( DSOs& result,
                                                  const int version,
                                                  const std::string& path,
                                                  const std::string& pattern )
@@ -163,8 +163,8 @@ void PluginFactory< PluginT, InitDataT >::_load( DSOs& result,
     }
 }
 
-template< typename PluginT, typename InitDataT >
-bool PluginFactory< PluginT, InitDataT >::unload( DSO* dso )
+template< typename T, typename InitDataT >
+bool PluginFactory< T, InitDataT >::unload( DSO* dso )
 {
     typename PluginMap::iterator i = _libraries.find( dso );
     if( i == _libraries.end( ))

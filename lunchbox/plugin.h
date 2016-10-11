@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2015, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2016, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -66,8 +66,8 @@ public:
      * initData.
      * @version 1.11.0
      */
-    Plugin( const Constructor& constructor_, const HandlesFunc& handles_ )
-        : constructor( constructor_ ), handles( handles_ )
+    Plugin( const Constructor& constructor, const HandlesFunc& handles )
+        : _constructor( constructor ), _handles( handles )
         , tag( servus::make_UUID( )) {}
 
     /** @return true if the plugins wrap the same plugin. @version 1.11.0 */
@@ -77,10 +77,15 @@ public:
     /** @return false if the plugins do wrap the same plugin. @version 1.11.0 */
     bool operator != ( const Plugin& rhs ) const { return !(*this == rhs); }
 
+    /** Construct a new plugin instance. @version 1.14 */
+    PluginT* construct( const InitDataT& data ) { return _constructor( data ); }
+
+    /** @return true if this plugin handles the given request. @version 1.14 */
+    bool handles( const InitDataT& data ) { return _handles( data ); }
+
 private:
-    friend class PluginFactory< PluginT, InitDataT >;
-    Constructor constructor;
-    HandlesFunc handles;
+    Constructor _constructor;
+    HandlesFunc _handles;
 
     // Makes Plugin comparable. See http://stackoverflow.com/questions/18665515
     servus::uint128_t tag;

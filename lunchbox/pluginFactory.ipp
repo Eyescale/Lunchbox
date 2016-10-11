@@ -44,22 +44,20 @@ T* PluginFactory< T, InitDataT >::create( const InitDataT& initData )
 {
     BOOST_FOREACH( PluginT& plugin, _plugins )
         if( plugin.handles( initData ))
-            return plugin.constructor( initData );
+            return plugin.construct( initData );
 
     LBTHROW( std::runtime_error( "No plugin implementation available for " +
                                  boost::lexical_cast<std::string>( initData )));
 }
 
 template< typename T, typename InitDataT >
-void PluginFactory< T, InitDataT >::register_(
-    const Plugin< T, InitDataT >& plugin )
+void PluginFactory< T, InitDataT >::register_( const PluginT& plugin )
 {
     _plugins.push_back( plugin );
 }
 
 template< typename T, typename InitDataT >
-bool PluginFactory< T, InitDataT >::deregister(
-    const Plugin< T, InitDataT >& plugin )
+bool PluginFactory< T, InitDataT >::deregister( const PluginT& plugin )
 {
     typename Plugins::iterator i = std::find( _plugins.begin(), _plugins.end(),
                                               plugin );

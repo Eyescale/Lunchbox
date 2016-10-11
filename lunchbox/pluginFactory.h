@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2015, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2016, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -76,10 +76,10 @@ public:
     T* create( const InitDataT& initData );
 
     /** Register a plugin type. @version 1.11.0 */
-    void register_( const Plugin< T, InitDataT >& plugin );
+    void register_( const PluginT& plugin );
 
     /** Deregister a plugin type. @version 1.11.0 */
-    bool deregister( const Plugin< T, InitDataT >& plugin );
+    bool deregister( const PluginT& plugin );
 
     /** Unregister all plugin types. @version 1.11.0 */
     void deregisterAll();

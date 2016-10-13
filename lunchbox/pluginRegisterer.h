@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2015, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2016, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -49,7 +49,7 @@ namespace lunchbox
  * class MyPluginInterface
  * {
  * public:
- *     typedef MyPluginInterface PluginT;
+ *     typedef MyPluginInterface InterfaceT;
  *     typedef MyPluginInitData InitDataT;
  *              ( optional for InitDataT == servus::URI )
  * }
@@ -57,66 +57,20 @@ namespace lunchbox
  *
  * @version 1.11.0
  */
-template< typename T > struct hasInitDataT
-{
-    // SFINAE class to check whether class T has a typedef InitDataT
-    // If class has the typedef, "value" is known in compile time as true,
-    // else value is false.
 
-    // SFINAE is used for specializing the PluginRegisterer class
-    // when no InitDataT is defined.
-    template<typename U> static char (&test(typename U::InitDataT const*))[1];
-    template<typename U> static char (&test(...))[2];
-    // cppcheck-suppress sizeofCalculation
-    static const bool value = (sizeof(test<T>(0)) == 1);
-};
-
-template< typename Impl, bool hasInitData = hasInitDataT< Impl >::value >
-class PluginRegisterer
+template< typename T > class PluginRegisterer
 {
 public:
-    /** Construct a registerer and register the Impl class. @version 1.11.0 */
-    PluginRegisterer();
-};
-
-/**
- * Specialized PluginRegisterer for implementations which have the InitDataT
- * definition.
- */
-template< typename Impl > class PluginRegisterer< Impl, true >
-{
-public:
-    /** Construct a registerer and register the Impl class. @version 1.11.0 */
+    /** Construct and register the Plugin< T > class. @version 1.11.0 */
     PluginRegisterer()
     {
-        Plugin< typename Impl::PluginT, typename Impl::InitDataT > plugin(
-            boost::bind( boost::factory< Impl* >(), _1 ),
-            boost::bind( &Impl::handles, _1 ));
-        PluginFactory< typename Impl::PluginT,
-                       typename Impl::InitDataT >::getInstance().
-            register_( plugin );
+        Plugin< typename T::InterfaceT > plugin(
+            boost::bind( boost::factory< T* >(), _1 ),
+            boost::bind( &T::handles, _1 ));
+        PluginFactory< typename T::InterfaceT >::getInstance().register_(
+            plugin );
     }
 };
-
-/**
- * Specialized PluginRegisterer for plugin implementations which don't have
- * the InitDataT definition.
- */
-template< typename Impl > class PluginRegisterer< Impl, false >
-{
-public:
-    /** Construct a registerer and register the Impl class. @version 1.11.0 */
-    PluginRegisterer()
-    {
-        Plugin< typename Impl::PluginT > plugin(
-            boost::bind( boost::factory< Impl* >(), _1 ),
-            boost::bind( &Impl::handles, _1 ));
-
-        PluginFactory< typename Impl::PluginT >::getInstance().
-            register_( plugin );
-    }
-};
-
 }
 
 #endif

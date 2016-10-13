@@ -29,35 +29,36 @@
 namespace lunchbox
 {
 /**
- * Manages a class deriving from a PluginT interface.
+ * Manages a class deriving from a T interface.
  *
- * Plugin classes deriving from PluginT must implement the following
+ * Plugin classes deriving from T must implement the following
  * prototype for their constructor:
  * @code
- * DerivedPluginClass( const InitDataT& initData );
+ * DerivedPluginClass( const T::InitDataT& initData );
  * @endcode
  *
- * PluginT must also implement the following method to be registered:
+ * T must also implement the following method to be registered:
  * @code
- * static bool handles( const InitDataT& initData );
+ * static bool handles( const T::InitDataT& initData );
  * @endcode
  *
+ * Note this requires a 'typedef [foo] InitDataT' in T.
  * @version 1.11.0
  */
-template< class PluginT, class InitDataT = servus::URI > class Plugin
+template< class T > class Plugin
 {
 public:
     /**
      * The constructor method / concrete factory for Plugin objects.
      * @version 1.11.0
      */
-    typedef boost::function< PluginT* ( const InitDataT& ) > Constructor;
+    typedef boost::function< T* ( const typename T::InitDataT& )> Constructor;
 
     /**
      * The method to check if the plugin can handle a given initData.
      * @version 1.11.0
      */
-    typedef boost::function< bool ( const InitDataT& ) > HandlesFunc;
+    typedef boost::function< bool ( const typename T::InitDataT& )> HandlesFunc;
 
     /**
      * Construct a new Plugin.
@@ -66,8 +67,8 @@ public:
      * initData.
      * @version 1.11.0
      */
-    Plugin( const Constructor& constructor, const HandlesFunc& handles )
-        : _constructor( constructor ), _handles( handles )
+    Plugin( const Constructor& constructor, const HandlesFunc& handles_ )
+        : _constructor( constructor ), _handles( handles_ )
         , tag( servus::make_UUID( )) {}
 
     /** @return true if the plugins wrap the same plugin. @version 1.11.0 */
@@ -78,10 +79,12 @@ public:
     bool operator != ( const Plugin& rhs ) const { return !(*this == rhs); }
 
     /** Construct a new plugin instance. @version 1.14 */
-    PluginT* construct( const InitDataT& data ) { return _constructor( data ); }
+    T* construct( const typename T::InitDataT& data )
+        { return _constructor( data ); }
 
     /** @return true if this plugin handles the given request. @version 1.14 */
-    bool handles( const InitDataT& data ) { return _handles( data ); }
+    bool handles( const typename T::InitDataT& data )
+        { return _handles( data ); }
 
 private:
     Constructor _constructor;

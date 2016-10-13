@@ -232,8 +232,8 @@ template< class > class Monitor;
 template< class > class Request;
 template< class, class > class LFVectorIterator;
 template< class, class > class Lockable;
-template< class, class > class Plugin;
-template< class, class > class PluginFactory;
+template< class > class Plugin;
+template< class > class PluginFactory;
 template< class, int32_t > class LFVector;
 
 typedef Atomic< int32_t > a_int32_t; //!< An atomic 32 bit integer variable

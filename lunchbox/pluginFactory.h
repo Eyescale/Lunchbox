@@ -40,7 +40,7 @@ namespace lunchbox
 /**
  * Factory for Plugin classes.
  *
- * The PluginFactory selects the a plugin for a given InitDataT, based on a
+ * The PluginFactory selects the a plugin for a given T::InitDataT, based on a
  * plugin's handles() function. In case a InitDataT can be handled by multiple
  * plugins, which plugin is chosen is undefined.
  *
@@ -55,11 +55,10 @@ namespace lunchbox
  *
  * @version 1.11.0
  */
-template< class T, class InitDataT = servus::URI >
-class PluginFactory : public boost::noncopyable
+template< class T > class PluginFactory : public boost::noncopyable
 {
 public:
-    typedef Plugin< T, InitDataT > PluginT;
+    typedef Plugin< T > PluginT;
     typedef std::vector< PluginT > Plugins;
 
     /** Get the single class instance. @version 1.11.0 */
@@ -73,7 +72,7 @@ public:
      * @throws std::runtime_error if no plugin can handle the initData.
      * @version 1.11.0
      */
-    T* create( const InitDataT& initData );
+    T* create( const typename T::InitDataT& initData );
 
     /** Register a plugin type. @version 1.11.0 */
     void register_( const PluginT& plugin );

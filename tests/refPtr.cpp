@@ -27,9 +27,6 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 
 #define NTHREADS 24
 #define NREFS    200000
@@ -177,20 +174,5 @@ int main( int, char** )
               << "ns/op) using make_shared" << std::endl;
 
     foo = 0;
-
-    FooPtr inFoo1( new Foo );
-    TEST( inFoo1->getRefCount() == 1 );
-    FooPtr inFoo2 = inFoo1;
-    TEST( inFoo2->getRefCount() == 2 );
-    FooPtr outFoo1;
-    std::stringstream stream;
-    boost::archive::text_oarchive oar( stream );
-    oar & inFoo1;
-    boost::archive::text_iarchive iar( stream );
-    iar & outFoo1;
-    TEST( outFoo1->getRefCount() == 1 );
-    FooPtr outFoo2 = outFoo1;
-    TEST( outFoo2->getRefCount() == 2 );
-
     return EXIT_SUCCESS;
 }

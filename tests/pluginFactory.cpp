@@ -21,12 +21,14 @@
 #define BOOST_TEST_MODULE PluginFactory
 
 #include <lunchbox/types.h>
+struct InitData;
+namespace std { string to_string( const InitData& ); }
+
 #include <lunchbox/pluginFactory.h>
 #include <lunchbox/pluginRegisterer.h>
 #include <servus/uri.h>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/scoped_ptr.hpp>
 
 #define VALID_VALUE    10
 #define INVALID_VALUE   0
@@ -37,11 +39,11 @@ struct InitData
     servus::URI uri;
 };
 
-namespace boost
+namespace std
 {
-template<> inline std::string lexical_cast( const InitData& data )
+inline std::string to_string( const InitData& data )
 {
-    return lexical_cast< std::string >( data.uri );
+    return std::to_string( data.uri );
 }
 }
 
@@ -72,7 +74,7 @@ public:
 };
 
 typedef lunchbox::PluginFactory< PluginInterface > PluginFactory;
-typedef boost::shared_ptr< PluginInterface > PluginInterfacePtr;
+typedef std::shared_ptr< PluginInterface > PluginInterfacePtr;
 
 PluginInterfacePtr createPlugin()
 {

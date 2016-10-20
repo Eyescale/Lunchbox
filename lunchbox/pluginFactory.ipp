@@ -39,12 +39,12 @@ template< typename T > PluginFactory< T >::~PluginFactory()
 template< typename T >
 T* PluginFactory< T >::create( const typename T::InitDataT& initData )
 {
-    BOOST_FOREACH( PluginT& plugin, _plugins )
+    for( PluginT& plugin : _plugins )
         if( plugin.handles( initData ))
             return plugin.construct( initData );
 
     LBTHROW( std::runtime_error( "No plugin implementation available for " +
-                                 boost::lexical_cast<std::string>( initData )));
+                                 std::to_string( initData )));
 }
 
 template< typename T >
@@ -68,37 +68,25 @@ bool PluginFactory< T >::deregister( const PluginT& plugin )
 template< typename T > void PluginFactory< T >::deregisterAll()
 {
     _plugins.clear();
-    BOOST_FOREACH( typename PluginMap::value_type& plugin, _libraries )
+    for( typename PluginMap::value_type& plugin : _libraries )
         delete plugin.first;
     _libraries.clear();
 }
 
 template< typename T >
-DSOs PluginFactory< T >::load( const int version, const Strings& paths,
+void PluginFactory< T >::load( const int version, const Strings& paths,
                                const std::string& pattern )
 {
     Strings unique = paths;
     lunchbox::usort( unique );
 
-    DSOs result;
-    BOOST_FOREACH( const std::string& path, unique )
-        _load( result, version, path, pattern );
-    return result;
+    for( const std::string& path : unique )
+        load( version, path, pattern );
 }
 
 template< typename T >
-DSOs PluginFactory< T >::load( const int version, const std::string& path,
+void PluginFactory< T >::load( const int version, const std::string& path,
                                const std::string& pattern )
-{
-    DSOs loaded;
-    _load( loaded, version, path, pattern );
-    return loaded;
-}
-
-template< typename T >
-void PluginFactory< T >::_load( DSOs& result, const int version,
-                                const std::string& path,
-                                const std::string& pattern )
 {
 #ifdef _MSC_VER
     const std::string regex( pattern + ".dll" );
@@ -109,7 +97,7 @@ void PluginFactory< T >::_load( DSOs& result, const int version,
 #endif
     const Strings& libs = searchDirectory( path, regex );
 
-    BOOST_FOREACH( const std::string& lib, libs )
+    for( const std::string& lib : libs )
     {
         lunchbox::DSO* dso = new lunchbox::DSO( path + "/" + lib );
         if( !dso->isOpen())
@@ -146,23 +134,10 @@ void PluginFactory< T >::_load( DSOs& result, const int version,
         if( registerFunc( ))
         {
             _libraries.insert( std::make_pair( dso, _plugins.back( )));
-            result.push_back( dso );
             LBINFO << "Enabled plugin " << lib << std::endl;
         }
         else
             delete dso;
     }
-}
-
-template< typename T > bool PluginFactory< T >::unload( DSO* dso )
-{
-    typename PluginMap::iterator i = _libraries.find( dso );
-    if( i == _libraries.end( ))
-        return false;
-
-    delete i->first;
-    const bool ret = deregister( i->second );
-    _libraries.erase( i );
-    return ret;
 }
 }

@@ -29,10 +29,8 @@
 #include <lunchbox/file.h> // searchDirectory() used inline
 #include <servus/uri.h> // Default template type
 
-#include <boost/foreach.hpp> // used inline
-#include <boost/lexical_cast.hpp> // used inline
 #include <boost/noncopyable.hpp> // base class
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 namespace lunchbox
 {
@@ -98,33 +96,21 @@ public:
      *                plugins.
      * @param path the directory to search for plugins.
      * @param pattern the core pattern of plugin names.
-     * @return the loaded plugins, ownership remains with the PluginFactory.
      * @version 1.11.0
      * @sa getLibraryPath()
      */
-    DSOs load( const int version, const std::string& path,
+    void load( const int version, const std::string& path,
                const std::string& pattern );
-    DSOs load( const int version, const Strings& paths,
+    void load( const int version, const Strings& paths,
                const std::string& pattern );
-
-    /**
-     * Unload and deregister a previously loaded plugin
-     *
-     * @return true if the plugin was loaded, false on error.
-     * @version 1.11.0
-     */
-    bool unload( DSO* dso );
     //@}
 
 private:
 #pragma warning( disable: 4251 )
     Plugins _plugins;
-    typedef boost::unordered_map< DSO*, PluginT > PluginMap;
+    typedef std::unordered_map< DSO*, PluginT > PluginMap;
     PluginMap _libraries;
 #pragma warning( default: 4251 )
-
-    void _load( DSOs& result, const int version, const std::string& path,
-                const std::string& pattern );
 
     ~PluginFactory();
 };

@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2007-2014, Stefan Eilemann <eile@equalizergraphics.com>
- *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2007-2016, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,10 +18,15 @@
 
 namespace lunchbox
 {
-template< class T > Buffer< T >::Buffer( Buffer< T >& from )
+template< class T > Buffer< T >::Buffer( const Buffer< T >& from )
 {
-    _data = from._data; _size = from._size; _maxSize = from._maxSize;
-    from._data = 0; from._size = 0; from._maxSize = 0;
+    *this = from;
+}
+
+template< class T > Buffer< T >::Buffer( Buffer< T >&& from )
+{
+    std::swap( _data, from._data );
+    std::swap( _size, from._size );
 }
 
 template< class T > T* Buffer< T >::pack()
@@ -37,7 +42,18 @@ template< class T > T* Buffer< T >::pack()
 template< class T >
 Buffer< T >& Buffer< T >::operator = ( const Buffer< T >& from )
 {
-    replace( from );
+    if( this != &from )
+        replace( from );
+    return *this;
+}
+
+template< class T >
+Buffer< T >& Buffer< T >::operator = ( Buffer< T >&& from )
+{
+    if( this == &from )
+        return *this;
+    std::swap( _data, from._data );
+    std::swap( _size, from._size );
     return *this;
 }
 

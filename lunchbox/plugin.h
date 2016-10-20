@@ -23,8 +23,6 @@
 #define LUNCHBOX_PLUGIN_H
 
 #include <servus/uint128_t.h> // member
-#include <boost/function.hpp> // Plugin functions
-#include <boost/function_equal.hpp> // operator ==
 
 namespace lunchbox
 {
@@ -52,13 +50,13 @@ public:
      * The constructor method / concrete factory for Plugin objects.
      * @version 1.11.0
      */
-    typedef boost::function< T* ( const typename T::InitDataT& )> Constructor;
+    typedef std::function< T* ( const typename T::InitDataT& )> Constructor;
 
     /**
      * The method to check if the plugin can handle a given initData.
      * @version 1.11.0
      */
-    typedef boost::function< bool ( const typename T::InitDataT& )> HandlesFunc;
+    typedef std::function< bool ( const typename T::InitDataT& )> HandlesFunc;
 
     /**
      * Construct a new Plugin.

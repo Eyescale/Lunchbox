@@ -120,7 +120,7 @@ int main( int argc, char **argv )
     }
     catch( const std::runtime_error& e )
     {
-        LBINFO << e.what() << std::endl;
+        LBINFO << "Test exception: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
 

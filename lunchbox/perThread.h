@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2016, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -44,7 +44,7 @@ template< class T > void perThreadNoDelete( T* ) {}
  * Example: @include tests/perThread.cpp
  */
 template< class T, void (*D)( T* ) = &perThreadDelete< T > >
-class PerThread : public boost::noncopyable
+class PerThread
 {
 public:
     /** Construct a new per-thread variable. @version 1.0 */
@@ -106,6 +106,9 @@ public:
 
 private:
     TLS tls_;
+    PerThread( const PerThread& ) = delete;
+    PerThread( PerThread&& ) = delete;
+    PerThread& operator = ( const PerThread&& ) = delete;
 };
 
 }

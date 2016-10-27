@@ -140,52 +140,53 @@ public:
 
     std::string operator [] ( const std::string& key ) const final
     {
-        ReadMap::iterator i = _reads.find( key );
-        librados::bufferlist bl;
-        if( i == _reads.end( ))
-        {
-            uint64_t size = 0;
-            time_t time;
-            const int stat = _context.stat( key, &size, &time );
-            if( stat < 0 || size == 0 )
-            {
-                std::cerr << "Stat '" << key << "' failed: "
-                          << ::strerror( -stat ) << std::endl;
-                return std::string();
-            }
-
-            const int read = _context.read( key, bl, size, 0 );
-            if( read < 0 )
-            {
-                std::cerr << "Read '" << key << "' failed: "
-                          << ::strerror( -read ) << std::endl;
-                return std::string();
-            }
-        }
-        else
-        {
-            i->second.op->wait_for_complete();
-            const int read = i->second.op->get_return_value();
-            if( read < 0 )
-            {
-                std::cerr <<  "Finish read '" << key << "' failed: "
-                          << ::strerror( -read ) << std::endl;
-                return std::string();
-            }
-
-            i->second.bl.swap( bl );
-            _reads.erase( i );
-        }
+        const librados::bufferlist bl = _get( key );
         std::string value;
-        bl.copy( 0, bl.length(), value );
+        if( bl.length() > 0 )
+            bl.copy( 0, bl.length(), value );
         return value;
     }
 
-    bool contains( const std::string& key ) const final
+    void takeValues( const Strings& keys, const ValueFunc& func ) const final
     {
-        uint64_t size;
-        time_t time;
-        return _context.stat( key, &size, &time ) >= 0;
+        size_t fetchedIndex = 0;
+        for( const auto& key: keys )
+        {
+            // pre-fetch requested values
+            while( _reads.size() >= _maxPendingOps &&
+                   fetchedIndex < keys.size( ))
+            {
+                fetch( keys[ fetchedIndex++ ], 0 );
+            }
+
+            // get current key
+            librados::bufferlist bl = _get( key );
+            if( bl.length() == 0 )
+                continue;
+
+            char* copy = (char*)malloc( bl.length( ));
+            bl.copy( 0, bl.length(), copy );
+            func( key, copy, bl.length( ));
+        }
+    }
+
+    void getValues( const Strings& keys, const ConstValueFunc& func )
+        const final
+    {
+        size_t fetchedIndex = 0;
+        for( const auto& key: keys )
+        {
+            // pre-fetch requested values
+            while( _reads.size() >= _maxPendingOps &&
+                   fetchedIndex < keys.size( ))
+            {
+                fetch( keys[ fetchedIndex++ ], 0 );
+            }
+
+            // get current key
+            const auto& value = (*this)[ key ];
+            func( key, value.data(), value.size( ));
+        }
     }
 
     bool flush() final { return _flush( 0 ); }
@@ -244,6 +245,48 @@ private:
         }
         return ok;
     }
+
+    librados::bufferlist&& _get( const std::string& key ) const
+    {
+        librados::bufferlist bl;
+        ReadMap::iterator i = _reads.find( key );
+        if( i == _reads.end( ))
+        {
+            uint64_t size = 0;
+            time_t time;
+            const int stat = _context.stat( key, &size, &time );
+            if( stat < 0 || size == 0 )
+            {
+                std::cerr << "Stat '" << key << "' failed: "
+                          << ::strerror( -stat ) << std::endl;
+                return std::move( bl );
+            }
+
+            const int read = _context.read( key, bl, size, 0 );
+            if( read < 0 )
+            {
+                std::cerr << "Read '" << key << "' failed: "
+                          << ::strerror( -read ) << std::endl;
+                return std::move( bl );
+            }
+        }
+        else
+        {
+            i->second.op->wait_for_complete();
+            const int read = i->second.op->get_return_value();
+            if( read < 0 )
+            {
+                std::cerr <<  "Finish read '" << key << "' failed: "
+                          << ::strerror( -read ) << std::endl;
+                return std::move( bl );
+            }
+
+            i->second.bl.swap( bl );
+            _reads.erase( i );
+        }
+        return std::move( bl );
+    }
+
 };
 }
 }

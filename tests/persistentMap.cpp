@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define TEST_RUNTIME 2400 //seconds
+#define TEST_RUNTIME 240 //seconds
 #include <lunchbox/test.h>
 #include <lunchbox/clock.h>
 #include <lunchbox/os.h>
@@ -31,7 +31,7 @@ using lunchbox::PersistentMap;
 
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
-const int64_t loopTime = 300;
+const int64_t loopTime = 1000;
 
 template< class T > void insertVector( PersistentMap& map )
 {
@@ -58,8 +58,7 @@ template< class T > void insertVector( PersistentMap& map, const size_t elems )
     TEST( map.insert( std::string( "bulk" ) + typeid( vector ).name(), vector ));
 }
 
-template< class T >
-void readVector( const PersistentMap& map, const size_t elems )
+template< class T > void readVector( const PersistentMap& map, const size_t elems )
 {
     const std::vector< T >& vector =
         map.getVector< T >( std::string( "bulk" ) + typeid( vector ).name());
@@ -91,16 +90,18 @@ void read( const PersistentMap& map )
                   ints[i] << " not found in set" );
 }
 
-void read( const std::string& uri )
+void read( const std::string& uriStr )
 {
+    const servus::URI uri( uriStr );
     PersistentMap map( uri );
     read( map );
 }
 
-bool testAvailable( const std::string& uri )
+bool testAvailable( const std::string& uriStr )
 {
     try
     {
+        const servus::URI uri( uriStr );
         PersistentMap map( uri );
         if( !map.insert( "foo", "bar" ))
             return false;
@@ -112,8 +113,9 @@ bool testAvailable( const std::string& uri )
     }
 }
 
-void setup( const std::string& uri )
+void setup( const std::string& uriStr )
 {
+    const servus::URI uri( uriStr );
     PersistentMap map( uri );
     TEST( map.insert( "foo", "bar" ));
     TESTINFO( map[ "foo" ] == "bar",
@@ -161,7 +163,6 @@ void setup( const std::string& uri )
         bigSet.insert( i );
     TEST( map.insert( "std::set< uint32_t >", bigSet ));
 
-#ifdef LUNCHBOX_USE_CXX11
     const lunchbox::Strings keys = { "hans", "coffee" };
     size_t numResults = 0;
     map.takeValues( keys, [&]( const std::string& key, char* data,
@@ -185,26 +186,26 @@ void setup( const std::string& uri )
         ++numResults;
     });
     TEST( numResults == keys.size( ));
-#endif
 }
 
-void benchmark( const std::string& uri, const uint64_t queueDepth,
+void benchmark( const std::string& uriStr, const uint64_t queueDepth,
                 const size_t valueSize )
 {
     static std::string lastURI;
-    if( uri != lastURI )
+    if( uriStr != lastURI )
     {
         std::cout
-            << " " << uri << std::endl
+            << " " << uriStr << std::endl
             << " depth,     size,  writes/s,     MB/s,  reads/s,      MB/s"
             << std::endl;
-        lastURI = uri;
+        lastURI = uriStr;
     }
 
     // cppcheck-suppress zerodivcond
     std::cout << boost::format( "%6i, %8i,") % queueDepth % valueSize
               << std::flush;
 
+    const servus::URI uri( uriStr );
     PersistentMap map( uri );
     map.setQueueDepth( queueDepth );
 
@@ -315,6 +316,8 @@ int main( const int argc, char* argv[] )
         benchmark( argv[1], atoi( argv[2] ), atoi( argv[3] ));
         return EXIT_SUCCESS;
     }
+    const bool perfTest =
+        std::string( argv[0] ).find( "perf-" ) != std::string::npos;
 
     typedef std::vector< TestSpec > TestSpecs;
     TestSpecs tests;
@@ -324,23 +327,20 @@ int main( const int argc, char* argv[] )
     tests.push_back( TestSpec( "leveldb://persistentMap2.leveldb", 0, 65536 ));
 #endif
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
-        if( testAvailable( "memcached://" ))
-        {
-            setup( "memcached://" );
-            read( "memcached://" );
-            if( perfTest )
-                for( size_t i=1; i <= 65536; i = i<<2 )
-                    benchmark( "memcached://", 0, i );
-        }
+    if( testAvailable( "memcached://" ))
+    {
+        setup( "memcached://" );
+        read( "memcached://" );
+        if( perfTest )
+           for( size_t i=1; i <= 65536; i = i<<2 )
+               benchmark( "memcached://", 0, i );
+    }
 #endif
 #ifdef LUNCHBOX_USE_RADOS
     tests.push_back( TestSpec(
                     "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf",
                      8192, LB_4MB ));
 #endif
-
-    const bool perfTest =
-        std::string( argv[0] ).find( "perf-" ) != std::string::npos;
 
     try
     {

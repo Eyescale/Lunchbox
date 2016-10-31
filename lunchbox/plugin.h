@@ -23,6 +23,7 @@
 #define LUNCHBOX_PLUGIN_H
 
 #include <servus/uint128_t.h> // member
+#include <functional>
 
 namespace lunchbox
 {

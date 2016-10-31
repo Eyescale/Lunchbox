@@ -19,15 +19,18 @@
 namespace lunchbox
 {
 template< class T > Buffer< T >::Buffer( const Buffer< T >& from )
+    : _data( nullptr )
+    , _size( 0 )
+    , _maxSize( 0 )
 {
     *this = from;
 }
 
 template< class T > Buffer< T >::Buffer( Buffer< T >&& from )
-{
-    std::swap( _data, from._data );
-    std::swap( _size, from._size );
-}
+    : _data( std::move( from._data ))
+    , _size( from._size )
+    , _maxSize( from._maxSize )
+{}
 
 template< class T > T* Buffer< T >::pack()
 {

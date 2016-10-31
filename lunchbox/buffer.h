@@ -44,7 +44,7 @@ template< class T > class Buffer
 {
 public:
     /** Construct a new, empty buffer. @version 1.0 */
-    Buffer() : _data(0), _size(0), _maxSize(0) {}
+    Buffer() : _data( nullptr ), _size( 0 ), _maxSize( 0 ) {}
 
     /** Construct a new buffer of the given size. @version 1.0 */
     explicit Buffer( const uint64_t size ) : _data(0), _size(0), _maxSize(0)

@@ -15,39 +15,47 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <lunchbox/test.h>
-#include <lunchbox/memoryMap.h>
+#define BOOST_TEST_MODULE MemoryMap
 
-using lunchbox::MemoryMap;
+#include <lunchbox/memoryMap.h>
+#include <lunchbox/types.h>
+#include <boost/test/unit_test.hpp>
+
 #define MAP_SIZE LB_10MB
 #define STRIDE 23721
 
-int main( int, char** )
+BOOST_AUTO_TEST_CASE( write_read )
 {
-    MemoryMap map( "foo.mmap", MAP_SIZE );
-    TESTINFO( map.getSize() == MAP_SIZE, map.getSize( ));
-    TEST( map.recreate(  "foo.mmap", MAP_SIZE ));
+    lunchbox::MemoryMap map( "foo.mmap", MAP_SIZE );
+    BOOST_CHECK_EQUAL( map.getSize(), MAP_SIZE );
+    BOOST_CHECK( map.recreate(  "foo.mmap", MAP_SIZE ));
 
     uint8_t* writePtr = map.getAddress< uint8_t >();
-    TEST( writePtr );
+    BOOST_CHECK( writePtr );
 
     for( size_t i=0; i < MAP_SIZE; i += STRIDE )
         writePtr[i] = uint8_t( i );
     map.unmap();
 
     const void* noPtr = map.map( "foo.map" );
-    TEST( noPtr == 0 );
-    TEST( map.getSize() == 0 );
+    BOOST_CHECK( !noPtr );
+    BOOST_CHECK_EQUAL( map.getSize(), 0 );
 
-    TEST( map.map( "foo.mmap" ));
-    TEST( !map.map( "foo.mmap" ));
-    TEST( map.remap( "foo.mmap" ));
+    BOOST_CHECK( map.map( "foo.mmap" ));
+    BOOST_CHECK( !map.map( "foo.mmap" ));
+    BOOST_CHECK( map.remap( "foo.mmap" ));
     const uint8_t* readPtr = map.getAddress< uint8_t >();
-    TEST( readPtr );
-    TEST( map.getSize() == MAP_SIZE );
+    BOOST_CHECK( readPtr );
+    BOOST_CHECK_EQUAL( map.getSize(), MAP_SIZE );
 
     for( size_t i=0; i < MAP_SIZE; i += STRIDE )
-        TEST( readPtr[i] == uint8_t( i ));
+        BOOST_CHECK_EQUAL( readPtr[i], uint8_t( i ));
+}
 
-    return EXIT_SUCCESS;
+BOOST_AUTO_TEST_CASE( exceptions )
+{
+    BOOST_CHECK_THROW( lunchbox::MemoryMap( "doesnotexist" ),
+                       std::runtime_error );
+    BOOST_CHECK_THROW( lunchbox::MemoryMap( "/doesnotexist", 42 ),
+                       std::runtime_error );
 }

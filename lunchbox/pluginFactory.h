@@ -29,7 +29,6 @@
 #include <lunchbox/file.h> // searchDirectory() used inline
 #include <servus/uri.h> // Default template type
 
-#include <boost/noncopyable.hpp> // base class
 #include <unordered_map>
 
 namespace lunchbox
@@ -53,7 +52,7 @@ namespace lunchbox
  *
  * @version 1.11.0
  */
-template< class T > class PluginFactory : public boost::noncopyable
+template< class T > class PluginFactory
 {
 public:
     typedef Plugin< T > PluginT;
@@ -106,6 +105,12 @@ public:
     //@}
 
 private:
+    PluginFactory() {}
+    PluginFactory( const PluginFactory& ) = delete;
+    PluginFactory( PluginFactory&& ) = delete;
+    PluginFactory& operator = ( const PluginFactory& ) = delete;
+    PluginFactory& operator = ( PluginFactory&& ) = delete;
+
 #pragma warning( disable: 4251 )
     Plugins _plugins;
     typedef std::unordered_map< DSO*, PluginT > PluginMap;

@@ -51,6 +51,7 @@ public:
 }
 
 // Impls - need detail::PersistentMap interface above
+#include "ceph/persistentMap.h"
 #include "leveldb/persistentMap.h"
 #include "memcached/persistentMap.h"
 
@@ -59,6 +60,10 @@ namespace
 lunchbox::detail::PersistentMap* _newImpl( const servus::URI& uri )
 {
     // Update handles() below on any change here!
+#ifdef LUNCHBOX_USE_RADOS
+    if( lunchbox::ceph::PersistentMap::handles( uri ))
+        return new lunchbox::ceph::PersistentMap( uri );
+#endif
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
         return new lunchbox::leveldb::PersistentMap( uri );
@@ -70,16 +75,12 @@ lunchbox::detail::PersistentMap* _newImpl( const servus::URI& uri )
 
     LBTHROW( std::runtime_error(
                  std::string( "No suitable implementation found for: " ) +
-                     boost::lexical_cast< std::string >( uri )));
+                              std::to_string( uri )));
 }
 }
 
 namespace lunchbox
 {
-PersistentMap::PersistentMap( const std::string& uri )
-    : _impl( _newImpl( servus::URI( uri )))
-{}
-
 PersistentMap::PersistentMap( const servus::URI& uri )
     : _impl( _newImpl( uri ))
 {}
@@ -101,13 +102,14 @@ PersistentMapPtr PersistentMap::createCache()
 {
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
     if( ::getenv( "MEMCACHED_SERVERS" ))
-        return PersistentMapPtr( new PersistentMap( "memcached://" ));
+        return PersistentMapPtr( new PersistentMap(
+                                     servus::URI( "memcached://" )));
 #endif
 #ifdef LUNCHBOX_USE_LEVELDB
     const char* leveldb = ::getenv( "LEVELDB_CACHE" );
     if( leveldb )
-        return PersistentMapPtr( new PersistentMap(
-                                     std::string( "leveldb://" ) + leveldb ));
+        return PersistentMapPtr( new PersistentMap( servus::URI(
+                                      std::string( "leveldb://" ) + leveldb )));
 #endif
 
     return PersistentMapPtr();
@@ -117,6 +119,10 @@ bool PersistentMap::handles( const servus::URI& uri LB_UNUSED )
 {
 #ifdef LUNCHBOX_USE_LEVELDB
     if( lunchbox::leveldb::PersistentMap::handles( uri ))
+        return true;
+#endif
+#ifdef LUNCHBOX_USE_RADOS
+    if( lunchbox::ceph::PersistentMap::handles( uri ))
         return true;
 #endif
 #ifdef LUNCHBOX_USE_LIBMEMCACHED

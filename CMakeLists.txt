@@ -21,7 +21,7 @@ set(LUNCHBOX_LICENSE LGPL)
 set(LUNCHBOX_DEB_DEPENDS libboost-filesystem-dev libboost-regex-dev
   libboost-serialization-dev libboost-system-dev libboost-test-dev
   libhwloc-dev avahi-daemon libavahi-client-dev
-  libleveldb-dev libmemcached-dev libmemcached-tools memcached)
+  libleveldb-dev libmemcached-dev libmemcached-tools librados-dev memcached)
 set(LUNCHBOX_PORT_DEPENDS boost libmemcached memcached)
 set(COMMON_PROJECT_DOMAIN ch.eyescale)
 
@@ -42,6 +42,8 @@ if(NOT COMMON_USE_CXX03)
 endif()
 common_find_package(Servus REQUIRED)
 common_find_package_post()
+#set(RADOS_FOUND TRUE) # TBD RADOS finder
+#add_definitions(-DLUNCHBOX_USE_RADOS) # TBD done be common_package
 
 set(LUNCHBOX_DEPENDENT_LIBRARIES Boost)
 if(NOT LUNCHBOX_BUILD_V2_API)

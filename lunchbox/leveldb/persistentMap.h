@@ -21,8 +21,6 @@
 
 #include <leveldb/db.h>
 
-#include <boost/foreach.hpp>
-
 namespace lunchbox
 {
 namespace db = ::leveldb;
@@ -72,7 +70,7 @@ public:
 
     void takeValues( const Strings& keys, const ValueFunc& func ) const final
     {
-        BOOST_FOREACH( const std::string& key, keys )
+        for( const auto& key: keys )
         {
             std::string value;
             if( !_db->Get( db::ReadOptions(), key, &value ).ok( ))
@@ -87,7 +85,7 @@ public:
     void getValues( const Strings& keys, const ConstValueFunc& func ) const
         final
     {
-        BOOST_FOREACH( const std::string& key, keys )
+        for( const auto& key: keys )
         {
             std::string value;
             if( !_db->Get( db::ReadOptions(), key, &value ).ok( ))

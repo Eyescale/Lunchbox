@@ -25,17 +25,12 @@
 #include <lunchbox/types.h>
 #include <servus/uri.h>
 
-#include <boost/foreach.hpp>
-#include <boost/function/function3.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/type_traits.hpp>
-
 #include <iostream>
+#include <memory>
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace lunchbox
@@ -43,27 +38,27 @@ namespace lunchbox
 namespace detail { class PersistentMap; }
 
 class PersistentMap;
-typedef boost::shared_ptr< PersistentMap > PersistentMapPtr;
+typedef std::shared_ptr< PersistentMap > PersistentMapPtr;
 
 /**
  * Callback for PersistentMap::takeValues(), providing the key, pointer and size
  * of the value.
  */
-typedef boost::function< void( const std::string&, char*, size_t ) > ValueFunc;
+typedef std::function< void( const std::string&, char*, size_t ) > ValueFunc;
 
 /**
  * Callback for PersistentMap::getValues(), providing the key, pointer and size
  * of the value.
  */
-typedef boost::function< void( const std::string&, const char*,
-                               size_t ) > ConstValueFunc;
+typedef std::function< void( const std::string&, const char*,
+                             size_t ) > ConstValueFunc;
 
 /**
  * Unified interface to save key-value pairs in a persistent store.
  *
  * Example: @include tests/persistentMap.cpp
  */
-class PersistentMap : public boost::noncopyable
+class PersistentMap
 {
 public:
     /**
@@ -71,9 +66,9 @@ public:
      *
      * Depending on the URI scheme an implementation backend is chosen. If no
      * URI is given, a default one is selected. Available implementations are:
+     * * ceph://path_to_ceph.conf (if LUNCHBOX_USE_RADOS is defined)
      * * leveldb://path (if LUNCHBOX_USE_LEVELDB is defined)
      * * memcached://[server] (if LUNCHBOX_USE_LIBMEMCACHED is defined)
-     * * skv://path_to_config\#pdsname (if LUNCHBOX_USE_SKV is defined)
      *
      * If no path is given for leveldb, the implementation uses
      * persistentMap.leveldb in the current working directory.
@@ -87,12 +82,6 @@ public:
      * @param uri the storage backend and destination.
      * @throw std::runtime_error if no suitable implementation is found.
      * @throw std::runtime_error if opening the leveldb failed.
-     * @version 1.9.2
-     */
-    LUNCHBOX_API explicit PersistentMap( const std::string& uri =std::string());
-
-    /**
-     * Construct a persistent map using an URI. See other ctor for details.
      * @version 1.9.2
      */
     LUNCHBOX_API explicit PersistentMap( const servus::URI& uri );
@@ -149,7 +138,7 @@ public:
      * @version 1.9.2
      */
     template< class V > bool insert( const std::string& key, const V& value )
-        { return _insert( key, value, boost::has_trivial_assign< V >( )); }
+        { return _insert( key, value, std::is_trivially_copyable< V >( ));}
     LUNCHBOX_API bool insert( const std::string& key, const void* data,
                               size_t size );
 
@@ -164,7 +153,7 @@ public:
      */
     template< class V >
     bool insert( const std::string& key, const std::vector< V >& values )
-        { return _insert( key, values, boost::has_trivial_assign< V >( )); }
+        { return _insert( key, values, std::is_trivially_copyable< V >( ));}
 
     /**
      * Insert or update a set of values in the database.
@@ -268,6 +257,11 @@ public:
     LUNCHBOX_API void setByteswap( const bool swap );
 
 private:
+    PersistentMap( const PersistentMap& ) = delete;
+    PersistentMap( PersistentMap&& ) = delete;
+    PersistentMap& operator = ( const PersistentMap& ) = delete;
+    PersistentMap& operator = ( PersistentMap&& ) = delete;
+
     detail::PersistentMap* const _impl;
 
     LUNCHBOX_API bool _swap() const;
@@ -277,40 +271,40 @@ private:
     // declare v as a "const ref to array of four chars", not as a "const array
     // to four char refs". Long live Bjarne!
     template< size_t N > bool
-    _insert( const std::string& k, char const (& v)[N], const boost::true_type&)
+    _insert( const std::string& k, char const (& v)[N], const std::true_type&)
     {
         return insert( k, (void*)v, N - 1 ); // strip '0'
     }
 
     template< class V >
-    bool _insert( const std::string& k, const V& v, const boost::true_type& )
+    bool _insert( const std::string& k, const V& v, const std::true_type& )
     {
-        if( boost::is_pointer< V >::value )
+        if( std::is_pointer< V >::value )
             LBTHROW( std::runtime_error( "Can't insert pointers" ));
         return insert( k, &v, sizeof( V ));
     }
 
     template< class V >
-    bool _insert( const std::string&, const V& v, const boost::false_type& )
+    bool _insert( const std::string&, const V& v, const std::false_type& )
     { LBTHROW( std::runtime_error( "Can't insert non-POD " + className( v ))); }
 
     template< class V >
     bool _insert( const std::string& key, const std::vector< V >& values,
-                  const boost::true_type& )
+                  const std::true_type& )
         { return insert( key, values.data(), values.size() * sizeof( V )); }
 
     template< class V > V _get( const std::string& k ) const
     {
-        if( !boost::has_trivial_assign< V >( ))
+        if( !std::is_trivially_copyable< V >::value )
             LBTHROW( std::runtime_error( "Can't retrieve non-POD " +
                                          className( V( ))));
-        if( boost::is_pointer< V >::value )
+        if( std::is_pointer< V >::value )
             LBTHROW( std::runtime_error( "Can't retrieve pointers" ));
 
         const std::string& value = (*this)[ k ];
         if( value.size() != sizeof( V ))
             LBTHROW( std::runtime_error( std::string( "Wrong value size " ) +
-                            boost::lexical_cast< std::string >( value.size( )) +
+                                         std::to_string( value.size( )) +
                                          " for type " + className( V( ))));
 
         V v( *reinterpret_cast< const V* >( value.data( )));
@@ -322,7 +316,7 @@ private:
 
 template<> inline
 bool PersistentMap::_insert( const std::string& k, const std::string& v,
-                             const boost::false_type& )
+                             const std::false_type& )
 {
     return insert( k, v.data(), v.length( ));
 }
@@ -335,7 +329,7 @@ std::vector< V > PersistentMap::getVector( const std::string& key ) const
                    reinterpret_cast< const V* >( value.data() + value.size( )));
     if( _swap() && sizeof( V ) != 1 )
     {
-        BOOST_FOREACH( V& elem, vector )
+        for( V& elem : vector )
             byteswap( elem );
     }
     return vector;

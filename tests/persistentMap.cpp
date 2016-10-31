@@ -32,7 +32,6 @@ using lunchbox::PersistentMap;
 const int ints[] = { 17, 53, 42, 65535, 32768 };
 const size_t numInts = sizeof( ints ) / sizeof( int );
 const int64_t loopTime = 1000;
-bool perfTest = false;
 
 template< class T > void insertVector( PersistentMap& map )
 {
@@ -91,16 +90,18 @@ void read( const PersistentMap& map )
                   ints[i] << " not found in set" );
 }
 
-void read( const std::string& uri )
+void read( const std::string& uriStr )
 {
+    const servus::URI uri( uriStr );
     PersistentMap map( uri );
     read( map );
 }
 
-bool testAvailable( const std::string& uri )
+bool testAvailable( const std::string& uriStr )
 {
     try
     {
+        const servus::URI uri( uriStr );
         PersistentMap map( uri );
         if( !map.insert( "foo", "bar" ))
             return false;
@@ -112,8 +113,9 @@ bool testAvailable( const std::string& uri )
     }
 }
 
-void setup( const std::string& uri )
+void setup( const std::string& uriStr )
 {
+    const servus::URI uri( uriStr );
     PersistentMap map( uri );
     TEST( map.insert( "foo", "bar" ));
     TESTINFO( map[ "foo" ] == "bar",
@@ -161,7 +163,6 @@ void setup( const std::string& uri )
         bigSet.insert( i );
     TEST( map.insert( "std::set< uint32_t >", bigSet ));
 
-#ifdef LUNCHBOX_USE_CXX11
     const lunchbox::Strings keys = { "hans", "coffee" };
     size_t numResults = 0;
     map.takeValues( keys, [&]( const std::string& key, char* data,
@@ -185,19 +186,26 @@ void setup( const std::string& uri )
         ++numResults;
     });
     TEST( numResults == keys.size( ));
-#endif
 }
 
-void benchmark( const std::string& uri, const uint64_t queueDepth,
+void benchmark( const std::string& uriStr, const uint64_t queueDepth,
                 const size_t valueSize )
 {
     static std::string lastURI;
-    if( uri != lastURI )
+    if( uriStr != lastURI )
     {
-        std::cout << uri << std::endl;
-        lastURI = uri;
+        std::cout
+            << " " << uriStr << std::endl
+            << " depth,     size,  writes/s,     MB/s,  reads/s,      MB/s"
+            << std::endl;
+        lastURI = uriStr;
     }
 
+    // cppcheck-suppress zerodivcond
+    std::cout << boost::format( "%6i, %8i,") % queueDepth % valueSize
+              << std::flush;
+
+    const servus::URI uri( uriStr );
     PersistentMap map( uri );
     map.setQueueDepth( queueDepth );
 
@@ -215,15 +223,18 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
     // write performance
     lunchbox::Clock clock;
     uint64_t i = 0;
-    while( clock.getTime64() < loopTime )
+    while( clock.getTime64() < loopTime || i <= queueDepth )
     {
         map.insert( keys[ i % (queueDepth+1) ], value );
         ++i;
     }
     map.flush();
-    const float writeTime = clock.getTimef() / 1000.f;
+    float time = clock.getTimef() / 1000.f;
     const uint64_t wOps = i;
-    TEST( i > queueDepth );
+
+    // cppcheck-suppress zerodivcond
+    std::cout << boost::format( "%9.2f, %9.2f,") % (wOps/time)
+        % (wOps/1024.f/1024.f * valueSize / time) << std::flush;
 
     // read performance
     clock.reset();
@@ -246,28 +257,10 @@ void benchmark( const std::string& uri, const uint64_t queueDepth,
         for( uint64_t j = i - queueDepth; j <= i; ++j ) // drain fetched keys
             map[ keys[ j % (queueDepth+1) ]];
     }
+    time = clock.getTimef() / 1000.f;
 
-    const float readTime = clock.getTimef() / 1000.f;
-    const size_t rOps = i;
-
-    std::cout << boost::format( "%6i, %6i, %9.2f, %9.2f, %9.2f, %9.2f")
-        // cppcheck-suppress zerodivcond
-        % queueDepth % valueSize % (rOps/readTime) % (wOps/writeTime)
-        % (rOps/1024.f/1024.f*valueSize/readTime)
-        % (wOps/1024.f/1024.f*valueSize/writeTime) << std::endl;
-
-
-    if( !perfTest )
-    {
-        // check contents of store (not all to save time on bigger tests)
-        for( uint64_t j = 0; j < wOps && clock.getTime64() < loopTime; ++j )
-        {
-            const std::string& val = map[ keys[ j % (queueDepth+1) ]];
-            TESTINFO( val.size() == valueSize,
-                      val.size() << " != " << valueSize );
-            TEST( val == value );
-        }
-    }
+    std::cout << boost::format( "%9.2f, %9.2f") % (i/time)
+        % (i/1024.f/1024.f * valueSize / time) << std::endl;
 
     // try to make sure there's nothing outstanding if we messed up in our test
     map.flush();
@@ -301,36 +294,71 @@ void testLevelDBFailures()
 #endif
 }
 
-int main( int, char* argv[] )
+size_t dup( const size_t value )
 {
-    perfTest = std::string( argv[0] ).find( "perf-" ) != std::string::npos;
-    if( perfTest )
-        std::cout
-            << " async,  value,   reads/s,  writes/s, read MB/s, write MB/s"
-            << std::endl;
-    try
+    return value == 0 ? 1 : value << 1;
+}
+
+struct TestSpec
+{
+    TestSpec( const std::string& uri_, const size_t depth_, const size_t size_ )
+        : uri( uri_ ), depth( depth_ ), size( size_ ) {}
+
+    std::string uri;
+    size_t depth;
+    size_t size;
+};
+
+int main( const int argc, char* argv[] )
+{
+    if( argc == 4 )
     {
+        benchmark( argv[1], atoi( argv[2] ), atoi( argv[3] ));
+        return EXIT_SUCCESS;
+    }
+    const bool perfTest =
+        std::string( argv[0] ).find( "perf-" ) != std::string::npos;
+
+    typedef std::vector< TestSpec > TestSpecs;
+    TestSpecs tests;
 #ifdef LUNCHBOX_USE_LEVELDB
-        setup( "" );
-        setup( "leveldb://" );
-        setup( "leveldb://persistentMap2.leveldb" );
-        read( "" );
-        read( "leveldb://" );
-        read( "leveldb://persistentMap2.leveldb" );
-        if( perfTest )
-            for( size_t i=1; i <= 65536; i = i<<2 )
-                benchmark( "leveldb://", 0, i );
+    tests.push_back( TestSpec( "", 0, 65536 ));
+    tests.push_back( TestSpec( "leveldb://", 0, 65536 ));
+    tests.push_back( TestSpec( "leveldb://persistentMap2.leveldb", 0, 65536 ));
 #endif
 #ifdef LUNCHBOX_USE_LIBMEMCACHED
-        if( testAvailable( "memcached://" ))
-        {
-            setup( "memcached://" );
-            read( "memcached://" );
-            if( perfTest )
-                for( size_t i=1; i <= 65536; i = i<<2 )
-                    benchmark( "memcached://", 0, i );
-        }
+    if( testAvailable( "memcached://" ))
+    {
+        setup( "memcached://" );
+        read( "memcached://" );
+        if( perfTest )
+           for( size_t i=1; i <= 65536; i = i<<2 )
+               benchmark( "memcached://", 0, i );
+    }
 #endif
+#ifdef LUNCHBOX_USE_RADOS
+    tests.push_back( TestSpec(
+                    "ceph://client.vizpoc@vizpoc/home/eilemann/.ceph/ceph.conf",
+                     8192, LB_4MB ));
+#endif
+
+    try
+    {
+        while( !tests.empty( ))
+        {
+            const TestSpec test = tests.back();
+            tests.pop_back();
+
+            setup( test.uri );
+            read( test.uri );
+            if( perfTest )
+            {
+                for( size_t i = 1; i <= test.size; i = i << 2 )
+                    benchmark( test.uri, test.depth, i );
+                for( size_t i = 0; i <= test.depth; i = dup( i ))
+                    benchmark( test.uri, i, 1024 );
+            }
+        }
     }
 #ifdef LUNCHBOX_USE_LEVELDB
     catch( const leveldb::Status& status )

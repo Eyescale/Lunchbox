@@ -76,6 +76,7 @@ endif()
 
 set(LUNCHBOX_HEADERS
   detail/threadID.h
+  ceph/persistentMap.h
   leveldb/persistentMap.h
   memcached/persistentMap.h
   time.h
@@ -136,6 +137,9 @@ if(LEVELDB_FOUND)
 endif()
 if(libmemcached_FOUND)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ${libmemcached_LIBRARIES})
+endif()
+if(RADOS_FOUND)
+  list(APPEND LUNCHBOX_LINK_LIBRARIES rados)
 endif()
 
 common_library(Lunchbox)

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2009-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2016, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -35,14 +35,14 @@ namespace detail
 class MemoryMap
 {
 public:
-    MemoryMap() : ptr( 0 ) , size( 0 ), map_( 0 ) {}
+    MemoryMap() : ptr( nullptr ) , size( 0 ), map_( 0 ) {}
 
     void* init( const std::string& filename, const size_t size_ )
     {
         if( ptr )
         {
             LBWARN << "File already mapped" << std::endl;
-            return 0;
+            return nullptr;
         }
 
         init_( filename, size_ );
@@ -55,7 +55,7 @@ public:
             return;
 
         unmap_();
-        ptr = 0;
+        ptr = nullptr;
         size = 0;
     }
 
@@ -150,7 +150,7 @@ private:
         if( ptr == MAP_FAILED )
         {
             ::close( map_ );
-            ptr = 0;
+            ptr = nullptr;
             size = 0;
             map_ = 0;
         }
@@ -174,13 +174,15 @@ MemoryMap::MemoryMap()
 MemoryMap::MemoryMap( const std::string& filename )
     : impl_( new detail::MemoryMap )
 {
-    map( filename );
+    if( !map( filename ))
+        LBTHROW( std::runtime_error( "Can't map file" ));
 }
 
 MemoryMap::MemoryMap( const std::string& filename, const size_t size )
     : impl_( new detail::MemoryMap )
 {
-    create( filename, size );
+    if( !create( filename, size ))
+        LBTHROW( std::runtime_error( "Can't create file" ));
 }
 
 MemoryMap::~MemoryMap()
@@ -204,7 +206,7 @@ void* MemoryMap::create( const std::string& filename, const size_t size )
 {
     LBASSERT( size > 0 );
     if( size == 0 )
-        return 0;
+        return nullptr;
 
     return impl_->init( filename, size );
 }

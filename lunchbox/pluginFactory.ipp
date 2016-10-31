@@ -39,7 +39,7 @@ template< typename T > PluginFactory< T >::~PluginFactory()
 template< typename T >
 T* PluginFactory< T >::create( const typename T::InitDataT& initData )
 {
-    for( PluginT& plugin : _plugins )
+    for( auto& plugin : _plugins )
         if( plugin.handles( initData ))
             return plugin.construct( initData );
 
@@ -68,7 +68,7 @@ bool PluginFactory< T >::deregister( const PluginT& plugin )
 template< typename T > void PluginFactory< T >::deregisterAll()
 {
     _plugins.clear();
-    for( typename PluginMap::value_type& plugin : _libraries )
+    for( auto& plugin : _libraries )
         delete plugin.first;
     _libraries.clear();
 }
@@ -80,7 +80,7 @@ void PluginFactory< T >::load( const int version, const Strings& paths,
     Strings unique = paths;
     lunchbox::usort( unique );
 
-    for( const std::string& path : unique )
+    for( const auto& path : unique )
         load( version, path, pattern );
 }
 
@@ -97,7 +97,7 @@ void PluginFactory< T >::load( const int version, const std::string& path,
 #endif
     const Strings& libs = searchDirectory( path, regex );
 
-    for( const std::string& lib : libs )
+    for( const auto& lib : libs )
     {
         lunchbox::DSO* dso = new lunchbox::DSO( path + "/" + lib );
         if( !dso->isOpen())

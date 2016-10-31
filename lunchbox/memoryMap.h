@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2009-2014, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2016, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -39,10 +39,19 @@ public:
     /** Construct a new memory map. @version 1.0 */
     LUNCHBOX_API MemoryMap();
 
-    /** Construct and initialize a new, readonly memory map. @version 1.7.1 */
+    /**
+     * Construct and initialize a new, readonly memory map.
+     *
+     * @throw std::runtime_error if file can't be mapped.
+     * @version 1.7.1 */
     LUNCHBOX_API explicit MemoryMap( const std::string& filename );
 
-    /** Construct and initialize a new, read-write memory map. @version 1.9.1 */
+    /**
+     * Construct and initialize a new, read-write memory map.
+     *
+     * @throw std::runtime_error if file can't be created.
+     * @version 1.9.1
+     */
     LUNCHBOX_API MemoryMap( const std::string& filename, const size_t size );
 
     /**

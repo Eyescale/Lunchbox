@@ -30,7 +30,11 @@ template< class T > Buffer< T >::Buffer( Buffer< T >&& from )
     : _data( std::move( from._data ))
     , _size( from._size )
     , _maxSize( from._maxSize )
-{}
+{
+    from._data = nullptr;
+    from._size = 0;
+    from._maxSize = 0;
+}
 
 template< class T > T* Buffer< T >::pack()
 {
@@ -57,6 +61,7 @@ Buffer< T >& Buffer< T >::operator = ( Buffer< T >&& from )
         return *this;
     std::swap( _data, from._data );
     std::swap( _size, from._size );
+    std::swap( _maxSize, from._maxSize );
     return *this;
 }
 

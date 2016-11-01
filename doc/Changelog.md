@@ -2,6 +2,8 @@
 
 # git master
 
+* [283](https://github.com/Eyescale/Lunchbox/pull/283):
+  Break PersistentMap out into keyv::Map
 * [276](https://github.com/Eyescale/Lunchbox/pull/276):
   Renamed UnorderedIntervalSet to IntervalSet
 * [275](https://github.com/Eyescale/Lunchbox/pull/275):

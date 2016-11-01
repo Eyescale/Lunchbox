@@ -41,7 +41,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   perThread.h
   perThread.ipp
   perThreadRef.h
-  persistentMap.h
   plugin.h
   pluginFactory.h
   pluginFactory.ipp
@@ -76,9 +75,6 @@ endif()
 
 set(LUNCHBOX_HEADERS
   detail/threadID.h
-  ceph/persistentMap.h
-  leveldb/persistentMap.h
-  memcached/persistentMap.h
   time.h
   test.h
 )
@@ -98,7 +94,6 @@ set(LUNCHBOX_SOURCES
   log.cpp
   memoryMap.cpp
   os.cpp
-  persistentMap.cpp
   referenced.cpp
   requestHandler.cpp
   rng.cpp
@@ -131,15 +126,6 @@ if(AVAHI-CLIENT_FOUND)
 endif()
 if(MPI_FOUND)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ${MPI_LIBRARIES})
-endif()
-if(LEVELDB_FOUND)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES ${LEVELDB_LIBRARIES})
-endif()
-if(libmemcached_FOUND)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES ${libmemcached_LIBRARIES})
-endif()
-if(RADOS_FOUND)
-  list(APPEND LUNCHBOX_LINK_LIBRARIES rados)
 endif()
 
 common_library(Lunchbox)

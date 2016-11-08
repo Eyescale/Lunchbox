@@ -176,7 +176,7 @@ private:
     static void* runChild( void* arg );
     void        _runChild();
 
-    friend void lunchbox::abort( bool );
+    friend void abort( bool );
     static void _dumpAll();
 };
 

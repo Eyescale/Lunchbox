@@ -151,9 +151,11 @@ template< class T > inline std::string format( const std::vector< T >& data )
 #    define LBCHECK(x) { x; }
 #  endif
 
-#  define LBUNIMPLEMENTED { LBERROR << "Unimplemented code" << std::endl \
+#  define LBUNIMPLEMENTED { LBERROR << "Unimplemented code in " << __FILE__ \
+                                    << ":" << __LINE__ << std::endl     \
                                     << lunchbox::forceFlush; }
-#  define LBUNREACHABLE   { LBERROR << "Unreachable code" << std::endl  \
+#  define LBUNREACHABLE   { LBERROR << "Unreachable code in " << __FILE__ \
+                                    << ":" << __LINE__ << std::endl     \
                                     << lunchbox::forceFlush; }
 #  define LBDONTCALL                                                    \
     { LBERROR << "Code is not supposed to be called in this context"    \
@@ -184,11 +186,12 @@ template< class T > inline std::string format( const std::vector< T >& data )
     }
 
 #  define LBUNIMPLEMENTED                                               \
-    { LBERROR << "Unimplemented code in " << lunchbox::className( this ) \
+    { LBERROR << "Unimplemented code in " << __FILE__ << ":" << __LINE__ \
               << " ";                                                   \
         lunchbox::abort(); }
 #  define LBUNREACHABLE                                                 \
-    { LBERROR << "Unreachable code in " << lunchbox::className( this )  \
+    { LBERROR << "Unreachable code in " << __FILE__ << ":" << __LINE__  \
+              << lunchbox::className( this )                            \
               << " ";                                                   \
         lunchbox::abort(); }
 #  define LBDONTCALL                                                    \

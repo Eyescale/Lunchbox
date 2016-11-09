@@ -176,7 +176,7 @@ private:
     static void* runChild( void* arg );
     void        _runChild();
 
-    friend void abort( bool );
+    LUNCHBOX_API friend void abort( bool );
     static void _dumpAll();
 };
 

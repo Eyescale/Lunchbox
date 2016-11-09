@@ -34,6 +34,7 @@
 #  include <windows.h>
 #  include <direct.h>
 #  define getcwd _getcwd
+#  define MAXPATHLEN _MAX_PATH
 #elif __APPLE__
 #  include <dirent.h>
 #  include <mach-o/dyld.h>

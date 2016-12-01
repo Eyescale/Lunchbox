@@ -71,12 +71,13 @@ LUNCHBOX_API std::string demangleTypeID( const char* mangled ); //!< @internal
 #  pragma warning( disable: 4100 ) // VS Bug
 #endif
 /** Print the RTTI name of the given class. @version 1.0 */
-template< class T > inline std::string className( const T* object )
-    { return demangleTypeID( typeid( *object ).name( )); }
-
-/** Print the RTTI name of the given class. @version 1.0 */
 template< class T > inline std::string className( const T& object )
     { return demangleTypeID( typeid( object ).name( )); }
+
+/** Print the RTTI name of the given class. @version 1.0 */
+template< class T > inline std::string className( const T* object )
+    { return className( *object ); }
+
 #ifdef _WIN32
 #  pragma warning( default: 4100 )
 #endif
@@ -187,16 +188,15 @@ template< class T > inline std::string format( const std::vector< T >& data )
 
 #  define LBUNIMPLEMENTED                                               \
     { LBERROR << "Unimplemented code in " << __FILE__ << ":" << __LINE__ \
-              << " ";                                                   \
+              << " " << lunchbox::className( *this );                   \
         lunchbox::abort(); }
 #  define LBUNREACHABLE                                                 \
     { LBERROR << "Unreachable code in " << __FILE__ << ":" << __LINE__  \
-              << lunchbox::className( this )                            \
-              << " ";                                                   \
+              << " " << lunchbox::className( *this );                   \
         lunchbox::abort(); }
 #  define LBDONTCALL                                                    \
     { LBERROR << "Code is not supposed to be called in this context, type " \
-              << lunchbox::className( this ) << " " ;                   \
+              << lunchbox::className( *this );                          \
         lunchbox::abort(); }
 
 #  define LBCHECK(x) { const bool eqOk = x; LBASSERTINFO( eqOk, #x ) }

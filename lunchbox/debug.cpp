@@ -43,7 +43,7 @@ namespace lunchbox
 
 void abort( const bool dumpThreads )
 {
-    LBERROR << "  in: " << backtrace << "\n";
+    LBERROR << " in: " << backtrace << "\n";
     if( dumpThreads )
     {
         LBERROR << "\nThreads:" << std::endl;

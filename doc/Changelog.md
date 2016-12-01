@@ -2,8 +2,12 @@
 
 # git master
 
+# Release 1.15 (09-12-2016)
+
 * [283](https://github.com/Eyescale/Lunchbox/pull/283):
   Break PersistentMap out into keyv::Map
+* [278](https://github.com/Eyescale/Lunchbox/pull/278):
+  Simplified Plugin API
 * [276](https://github.com/Eyescale/Lunchbox/pull/276):
   Renamed UnorderedIntervalSet to IntervalSet
 * [275](https://github.com/Eyescale/Lunchbox/pull/275):

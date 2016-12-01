@@ -44,21 +44,20 @@ development and deployment of multi-threaded applications:
 
 # Building
 
-Lunchbox is a cross-platform library, designed to run on any modern operating
-system, including all Unix variants and the Windows operating system. Lunchbox
-uses CMake to create a platform-specific build environment. The following
-platforms and build environments are tested:
+Lunchbox is a cross-platform library, designed to run on any modern
+operating system, including all Unix variants and the Windows operating
+system. It requires a C++11 compiler and uses CMake to create a
+platform-specific build environment. The following platforms and build
+environments are tested:
 
-* Linux: Ubuntu 14.04, RHEL 6.6 (Makefile, Ninja)
+* Linux: Ubuntu 16.04, RHEL 6.8 (Makefile, Ninja)
 * Windows: 7 (Visual Studio 2012)
-* Mac OS X: 10.8 (Makefile, Ninja)
+* Mac OS X: 10.9 (Makefile, Ninja)
 
 Building from source is as simple as:
 
     git clone https://github.com/Eyescale/Lunchbox.git
     mkdir Lunchbox/build
     cd Lunchbox/build
-    cmake ..
-    make
-
-
+    cmake -GNinja ..
+    ninja

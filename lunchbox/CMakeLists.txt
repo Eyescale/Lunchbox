@@ -60,6 +60,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   stdExt.h
   thread.h
   threadID.h
+  threadPool.h
   timedLock.h
   tls.h
   types.h
@@ -107,7 +108,7 @@ set(LUNCHBOX_SOURCES
 
 set(LUNCHBOX_PUBLIC_INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIRS})
 list(APPEND LUNCHBOX_LINK_LIBRARIES PUBLIC ${Boost_LIBRARIES} Servus
-                                    PRIVATE ${PTHREAD_LIBRARIES})
+                                    ${PTHREAD_LIBRARIES})
 
 if(WIN32)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ws2_32 mswsock imagehlp)

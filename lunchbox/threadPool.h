@@ -33,12 +33,14 @@ namespace lunchbox {
 /*!
  * Thread pool for tasks execution.
  * A task is a callable object taking no arguments and returing a value or void.
- * All the member mthods are thread safe.
+ * All the member methods are thread safe.
  *
  * Example: @include tests/threadPool.cpp
  */
 
-struct ThreadPool {
+class ThreadPool
+{
+public:
 
     /*!
      * \brief Construct a ThreadPool
@@ -48,12 +50,14 @@ struct ThreadPool {
         :   _stop(false)
     {
         for(size_t i = 0;i<size;++i)
+        {
             _threads.emplace_back([this]{this->work();});
+        }
     }
 
 
     /*! Destroy the thread pool.
-     * This function will block until all the tasks a done
+     * This function will block until all the tasks are done
      */
     ~ThreadPool()
     {
@@ -111,7 +115,7 @@ struct ThreadPool {
     }
 
     /*!
-     * Stop the thread pool. No task are accepted after calling this function.
+     * Stop the thread pool. No tasks are accepted after calling this function.
      * If a task is posted after calling stop, a std::runtime_error is thrown
      */
     void stop()
@@ -123,7 +127,8 @@ struct ThreadPool {
     /*!
      * \return true is stop was called.
      */
-    bool isStoped()const{
+    bool isStoped()const
+    {
         return _stop;
     }
 
@@ -137,11 +142,14 @@ struct ThreadPool {
         return _tasks.size();
     }
 
-protected:
+private:
 
-    void checkStopped(){
-        if(_stop) throw std::runtime_error("posting on stopped thread pool");
-
+    void checkStopped()
+    {
+        if( _stop )
+        {
+            throw std::runtime_error("posting on stopped thread pool");
+        }
     }
 
     void joinAll()

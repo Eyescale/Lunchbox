@@ -190,6 +190,7 @@ typedef SSIZE_T    ssize_t;
 #define LB_128MB (134217728)
 #define LB_256MB (268435456)
 #define LB_512MB (536870912)
+#define LB_4GB   (4294967296u)
 
 /** @cond IGNORE */
 struct GLEWContextStruct;

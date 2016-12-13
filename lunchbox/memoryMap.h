@@ -130,11 +130,11 @@ public:
         { return static_cast< T* >( getAddress( )); }
 
     /** Access the given element in the map. @version 1.16 */
-    template< class T > T& operator[]( const size_t i )
+    template< class T > T& get( const size_t i )
         { return getAddress< T >()[i]; }
 
     /** Access the given element in the map. @version 1.16 */
-    template< class T > const T& operator[]( size_t i ) const
+    template< class T > const T& get( size_t i ) const
         { return getAddress< T >()[i]; }
 
     /** @return the size of the memory map. @version 1.0 */

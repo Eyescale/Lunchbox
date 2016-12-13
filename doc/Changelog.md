@@ -3,7 +3,7 @@
 # git master
 
 * [292](https://github.com/Eyescale/Lunchbox/pull/292):
-  Add MemoryMap bracket operators
+  Add MemoryMap element getter
 
 # Release 1.15 (09-12-2016)
 

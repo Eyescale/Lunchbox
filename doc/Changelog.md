@@ -2,6 +2,9 @@
 
 # git master
 
+* [292](https://github.com/Eyescale/Lunchbox/pull/292):
+  Add MemoryMap bracket operators
+
 # Release 1.15 (09-12-2016)
 
 * [283](https://github.com/Eyescale/Lunchbox/pull/283):

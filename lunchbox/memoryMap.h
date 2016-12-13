@@ -134,7 +134,7 @@ public:
         { return getAddress< T >()[i]; }
 
     /** Access the given element in the map. @version 1.16 */
-    template< class T > const T& get( size_t i ) const
+    template< class T > const T& get( const size_t i ) const
         { return getAddress< T >()[i]; }
 
     /** @return the size of the memory map. @version 1.0 */

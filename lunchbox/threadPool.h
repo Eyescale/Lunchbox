@@ -61,7 +61,7 @@ public:
      */
     ~ThreadPool()
     {
-        stop();
+        _stop = true;
         _waitCondition.notify_all();
         joinAll();
     }
@@ -81,9 +81,8 @@ public:
      * \return a std::future containing the future result.
      */
     template<class F>
-    auto post(F&& f) -> std::future<typename std::result_of<F()>::type>
+    std::future<typename std::result_of<F()>::type> post(F&& f)
     {
-        checkStopped();
         using ReturnType = typename std::result_of<F()>::type;
 
         auto task  = std::make_shared<std::packaged_task<ReturnType()>>(
@@ -106,7 +105,6 @@ public:
     template<class F>
     void postDetached(F&& f)
     {
-        checkStopped();
         {
             std::unique_lock<std::mutex> lock(_queueMutex);
             _tasks.emplace(f);
@@ -114,23 +112,6 @@ public:
         _waitCondition.notify_one();
     }
 
-    /*!
-     * Stop the thread pool. No tasks are accepted after calling this function.
-     * If a task is posted after calling stop, a std::runtime_error is thrown
-     */
-    void stop()
-    {
-        _stop = true;
-    }
-
-
-    /*!
-     * \return true is stop was called.
-     */
-    bool isStoped()const
-    {
-        return _stop;
-    }
 
 
     /*!
@@ -143,14 +124,6 @@ public:
     }
 
 private:
-
-    void checkStopped()
-    {
-        if( _stop )
-        {
-            throw std::runtime_error("posting on stopped thread pool");
-        }
-    }
 
     void joinAll()
     {
@@ -166,7 +139,7 @@ private:
                 std::unique_lock<std::mutex> lock(_queueMutex);
                 _waitCondition.wait(lock,
                     [this]{ return _stop || !_tasks.empty(); });
-                if(_stop && _tasks.empty())
+                if( _stop )
                     return;
                 task = std::move(_tasks.front());
                 _tasks.pop();

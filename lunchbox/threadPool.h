@@ -25,8 +25,6 @@
 #include <condition_variable>
 #include <future>
 #include <functional>
-#include <stdexcept>
-
 
 namespace lunchbox
 {
@@ -44,7 +42,7 @@ public:
 
     /**
      * Construct a ThreadPool
-     * \param size : number of threads in the thread pool
+     * @param size : number of threads in the thread pool
      */
     ThreadPool(size_t size = std::max(1u,std::thread::hardware_concurrency()))
         :   _stop(false)
@@ -67,8 +65,7 @@ public:
     }
 
     /**
-     * \brief getSize
-     * \return the number of threads used in the thread pool
+     * @return the number of threads used in the thread pool
      */
     size_t getSize()const
     {
@@ -78,7 +75,7 @@ public:
 
     /**
      * Post a new task in the thread pool.
-     * \return a std::future containing the future result.
+     * @return a std::future containing the future result.
      */
     template<class F>
     std::future<typename std::result_of<F()>::type> post(F&& f)
@@ -113,7 +110,7 @@ public:
     }
 
     /**
-     * \return true if there are pending tasks to be executed.
+     * @return true if there are pending tasks to be executed.
      */
     bool hasPendingJobs()const
     {

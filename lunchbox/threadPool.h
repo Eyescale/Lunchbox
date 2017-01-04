@@ -28,22 +28,22 @@
 #include <stdexcept>
 
 
-namespace lunchbox {
+namespace lunchbox
+{
 
-/*!
+/**
  * Thread pool for tasks execution.
  * A task is a callable object taking no arguments and returing a value or void.
  * All the member methods are thread safe.
  *
  * Example: @include tests/threadPool.cpp
  */
-
 class ThreadPool
 {
 public:
 
-    /*!
-     * \brief Construct a ThreadPool
+    /**
+     * Construct a ThreadPool
      * \param size : number of threads in the thread pool
      */
     ThreadPool(size_t size = std::max(1u,std::thread::hardware_concurrency()))
@@ -56,7 +56,7 @@ public:
     }
 
 
-    /*! Destroy the thread pool.
+    /** Destroy the thread pool.
      * This function will block until all the tasks are done
      */
     ~ThreadPool()
@@ -66,7 +66,7 @@ public:
         joinAll();
     }
 
-    /*!
+    /**
      * \brief getSize
      * \return the number of threads used in the thread pool
      */
@@ -76,7 +76,7 @@ public:
 
     }
 
-    /*!
+    /**
      * Post a new task in the thread pool.
      * \return a std::future containing the future result.
      */
@@ -98,7 +98,7 @@ public:
         return res;
     }
 
-    /*!
+    /**
      * Post a detached task in the thread pool.
      * The result of this task is not monitored.
      */
@@ -112,9 +112,7 @@ public:
         _waitCondition.notify_one();
     }
 
-
-
-    /*!
+    /**
      * \return true if there are pending tasks to be executed.
      */
     bool hasPendingJobs()const

@@ -32,12 +32,14 @@
     while( --i )                                                        \
         if( rng.get< type >() <= ( min ))                               \
             break;                                                      \
-    TESTINFO( i, "Did never get value below " << (min) << " for " << #type ); \
+    TESTINFO( i, "Did never get value below " << std::to_string(min) << \
+                 " for " << #type );                                    \
     i = MAXLOOPS;                                                       \
     while( --i )                                                        \
         if( rng.get< type >() >= ( max ))                               \
             break;                                                      \
-    TESTINFO( i, "Did never get value above " << (max) << " for " << #type ); \
+    TESTINFO( i, "Did never get value above " << std::to_string(max) << \
+                 " for " << #type );                                    \
     {                                                                   \
         const type value = rng.get< type >();                           \
         i = MAXLOOPS;                                                   \

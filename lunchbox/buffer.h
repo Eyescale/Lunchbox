@@ -51,10 +51,10 @@ public:
         { reset( size ); }
 
     /** Copy constructor, copies data to new Buffer. @version 1.14 */
-    explicit Buffer( const Buffer& from );
+    Buffer( const Buffer& from );
 
     /** Move constructor, transfers data to new Buffer. @version 1.14 */
-    explicit Buffer( Buffer&& from );
+    Buffer( Buffer&& from );
 
     /** Destruct the buffer. @version 1.0 */
     ~Buffer() { clear(); }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2016, Mohamed-Ghaith Kaabi <mohamedghaith.kaabi@gmail.com>
+/* Copyright (c) 2016-2017, Mohamed-Ghaith Kaabi <mohamedghaith.kaabi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -42,20 +42,19 @@ public:
 
     /**
      * Construct a ThreadPool
-     * @param size : number of threads in the thread pool
+     * @param size number of threads in the thread pool
      */
-    ThreadPool(size_t size = std::max(1u,std::thread::hardware_concurrency()))
-        :   _stop(false)
+    ThreadPool( const size_t size =
+                    std::max( 1u, std::thread::hardware_concurrency( )))
+        : _stop( false )
     {
-        for(size_t i = 0;i<size;++i)
-        {
-            _threads.emplace_back([this]{this->work();});
-        }
+        for( size_t i = 0; i < size; ++i )
+            _threads.emplace_back( [this]{ this->work(); });
     }
 
-
-    /** Destroy the thread pool.
-     * This function will block until all the tasks are done
+    /**
+     * Destroy this thread pool.
+     * Will block until all the tasks are done.
      */
     ~ThreadPool()
     {
@@ -67,29 +66,27 @@ public:
     /**
      * @return the number of threads used in the thread pool
      */
-    size_t getSize()const
+    size_t getSize() const
     {
         return _threads.size();
-
     }
 
     /**
      * Post a new task in the thread pool.
      * @return a std::future containing the future result.
      */
-    template<class F>
-    std::future<typename std::result_of<F()>::type> post(F&& f)
+    template< class F >
+    std::future< typename std::result_of< F( )>::type > post( F&& f )
     {
-        using ReturnType = typename std::result_of<F()>::type;
+        using ReturnType = typename std::result_of< F( )>::type;
 
-        auto task  = std::make_shared<std::packaged_task<ReturnType()>>(
-                        std::forward<F>(f)
-                     );
+        auto task = std::make_shared< std::packaged_task< ReturnType( )>>(
+                        std::forward< F >( f ));
 
-        std::future<ReturnType> res = task->get_future();
+        std::future< ReturnType > res = task->get_future();
         {
-            std::unique_lock<std::mutex> lock(_queueMutex);
-            _tasks.emplace([task](){ (*task)();});
+            std::unique_lock< std::mutex > lock( _tasksMutex );
+            _tasks.emplace([task](){ (*task)(); });
         }
         _waitCondition.notify_one();
         return res;
@@ -99,11 +96,10 @@ public:
      * Post a detached task in the thread pool.
      * The result of this task is not monitored.
      */
-    template<class F>
-    void postDetached(F&& f)
+    template< class F > void postDetached(F&& f)
     {
         {
-            std::unique_lock<std::mutex> lock(_queueMutex);
+            std::unique_lock< std::mutex > lock( _tasksMutex );
             _tasks.emplace(f);
         }
         _waitCondition.notify_one();
@@ -112,41 +108,44 @@ public:
     /**
      * @return true if there are pending tasks to be executed.
      */
-    bool hasPendingJobs()const
+
+    bool hasPendingJobs() const
     {
-        std::unique_lock<std::mutex> lock(_queueMutex);
-        return _tasks.size();
+        std::unique_lock< std::mutex > lock( _tasksMutex );
+        return !_tasks.empty();
     }
 
 private:
-
     void joinAll()
     {
-        for(std::thread &worker: _threads) worker.join();
+        for( auto& thread: _threads )
+            thread.join();
     }
 
     void work()
     {
         for(;;)
         {
-            std::function<void()> task;
+            std::function< void( )> task;
             {
-                std::unique_lock<std::mutex> lock(_queueMutex);
-                _waitCondition.wait(lock,
-                    [this]{ return _stop || !_tasks.empty(); });
+                std::unique_lock< std::mutex > lock( _tasksMutex );
+                _waitCondition.wait( lock, [this]
+                                           {
+                                               return _stop || !_tasks.empty();
+                                           });
                 if( _stop )
                     return;
-                task = std::move(_tasks.front());
+                task = std::move( _tasks.front( ));
                 _tasks.pop();
             }
             task();
         }
     }
 
-private:
-    std::vector<std::thread> _threads;
-    std::queue<std::function<void()>> _tasks;
-    mutable std::mutex _queueMutex;
+
+    std::vector< std::thread > _threads;
+    std::queue< std::function< void( )>> _tasks;
+    mutable std::mutex _tasksMutex;
     std::condition_variable _waitCondition;
     bool _stop;
 };

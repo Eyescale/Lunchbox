@@ -67,15 +67,7 @@ public:
      * @version 1.11.0
      */
     Plugin( const Constructor& constructor, const HandlesFunc& handles_ )
-        : _constructor( constructor ), _handles( handles_ )
-        , tag( servus::make_UUID( )) {}
-
-    /** @return true if the plugins wrap the same plugin. @version 1.11.0 */
-    bool operator == ( const Plugin& rhs ) const
-        { return tag == rhs.tag; }
-
-    /** @return false if the plugins do wrap the same plugin. @version 1.11.0 */
-    bool operator != ( const Plugin& rhs ) const { return !(*this == rhs); }
+        : _constructor( constructor ), _handles( handles_ ) {}
 
     /** Construct a new plugin instance. @version 1.14 */
     T* construct( const typename T::InitDataT& data )
@@ -89,8 +81,8 @@ private:
     Constructor _constructor;
     HandlesFunc _handles;
 
-    // Makes Plugin comparable. See http://stackoverflow.com/questions/18665515
-    servus::uint128_t tag;
+    bool operator == ( const Plugin& rhs ) const = delete;
+    bool operator != ( const Plugin& rhs ) const = delete;
 };
 
 }

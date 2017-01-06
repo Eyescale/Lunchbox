@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2016, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2017, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -32,27 +32,31 @@
 namespace lunchbox
 {
 /**
- * Helper class to statically register derived plugin classes. If MyInitDataType
- * is not given, default value is servus::URI.
+ * Helper class to statically register derived plugin classes.
  *
  * The following code can be placed in a plugin's cpp file:
  * @code
  * namespace
  * {
- *     PluginRegisterer< MyPluginInterface > registerer;
+ *     PluginRegisterer< MyPlugin > registerer;
  * }
  * @endcode
  *
- * Also note that it needs the following type definition to be placed in the
- * plugin's interface (or in all its implementations that are to be registered):
+ * The plugin needs to conform to the following API:
  * @code
  * class MyPluginInterface
  * {
  * public:
  *     typedef MyPluginInterface InterfaceT;
  *     typedef MyPluginInitData InitDataT;
- *              ( optional for InitDataT == servus::URI )
- * }
+ * };
+ *
+ * class MyPlugin : public MyPluginInterface
+ * {
+ * public:
+ *     MyPlugin( const InitDataT& data );
+ *     static bool handles( const InitDataT& data );
+ * };
  * @endcode
  *
  * @version 1.11.0

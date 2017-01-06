@@ -27,23 +27,7 @@
 
 namespace lunchbox
 {
-/**
- * Manages a class deriving from a T interface.
- *
- * Plugin classes deriving from T must implement the following
- * prototype for their constructor:
- * @code
- * DerivedPluginClass( const T::InitDataT& initData );
- * @endcode
- *
- * T must also implement the following method to be registered:
- * @code
- * static bool handles( const T::InitDataT& initData );
- * @endcode
- *
- * Note this requires a 'typedef [foo] InitDataT' in T.
- * @version 1.11.0
- */
+/** @internal */
 template< class T > class Plugin
 {
 public:

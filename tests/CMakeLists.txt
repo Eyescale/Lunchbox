@@ -14,7 +14,5 @@ if(COVERAGE AND TRAVIS)
   list(APPEND EXCLUDE_FROM_TESTS anySerialization.cpp) #timeout in lcov gather
 endif()
 
-set(UNIT_AND_PERF_TESTS persistentMap.cpp)
-
 include(CommonCTest)
 install_files(share/Lunchbox/tests FILES ${TEST_FILES} COMPONENT examples)

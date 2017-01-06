@@ -37,6 +37,15 @@ template< typename T > PluginFactory< T >::~PluginFactory()
 }
 
 template< typename T >
+bool PluginFactory< T >::handles( const typename T::InitDataT& initData )
+{
+    for( auto& plugin : _plugins )
+        if( plugin.handles( initData ))
+            return true;
+    return false;
+}
+
+template< typename T >
 T* PluginFactory< T >::create( const typename T::InitDataT& initData )
 {
     for( auto& plugin : _plugins )

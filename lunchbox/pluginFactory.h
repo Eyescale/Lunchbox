@@ -61,6 +61,9 @@ public:
     /** Get the single class instance. @version 1.11 */
     static PluginFactory& getInstance();
 
+    /** @return true if any plugin handles the given parameter. @version 1.16 */
+    bool handles( const typename T::InitDataT& initData );
+
     /**
      * Create a plugin instance.
      * @param initData The initData passed to the plugin constructor.

@@ -31,17 +31,17 @@ namespace lunchbox
 template< class T > class Plugin
 {
 public:
-    /**
-     * The constructor method / concrete factory for Plugin objects.
-     * @version 1.11.0
-     */
-    typedef std::function< T* ( const typename T::InitDataT& )> Constructor;
+    /** The constructor method for Plugin objects.  @version 1.11.0 */
+    using Constructor = std::function< T*( const typename T::InitDataT& )>;
 
     /**
      * The method to check if the plugin can handle a given initData.
      * @version 1.11.0
      */
-    typedef std::function< bool ( const typename T::InitDataT& )> HandlesFunc;
+    using HandlesFunc = std::function< bool( const typename T::InitDataT& )>;
+
+    /** The method to get the plugin's description. @version 1.16 */
+    using DescriptionFunc = std::function< std::string( )>;
 
     /**
      * Construct a new Plugin.
@@ -50,20 +50,26 @@ public:
      * initData.
      * @version 1.11.0
      */
-    Plugin( const Constructor& constructor, const HandlesFunc& handles_ )
-        : _constructor( constructor ), _handles( handles_ ) {}
+    Plugin( const Constructor& constructor, const HandlesFunc& handles_,
+            const DescriptionFunc& description )
+        : _constructor( constructor ), _handles( handles_ ),
+          _description( description ) {}
 
     /** Construct a new plugin instance. @version 1.14 */
-    T* construct( const typename T::InitDataT& data )
+    T* construct( const typename T::InitDataT& data ) const
         { return _constructor( data ); }
 
     /** @return true if this plugin handles the given request. @version 1.14 */
-    bool handles( const typename T::InitDataT& data )
+    bool handles( const typename T::InitDataT& data ) const
         { return _handles( data ); }
+
+    /** @return the plugin's description. @version 1.17 */
+    std::string getDescription() const { return _description(); }
 
 private:
     Constructor _constructor;
     HandlesFunc _handles;
+    DescriptionFunc _description;
 
     bool operator == ( const Plugin& rhs ) const = delete;
     bool operator != ( const Plugin& rhs ) const = delete;

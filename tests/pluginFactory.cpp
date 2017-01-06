@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2016, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2017, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *
  * This file is part of Lunchbox <https://github.com/Eyescale/Lunchbox>
@@ -62,6 +62,7 @@ class Plugin : public PluginInterface
 public:
     explicit Plugin( const InitData& ) {}
     static bool handles( const InitData& ) { return true; }
+    static std::string getDescription() { return "I am a test plugin"; }
     int getValue() final { return VALID_VALUE; }
 };
 
@@ -70,6 +71,7 @@ class FalsePlugin : public PluginInterface
 public:
     explicit FalsePlugin( const InitData& ) {}
     static bool handles( const InitData& ) { return false; }
+    static std::string getDescription() { return "I am a lazy plugin"; }
     int getValue() final { return INVALID_VALUE; }
 };
 
@@ -90,14 +92,15 @@ BOOST_AUTO_TEST_CASE( throwNoneRegistered )
 
 BOOST_AUTO_TEST_CASE( creation )
 {
-    PluginFactory::getInstance().deregisterAll();
+    auto& factory = PluginFactory::getInstance();
+    factory.deregisterAll();
     lunchbox::PluginRegisterer< Plugin > registerer;
     PluginInterfacePtr plugin = createPlugin();
 
     BOOST_CHECK( plugin );
     BOOST_CHECK_EQUAL( plugin->getValue(), VALID_VALUE );
+    BOOST_CHECK_EQUAL( factory.getDescriptions(), "I am a test plugin" );
 }
-
 
 BOOST_AUTO_TEST_CASE( throwHandlesFailure )
 {
@@ -109,11 +112,14 @@ BOOST_AUTO_TEST_CASE( throwHandlesFailure )
 
 BOOST_AUTO_TEST_CASE( createCorrectVariant )
 {
-    PluginFactory::getInstance().deregisterAll();
+    auto& factory = PluginFactory::getInstance();
+    factory.deregisterAll();
     lunchbox::PluginRegisterer< FalsePlugin > registerer1;
     lunchbox::PluginRegisterer< Plugin > registerer2;
     PluginInterfacePtr plugin = createPlugin();
 
     BOOST_CHECK( plugin );
     BOOST_CHECK_EQUAL( plugin->getValue(), VALID_VALUE );
+    BOOST_CHECK_EQUAL( factory.getDescriptions(),
+                       "I am a lazy plugin\nI am a test plugin" );
 }

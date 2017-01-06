@@ -73,6 +73,15 @@ template< typename T > void PluginFactory< T >::deregisterAll()
     _libraries.clear();
 }
 
+template< typename T > std::string PluginFactory< T >::getDescriptions() const
+{
+    std::string descriptions;
+    for( const auto& plugin : _plugins )
+        descriptions += (descriptions.empty() ? "" : "\n" ) +
+                        plugin.getDescription();
+    return descriptions;
+}
+
 template< typename T >
 void PluginFactory< T >::load( const int version, const Strings& paths,
                                const std::string& pattern )

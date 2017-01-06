@@ -55,6 +55,7 @@ namespace lunchbox
  * public:
  *     MyPlugin( const InitDataT& data );
  *     static bool handles( const InitDataT& data );
+ *     static std::string getDescription();
  * };
  * @endcode
  *
@@ -67,11 +68,12 @@ public:
     /** Construct and register the Plugin< T > class. @version 1.11.0 */
     PluginRegisterer()
     {
-        Plugin< typename T::InterfaceT > plugin(
-            std::bind( boost::factory< T* >(), std::placeholders::_1 ),
-            std::bind( &T::handles, std::placeholders::_1 ));
         PluginFactory< typename T::InterfaceT >::getInstance().register_(
-            plugin );
+            {
+                std::bind( boost::factory< T* >(), std::placeholders::_1 ),
+                std::bind( &T::handles, std::placeholders::_1 ),
+                std::bind( &T::getDescription )
+            });
     }
 };
 }

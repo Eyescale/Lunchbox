@@ -25,9 +25,8 @@
 #include <lunchbox/plugin.h> // used inline
 #include <lunchbox/pluginFactory.h> // used inline
 
-#include <boost/bind.hpp> // used inline
-#include <boost/version.hpp>
 #include <boost/functional/factory.hpp>
+#include <functional>
 
 namespace lunchbox
 {
@@ -69,8 +68,8 @@ public:
     PluginRegisterer()
     {
         Plugin< typename T::InterfaceT > plugin(
-            boost::bind( boost::factory< T* >(), _1 ),
-            boost::bind( &T::handles, _1 ));
+            std::bind( boost::factory< T* >(), std::placeholders::_1 ),
+            std::bind( &T::handles, std::placeholders::_1 ));
         PluginFactory< typename T::InterfaceT >::getInstance().register_(
             plugin );
     }

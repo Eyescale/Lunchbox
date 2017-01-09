@@ -23,7 +23,8 @@ template< class T > Buffer< T >::Buffer( const Buffer< T >& from )
     , _size( 0 )
     , _maxSize( 0 )
 {
-    *this = from;
+    if( !from.isEmpty( ))
+        *this = from;
 }
 
 template< class T > Buffer< T >::Buffer( Buffer< T >&& from )

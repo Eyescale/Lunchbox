@@ -114,7 +114,8 @@ public:
 private:
     void joinAll()
     {
-        for( auto& thread : _threads ) thread.join();
+        for( auto& thread : _threads )
+            thread.join();
     }
 
     void work()

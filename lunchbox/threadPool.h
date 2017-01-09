@@ -42,40 +42,40 @@ public:
      * Construct a ThreadPool
      * @param size number of threads in the thread pool
      */
-    ThreadPool( const size_t size = std::max( 1u, std::thread::hardware_concurrency()));
+    inline ThreadPool( const size_t size = std::max( 1u, std::thread::hardware_concurrency()));
     /**
      * Destroy this thread pool.
      * Will block until all the tasks are done.
      */
-    ~ThreadPool();
+    inline ~ThreadPool();
 
     /**
      * @return the number of threads used in the thread pool
      */
-    size_t getSize() const;
+    inline size_t getSize() const;
 
     /**
      * Post a new task in the thread pool.
      * @return a std::future containing the future result.
      */
     template < typename F >
-    std::future< typename std::result_of< F() >::type > post( F&& f );
+    inline  std::future< typename std::result_of< F() >::type > post( F&& f );
 
     /**
      * Post a detached task in the thread pool.
      * The result of this task is not monitored.
      */
     template < typename F >
-    void postDetached( F&& f );
+    inline void postDetached( F&& f );
 
     /**
      * @return true if there are pending tasks to be executed.
      */
-    bool hasPendingJobs() const;
+    inline bool hasPendingJobs() const;
 
 private:
-    void joinAll();
-    void work();
+    inline void joinAll();
+    inline void work();
 
     std::vector< std::thread > _threads;
     std::queue< std::function< void() > > _tasks;

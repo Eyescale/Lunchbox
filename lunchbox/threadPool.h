@@ -42,98 +42,40 @@ public:
      * Construct a ThreadPool
      * @param size number of threads in the thread pool
      */
-    ThreadPool( const size_t size =
-                    std::max( 1u, std::thread::hardware_concurrency() ) )
-        : _stop( false )
-    {
-        for( size_t i = 0; i < size; ++i )
-            _threads.emplace_back( [this] { this->work(); } );
-    }
-
+    ThreadPool( const size_t size = std::max( 1u, std::thread::hardware_concurrency()));
     /**
      * Destroy this thread pool.
      * Will block until all the tasks are done.
      */
-    ~ThreadPool()
-    {
-        _stop = true;
-        _waitCondition.notify_all();
-        joinAll();
-    }
+    ~ThreadPool();
 
     /**
      * @return the number of threads used in the thread pool
      */
-    size_t getSize() const { return _threads.size(); }
+    size_t getSize() const;
 
     /**
      * Post a new task in the thread pool.
      * @return a std::future containing the future result.
      */
     template < typename F >
-    std::future< typename std::result_of< F() >::type > post( F&& f )
-    {
-        using ReturnType = typename std::result_of< F() >::type;
-
-        auto task = std::make_shared<std::packaged_task<ReturnType()>>(
-            std::forward< F >( f ) );
-
-        auto res = task->get_future();
-        {
-            std::unique_lock< std::mutex > lock( _tasksMutex );
-            _tasks.emplace( [task]() { ( *task )(); } );
-        }
-        _waitCondition.notify_one();
-        return res;
-    }
+    std::future< typename std::result_of< F() >::type > post( F&& f );
 
     /**
      * Post a detached task in the thread pool.
      * The result of this task is not monitored.
      */
     template < typename F >
-    void postDetached( F&& f )
-    {
-        {
-            std::unique_lock< std::mutex > lock( _tasksMutex );
-            _tasks.emplace( f );
-        }
-        _waitCondition.notify_one();
-    }
+    void postDetached( F&& f );
 
     /**
      * @return true if there are pending tasks to be executed.
      */
-
-    bool hasPendingJobs() const
-    {
-        std::unique_lock< std::mutex > lock( _tasksMutex );
-        return !_tasks.empty();
-    }
+    bool hasPendingJobs() const;
 
 private:
-    void joinAll()
-    {
-        for( auto& thread : _threads )
-            thread.join();
-    }
-
-    void work()
-    {
-        for( ;; )
-        {
-            std::function< void() > task;
-            {
-                std::unique_lock< std::mutex > lock( _tasksMutex );
-                _waitCondition.wait(
-                    lock, [this] { return _stop || !_tasks.empty(); } );
-                if( _stop ) return;
-                task = std::move( _tasks.front() );
-                _tasks.pop();
-            }
-            task();
-        }
-    }
+    void joinAll();
+    void work();
 
     std::vector< std::thread > _threads;
     std::queue< std::function< void() > > _tasks;
@@ -143,4 +85,6 @@ private:
 };
 }
 
-#endif  // LUNCHBOX_THREADPOOL_H
+#include "threadPool.ipp"
+
+#endif // LUNCHBOX_THREADPOOL_H

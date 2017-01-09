@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2016, Mohamed-Ghaith Kaabi <mohamedghaith.kaabi@gmail.com>
+/* Copyright (c) 2016-2017, Mohamed-Ghaith Kaabi <mohamedghaith.kaabi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,79 +19,69 @@
 
 #include <lunchbox/threadPool.h>
 
-
 BOOST_AUTO_TEST_CASE( size )
 {
-    lunchbox::ThreadPool threadPool {3};
-    BOOST_CHECK(threadPool.getSize() == 3);
+    lunchbox::ThreadPool threadPool{3};
+    BOOST_CHECK( threadPool.getSize() == 3 );
 }
 
 BOOST_AUTO_TEST_CASE( queue )
 {
-    lunchbox::ThreadPool threadPool {1};
-    for (int i = 0; i < 10; ++i)
+    lunchbox::ThreadPool threadPool{1};
+    for( int i = 0; i < 10; ++i )
     {
-        threadPool.postDetached(
-            []{
-                std::this_thread::sleep_for(std::chrono::milliseconds(50 + rand() %50));
-            }
-        );
+        threadPool.postDetached( [] {
+            std::this_thread::sleep_for( std::chrono::milliseconds( 50 + rand() % 50 ));
+        } );
     }
 
     // append a dummy task
-    threadPool.post([](){}).get();
+    threadPool.post( [](){}).get();
     BOOST_CHECK( !threadPool.hasPendingJobs() );
 }
 
-
 BOOST_AUTO_TEST_CASE( dispatcher )
 {
-    std::vector<std::future<int>> futures;
-    lunchbox::ThreadPool threadPool {4};
+    std::vector< std::future< int > > futures;
+    lunchbox::ThreadPool threadPool{4};
 
-    for (int i = 0; i < 10; ++i)
+    for( int i = 0; i < 10; ++i )
     {
-        futures.push_back(
-            threadPool.post(
-                []{
-                    std::this_thread::sleep_for(std::chrono::milliseconds(50 + rand() %50));
-                    return 42;
-                }
-            )
-       );
+        futures.push_back( threadPool.post( [] {
+            std::this_thread::sleep_for( std::chrono::milliseconds( 50 + rand() % 50 ));
+            return 42;
+        }));
     }
 
-    BOOST_CHECK(threadPool.hasPendingJobs());
+    BOOST_CHECK( threadPool.hasPendingJobs() );
 
-    for(auto & future : futures){
-        BOOST_CHECK(future.get() == 42);
+    for( auto& future : futures )
+    {
+        BOOST_CHECK( future.get() == 42 );
     }
 }
 
+int task()
+{
+    std::this_thread::sleep_for( std::chrono::milliseconds( 50 + rand() % 50 ));
+    return 42;
+}
 
 BOOST_AUTO_TEST_CASE( join )
 {
-    std::vector<std::future<int>> futures;
+    std::vector< std::future< int > > futures;
 
     {
-        lunchbox::ThreadPool threadPool {4};
-        for (int i = 0; i < 100; ++i)
+        lunchbox::ThreadPool threadPool{4};
+        for( int i = 0; i < 100; ++i )
         {
-            futures.push_back(
-                threadPool.post(
-                    []{
-                        std::this_thread::sleep_for(std::chrono::milliseconds(50 + rand() %50));
-                        return 42;
-                    }
-                )
-            );
+            futures.push_back( threadPool.post( task ));
         }
     } // blocks until all tasks are done
 
-    for( const std::future<int> & future : futures )
+    for( const std::future< int >& future : futures )
     {
-        BOOST_CHECK(future.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready);
+        BOOST_CHECK( future.wait_for( std::chrono::milliseconds( 0 )) ==
+                     std::future_status::ready );
     }
 }
-
-

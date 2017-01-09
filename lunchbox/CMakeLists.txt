@@ -61,6 +61,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   thread.h
   threadID.h
   threadPool.h
+  threadPool.ipp
   timedLock.h
   tls.h
   types.h

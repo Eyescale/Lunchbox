@@ -14,17 +14,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #ifndef LUNCHBOX_THREADPOOL_H
 #define LUNCHBOX_THREADPOOL_H
 
-#include <vector>
-#include <queue>
-#include <memory>
-#include <thread>
 #include <condition_variable>
-#include <future>
 #include <functional>
+#include <future>
+#include <memory>
+#include <queue>
+#include <thread>
+#include <vector>
 
 namespace lunchbox
 {
@@ -39,17 +38,16 @@ namespace lunchbox
 class ThreadPool
 {
 public:
-
     /**
      * Construct a ThreadPool
      * @param size number of threads in the thread pool
      */
     ThreadPool( const size_t size =
-                    std::max( 1u, std::thread::hardware_concurrency( )))
+                    std::max( 1u, std::thread::hardware_concurrency() ) )
         : _stop( false )
     {
         for( size_t i = 0; i < size; ++i )
-            _threads.emplace_back( [this]{ this->work(); });
+            _threads.emplace_back( [this] { this->work(); } );
     }
 
     /**
@@ -66,27 +64,24 @@ public:
     /**
      * @return the number of threads used in the thread pool
      */
-    size_t getSize() const
-    {
-        return _threads.size();
-    }
+    size_t getSize() const { return _threads.size(); }
 
     /**
      * Post a new task in the thread pool.
      * @return a std::future containing the future result.
      */
-    template< class F >
-    std::future< typename std::result_of< F( )>::type > post( F&& f )
+    template < typename F >
+    std::future< typename std::result_of< F() >::type > post( F&& f )
     {
-        using ReturnType = typename std::result_of< F( )>::type;
+        using ReturnType = typename std::result_of< F() >::type;
 
-        auto task = std::make_shared< std::packaged_task< ReturnType( )>>(
-                        std::forward< F >( f ));
+        auto task = std::make_shared<std::packaged_task<ReturnType()>>(
+            std::forward< F >( f ) );
 
-        std::future< ReturnType > res = task->get_future();
+        auto res = task->get_future();
         {
             std::unique_lock< std::mutex > lock( _tasksMutex );
-            _tasks.emplace([task](){ (*task)(); });
+            _tasks.emplace( [task]() { ( *task )(); } );
         }
         _waitCondition.notify_one();
         return res;
@@ -96,11 +91,12 @@ public:
      * Post a detached task in the thread pool.
      * The result of this task is not monitored.
      */
-    template< class F > void postDetached(F&& f)
+    template < typename F >
+    void postDetached( F&& f )
     {
         {
             std::unique_lock< std::mutex > lock( _tasksMutex );
-            _tasks.emplace(f);
+            _tasks.emplace( f );
         }
         _waitCondition.notify_one();
     }
@@ -118,38 +114,32 @@ public:
 private:
     void joinAll()
     {
-        for( auto& thread: _threads )
-            thread.join();
+        for( auto& thread : _threads ) thread.join();
     }
 
     void work()
     {
-        for(;;)
+        for( ;; )
         {
-            std::function< void( )> task;
+            std::function< void() > task;
             {
                 std::unique_lock< std::mutex > lock( _tasksMutex );
-                _waitCondition.wait( lock, [this]
-                                           {
-                                               return _stop || !_tasks.empty();
-                                           });
-                if( _stop )
-                    return;
-                task = std::move( _tasks.front( ));
+                _waitCondition.wait(
+                    lock, [this] { return _stop || !_tasks.empty(); } );
+                if( _stop ) return;
+                task = std::move( _tasks.front() );
                 _tasks.pop();
             }
             task();
         }
     }
 
-
     std::vector< std::thread > _threads;
-    std::queue< std::function< void( )>> _tasks;
+    std::queue< std::function< void() > > _tasks;
     mutable std::mutex _tasksMutex;
     std::condition_variable _waitCondition;
     bool _stop;
 };
-
 }
 
-#endif //LUNCHBOX_THREADPOOL_H
+#endif  // LUNCHBOX_THREADPOOL_H

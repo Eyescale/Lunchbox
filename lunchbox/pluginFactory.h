@@ -27,6 +27,7 @@
 #include <lunchbox/debug.h> // LBTHROW
 #include <lunchbox/dso.h> // used inline
 #include <lunchbox/file.h> // searchDirectory() used inline
+#include <lunchbox/plugin.h> // member
 #include <servus/uri.h> // Default template type
 
 #include <unordered_map>

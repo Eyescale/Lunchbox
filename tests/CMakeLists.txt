@@ -1,4 +1,4 @@
-# Copyright (c) 2010-2016, Daniel Pfeifer
+# Copyright (c) 2010-2017, Daniel Pfeifer
 #                         Stefan Eilemann <eile@eyescale.ch>
 #
 # Change this number when adding tests to force a CMake run: 1

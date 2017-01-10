@@ -25,10 +25,11 @@
 
 #ifdef _WIN32
 #  include <lunchbox/os.h>
-#  define fork CreateThread
-   const std::string forkFun( "CreateThread" );
+#  define libraryFunc CreateThread
+   const std::string funcName( "CreateThread" );
 #else
-   const std::string forkFun( "fork" );
+#  define libraryFunc malloc
+   const std::string funcName( "malloc" );
 #endif
 
 namespace fs = boost::filesystem;
@@ -62,15 +63,15 @@ int main( int, char** )
     TEST( !three.open( libraries[0] ));
     TEST( one == three );
 
-    TEST( one.getFunctionPointer( forkFun ));
-    TESTINFO( one.getFunctionPointer( forkFun ) == &fork,
-              one.getFunctionPointer( forkFun ) << " != " << (void*)&fork );
+    TEST( one.getFunctionPointer( funcName ));
+    TESTINFO( one.getFunctionPointer( funcName ) == &libraryFunc,
+              one.getFunctionPointer( funcName ) << " != " << (void*)&libraryFunc );
     TEST( !one.getFunctionPointer( "fooBar" ));
 
     one.close();
     TEST( one != two );
     TEST( one != three );
-    TEST( !one.getFunctionPointer( forkFun ));
+    TEST( !one.getFunctionPointer( funcName ));
 
     two.close();
     TEST( one == two );

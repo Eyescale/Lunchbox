@@ -35,12 +35,12 @@ size getSize()
     CONSOLE_SCREEN_BUFFER_INFO info;
     if( GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &info ))
         return { info.dwSize.X, info.dwSize.Y };
-    return {80, 80};
 #else
     struct winsize w;
-    ::ioctl( STDOUT_FILENO, TIOCGWINSZ, &w );
-    return { w.ws_col, w.ws_row };
+    if( ::ioctl( STDOUT_FILENO, TIOCGWINSZ, &w ) >= 0 )
+        return { w.ws_col, w.ws_row };
 #endif
+    return {80, 80};
 }
 }
 }

@@ -24,8 +24,8 @@ int main( int, char** )
     TEST( lunchbox::string::prepend( "foo", " " ) == " foo" );
     TEST( lunchbox::string::prepend( "foo\nbar", " " ) == " foo\n bar" );
     TEST( lunchbox::string::prepend( "\nfoo\nbar", " " ) == " \n foo\n bar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", "" ) == " \nfoo\nbar" );
+    TEST( lunchbox::string::prepend( "\nfoo\nbar", "" ) == "\nfoo\nbar" );
     TEST( lunchbox::string::prepend( "\nfoo\nbar", "deine mutter " ) ==
-                                     " \ndeine mutter foo\ndeine mutter bar" );
+                           "deine mutter \ndeine mutter foo\ndeine mutter bar" );
     return EXIT_SUCCESS;
 }

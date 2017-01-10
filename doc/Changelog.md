@@ -2,6 +2,10 @@
 
 # git master
 
+* [294](https://github.com/Eyescale/Lunchbox/pull/294):
+  * Add description to plugins
+  * Add lunchbox::string::prepend()
+  * Add lunchbox::term::getSize()
 * [292](https://github.com/Eyescale/Lunchbox/pull/292):
   Add string::prepend()
 * [292](https://github.com/Eyescale/Lunchbox/pull/292):

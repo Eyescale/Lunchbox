@@ -121,5 +121,5 @@ BOOST_AUTO_TEST_CASE( createCorrectVariant )
     BOOST_CHECK( plugin );
     BOOST_CHECK_EQUAL( plugin->getValue(), VALID_VALUE );
     BOOST_CHECK_EQUAL( factory.getDescriptions(),
-                       "I am a lazy plugin\nI am a test plugin" );
+                       "I am a lazy plugin\n\nI am a test plugin" );
 }

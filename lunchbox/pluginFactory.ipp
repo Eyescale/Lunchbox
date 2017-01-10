@@ -152,7 +152,7 @@ void PluginFactory< T >::load( const int version, const std::string& path,
         if( registerFunc( ))
         {
             _libraries.insert( std::make_pair( dso, _plugins.back( )));
-            LBINFO << "Enabled plugin " << lib << std::endl;
+            LBINFO << "Loaded plugin " << lib << std::endl;
         }
         else
             delete dso;

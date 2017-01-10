@@ -7,9 +7,9 @@
   * Add lunchbox::string::prepend()
   * Add lunchbox::term::getSize()
 * [292](https://github.com/Eyescale/Lunchbox/pull/292):
-  Add string::prepend()
-* [292](https://github.com/Eyescale/Lunchbox/pull/292):
   Add MemoryMap element getter
+* [290](https://github.com/Eyescale/Lunchbox/pull/290):
+  A ThreadPool class
 
 # Release 1.15 (09-12-2016)
 

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2016, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2017, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -25,34 +25,38 @@
 #include <lunchbox/plugin.h> // used inline
 #include <lunchbox/pluginFactory.h> // used inline
 
-#include <boost/bind.hpp> // used inline
-#include <boost/version.hpp>
 #include <boost/functional/factory.hpp>
+#include <functional>
 
 namespace lunchbox
 {
 /**
- * Helper class to statically register derived plugin classes. If MyInitDataType
- * is not given, default value is servus::URI.
+ * Helper class to statically register derived plugin classes.
  *
  * The following code can be placed in a plugin's cpp file:
  * @code
  * namespace
  * {
- *     PluginRegisterer< MyPluginInterface > registerer;
+ *     PluginRegisterer< MyPlugin > registerer;
  * }
  * @endcode
  *
- * Also note that it needs the following type definition to be placed in the
- * plugin's interface (or in all its implementations that are to be registered):
+ * The plugin needs to conform to the following API:
  * @code
  * class MyPluginInterface
  * {
  * public:
  *     typedef MyPluginInterface InterfaceT;
  *     typedef MyPluginInitData InitDataT;
- *              ( optional for InitDataT == servus::URI )
- * }
+ * };
+ *
+ * class MyPlugin : public MyPluginInterface
+ * {
+ * public:
+ *     MyPlugin( const InitDataT& data );
+ *     static bool handles( const InitDataT& data );
+ *     static std::string getDescription();
+ * };
  * @endcode
  *
  * @version 1.11.0
@@ -64,11 +68,12 @@ public:
     /** Construct and register the Plugin< T > class. @version 1.11.0 */
     PluginRegisterer()
     {
-        Plugin< typename T::InterfaceT > plugin(
-            boost::bind( boost::factory< T* >(), _1 ),
-            boost::bind( &T::handles, _1 ));
         PluginFactory< typename T::InterfaceT >::getInstance().register_(
-            plugin );
+            {
+                std::bind( boost::factory< T* >(), std::placeholders::_1 ),
+                std::bind( &T::handles, std::placeholders::_1 ),
+                std::bind( &T::getDescription )
+            });
     }
 };
 }

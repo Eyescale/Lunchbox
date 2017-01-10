@@ -27,37 +27,21 @@
 
 namespace lunchbox
 {
-/**
- * Manages a class deriving from a T interface.
- *
- * Plugin classes deriving from T must implement the following
- * prototype for their constructor:
- * @code
- * DerivedPluginClass( const T::InitDataT& initData );
- * @endcode
- *
- * T must also implement the following method to be registered:
- * @code
- * static bool handles( const T::InitDataT& initData );
- * @endcode
- *
- * Note this requires a 'typedef [foo] InitDataT' in T.
- * @version 1.11.0
- */
+/** @internal */
 template< class T > class Plugin
 {
 public:
-    /**
-     * The constructor method / concrete factory for Plugin objects.
-     * @version 1.11.0
-     */
-    typedef std::function< T* ( const typename T::InitDataT& )> Constructor;
+    /** The constructor method for Plugin objects.  @version 1.11.0 */
+    using Constructor = std::function< T*( const typename T::InitDataT& )>;
 
     /**
      * The method to check if the plugin can handle a given initData.
      * @version 1.11.0
      */
-    typedef std::function< bool ( const typename T::InitDataT& )> HandlesFunc;
+    using HandlesFunc = std::function< bool( const typename T::InitDataT& )>;
+
+    /** The method to get the plugin's description. @version 1.16 */
+    using DescriptionFunc = std::function< std::string( )>;
 
     /**
      * Construct a new Plugin.
@@ -66,31 +50,29 @@ public:
      * initData.
      * @version 1.11.0
      */
-    Plugin( const Constructor& constructor, const HandlesFunc& handles_ )
-        : _constructor( constructor ), _handles( handles_ )
-        , tag( servus::make_UUID( )) {}
-
-    /** @return true if the plugins wrap the same plugin. @version 1.11.0 */
-    bool operator == ( const Plugin& rhs ) const
-        { return tag == rhs.tag; }
-
-    /** @return false if the plugins do wrap the same plugin. @version 1.11.0 */
-    bool operator != ( const Plugin& rhs ) const { return !(*this == rhs); }
+    Plugin( const Constructor& constructor, const HandlesFunc& handles_,
+            const DescriptionFunc& description )
+        : _constructor( constructor ), _handles( handles_ ),
+          _description( description ) {}
 
     /** Construct a new plugin instance. @version 1.14 */
-    T* construct( const typename T::InitDataT& data )
+    T* construct( const typename T::InitDataT& data ) const
         { return _constructor( data ); }
 
     /** @return true if this plugin handles the given request. @version 1.14 */
-    bool handles( const typename T::InitDataT& data )
+    bool handles( const typename T::InitDataT& data ) const
         { return _handles( data ); }
+
+    /** @return the plugin's description. @version 1.17 */
+    std::string getDescription() const { return _description(); }
 
 private:
     Constructor _constructor;
     HandlesFunc _handles;
+    DescriptionFunc _description;
 
-    // Makes Plugin comparable. See http://stackoverflow.com/questions/18665515
-    servus::uint128_t tag;
+    bool operator == ( const Plugin& rhs ) const = delete;
+    bool operator != ( const Plugin& rhs ) const = delete;
 };
 
 }

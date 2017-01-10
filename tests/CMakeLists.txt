@@ -1,4 +1,4 @@
-# Copyright (c) 2010-2016, Daniel Pfeifer
+# Copyright (c) 2010-2017, Daniel Pfeifer
 #                         Stefan Eilemann <eile@eyescale.ch>
 #
 # Change this number when adding tests to force a CMake run: 1
@@ -13,8 +13,6 @@ endif()
 if(COVERAGE AND TRAVIS)
   list(APPEND EXCLUDE_FROM_TESTS anySerialization.cpp) #timeout in lcov gather
 endif()
-
-set(UNIT_AND_PERF_TESTS persistentMap.cpp)
 
 include(CommonCTest)
 install_files(share/Lunchbox/tests FILES ${TEST_FILES} COMPONENT examples)

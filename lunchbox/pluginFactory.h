@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2016, EPFL/Blue Brain Project
+/* Copyright (c) 2013-2017, EPFL/Blue Brain Project
  *                          Raphael Dumusc <raphael.dumusc@epfl.ch>
  *                          Stefan.Eilemann@epfl.ch
  *
@@ -27,6 +27,7 @@
 #include <lunchbox/debug.h> // LBTHROW
 #include <lunchbox/dso.h> // used inline
 #include <lunchbox/file.h> // searchDirectory() used inline
+#include <lunchbox/plugin.h> // member
 #include <servus/uri.h> // Default template type
 
 #include <unordered_map>
@@ -58,8 +59,11 @@ public:
     typedef Plugin< T > PluginT;
     typedef std::vector< PluginT > Plugins;
 
-    /** Get the single class instance. @version 1.11.0 */
+    /** Get the single class instance. @version 1.11 */
     static PluginFactory& getInstance();
+
+    /** @return true if any plugin handles the given parameter. @version 1.16 */
+    bool handles( const typename T::InitDataT& initData );
 
     /**
      * Create a plugin instance.
@@ -71,14 +75,17 @@ public:
      */
     T* create( const typename T::InitDataT& initData );
 
-    /** Register a plugin type. @version 1.11.0 */
+    /** Register a plugin type. @version 1.11 */
     void register_( const PluginT& plugin );
 
-    /** Deregister a plugin type. @version 1.11.0 */
+    /** Deregister a plugin type. @version 1.11 */
     bool deregister( const PluginT& plugin );
 
-    /** Unregister all plugin types. @version 1.11.0 */
+    /** Unregister all plugin types. @version 1.11 */
     void deregisterAll();
+
+    /** @return the descriptions of all registered plugins. @version 1.16 */
+    std::string getDescriptions() const;
 
     /** @name Automatic loading of plugin DSOs. */
     //@{

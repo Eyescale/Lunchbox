@@ -37,6 +37,15 @@ template< typename T > PluginFactory< T >::~PluginFactory()
 }
 
 template< typename T >
+bool PluginFactory< T >::handles( const typename T::InitDataT& initData )
+{
+    for( auto& plugin : _plugins )
+        if( plugin.handles( initData ))
+            return true;
+    return false;
+}
+
+template< typename T >
 T* PluginFactory< T >::create( const typename T::InitDataT& initData )
 {
     for( auto& plugin : _plugins )
@@ -71,6 +80,15 @@ template< typename T > void PluginFactory< T >::deregisterAll()
     for( auto& plugin : _libraries )
         delete plugin.first;
     _libraries.clear();
+}
+
+template< typename T > std::string PluginFactory< T >::getDescriptions() const
+{
+    std::string descriptions;
+    for( const auto& plugin : _plugins )
+        descriptions += (descriptions.empty() ? "" : "\n\n" ) +
+                        plugin.getDescription();
+    return descriptions;
 }
 
 template< typename T >
@@ -134,7 +152,7 @@ void PluginFactory< T >::load( const int version, const std::string& path,
         if( registerFunc( ))
         {
             _libraries.insert( std::make_pair( dso, _plugins.back( )));
-            LBINFO << "Enabled plugin " << lib << std::endl;
+            LBINFO << "Loaded plugin " << lib << std::endl;
         }
         else
             delete dso;

@@ -1,5 +1,5 @@
 
-# Copyright (c) 2012-2016 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2017 Stefan Eilemann <eile@eyescale.ch>
 
 set(LUNCHBOX_PUBLIC_HEADERS
   algorithm.h
@@ -60,6 +60,8 @@ set(LUNCHBOX_PUBLIC_HEADERS
   stdExt.h
   thread.h
   threadID.h
+  threadPool.h
+  threadPool.ipp
   timedLock.h
   tls.h
   types.h
@@ -106,8 +108,9 @@ set(LUNCHBOX_SOURCES
   )
 
 set(LUNCHBOX_PUBLIC_INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIRS})
+
 list(APPEND LUNCHBOX_LINK_LIBRARIES PUBLIC ${Boost_LIBRARIES} Servus
-                                    PRIVATE ${PTHREAD_LIBRARIES})
+                                    ${PTHREAD_LIBRARIES})
 
 if(WIN32)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ws2_32 mswsock imagehlp)

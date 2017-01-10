@@ -2,6 +2,8 @@
 
 # git master
 
+* [290](https://github.com/Eyescale/Lunchbox/pull/290):
+  A ThreadPool class
 * [292](https://github.com/Eyescale/Lunchbox/pull/292):
   Add MemoryMap element getter
 

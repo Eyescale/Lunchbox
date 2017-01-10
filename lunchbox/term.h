@@ -15,17 +15,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <lunchbox/test.h>
-#include <lunchbox/string.h>
+#pragma once
 
-int main( int, char** )
+#include <lunchbox/api.h>
+#include <lunchbox/types.h>
+
+namespace lunchbox
 {
-    TEST( lunchbox::string::prepend( "", "  " ) == "  " );
-    TEST( lunchbox::string::prepend( "foo", " " ) == " foo" );
-    TEST( lunchbox::string::prepend( "foo\nbar", " " ) == " foo\n bar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", " " ) == " \n foo\n bar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", "" ) == " \nfoo\nbar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", "deine mutter " ) ==
-                                     " \ndeine mutter foo\ndeine mutter bar" );
-    return EXIT_SUCCESS;
+namespace term
+{
+
+/** Terminal sizes in width, height. @version 1.16 */
+using size = std::pair< uint32_t, uint32_t >;
+
+/**
+ * @return the width and height of the shell running the program.
+ * @version 1.16
+ */
+LUNCHBOX_API size getSize();
+}
 }

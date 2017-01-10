@@ -86,7 +86,7 @@ template< typename T > std::string PluginFactory< T >::getDescriptions() const
 {
     std::string descriptions;
     for( const auto& plugin : _plugins )
-        descriptions += (descriptions.empty() ? "" : "\n" ) +
+        descriptions += (descriptions.empty() ? "" : "\n\n" ) +
                         plugin.getDescription();
     return descriptions;
 }

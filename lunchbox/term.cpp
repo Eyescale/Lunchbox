@@ -15,17 +15,32 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <lunchbox/test.h>
-#include <lunchbox/string.h>
+#include "term.h"
+#include "os.h"
 
-int main( int, char** )
+#ifndef _MSC_VER
+#  include <stdio.h>
+#  include <sys/ioctl.h>
+#  include <unistd.h>
+#endif
+
+#include <iostream>
+namespace lunchbox
 {
-    TEST( lunchbox::string::prepend( "", "  " ) == "  " );
-    TEST( lunchbox::string::prepend( "foo", " " ) == " foo" );
-    TEST( lunchbox::string::prepend( "foo\nbar", " " ) == " foo\n bar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", " " ) == " \n foo\n bar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", "" ) == " \nfoo\nbar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", "deine mutter " ) ==
-                                     " \ndeine mutter foo\ndeine mutter bar" );
-    return EXIT_SUCCESS;
+namespace term
+{
+size getSize()
+{
+#ifdef _MSC_VER
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    if( GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &info ))
+        return { info.dwSize.X, info.dwSize.Y };
+    return {80, 80};
+#else
+    struct winsize w;
+    ::ioctl( STDOUT_FILENO, TIOCGWINSZ, &w );
+    return { w.ws_col, w.ws_row };
+#endif
+}
+}
 }

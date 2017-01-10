@@ -58,6 +58,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   sleep.h
   spinLock.h
   stdExt.h
+  term.h
   thread.h
   threadID.h
   timedLock.h
@@ -99,6 +100,7 @@ set(LUNCHBOX_SOURCES
   rng.cpp
   sleep.cpp
   spinLock.cpp
+  term.cpp
   thread.cpp
   threadID.cpp
   timedLock.cpp

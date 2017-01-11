@@ -28,7 +28,12 @@ ThreadPool::ThreadPool( const size_t size )
 ThreadPool::~ThreadPool()
 {
     _stop = true;
-    _waitCondition.notify_all();
+    // wake-up all the thread individually by
+    // sending an empty task
+    for (size_t i = 0; i < _threads.size(); ++i)
+    {
+        postDetached([]{});
+    }
     joinAll();
 }
 

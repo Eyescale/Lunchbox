@@ -19,14 +19,20 @@
 
 #include <lunchbox/threadPool.h>
 
+#include <iostream>
+
 BOOST_AUTO_TEST_CASE( size )
 {
+    std::cout<< "Begin : " <<__PRETTY_FUNCTION__ << std::endl;
     lunchbox::ThreadPool threadPool{3};
     BOOST_CHECK( threadPool.getSize() == 3 );
+
+    std::cout<< "End : " <<__PRETTY_FUNCTION__ << std::endl;
 }
 
 BOOST_AUTO_TEST_CASE( queue )
 {
+    std::cout<< "Begin : " <<__PRETTY_FUNCTION__ << std::endl;
     lunchbox::ThreadPool threadPool{1};
     for( int i = 0; i < 10; ++i )
     {
@@ -38,10 +44,14 @@ BOOST_AUTO_TEST_CASE( queue )
     // append a dummy task
     threadPool.post( [](){}).get();
     BOOST_CHECK( !threadPool.hasPendingJobs() );
+
+    std::cout<< "End : " <<__PRETTY_FUNCTION__ << std::endl;
 }
 
 BOOST_AUTO_TEST_CASE( dispatcher )
 {
+    std::cout<< "Begin : " <<__PRETTY_FUNCTION__ << std::endl;
+
     std::vector< std::future< int > > futures;
     lunchbox::ThreadPool threadPool{4};
 
@@ -59,6 +69,8 @@ BOOST_AUTO_TEST_CASE( dispatcher )
     {
         BOOST_CHECK( future.get() == 42 );
     }
+
+    std::cout<< "End : " <<__PRETTY_FUNCTION__ << std::endl;
 }
 
 int task()
@@ -69,6 +81,7 @@ int task()
 
 BOOST_AUTO_TEST_CASE( join )
 {
+    std::cout<< "Begin : " <<__PRETTY_FUNCTION__ << std::endl;
     std::vector< std::future< int > > futures;
 
     {
@@ -77,11 +90,14 @@ BOOST_AUTO_TEST_CASE( join )
         {
             futures.push_back( threadPool.post( task ));
         }
+        std::cout << "Finished posting. Wait for done ...\n";
     } // blocks until all tasks are done
+    std::cout << "Done " << std::endl;
 
     for( const std::future< int >& future : futures )
     {
         BOOST_CHECK( future.wait_for( std::chrono::milliseconds( 0 )) ==
                      std::future_status::ready );
     }
+    std::cout<< "End : " <<__PRETTY_FUNCTION__ << std::endl;
 }

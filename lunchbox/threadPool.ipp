@@ -27,8 +27,11 @@ ThreadPool::ThreadPool( const size_t size )
 
 ThreadPool::~ThreadPool()
 {
-    _stop = true;
-    _waitCondition.notify_all();
+    {
+        std::unique_lock<std::mutex> lock( _tasksMutex );
+        _stop = true;
+        _waitCondition.notify_all();
+    }
     joinAll();
 }
 

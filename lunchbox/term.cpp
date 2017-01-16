@@ -40,7 +40,7 @@ size getSize()
     if( ::ioctl( STDOUT_FILENO, TIOCGWINSZ, &w ) >= 0 )
         return { w.ws_col, w.ws_row };
 #endif
-    return {80, 80};
+    return { 120, 80 };
 }
 }
 }

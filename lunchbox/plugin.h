@@ -45,9 +45,10 @@ public:
 
     /**
      * Construct a new Plugin.
-     * @param constructor_ The constructor method for Plugin objects.
+     * @param constructor The constructor method for Plugin objects.
      * @param handles_ The method to check if the plugin can handle the
      * initData.
+     * @param description method to get the the help for the plugin
      * @version 1.11.0
      */
     Plugin( const Constructor& constructor, const HandlesFunc& handles_,

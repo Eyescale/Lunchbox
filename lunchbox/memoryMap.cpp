@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2009-2016, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -36,7 +36,11 @@ namespace detail
 class MemoryMap
 {
 public:
-    MemoryMap() : ptr( nullptr ) , size( 0 ), map_( 0 ) {}
+    MemoryMap() : ptr( nullptr ) , size( 0 ), _map( 0 )
+#ifdef _WIN32
+    , _file( nullptr )
+#endif
+     {}
 
     void* init( const std::string& filename, const size_t size_ )
     {
@@ -46,8 +50,7 @@ public:
             return nullptr;
         }
 
-        init_( filename, size_ );
-        return ptr;
+        return _init( filename, size_ );
     }
 
     void unmap()
@@ -55,9 +58,26 @@ public:
         if( !ptr )
             return;
 
-        unmap_();
+        _unmap();
         ptr = nullptr;
         size = 0;
+    }
+
+    void* resize( const size_t size_ )
+    {
+        if( !ptr )
+            return nullptr;
+        if( size == size_ )
+            return ptr;
+
+#ifdef _WIN32
+        ::UnmapViewOfFile( ptr );
+        ::CloseHandle( _map );
+#else
+        ::munmap( ptr, size );
+#endif
+
+        return _mapFile( size_ );
     }
 
     void* ptr;
@@ -65,103 +85,115 @@ public:
 
 private:
 #ifdef _WIN32
-    void* map_;
+    HANDLE _file;
+    void* _map;
 
-    void init_( const std::string& filename, const size_t size_ )
+    void* _init( const std::string& filename, const size_t size_ )
     {
-        // try to open binary file (and size it)
+        // try to open binary file
         const DWORD access = size_ ? GENERIC_READ | GENERIC_WRITE:GENERIC_READ;
         const DWORD create = size_ ? CREATE_ALWAYS : OPEN_EXISTING;
-        HANDLE file = ::CreateFile( filename.c_str(), access, FILE_SHARE_READ,
-                                    0, create, FILE_ATTRIBUTE_NORMAL, 0 );
-        if( file == INVALID_HANDLE_VALUE )
+        _file = ::CreateFile( filename.c_str(), access, FILE_SHARE_READ,
+                              0, create, FILE_ATTRIBUTE_NORMAL, 0 );
+        if( _file == INVALID_HANDLE_VALUE )
         {
             LBWARN << "Can't open " << filename << ": " << sysError <<std::endl;
             return;
         }
+        return _mapFile( size_ );
+    }
+
+    void* _mapFile( const size_t size_ )
+    {
+        if( !_file )
+            return nullptr;
 
         if( size_ )
         {
-            ::SetFilePointer( file, LONG(size_), PLONG(&size_)+1, FILE_BEGIN );
-            ::SetEndOfFile( file );
+            ::SetFilePointer( _file, LONG(size), PLONG(&size)+1, FILE_BEGIN );
+            ::SetEndOfFile( _file );
         }
 
         // create a file mapping
         const DWORD mode = size_ ? PAGE_READWRITE : PAGE_READONLY;
-        map_ = ::CreateFileMapping( file, 0, mode, 0, 0, 0 );
-        if( !map_ )
+        _map = ::CreateFileMapping( _file, 0, mode, 0, 0, 0 );
+        if( !_map )
         {
-            ::CloseHandle( file );
+            ::CloseHandle( _file );
             LBWARN << "File mapping failed: " << sysError << std::endl;
-            return;
+            return nullptr;
         }
 
         // get a view of the mapping
-        ptr = ::MapViewOfFile( map_, size_ ? FILE_MAP_WRITE :
+        ptr = ::MapViewOfFile( _map, size_ ? FILE_MAP_WRITE :
                                              FILE_MAP_READ, 0, 0, 0 );
 
         // get size
         DWORD highSize;
-        const DWORD lowSize = ::GetFileSize( file, &highSize );
+        const DWORD lowSize = ::GetFileSize( _file, &highSize );
         size = lowSize | ( static_cast< uint64_t >( highSize ) << 32 );
-        LBASSERT( size_ == 0 || size_ == size );
-
-        ::CloseHandle( file );
+        LBASSERT( size == 0 || size_ == size );
     }
 
-    void unmap_()
+    void _unmap()
     {
         ::UnmapViewOfFile( ptr );
-        ::CloseHandle( map_ );
-        map_ = 0;
+        ::CloseHandle( _map );
+        ::CloseHandle( _file );
+        _file = nullptr;
+        _map = nullptr;
     }
 
 #else
+    int _map;
 
-    int map_;
-
-    void init_( const std::string& filename, const size_t size_ )
+    void* _init( const std::string& filename, const size_t size_ )
     {
         // try to open binary file (and size it)
         const int flags = size_ ? O_RDWR | O_CREAT : O_RDONLY;
-        map_ = ::open( filename.c_str(), flags, S_IRUSR | S_IWUSR );
-        if( map_ < 0 )
+        _map = ::open( filename.c_str(), flags, S_IRUSR | S_IWUSR );
+        if( _map < 0 )
         {
             LBINFO << "Can't open " << filename << ": " << sysError <<std::endl;
-            return;
+            return nullptr;
         }
 
-        if( size_ > 0 && ::ftruncate( map_, size_ ) != 0 )
+        return _mapFile( size_ );
+    }
+
+    void* _mapFile( const size_t size_ )
+    {
+        if( size_ > 0 && ::ftruncate( _map, size_ ) != 0 )
         {
-            LBINFO << "Can't resize " << filename << ": " << sysError
-                   << std::endl;
-            return;
+            LBINFO << "Can't resize file: " << sysError << std::endl;
+            return nullptr;
         }
 
         // retrieve file information
         struct stat status;
-        ::fstat( map_, &status );
+        ::fstat( _map, &status );
 
         // create memory mapped file
         size = status.st_size;
-        LBASSERTINFO( size_ == 0 || size_ == size, size << " ? " << size_ );
+        LBASSERTINFO( size_ == 0 || size_ == size, size_ << " != " << size );
 
         const int mapFlags = size_ ? PROT_READ | PROT_WRITE : PROT_READ;
-        ptr = ::mmap( 0, size, mapFlags, MAP_SHARED, map_, 0 );
+        ptr = ::mmap( 0, size, mapFlags, MAP_SHARED, _map, 0 );
         if( ptr == MAP_FAILED )
         {
-            ::close( map_ );
+            ::close( _map );
             ptr = nullptr;
             size = 0;
-            map_ = 0;
+            _map = 0;
         }
+        return ptr;
     }
 
-    void unmap_()
+    void _unmap()
     {
         ::munmap( ptr, size );
-        ::close( map_ );
-        map_ = 0;
+        ::close( _map );
+        _map = 0;
     }
 #endif
 };
@@ -216,6 +248,11 @@ void* MemoryMap::recreate( const std::string& filename, const size_t size )
 {
     unmap();
     return create( filename, size );
+}
+
+void* MemoryMap::resize( size_t size )
+{
+    return impl_->resize( size );
 }
 
 void MemoryMap::unmap()

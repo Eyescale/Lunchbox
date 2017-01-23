@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013-2016 Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2017 Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -28,12 +28,18 @@ BOOST_AUTO_TEST_CASE( write_read )
 {
     lunchbox::MemoryMap map( "foo.mmap", MAP_SIZE );
     BOOST_CHECK_EQUAL( map.getSize(), MAP_SIZE );
-    BOOST_CHECK( map.recreate(  "foo.mmap", MAP_SIZE ));
 
+    BOOST_CHECK( map.recreate(  "foo.mmap", MAP_SIZE / 2 ));
     uint8_t* writePtr = map.getAddress< uint8_t >();
     BOOST_CHECK( writePtr );
 
-    for( size_t i=0; i < MAP_SIZE; i += STRIDE )
+    size_t i = 0;
+    for( ; i < MAP_SIZE / 2; i += STRIDE )
+        writePtr[i] = uint8_t( i );
+
+    BOOST_CHECK( map.resize( MAP_SIZE ));
+    writePtr = map.getAddress< uint8_t >();
+    for( ; i < MAP_SIZE; i += STRIDE )
         writePtr[i] = uint8_t( i );
     map.unmap();
 
@@ -48,7 +54,7 @@ BOOST_AUTO_TEST_CASE( write_read )
     BOOST_CHECK( readPtr );
     BOOST_CHECK_EQUAL( map.getSize(), MAP_SIZE );
 
-    for( size_t i=0; i < MAP_SIZE; i += STRIDE )
+    for( i = 0; i < MAP_SIZE; i += STRIDE )
         BOOST_CHECK_EQUAL( readPtr[i], uint8_t( i ));
 }
 

@@ -2,6 +2,8 @@
 
 # git master
 
+* [298](https://github.com/Eyescale/Lunchbox/pull/298):
+  Add MemoryMap::resize()
 * [294](https://github.com/Eyescale/Lunchbox/pull/294):
   * Add description to plugins
   * Add lunchbox::string::prepend()

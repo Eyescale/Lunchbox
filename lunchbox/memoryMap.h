@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2009-2016, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2009-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -106,11 +106,23 @@ public:
      *
      * @param filename The filename of the file to map.
      * @param size this size of the file.
-     * @return the pointer to the mapped file, or 0 upon error.
+     * @return the pointer to the mapped file, or nullptr upon error.
      * @version 1.0
      */
     LUNCHBOX_API void* recreate( const std::string& filename,
-                                 const size_t size );
+                                 size_t size );
+
+    /**
+     * Resize a writeable memory map.
+     *
+     * The mapping address may change. An existing read-only map will result in
+     * an error. On error, the existing map is unmapped.
+     *
+     * @param size the new size.
+     * @return the new mapping address, or nullptr on error.
+     * @version 1.16
+     */
+    LUNCHBOX_API void* resize( size_t size );
 
     /** Unmap the file. @version 1.0 */
     LUNCHBOX_API void unmap();

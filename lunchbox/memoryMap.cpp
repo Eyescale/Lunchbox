@@ -98,7 +98,7 @@ private:
         if( _file == INVALID_HANDLE_VALUE )
         {
             LBWARN << "Can't open " << filename << ": " << sysError <<std::endl;
-            return;
+            return nullptr;
         }
         return _mapFile( size_ );
     }
@@ -132,7 +132,7 @@ private:
         DWORD highSize;
         const DWORD lowSize = ::GetFileSize( _file, &highSize );
         size = lowSize | ( static_cast< uint64_t >( highSize ) << 32 );
-        LBASSERT( size == 0 || size_ == size );
+        return ptr;
     }
 
     void _unmap()

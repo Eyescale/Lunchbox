@@ -22,7 +22,7 @@
 #ifndef LUNCHBOX_PLUGINREGISTERER_H
 #define LUNCHBOX_PLUGINREGISTERER_H
 
-#include <lunchbox/plugin.h> // used inline
+#include <lunchbox/plugin.h>        // used inline
 #include <lunchbox/pluginFactory.h> // used inline
 
 #include <boost/functional/factory.hpp>
@@ -62,18 +62,17 @@ namespace lunchbox
  * @version 1.11.0
  */
 
-template< typename T > class PluginRegisterer
+template <typename T>
+class PluginRegisterer
 {
 public:
     /** Construct and register the Plugin< T > class. @version 1.11.0 */
     PluginRegisterer()
     {
-        PluginFactory< typename T::InterfaceT >::getInstance().register_(
-            {
-                std::bind( boost::factory< T* >(), std::placeholders::_1 ),
-                std::bind( &T::handles, std::placeholders::_1 ),
-                std::bind( &T::getDescription )
-            });
+        PluginFactory<typename T::InterfaceT>::getInstance().register_(
+            {std::bind(boost::factory<T*>(), std::placeholders::_1),
+             std::bind(&T::handles, std::placeholders::_1),
+             std::bind(&T::getDescription)});
     }
 };
 }

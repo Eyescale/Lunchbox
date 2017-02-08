@@ -22,26 +22,27 @@
 #ifndef LUNCHBOX_PLUGIN_H
 #define LUNCHBOX_PLUGIN_H
 
-#include <servus/uint128_t.h> // member
 #include <functional>
+#include <servus/uint128_t.h> // member
 
 namespace lunchbox
 {
 /** @internal */
-template< class T > class Plugin
+template <class T>
+class Plugin
 {
 public:
     /** The constructor method for Plugin objects.  @version 1.11.0 */
-    using Constructor = std::function< T*( const typename T::InitDataT& )>;
+    using Constructor = std::function<T*(const typename T::InitDataT&)>;
 
     /**
      * The method to check if the plugin can handle a given initData.
      * @version 1.11.0
      */
-    using HandlesFunc = std::function< bool( const typename T::InitDataT& )>;
+    using HandlesFunc = std::function<bool(const typename T::InitDataT&)>;
 
     /** The method to get the plugin's description. @version 1.16 */
-    using DescriptionFunc = std::function< std::string( )>;
+    using DescriptionFunc = std::function<std::string()>;
 
     /**
      * Construct a new Plugin.
@@ -51,31 +52,36 @@ public:
      * @param description method to get the the help for the plugin
      * @version 1.11.0
      */
-    Plugin( const Constructor& constructor, const HandlesFunc& handles_,
-            const DescriptionFunc& description )
-        : _constructor( constructor ), _handles( handles_ ),
-          _description( description ) {}
+    Plugin(const Constructor& constructor, const HandlesFunc& handles_,
+           const DescriptionFunc& description)
+        : _constructor(constructor)
+        , _handles(handles_)
+        , _description(description)
+    {
+    }
 
     /** Construct a new plugin instance. @version 1.14 */
-    T* construct( const typename T::InitDataT& data ) const
-        { return _constructor( data ); }
+    T* construct(const typename T::InitDataT& data) const
+    {
+        return _constructor(data);
+    }
 
     /** @return true if this plugin handles the given request. @version 1.14 */
-    bool handles( const typename T::InitDataT& data ) const
-        { return _handles( data ); }
+    bool handles(const typename T::InitDataT& data) const
+    {
+        return _handles(data);
+    }
 
     /** @return the plugin's description. @version 1.17 */
     std::string getDescription() const { return _description(); }
-
 private:
     Constructor _constructor;
     HandlesFunc _handles;
     DescriptionFunc _description;
 
-    bool operator == ( const Plugin& rhs ) const = delete;
-    bool operator != ( const Plugin& rhs ) const = delete;
+    bool operator==(const Plugin& rhs) const = delete;
+    bool operator!=(const Plugin& rhs) const = delete;
 };
-
 }
 
 #endif

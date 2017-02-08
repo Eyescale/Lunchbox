@@ -18,9 +18,9 @@
 #ifndef LUNCHBOX_SCOPEDMUTEX_H
 #define LUNCHBOX_SCOPEDMUTEX_H
 
-#include <lunchbox/condition.h>   // used in inline method
-#include <lunchbox/lock.h>        // used in inline method
-#include <lunchbox/lockable.h>    // used in inline method
+#include <lunchbox/condition.h> // used in inline method
+#include <lunchbox/lock.h>      // used in inline method
+#include <lunchbox/lockable.h>  // used in inline method
 #include <lunchbox/types.h>
 
 namespace lunchbox
@@ -29,21 +29,27 @@ class WriteOp;
 class ReadOp;
 
 /** @cond IGNORE */
-template< class L, class T > struct ScopedMutexLocker {};
-template< class L > struct ScopedMutexLocker< L, WriteOp >
+template <class L, class T>
+struct ScopedMutexLocker
 {
-    static inline void set( L& lock ) { lock.set(); }
-    static inline void unset( L& lock ) { lock.unset(); }
 };
-template< class L > struct ScopedMutexLocker< L, ReadOp >
+template <class L>
+struct ScopedMutexLocker<L, WriteOp>
 {
-    static inline void set( L& lock ) { lock.setRead(); }
-    static inline void unset( L& lock ) { lock.unsetRead(); }
+    static inline void set(L& lock) { lock.set(); }
+    static inline void unset(L& lock) { lock.unset(); }
 };
-template<> struct ScopedMutexLocker< Condition, WriteOp >
+template <class L>
+struct ScopedMutexLocker<L, ReadOp>
 {
-    static inline void set( Condition& cond ) { cond.lock(); }
-    static inline void unset( Condition& cond ) { cond.unlock(); }
+    static inline void set(L& lock) { lock.setRead(); }
+    static inline void unset(L& lock) { lock.unsetRead(); }
+};
+template <>
+struct ScopedMutexLocker<Condition, WriteOp>
+{
+    static inline void set(Condition& cond) { cond.lock(); }
+    static inline void unset(Condition& cond) { cond.unlock(); }
 };
 /** @endcond */
 
@@ -55,10 +61,10 @@ template<> struct ScopedMutexLocker< Condition, WriteOp >
  * nothing if a 0 pointer for the lock is passed.
  * @deprecated Use boost::scoped_lock
  */
-template< class L = Lock, class T = WriteOp >
+template <class L = Lock, class T = WriteOp>
 class ScopedMutex
 {
-    typedef ScopedMutexLocker< L, T > LockTraits;
+    typedef ScopedMutexLocker<L, T> LockTraits;
 
 public:
     /**
@@ -70,21 +76,31 @@ public:
      * @param lock the mutex to set and unset, or 0.
      * @version 1.0
      */
-    explicit ScopedMutex( L* lock ) : _lock( lock )
-        { if( lock ) LockTraits::set( *lock ); }
+    explicit ScopedMutex(L* lock)
+        : _lock(lock)
+    {
+        if (lock)
+            LockTraits::set(*lock);
+    }
 
     /** Construct a new scoped mutex and set the given lock. @version 1.0 */
-    explicit ScopedMutex( L& lock ) : _lock( &lock )
-        { LockTraits::set( lock ); }
+    explicit ScopedMutex(L& lock)
+        : _lock(&lock)
+    {
+        LockTraits::set(lock);
+    }
 
     /** Move lock from rhs to new mutex. @version 1.5 */
-    ScopedMutex( const ScopedMutex& rhs ) : _lock( rhs._lock )
-    { const_cast< ScopedMutex& >( rhs )._lock = 0; }
+    ScopedMutex(const ScopedMutex& rhs)
+        : _lock(rhs._lock)
+    {
+        const_cast<ScopedMutex&>(rhs)._lock = 0;
+    }
 
     /** Move lock from rhs to this mutex. @version 1.5 */
-    ScopedMutex& operator = ( ScopedMutex& rhs )
+    ScopedMutex& operator=(ScopedMutex& rhs)
     {
-        if( this != &rhs )
+        if (this != &rhs)
         {
             _lock = rhs._lock;
             rhs._lock = 0;
@@ -96,14 +112,22 @@ public:
      * Construct a new scoped mutex for the given Lockable data structure.
      * @version 1.0
      */
-    template< typename LB > explicit ScopedMutex( const LB& lockable )
-    : _lock( &lockable.lock ) { LockTraits::set( lockable.lock ); }
+    template <typename LB>
+    explicit ScopedMutex(const LB& lockable)
+        : _lock(&lockable.lock)
+    {
+        LockTraits::set(lockable.lock);
+    }
 
     /** Destruct the scoped mutex and unset the mutex. @version 1.0 */
     ~ScopedMutex() { leave(); }
-
     /** Leave and unlock the mutex immediately. @version 1.0 */
-    void leave() { if( _lock ) LockTraits::unset( *_lock ); _lock = 0; }
+    void leave()
+    {
+        if (_lock)
+            LockTraits::unset(*_lock);
+        _lock = 0;
+    }
 
 private:
     ScopedMutex();
@@ -111,18 +135,18 @@ private:
 };
 
 /** A scoped mutex for a fast uncontended read operation. @version 1.1.2 */
-typedef ScopedMutex< SpinLock, ReadOp > ScopedFastRead;
+typedef ScopedMutex<SpinLock, ReadOp> ScopedFastRead;
 
 /** A scoped mutex for a fast uncontended write operation. @version 1.1.2 */
-typedef ScopedMutex< SpinLock, WriteOp > ScopedFastWrite;
+typedef ScopedMutex<SpinLock, WriteOp> ScopedFastWrite;
 
 /** A scoped mutex for a read operation. @version 1.1.5 */
-typedef ScopedMutex< Lock, ReadOp > ScopedRead;
+typedef ScopedMutex<Lock, ReadOp> ScopedRead;
 
 /** A scoped mutex for a write operation. @version 1.1.5 */
-typedef ScopedMutex< Lock, WriteOp > ScopedWrite;
+typedef ScopedMutex<Lock, WriteOp> ScopedWrite;
 
 /** A scoped mutex for a write operation on a condition. @version 1.3.6 */
-typedef ScopedMutex< Condition, WriteOp > ScopedCondition;
+typedef ScopedMutex<Condition, WriteOp> ScopedCondition;
 }
-#endif //LUNCHBOX_SCOPEDMUTEX_H
+#endif // LUNCHBOX_SCOPEDMUTEX_H

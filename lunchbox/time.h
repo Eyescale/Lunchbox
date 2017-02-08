@@ -22,13 +22,13 @@ namespace lunchbox
 {
 #ifndef _MSC_VER
 /** @internal @return a millisecond time as a unix timespec. */
-inline timespec convertToTimespec( const uint32_t milliSeconds )
+inline timespec convertToTimespec(const uint32_t milliSeconds)
 {
-    timespec ts = { 0, 0 };
-    ts.tv_sec  = static_cast<int>( milliSeconds / 1000 );
-    ts.tv_nsec = ( milliSeconds - ts.tv_sec * 1000 ) * 1000000;
+    timespec ts = {0, 0};
+    ts.tv_sec = static_cast<int>(milliSeconds / 1000);
+    ts.tv_nsec = (milliSeconds - ts.tv_sec * 1000) * 1000000;
     return ts;
 }
 #endif
 }
-#endif  // LUNCHBOX_TIME_H
+#endif // LUNCHBOX_TIME_H

@@ -15,11 +15,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <lunchbox/test.h>
+#include <iostream>
 #include <lunchbox/clock.h>
 #include <lunchbox/sleep.h>
+#include <lunchbox/test.h>
 #include <lunchbox/thread.h>
-#include <iostream>
 
 #define NTHREADS 256
 
@@ -33,19 +33,21 @@ public:
 class InitThread : public LoadThread
 {
 public:
-    InitThread() : initLeft( false ) {}
+    InitThread()
+        : initLeft(false)
+    {
+    }
     virtual ~InitThread() {}
-
     virtual bool init()
     {
-        lunchbox::sleep( 10 );
+        lunchbox::sleep(10);
         initLeft = true;
         return true;
     }
 
     virtual void run()
     {
-        TEST( !join( ));
+        TEST(!join());
         exit();
     }
 
@@ -56,53 +58,48 @@ class FailThread : public InitThread
 {
 public:
     virtual ~FailThread() {}
-
-    virtual bool init()
-    {
-        return false;
-    }
+    virtual bool init() { return false; }
 };
 
-int main( int, char** )
+int main(int, char**)
 {
     LoadThread loadThreads[NTHREADS];
     lunchbox::Clock clock;
 
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( loadThreads[i].start( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(loadThreads[i].start());
 
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( loadThreads[i].join( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(loadThreads[i].join());
     const float time = clock.getTimef();
-    std::cout << "Spawned and joined " << NTHREADS << " loadThreads in "
-              << time << " ms (" << (NTHREADS/time) << " threads/ms)"
-              << std::endl;
+    std::cout << "Spawned and joined " << NTHREADS << " loadThreads in " << time
+              << " ms (" << (NTHREADS / time) << " threads/ms)" << std::endl;
 
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( loadThreads[i].isStopped( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(loadThreads[i].isStopped());
 
     InitThread initThreads[NTHREADS];
 
     clock.reset();
-    for( size_t i=0; i<NTHREADS; ++i )
+    for (size_t i = 0; i < NTHREADS; ++i)
     {
-        TEST( initThreads[i].start( ));
-        TEST( initThreads[i].initLeft == true );
+        TEST(initThreads[i].start());
+        TEST(initThreads[i].initLeft == true);
     }
 #ifdef _MSC_VER // resolution of Sleep is not high enough...
-    TESTINFO( clock.getTimef() + 1.f > NTHREADS * 10, clock.getTimef( ));
+    TESTINFO(clock.getTimef() + 1.f > NTHREADS * 10, clock.getTimef());
 #else
-    TESTINFO( clock.getTimef() > NTHREADS * 10, clock.getTimef( ));
+    TESTINFO(clock.getTimef() > NTHREADS * 10, clock.getTimef());
 #endif
 
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( initThreads[i].join( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(initThreads[i].join());
 
     FailThread failThread;
-    TEST( !failThread.start( ));
-    TEST( !failThread.isRunning( ));
-    TEST( failThread.isStopped( ));
-    TEST( !failThread.join( ));
+    TEST(!failThread.start());
+    TEST(!failThread.isRunning());
+    TEST(failThread.isStopped());
+    TEST(!failThread.join());
 
     return EXIT_SUCCESS;
 }

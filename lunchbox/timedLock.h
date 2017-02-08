@@ -18,13 +18,16 @@
 #ifndef LUNCHBOX_TIMEDLOCK_H
 #define LUNCHBOX_TIMEDLOCK_H
 
+#include <boost/noncopyable.hpp>
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
-#include <boost/noncopyable.hpp>
 
 namespace lunchbox
 {
-namespace detail { class TimedLock; }
+namespace detail
+{
+class TimedLock;
+}
 
 /**
  * A mutex with timeout capabilities.
@@ -49,7 +52,7 @@ public:
      * @return true if the lock was acquired, false if not.
      * @version 1.0
      */
-    LUNCHBOX_API bool set( const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
+    LUNCHBOX_API bool set(const uint32_t timeout = LB_TIMEOUT_INDEFINITE);
 
     /** Release the lock. @version 1.0 */
     LUNCHBOX_API void unset();
@@ -74,4 +77,4 @@ private:
     detail::TimedLock* const _impl;
 };
 }
-#endif //LUNCHBOX_TIMEDLOCK_H
+#endif // LUNCHBOX_TIMEDLOCK_H

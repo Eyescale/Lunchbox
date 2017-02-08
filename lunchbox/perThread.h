@@ -19,18 +19,28 @@
 #define LUNCHBOX_PERTHREAD_H
 
 #include <lunchbox/compiler.h> // deprecated macro
-#include <lunchbox/debug.h> // LBASSERTINFO
-#include <lunchbox/tls.h> // member
+#include <lunchbox/debug.h>    // LBASSERTINFO
+#include <lunchbox/tls.h>      // member
 
 namespace lunchbox
 {
-namespace detail { class PerThread; }
+namespace detail
+{
+class PerThread;
+}
 
 /** Default PerThread destructor deleting the object. @version 1.1.2 */
-template< class T > void perThreadDelete( T* object ) { delete object; }
+template <class T>
+void perThreadDelete(T* object)
+{
+    delete object;
+}
 
 /** Empty PerThread destructor. @version 1.1.2 */
-template< class T > void perThreadNoDelete( T* ) {}
+template <class T>
+void perThreadNoDelete(T*)
+{
+}
 
 /**
  * Implements thread-specific storage for C++ objects.
@@ -43,7 +53,7 @@ template< class T > void perThreadNoDelete( T* ) {}
  *
  * Example: @include tests/perThread.cpp
  */
-template< class T, void (*D)( T* ) = &perThreadDelete< T > >
+template <class T, void (*D)(T*) = &perThreadDelete<T> >
 class PerThread
 {
 public:
@@ -53,9 +63,9 @@ public:
     ~PerThread();
 
     /** Assign an object to the thread-local storage. @version 1.0 */
-    PerThread<T, D>& operator = ( const T* data );
+    PerThread<T, D>& operator=(const T* data);
     /** Assign an object from another thread-local storage. @version 1.0 */
-    PerThread<T, D>& operator = ( const PerThread<T, D>& rhs );
+    PerThread<T, D>& operator=(const PerThread<T, D>& rhs);
 
     /** @return the held object pointer. @version 1.0 */
     T* get();
@@ -68,35 +78,37 @@ public:
 
     /** @return the held object reference. @version 1.0 */
     T& operator*()
-        { LBASSERTINFO( get(), className( this )); return *get(); }
+    {
+        LBASSERTINFO(get(), className(this));
+        return *get();
+    }
     /** @return the held object reference. @version 1.0 */
     const T& operator*() const
-        { LBASSERTINFO( get(), className( this )); return *get(); }
+    {
+        LBASSERTINFO(get(), className(this));
+        return *get();
+    }
 
     /**
      * @return true if the thread-local variables hold the same object.
      * @version 1.0
      */
-    bool operator == ( const PerThread& rhs ) const
-        { return ( get() == rhs.get( )); }
-
+    bool operator==(const PerThread& rhs) const { return (get() == rhs.get()); }
     /**
      * @return true if the thread-local variable holds the same object.
      * @version 1.0
      */
-    bool operator == ( const T* rhs ) const { return ( get()==rhs ); }
-
+    bool operator==(const T* rhs) const { return (get() == rhs); }
     /**
      * @return true if the thread-local variable holds another object.
      * @version 1.0
      */
-    bool operator != ( const T* rhs ) const { return ( get()!=rhs ); }
-
+    bool operator!=(const T* rhs) const { return (get() != rhs); }
     /**
      * @return true if the thread-local storage holds a 0 pointer.
      * @version 1.0
      */
-    bool operator ! () const;
+    bool operator!() const;
 
     /**
      * @return true if the thread-local storage holds a non-0 pointer.
@@ -106,13 +118,12 @@ public:
 
 private:
     TLS tls_;
-    PerThread( const PerThread& ) = delete;
-    PerThread( PerThread&& ) = delete;
-    PerThread& operator = ( const PerThread&& ) = delete;
+    PerThread(const PerThread&) = delete;
+    PerThread(PerThread&&) = delete;
+    PerThread& operator=(const PerThread&&) = delete;
 };
-
 }
 
 #include "perThread.ipp" // template implementation
 
-#endif //LUNCHBOX_PERTHREAD_H
+#endif // LUNCHBOX_PERTHREAD_H

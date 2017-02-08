@@ -18,8 +18,8 @@
 #ifndef LUNCHBOX_FUTUREFUNCTION_H
 #define LUNCHBOX_FUTUREFUNCTION_H
 
-#include <lunchbox/future.h> // base class
 #include <boost/function/function0.hpp>
+#include <lunchbox/future.h> // base class
 
 namespace lunchbox
 {
@@ -27,19 +27,22 @@ namespace lunchbox
  * A Future implementation using a boost::function for fulfilment.
  * Not thread safe.
  */
-template< class T > class FutureFunction : public FutureImpl< T >
+template <class T>
+class FutureFunction : public FutureImpl<T>
 {
 public:
-    typedef boost::function< T() > Func; //!< The fulfilling function
+    typedef boost::function<T()> Func; //!< The fulfilling function
 
-    explicit FutureFunction( const Func& func ) : func_( func ) {}
+    explicit FutureFunction(const Func& func)
+        : func_(func)
+    {
+    }
 
 protected:
-    virtual ~FutureFunction() { wait( 0 ); }
-
-    T wait( const uint32_t ) final
+    virtual ~FutureFunction() { wait(0); }
+    T wait(const uint32_t) final
     {
-        if( !func_.empty( ))
+        if (!func_.empty())
         {
             result_ = func_();
             func_.clear();
@@ -48,10 +51,8 @@ protected:
     }
 
     bool isReady() const final { return func_.empty(); }
-
     Func func_;
     T result_;
 };
-
 }
-#endif //LUNCHBOX_FUTURE_H
+#endif // LUNCHBOX_FUTURE_H

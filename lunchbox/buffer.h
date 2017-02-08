@@ -19,12 +19,12 @@
 #ifndef LUNCHBOX_BUFFER_H
 #define LUNCHBOX_BUFFER_H
 
-#include <lunchbox/debug.h>       // LBASSERT macro
-#include <lunchbox/os.h>          // setZero used inline
+#include <lunchbox/debug.h> // LBASSERT macro
+#include <lunchbox/os.h>    // setZero used inline
 #include <lunchbox/types.h>
 
-#include <cstdlib>      // for malloc
-#include <cstring>      // for memcpy
+#include <cstdlib> // for malloc
+#include <cstring> // for memcpy
 
 namespace lunchbox
 {
@@ -40,27 +40,44 @@ namespace lunchbox
  * implementation works like a pool, that is, data is only released when the
  * buffer is deleted or clear() is called.
  */
-template< class T > class Buffer
+template <class T>
+class Buffer
 {
 public:
     /** Construct a new, empty buffer. @version 1.0 */
-    Buffer() : _data( nullptr ), _size( 0 ), _maxSize( 0 ) {}
+    Buffer()
+        : _data(nullptr)
+        , _size(0)
+        , _maxSize(0)
+    {
+    }
 
     /** Construct a new buffer of the given size. @version 1.0 */
-    explicit Buffer( const uint64_t size ) : _data(0), _size(0), _maxSize(0)
-        { reset( size ); }
+    explicit Buffer(const uint64_t size)
+        : _data(0)
+        , _size(0)
+        , _maxSize(0)
+    {
+        reset(size);
+    }
 
     /** Copy constructor, copies data to new Buffer. @version 1.14 */
-    Buffer( const Buffer& from );
+    Buffer(const Buffer& from);
 
     /** Move constructor, transfers data to new Buffer. @version 1.14 */
-    Buffer( Buffer&& from );
+    Buffer(Buffer&& from);
 
     /** Destruct the buffer. @version 1.0 */
     ~Buffer() { clear(); }
-
     /** Flush the buffer, deleting all data. @version 1.0 */
-    void clear() { if( _data ) free( _data ); _data=0; _size=0; _maxSize=0; }
+    void clear()
+    {
+        if (_data)
+            free(_data);
+        _data = 0;
+        _size = 0;
+        _maxSize = 0;
+    }
 
     /**
      * Tighten the allocated memory to the size of the buffer.
@@ -70,18 +87,24 @@ public:
     T* pack();
 
     /** Assignment operator, copies data from Buffer. @version 1.0 */
-    Buffer& operator = ( const Buffer& from );
+    Buffer& operator=(const Buffer& from);
 
     /** Move operator, transfers ownership. @version 1.14 */
-    Buffer& operator = ( Buffer&& from );
+    Buffer& operator=(Buffer&& from);
 
     /** Direct access to the element at the given index. @version 1.0 */
-    T& operator [] ( const uint64_t position )
-        { LBASSERT( _size > position ); return _data[ position ]; }
+    T& operator[](const uint64_t position)
+    {
+        LBASSERT(_size > position);
+        return _data[position];
+    }
 
     /** Direct const access to an element. @version 1.0 */
-    const T& operator [] ( const uint64_t position ) const
-        { LBASSERT( _size > position ); return _data[ position ]; }
+    const T& operator[](const uint64_t position) const
+    {
+        LBASSERT(_size > position);
+        return _data[position];
+    }
 
     /**
      * Ensure that the buffer contains at least newSize elements.
@@ -90,7 +113,7 @@ public:
      * @return the new pointer to the first element.
      * @version 1.0
      */
-    T* resize( const uint64_t newSize );
+    T* resize(const uint64_t newSize);
 
     /**
      * Ensure that the buffer contains at least newSize elements.
@@ -98,7 +121,7 @@ public:
      * Existing data is retained. The size is increased, if necessary.
      * @version 1.0
      */
-    void grow( const uint64_t newSize );
+    void grow(const uint64_t newSize);
 
     /**
      * Ensure that the buffer contains at least newSize elements.
@@ -107,7 +130,7 @@ public:
      * @return the new pointer to the first element.
      * @version 1.0
      */
-    T* reserve( const uint64_t newSize );
+    T* reserve(const uint64_t newSize);
 
     /**
      * Set the buffer size and malloc enough memory.
@@ -116,32 +139,28 @@ public:
      * @return the new pointer to the first element.
      * @version 1.0
      */
-    T* reset( const uint64_t newSize );
+    T* reset(const uint64_t newSize);
 
     /** Set the buffer content to 0. @version 1.9.1 */
-    void setZero() { ::lunchbox::setZero( _data, _size ); }
-
+    void setZero() { ::lunchbox::setZero(_data, _size); }
     /** Append elements to the buffer, increasing the size. @version 1.0 */
-    void append( const T* data, const uint64_t size );
+    void append(const T* data, const uint64_t size);
 
     /** Append one element to the buffer. @version 1.0 */
-    void append( const T& element );
+    void append(const T& element);
 
     /** Replace the existing data with new data. @version 1.0 */
-    void replace( const void* data, const uint64_t size );
+    void replace(const void* data, const uint64_t size);
 
     /** Replace the existing data. @version 1.5.1 */
-    void replace( const Buffer& from ) { replace( from._data, from._size ); }
-
+    void replace(const Buffer& from) { replace(from._data, from._size); }
     /** Swap the buffer contents with another Buffer. @version 1.0 */
-    void swap( Buffer& buffer );
+    void swap(Buffer& buffer);
 
     /** @return a pointer to the data. @version 1.0 */
     T* getData() { return _data; }
-
     /** @return a const pointer to the data. @version 1.0 */
     const T* getData() const { return _data; }
-
     /**
      * Set the size of the buffer without changing its allocation.
      *
@@ -150,20 +169,16 @@ public:
      * does not change the size.
      * @version 1.0
      */
-    bool setSize( const uint64_t size );
+    bool setSize(const uint64_t size);
 
     /** @return the current number of elements. @version 1.0 */
     uint64_t getSize() const { return _size; }
-
     /** @return the current storage size. @version 1.5.1 */
-    uint64_t getNumBytes() const { return _size * sizeof( T ); }
-
+    uint64_t getNumBytes() const { return _size * sizeof(T); }
     /** @return true if the buffer is empty, false if not. @version 1.0 */
-    bool isEmpty() const { return (_size==0); }
-
+    bool isEmpty() const { return (_size == 0); }
     /** @return the maximum size of the buffer. @version 1.0 */
     uint64_t getMaxSize() const { return _maxSize; }
-
 private:
     /** A pointer to the data. */
     T* _data;
@@ -178,4 +193,4 @@ private:
 
 #include "buffer.ipp" // template implementation
 
-#endif //LUNCHBOX_BUFFER_H
+#endif // LUNCHBOX_BUFFER_H

@@ -18,15 +18,15 @@
 #ifndef LUNCHBOX_ALGORITHM_H
 #define LUNCHBOX_ALGORITHM_H
 
-#include <lunchbox/compiler.h>
 #include <algorithm>
+#include <lunchbox/compiler.h>
 #include <vector>
 
 #ifndef __MINGW32__ // MinGW does not provide the header
-#  ifdef LB_GCC_4_4_OR_LATER
-#    include <parallel/algorithm>
-#    define LB_USE_STD_PARALLEL
-#  endif
+#ifdef LB_GCC_4_4_OR_LATER
+#include <parallel/algorithm>
+#define LB_USE_STD_PARALLEL
+#endif
 #endif
 
 namespace lunchbox
@@ -39,32 +39,44 @@ using std::sort;
 #endif
 
 /** Find the element in the given vector. @version 1.0 */
-template< typename T > typename std::vector< T >::iterator
-find( std::vector< T >& container, const T& element )
-    { return std::find( container.begin(), container.end(), element ); }
-
-/** Find the element in the given vector. @version 1.0 */
-template< typename T > typename std::vector< T >::const_iterator
-find( const std::vector< T >& container, const T& element )
-    { return std::find( container.begin(), container.end(), element ); }
-
-/** Find the element matching the predicate @version 1.0 */
-template< typename T, typename P > typename std::vector< T >::iterator
-find_if( std::vector< T >& container, const P& predicate )
-    { return std::find_if( container.begin(), container.end(), predicate );}
-
-/** Find the element matching the predicate @version 1.0 */
-template< typename T, typename P > typename std::vector<T>::const_iterator
-find_if( std::vector< const T >& container, const P& predicate )
-    { return std::find_if( container.begin(), container.end(), predicate );}
-
-/** Uniquely sort and eliminate duplicates in a container. @version 1.9.1 */
-template< typename C > void usort( C& c )
+template <typename T>
+typename std::vector<T>::iterator find(std::vector<T>& container,
+                                       const T& element)
 {
-    std::sort( c.begin(), c.end( ));
-    c.erase( std::unique( c.begin(), c.end( )), c.end( ));
+    return std::find(container.begin(), container.end(), element);
 }
 
+/** Find the element in the given vector. @version 1.0 */
+template <typename T>
+typename std::vector<T>::const_iterator find(const std::vector<T>& container,
+                                             const T& element)
+{
+    return std::find(container.begin(), container.end(), element);
+}
+
+/** Find the element matching the predicate @version 1.0 */
+template <typename T, typename P>
+typename std::vector<T>::iterator find_if(std::vector<T>& container,
+                                          const P& predicate)
+{
+    return std::find_if(container.begin(), container.end(), predicate);
+}
+
+/** Find the element matching the predicate @version 1.0 */
+template <typename T, typename P>
+typename std::vector<T>::const_iterator find_if(std::vector<const T>& container,
+                                                const P& predicate)
+{
+    return std::find_if(container.begin(), container.end(), predicate);
+}
+
+/** Uniquely sort and eliminate duplicates in a container. @version 1.9.1 */
+template <typename C>
+void usort(C& c)
+{
+    std::sort(c.begin(), c.end());
+    c.erase(std::unique(c.begin(), c.end()), c.end());
+}
 }
 
 #endif // LUNCHBOX_ALGORITHM_H

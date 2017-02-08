@@ -27,7 +27,6 @@
 
 namespace lunchbox
 {
-
 /**
  * Thread pool for tasks execution.
  * A task is a callable object taking no arguments and returing a value or void.
@@ -42,7 +41,8 @@ public:
      * Construct a ThreadPool
      * @param size number of threads in the thread pool
      */
-    inline ThreadPool( const size_t size = std::max( 1u, std::thread::hardware_concurrency()));
+    inline ThreadPool(
+        const size_t size = std::max(1u, std::thread::hardware_concurrency()));
     /**
      * Destroy this thread pool.
      * Will block until all the tasks are done.
@@ -58,15 +58,15 @@ public:
      * Post a new task in the thread pool.
      * @return a std::future containing the future result.
      */
-    template < typename F >
-    inline  std::future< typename std::result_of< F() >::type > post( F&& f );
+    template <typename F>
+    inline std::future<typename std::result_of<F()>::type> post(F&& f);
 
     /**
      * Post a detached task in the thread pool.
      * The result of this task is not monitored.
      */
-    template < typename F >
-    inline void postDetached( F&& f );
+    template <typename F>
+    inline void postDetached(F&& f);
 
     /**
      * @return true if there are pending tasks to be executed.
@@ -77,8 +77,8 @@ private:
     inline void joinAll();
     inline void work();
 
-    std::vector< std::thread > _threads;
-    std::queue< std::function< void() > > _tasks;
+    std::vector<std::thread> _threads;
+    std::queue<std::function<void()> > _tasks;
     mutable std::mutex _tasksMutex;
     std::condition_variable _waitCondition;
     bool _stop;

@@ -39,19 +39,22 @@ namespace lunchbox
  *
  * Example: @include tests/lfQueue.cpp
  */
-template< typename T > class LFQueue : public boost::noncopyable
+template <typename T>
+class LFQueue : public boost::noncopyable
 {
 public:
     /** Construct a new queue. @version 1.0 */
-    explicit LFQueue( const int32_t size )
-        : _data( size + 1 ), _readPos( 0 ), _writePos( 0 ) {}
+    explicit LFQueue(const int32_t size)
+        : _data(size + 1)
+        , _readPos(0)
+        , _writePos(0)
+    {
+    }
 
     /** Destruct this queue. @version 1.0 */
     ~LFQueue() {}
-
     /** @return true if the queue is empty, false otherwise. @version 1.0 */
     bool isEmpty() const { return _readPos == _writePos; }
-
     /** Reset (empty) the queue. @version 1.0 */
     void clear();
 
@@ -61,7 +64,7 @@ public:
      * This method is not thread-safe. The queue has to be empty.
      * @version 1.0
      */
-    void resize( const int32_t size );
+    void resize(const int32_t size);
 
     /**
      * Retrieve and pop the front element from the queue.
@@ -71,7 +74,7 @@ public:
      *         is empty.
      * @version 1.0
      */
-    bool pop( T& result );
+    bool pop(T& result);
 
     /**
      * Retrieve the front element from the queue.
@@ -81,7 +84,7 @@ public:
      *         is empty.
      * @version 1.0
      */
-    bool getFront( T& result );
+    bool getFront(T& result);
 
     /**
      * Push a new element to the back of the queue.
@@ -90,21 +93,20 @@ public:
      * @return true if the element was placed, false if the queue is full
      * @version 1.0
      */
-    bool push( const T& element );
+    bool push(const T& element);
 
     /**
      * @return the maximum number of elements held by the queue.
      * @version 1.0
      */
     size_t getCapacity() const { return _data.size() - 1; }
-
 private:
-    std::vector< T > _data;
+    std::vector<T> _data;
     a_int32_t _readPos;
     a_int32_t _writePos;
 
-    LB_TS_VAR( _reader );
-    LB_TS_VAR( _writer );
+    LB_TS_VAR(_reader);
+    LB_TS_VAR(_writer);
 };
 }
 

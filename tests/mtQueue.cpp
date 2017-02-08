@@ -16,62 +16,61 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <pthread.h>
-#include <lunchbox/test.h>
+#include <iostream>
 #include <lunchbox/clock.h>
 #include <lunchbox/compiler.h>
 #include <lunchbox/mtQueue.h>
+#include <lunchbox/test.h>
 #include <lunchbox/thread.h>
-#include <iostream>
+#include <pthread.h>
 
 #define NOPS 100000
 #define NTHREADS 4
 
-lunchbox::MTQueue< uint64_t > queue;
-lunchbox::MTQueue< uint64_t >::Group group( NTHREADS + 1 );
+lunchbox::MTQueue<uint64_t> queue;
+lunchbox::MTQueue<uint64_t>::Group group(NTHREADS + 1);
 
 #ifdef LB_GCC_4_6_OR_LATER
-#  pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 class ReadThread : public lunchbox::Thread
 {
 public:
     virtual ~ReadThread() {}
     virtual void run() { run_(); }
-
     static void run_()
     {
         uint64_t item = 0xffffffffffffffffull;
 #ifndef NDEBUG
         uint64_t last = 0;
 #endif
-        while( queue.popBarrier( item, group ))
+        while (queue.popBarrier(item, group))
         {
 #ifndef NDEBUG
-            TESTINFO( last < item, last << " >= " << item );
+            TESTINFO(last < item, last << " >= " << item);
             last = item;
 #endif
         }
-        TEST( queue.isEmpty( ));
+        TEST(queue.isEmpty());
     }
 };
 
-int main( int, char** )
+int main(int, char**)
 {
-    ReadThread reader[ NTHREADS ];
-    for( size_t i = 0; i < NTHREADS; ++i )
-        TEST( reader[i].start( ));
+    ReadThread reader[NTHREADS];
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(reader[i].start());
 
     lunchbox::Clock clock;
-    for( size_t i = 1 ; i < NOPS; ++i )
-        queue.push( i );
+    for (size_t i = 1; i < NOPS; ++i)
+        queue.push(i);
     const float time = clock.getTimef();
 
     ReadThread::run_();
 
-    for( size_t i = 0; i < NTHREADS; ++i )
-        TEST( reader[i].join( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(reader[i].join());
 
-    std::cout << NOPS/time << " writes/ms" << std::endl;
+    std::cout << NOPS / time << " writes/ms" << std::endl;
     return EXIT_SUCCESS;
 }

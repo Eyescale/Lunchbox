@@ -20,10 +20,10 @@
 
 #include <lunchbox/buffer.h>
 
-BOOST_AUTO_TEST_CASE( copy_construct_from_empty_buffer )
+BOOST_AUTO_TEST_CASE(copy_construct_from_empty_buffer)
 {
     lunchbox::Bufferb empty;
-    lunchbox::Bufferb newBuffer( empty );
-    BOOST_CHECK_EQUAL( newBuffer.getData(), empty.getData( ));
-    BOOST_CHECK_EQUAL( newBuffer.getSize(), empty.getSize( ));
+    lunchbox::Bufferb newBuffer(empty);
+    BOOST_CHECK_EQUAL(newBuffer.getData(), empty.getData());
+    BOOST_CHECK_EQUAL(newBuffer.getSize(), empty.getSize());
 }

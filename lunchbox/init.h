@@ -36,7 +36,7 @@ namespace lunchbox
  * @return true if the library was successfully initialised, false otherwise
  * @version 1.0
  */
-LUNCHBOX_API bool init( const int argc, char** argv );
+LUNCHBOX_API bool init(const int argc, char** argv);
 
 /**
  * De-initialize the Lunchbox base classes.

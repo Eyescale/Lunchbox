@@ -28,13 +28,12 @@ class Launcher
 {
 public:
     /** Execute the given command in a new process. @version 1.0 */
-    LUNCHBOX_API static bool run( const std::string& command );
+    LUNCHBOX_API static bool run(const std::string& command);
 
 private:
-    Launcher(){}
-
+    Launcher() {}
 #ifndef _WIN32
-    static void _buildCommandLine( const std::string&, Strings& );
+    static void _buildCommandLine(const std::string&, Strings&);
 #endif
 };
 }

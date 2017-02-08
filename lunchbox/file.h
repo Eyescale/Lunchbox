@@ -26,7 +26,6 @@
 
 namespace lunchbox
 {
-
 /**
  * Retrieve a list of files in a directory matching a boost::regex pattern.
  *
@@ -34,18 +33,18 @@ namespace lunchbox
  * @version 1.0
  * @version 1.7.1 using boost::regex for matching
  */
-LUNCHBOX_API Strings searchDirectory( const std::string& directory,
-                                      const std::string& pattern );
+LUNCHBOX_API Strings searchDirectory(const std::string& directory,
+                                     const std::string& pattern);
 
 /**
  * @return the file name part of a path. @version 1.0
  */
-LUNCHBOX_API std::string getFilename( const std::string& filename );
+LUNCHBOX_API std::string getFilename(const std::string& filename);
 
 /**
  * @return the directory name part of a path. @version 1.0
  */
-LUNCHBOX_API std::string getDirname( const std::string& filename );
+LUNCHBOX_API std::string getDirname(const std::string& filename);
 
 /**
  * Get the absolute directory of the current executable.
@@ -58,7 +57,10 @@ LUNCHBOX_API std::string getDirname( const std::string& filename );
  */
 LUNCHBOX_API std::string getExecutableDir();
 /** @deprecated */
-inline std::string getExecutablePath() { return getExecutableDir(); }
+inline std::string getExecutablePath()
+{
+    return getExecutableDir();
+}
 
 /**
  * @return the absolute directory of the current working directory
@@ -82,7 +84,10 @@ LUNCHBOX_API std::string getWorkDir();
  * @version 1.12
  */
 LUNCHBOX_API std::string getRootDir();
-inline std::string getRootPath() { return getRootDir(); } //!< @deprecated
+inline std::string getRootPath()
+{
+    return getRootDir();
+} //!< @deprecated
 
 /**
  * @return the absolute path to the libraries of the current executable.
@@ -97,20 +102,20 @@ LUNCHBOX_API std::string getLibraryPath();
 LUNCHBOX_API Strings getLibraryPaths();
 
 /** Save binary to file. @return true on success, false otherwise. */
-LUNCHBOX_API bool saveBinary( const servus::Serializable& object,
-                              const std::string& filename );
+LUNCHBOX_API bool saveBinary(const servus::Serializable& object,
+                             const std::string& filename);
 
 /** Load from binary file. @return true on success, false otherwise. */
-LUNCHBOX_API bool loadBinary( servus::Serializable& object,
-                              const std::string& filename );
+LUNCHBOX_API bool loadBinary(servus::Serializable& object,
+                             const std::string& filename);
 
 /** Save ascii (JSON) to file. @return true on success, false otherwise. */
-LUNCHBOX_API bool saveAscii( const servus::Serializable& object,
-                             const std::string& filename );
+LUNCHBOX_API bool saveAscii(const servus::Serializable& object,
+                            const std::string& filename);
 
 /** Load from ascii (JSON) file. @return true on success, false otherwise.*/
-LUNCHBOX_API bool loadAscii( servus::Serializable& object,
-                             const std::string& filename );
+LUNCHBOX_API bool loadAscii(servus::Serializable& object,
+                            const std::string& filename);
 }
 
-#endif //LUNCHBOX_FILE_H
+#endif // LUNCHBOX_FILE_H

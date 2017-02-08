@@ -15,17 +15,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <lunchbox/test.h>
 #include <lunchbox/string.h>
+#include <lunchbox/test.h>
 
-int main( int, char** )
+int main(int, char**)
 {
-    TEST( lunchbox::string::prepend( "", "  " ) == "  " );
-    TEST( lunchbox::string::prepend( "foo", " " ) == " foo" );
-    TEST( lunchbox::string::prepend( "foo\nbar", " " ) == " foo\n bar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", " " ) == " \n foo\n bar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", "" ) == "\nfoo\nbar" );
-    TEST( lunchbox::string::prepend( "\nfoo\nbar", "deine mutter " ) ==
-                           "deine mutter \ndeine mutter foo\ndeine mutter bar" );
+    TEST(lunchbox::string::prepend("", "  ") == "  ");
+    TEST(lunchbox::string::prepend("foo", " ") == " foo");
+    TEST(lunchbox::string::prepend("foo\nbar", " ") == " foo\n bar");
+    TEST(lunchbox::string::prepend("\nfoo\nbar", " ") == " \n foo\n bar");
+    TEST(lunchbox::string::prepend("\nfoo\nbar", "") == "\nfoo\nbar");
+    TEST(lunchbox::string::prepend("\nfoo\nbar", "deine mutter ") ==
+         "deine mutter \ndeine mutter foo\ndeine mutter bar");
     return EXIT_SUCCESS;
 }

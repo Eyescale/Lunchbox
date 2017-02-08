@@ -38,28 +38,30 @@
 
 namespace lunchbox
 {
-
 /** The logging levels. @version 1.0 */
 enum LogLevel
 {
-    LOG_ERROR = 1, //!< Output critical errors and warnings
-    LOG_WARN = LOG_ERROR,      //!< @deprecated
-    LOG_INFO,      //!< Output informational messages
-    LOG_DEBUG,     //!< Output debugging information
-    LOG_VERB,      //!< Be noisy
+    LOG_ERROR = 1,        //!< Output critical errors and warnings
+    LOG_WARN = LOG_ERROR, //!< @deprecated
+    LOG_INFO,             //!< Output informational messages
+    LOG_DEBUG,            //!< Output debugging information
+    LOG_VERB,             //!< Be noisy
     LOG_ALL
 };
 
 /** The logging topics. @version 1.0 */
 enum LogTopic
 {
-    LOG_EXCEPTION = 0x01,    //!< Log exception within LBTHROW
-    LOG_BUG       = 0x04,    //!< Log potential bugs
-    LOG_CUSTOM    = 0x10,    //!< Log topics for other namespaces start here
-    LOG_ANY       = 0xffffu  //!< Log all Lunchbox topics
+    LOG_EXCEPTION = 0x01, //!< Log exception within LBTHROW
+    LOG_BUG = 0x04,       //!< Log potential bugs
+    LOG_CUSTOM = 0x10,    //!< Log topics for other namespaces start here
+    LOG_ANY = 0xffffu     //!< Log all Lunchbox topics
 };
 
-namespace detail { class Log; }
+namespace detail
+{
+class Log;
+}
 
 /**
  * The logging class.
@@ -101,7 +103,7 @@ public:
     static LUNCHBOX_API Log& instance();
 
     /** The per-thread logger. */
-    static LUNCHBOX_API Log& instance( const char* file, const int line );
+    static LUNCHBOX_API Log& instance(const char* file, const int line);
 
     /** Exit the log instance for the current thread. */
     static LUNCHBOX_API void exit();
@@ -113,16 +115,16 @@ public:
     static std::string& getLogLevelString();
 
     /** @return the log level of a string representation. @version 1.3.2 */
-    static LUNCHBOX_API int getLogLevel( const char* level );
+    static LUNCHBOX_API int getLogLevel(const char* level);
 
     /** Change the output stream. @version 1.4*/
-    static LUNCHBOX_API void setOutput( std::ostream& stream );
+    static LUNCHBOX_API void setOutput(std::ostream& stream);
 
     /** Change the output stream to the given file. @version 1.5.1 */
-    static LUNCHBOX_API bool setOutput( const std::string& file );
+    static LUNCHBOX_API bool setOutput(const std::string& file);
 
     /** Get the current output stream. @internal */
-    static LUNCHBOX_API std::ostream& getOutput ();
+    static LUNCHBOX_API std::ostream& getOutput();
 
     /**
      * Set the reference clock.
@@ -132,25 +134,26 @@ public:
      *
      * @param clock the reference clock.
      */
-    static LUNCHBOX_API void setClock( Clock* clock );
+    static LUNCHBOX_API void setClock(Clock* clock);
 
     static const Clock& getClock(); //!< @internal
 
-    LUNCHBOX_API void setThreadName( const std::string& name ); //!< @internal
-    LUNCHBOX_API const std::string& getThreadName() const; //!< @internal
+    LUNCHBOX_API void setThreadName(const std::string& name); //!< @internal
+    LUNCHBOX_API const std::string& getThreadName() const;    //!< @internal
 
 private:
     detail::Log* const impl_;
 
     Log();
 
-    template< class T > friend void perThreadDelete( T* );
+    template <class T>
+    friend void perThreadDelete(T*);
     virtual ~Log();
 
-    Log( const Log& );
-    Log& operator = ( const Log& );
+    Log(const Log&);
+    Log& operator=(const Log&);
 
-    void setLogInfo( const char* file, const int line );
+    void setLogInfo(const char* file, const int line);
 };
 
 /**
@@ -158,67 +161,76 @@ private:
  * lines to be intended by four characters.
  * @version 1.0
  */
-LUNCHBOX_API std::ostream& indent( std::ostream& os );
+LUNCHBOX_API std::ostream& indent(std::ostream& os);
 /** Decrease the indentation level of the Log stream. @version 1.0 */
-LUNCHBOX_API std::ostream& exdent( std::ostream& os );
+LUNCHBOX_API std::ostream& exdent(std::ostream& os);
 
 /** Disable flushing of the Log stream. @version 1.0 */
-LUNCHBOX_API std::ostream& disableFlush( std::ostream& os );
+LUNCHBOX_API std::ostream& disableFlush(std::ostream& os);
 /** Re-enable flushing of the Log stream. @version 1.0 */
-LUNCHBOX_API std::ostream& enableFlush( std::ostream& os );
+LUNCHBOX_API std::ostream& enableFlush(std::ostream& os);
 /** Flush the Log stream regardless of the auto-flush state. @version 1.0 */
-LUNCHBOX_API std::ostream& forceFlush( std::ostream& os );
+LUNCHBOX_API std::ostream& forceFlush(std::ostream& os);
 
 /** Disable printing of the Log header for subsequent lines. @version 1.0 */
-LUNCHBOX_API std::ostream& disableHeader( std::ostream& os );
+LUNCHBOX_API std::ostream& disableHeader(std::ostream& os);
 /** Re-enable printing of the Log header. @version 1.0 */
-LUNCHBOX_API std::ostream& enableHeader( std::ostream& os );
+LUNCHBOX_API std::ostream& enableHeader(std::ostream& os);
 
 /** Indent, disable flush and header for block printing. @version 1.9.1 */
-inline std::ostream& startBlock( std::ostream& os )
-    { return os << indent << disableFlush << disableHeader; }
+inline std::ostream& startBlock(std::ostream& os)
+{
+    return os << indent << disableFlush << disableHeader;
+}
 /** Exdent, denable flush and header to stop block print. @version 1.9.1 */
-inline std::ostream& stopBlock( std::ostream& os )
-    { return os << enableHeader << enableFlush << exdent; }
-
+inline std::ostream& stopBlock(std::ostream& os)
+{
+    return os << enableHeader << enableFlush << exdent;
+}
 }
 
 /** Output an error message to the per-thread Log stream. @version 1.0 */
-#define LBERROR (lunchbox::Log::level >= lunchbox::LOG_ERROR) &&    \
-    lunchbox::Log::instance( __FILE__, __LINE__ )
+#define LBERROR                                      \
+    (lunchbox::Log::level >= lunchbox::LOG_ERROR) && \
+        lunchbox::Log::instance(__FILE__, __LINE__)
 /** @deprecated */
 #define LBWARN LBERROR
 /** Output an informational message to the per-thread Log. @version 1.0 */
-#define LBINFO  (lunchbox::Log::level >= lunchbox::LOG_INFO)  &&    \
-    lunchbox::Log::instance( __FILE__, __LINE__ )
+#define LBINFO                                      \
+    (lunchbox::Log::level >= lunchbox::LOG_INFO) && \
+        lunchbox::Log::instance(__FILE__, __LINE__)
 /** Output a warning message to the per-thread Log stream. @version 1.0 */
-#define LBDEBUG  (lunchbox::Log::level >= lunchbox::LOG_DEBUG)  &&    \
-    lunchbox::Log::instance( __FILE__, __LINE__ )
+#define LBDEBUG                                      \
+    (lunchbox::Log::level >= lunchbox::LOG_DEBUG) && \
+        lunchbox::Log::instance(__FILE__, __LINE__)
 
 #ifdef NDEBUG
-#  define LBVERB if( false )                                    \
-        lunchbox::Log::instance( __FILE__, __LINE__ )
+#define LBVERB \
+    if (false) \
+    lunchbox::Log::instance(__FILE__, __LINE__)
 #else
 /** Output a verbatim message to the per-thread Log stream. @version 1.0 */
-#  define LBVERB (lunchbox::Log::level >= lunchbox::LOG_VERB)  &&    \
-    lunchbox::Log::instance( __FILE__, __LINE__ )
+#define LBVERB                                      \
+    (lunchbox::Log::level >= lunchbox::LOG_VERB) && \
+        lunchbox::Log::instance(__FILE__, __LINE__)
 #endif
 
 /**
  * Output a message pertaining to a topic to the per-thread Log stream.
  * @version 1.0
  */
-#define LBLOG(topic)  (lunchbox::Log::topics & (topic))  &&  \
-    lunchbox::Log::instance( __FILE__, __LINE__ )
+#define LBLOG(topic)                     \
+    (lunchbox::Log::topics & (topic)) && \
+        lunchbox::Log::instance(__FILE__, __LINE__)
 
 /**
  * Log a std::exception if topic LOG_EXCEPTION is set before throwing exception.
  * @version 1.7.1
  */
-#define LBTHROW(exc)                                                \
-    {                                                               \
-        LBDEBUG << exc.what() << std::endl;                         \
-        throw exc;                                                  \
+#define LBTHROW(exc)                        \
+    {                                       \
+        LBDEBUG << exc.what() << std::endl; \
+        throw exc;                          \
     }
 
-#endif //LUNCHBOX_LOG_H
+#endif // LUNCHBOX_LOG_H

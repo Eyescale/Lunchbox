@@ -21,13 +21,13 @@
 #ifndef LUNCHBOX_LFVECTOR_H
 #define LUNCHBOX_LFVECTOR_H
 
+#include <algorithm>               // used inline
 #include <lunchbox/bitOperation.h> // used inline
-#include <lunchbox/debug.h> // used inline
-#include <lunchbox/os.h> // bzero()
-#include <lunchbox/scopedMutex.h> // member
+#include <lunchbox/debug.h>        // used inline
+#include <lunchbox/os.h>           // bzero()
+#include <lunchbox/scopedMutex.h>  // member
 #include <lunchbox/serializable.h>
 #include <lunchbox/spinLock.h> // member
-#include <algorithm> // used inline
 #include <stdexcept>
 
 namespace lunchbox
@@ -50,7 +50,8 @@ namespace lunchbox
  *
  * Example: @include tests/perf/lfVector.cpp
  */
-template< class T, int32_t nSlots = 32 > class LFVector
+template <class T, int32_t nSlots = 32>
+class LFVector
 {
 public:
     typedef ScopedFastWrite ScopedWrite;
@@ -60,38 +61,36 @@ public:
     LFVector();
 
     /** @version 1.3.2 */
-    explicit LFVector( const size_t n );
+    explicit LFVector(const size_t n);
 
     /** @version 1.3.2 */
-    LFVector( const size_t n, const T& t );
+    LFVector(const size_t n, const T& t);
 
     /** @version 1.3.2 */
-    explicit LFVector( const LFVector& from );
+    explicit LFVector(const LFVector& from);
 
     /** @version 1.3.2 */
-    template< int32_t fromSlots >
-    explicit LFVector( const LFVector< T, fromSlots >& from );
+    template <int32_t fromSlots>
+    explicit LFVector(const LFVector<T, fromSlots>& from);
 
     /** @version 1.3.2 */
     ~LFVector();
 
     /** @version 1.3.2 */
-    LFVector& operator = ( const LFVector& from );
+    LFVector& operator=(const LFVector& from);
 
     /** @version 1.3.2 */
-    bool operator == ( const LFVector& rhs ) const;
+    bool operator==(const LFVector& rhs) const;
 
     /** @version 1.3.2 */
-    bool operator != ( const LFVector& rhs ) const { return !(*this == rhs); }
-
+    bool operator!=(const LFVector& rhs) const { return !(*this == rhs); }
     bool empty() const { return size_ == 0; } //!< @version 1.3.2
-    size_t size() const { return size_; } //!< @version 1.3.2
+    size_t size() const { return size_; }     //!< @version 1.3.2
+    /** @version 1.3.2 */
+    T& operator[](size_t i);
 
     /** @version 1.3.2 */
-    T& operator[]( size_t i );
-
-    /** @version 1.3.2 */
-    const T& operator[]( size_t i ) const;
+    const T& operator[](size_t i) const;
 
     /** @version 1.3.2 */
     T& front();
@@ -100,15 +99,15 @@ public:
     T& back();
 
     /** Iterator over the vector elements. @version 1.3.2 */
-    typedef LFVectorIterator< LFVector< T, nSlots >, T > iterator;
+    typedef LFVectorIterator<LFVector<T, nSlots>, T> iterator;
 
     /** Iterator over the const vector elements. @version 1.3.2 */
     typedef LFVectorIterator<const LFVector<T, nSlots>, const T> const_iterator;
 
     const_iterator begin() const; //!< @version 1.3.2
-    const_iterator end() const; //!< @version 1.3.2
-    iterator begin(); //!< @version 1.3.2
-    iterator end(); //!< @version 1.3.2
+    const_iterator end() const;   //!< @version 1.3.2
+    iterator begin();             //!< @version 1.3.2
+    iterator end();               //!< @version 1.3.2
 
     /**
      * Resize the vector to at least the given size.
@@ -127,7 +126,7 @@ public:
      * @throw std::runtime_error if the vector is full
      * @version 1.3.2
      */
-    void expand( const size_t newSize, const T& item = T( ));
+    void expand(const size_t newSize, const T& item = T());
 
     /**
      * Add an element to the vector.
@@ -142,7 +141,7 @@ public:
      * @throw std::runtime_error if the vector is full
      * @version 1.3.2
      */
-    void push_back( const T& item, bool lock = true );
+    void push_back(const T& item, bool lock = true);
 
     /**
      * Remove the last element (STL version).
@@ -167,7 +166,7 @@ public:
      * @return true if the vector was not empty, false if no item was popped.
      * @version 1.3.2
      */
-    bool pop_back( T& element );
+    bool pop_back(T& element);
 
     /**
      * Remove an element.
@@ -182,7 +181,7 @@ public:
      *         end() if nothing was erased.
      * @version 1.3.2
      */
-    iterator erase( typename LFVector< T, nSlots >::iterator pos );
+    iterator erase(typename LFVector<T, nSlots>::iterator pos);
 
     /**
      * Remove the last occurence of the given element.
@@ -196,7 +195,7 @@ public:
      *         end() if nothing was erased.
      * @version 1.3.2
      */
-    iterator erase( const T& element );
+    iterator erase(const T& element);
 
     /**
      * Resize the vector.
@@ -208,7 +207,7 @@ public:
      * @throw std::runtime_error if the vector is full
      * @version 1.7.2
      */
-    void resize( const size_t size, const T& value = T( ));
+    void resize(const size_t size, const T& value = T());
 
     /**
      * Clear the vector and all storage.
@@ -226,22 +225,21 @@ public:
 private:
     LB_SERIALIZABLE
 
-    T* slots_[ nSlots ];
+    T* slots_[nSlots];
     size_t size_;
     mutable SpinLock lock_;
 
-    template< int32_t fromSlots >
-    void assign_( const LFVector< T, fromSlots >& from );
+    template <int32_t fromSlots>
+    void assign_(const LFVector<T, fromSlots>& from);
 
-    void push_back_unlocked_( const T& item );
+    void push_back_unlocked_(const T& item);
 
     void trim_();
 };
 
 /** Output the vector and  up to 256 items to the ostream. @version 0.1 */
-template< class T >
-std::ostream& operator << ( std::ostream& os, const LFVector< T >& v );
-
+template <class T>
+std::ostream& operator<<(std::ostream& os, const LFVector<T>& v);
 }
 
 #include "lfVector.ipp" // template implementation

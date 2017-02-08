@@ -22,19 +22,18 @@
 #ifndef LUNCHBOX_PLUGINFACTORY_H
 #define LUNCHBOX_PLUGINFACTORY_H
 
-#include <lunchbox/types.h>
 #include <lunchbox/algorithm.h> // used inline
-#include <lunchbox/debug.h> // LBTHROW
-#include <lunchbox/dso.h> // used inline
-#include <lunchbox/file.h> // searchDirectory() used inline
-#include <lunchbox/plugin.h> // member
+#include <lunchbox/debug.h>     // LBTHROW
+#include <lunchbox/dso.h>       // used inline
+#include <lunchbox/file.h>      // searchDirectory() used inline
+#include <lunchbox/plugin.h>    // member
+#include <lunchbox/types.h>
 #include <servus/uri.h> // Default template type
 
 #include <unordered_map>
 
 namespace lunchbox
 {
-
 /**
  * Factory for Plugin classes.
  *
@@ -53,17 +52,18 @@ namespace lunchbox
  *
  * @version 1.11.0
  */
-template< class T > class PluginFactory
+template <class T>
+class PluginFactory
 {
 public:
-    typedef Plugin< T > PluginT;
-    typedef std::vector< PluginT > Plugins;
+    typedef Plugin<T> PluginT;
+    typedef std::vector<PluginT> Plugins;
 
     /** Get the single class instance. @version 1.11 */
     static PluginFactory& getInstance();
 
     /** @return true if any plugin handles the given parameter. @version 1.16 */
-    bool handles( const typename T::InitDataT& initData );
+    bool handles(const typename T::InitDataT& initData);
 
     /**
      * Create a plugin instance.
@@ -73,13 +73,13 @@ public:
      * @throws std::runtime_error if no plugin can handle the initData.
      * @version 1.11.0
      */
-    T* create( const typename T::InitDataT& initData );
+    T* create(const typename T::InitDataT& initData);
 
     /** Register a plugin type. @version 1.11 */
-    void register_( const PluginT& plugin );
+    void register_(const PluginT& plugin);
 
     /** Deregister a plugin type. @version 1.11 */
-    bool deregister( const PluginT& plugin );
+    bool deregister(const PluginT& plugin);
 
     /** Unregister all plugin types. @version 1.11 */
     void deregisterAll();
@@ -105,28 +105,27 @@ public:
      * @version 1.11.0
      * @sa getLibraryPath()
      */
-    void load( const int version, const std::string& path,
-               const std::string& pattern );
-    void load( const int version, const Strings& paths,
-               const std::string& pattern );
+    void load(const int version, const std::string& path,
+              const std::string& pattern);
+    void load(const int version, const Strings& paths,
+              const std::string& pattern);
     //@}
 
 private:
     PluginFactory() {}
-    PluginFactory( const PluginFactory& ) = delete;
-    PluginFactory( PluginFactory&& ) = delete;
-    PluginFactory& operator = ( const PluginFactory& ) = delete;
-    PluginFactory& operator = ( PluginFactory&& ) = delete;
+    PluginFactory(const PluginFactory&) = delete;
+    PluginFactory(PluginFactory&&) = delete;
+    PluginFactory& operator=(const PluginFactory&) = delete;
+    PluginFactory& operator=(PluginFactory&&) = delete;
 
-#pragma warning( disable: 4251 )
+#pragma warning(disable : 4251)
     Plugins _plugins;
-    typedef std::unordered_map< DSO*, PluginT > PluginMap;
+    typedef std::unordered_map<DSO*, PluginT> PluginMap;
     PluginMap _libraries;
-#pragma warning( default: 4251 )
+#pragma warning(default : 4251)
 
     ~PluginFactory();
 };
-
 }
 
 #include "pluginFactory.ipp" // template implementation

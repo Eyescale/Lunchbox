@@ -19,69 +19,71 @@
 
 #include <lunchbox/threadPool.h>
 
-BOOST_AUTO_TEST_CASE( size )
+BOOST_AUTO_TEST_CASE(size)
 {
     lunchbox::ThreadPool threadPool{3};
-    BOOST_CHECK( threadPool.getSize() == 3 );
+    BOOST_CHECK(threadPool.getSize() == 3);
 }
 
-BOOST_AUTO_TEST_CASE( queue )
+BOOST_AUTO_TEST_CASE(queue)
 {
     lunchbox::ThreadPool threadPool{1};
-    for( int i = 0; i < 10; ++i )
+    for (int i = 0; i < 10; ++i)
     {
-        threadPool.postDetached( [] {
-            std::this_thread::sleep_for( std::chrono::milliseconds( 50 + rand() % 50 ));
-        } );
+        threadPool.postDetached([] {
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(50 + rand() % 50));
+        });
     }
 
     // append a dummy task
-    threadPool.post( [](){}).get();
-    BOOST_CHECK( !threadPool.hasPendingJobs() );
+    threadPool.post([]() {}).get();
+    BOOST_CHECK(!threadPool.hasPendingJobs());
 }
 
-BOOST_AUTO_TEST_CASE( dispatcher )
+BOOST_AUTO_TEST_CASE(dispatcher)
 {
-    std::vector< std::future< int > > futures;
+    std::vector<std::future<int> > futures;
     lunchbox::ThreadPool threadPool{4};
 
-    for( int i = 0; i < 10; ++i )
+    for (int i = 0; i < 10; ++i)
     {
-        futures.push_back( threadPool.post( [] {
-            std::this_thread::sleep_for( std::chrono::milliseconds( 50 + rand() % 50 ));
+        futures.push_back(threadPool.post([] {
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(50 + rand() % 50));
             return 42;
         }));
     }
 
-    BOOST_CHECK( threadPool.hasPendingJobs() );
+    BOOST_CHECK(threadPool.hasPendingJobs());
 
-    for( auto& future : futures )
+    for (auto& future : futures)
     {
-        BOOST_CHECK( future.get() == 42 );
+        BOOST_CHECK(future.get() == 42);
     }
 }
 
 int task()
 {
-    std::this_thread::sleep_for( std::chrono::milliseconds( 50 + rand() % 50 ));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50 + rand() % 50));
     return 42;
 }
 
-BOOST_AUTO_TEST_CASE( join )
+BOOST_AUTO_TEST_CASE(join)
 {
-    std::vector< std::future< int > > futures;
+    std::vector<std::future<int> > futures;
 
     {
         lunchbox::ThreadPool threadPool{4};
-        for( int i = 0; i < 100; ++i )
+        for (int i = 0; i < 100; ++i)
         {
-            futures.push_back( threadPool.post( task ));
+            futures.push_back(threadPool.post(task));
         }
     } // blocks until all tasks are done
 
-    for( const std::future< int >& future : futures )
+    for (const std::future<int>& future : futures)
     {
-        BOOST_CHECK( future.wait_for( std::chrono::milliseconds( 0 )) ==
-                     std::future_status::ready );
+        BOOST_CHECK(future.wait_for(std::chrono::milliseconds(0)) ==
+                    std::future_status::ready);
     }
 }

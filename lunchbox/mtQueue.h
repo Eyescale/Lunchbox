@@ -40,7 +40,8 @@ namespace lunchbox
  *
  * Example: @include tests/mtQueue.cpp
  */
-template< typename T, size_t S = ULONG_MAX > class MTQueue
+template <typename T, size_t S = ULONG_MAX>
+class MTQueue
 // S = std::numeric_limits< size_t >::max() does not work:
 //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=6424
 {
@@ -49,29 +50,28 @@ public:
     typedef T value_type;
 
     /** Construct a new queue. @version 1.0 */
-    explicit MTQueue( const size_t maxSize = S ) : _maxSize( maxSize ) {}
+    explicit MTQueue(const size_t maxSize = S)
+        : _maxSize(maxSize)
+    {
+    }
 
     /** Construct a copy of a queue. @version 1.0 */
-    MTQueue( const MTQueue< T, S >& from )  { *this = from; }
-
+    MTQueue(const MTQueue<T, S>& from) { *this = from; }
     /** Destruct this Queue. @version 1.0 */
     ~MTQueue() {}
-
     /** Assign the values of another queue. @version 1.0 */
-    MTQueue< T, S >& operator = ( const MTQueue< T, S >& from );
+    MTQueue<T, S>& operator=(const MTQueue<T, S>& from);
 
     /**
      * Retrieve the requested element from the queue, may block.
      * @version 1.3.2
      */
-    const T& operator[]( const size_t index ) const;
+    const T& operator[](const size_t index) const;
 
     /** @return true if the queue is empty, false otherwise. @version 1.0 */
     bool isEmpty() const { return _queue.empty(); }
-
     /** @return the number of items currently in the queue. @version 1.0 */
     size_t getSize() const { return _queue.size(); }
-
     /**
      * Set the new maximum size of the queue.
      *
@@ -80,18 +80,17 @@ public:
      *
      * @version 1.3.2
      */
-    void setMaxSize( const size_t maxSize );
+    void setMaxSize(const size_t maxSize);
 
     /** @return the current maximum size of the queue. @version 1.3.2 */
     size_t getMaxSize() const { return _maxSize; }
-
     /**
      * Wait for the size to be at least the number of given elements.
      *
      * @return the current size when the condition was fulfilled.
      * @version 1.0
      */
-    size_t waitSize( const size_t minSize ) const;
+    size_t waitSize(const size_t minSize) const;
 
     /** Reset (empty) the queue. @version 1.0 */
     void clear();
@@ -110,7 +109,7 @@ public:
      * @return true if an element was popped
      * @version 1.1
      */
-    bool timedPop( const unsigned timeout, T& element );
+    bool timedPop(const unsigned timeout, T& element);
 
     /**
      * Retrieve a number of items from the front of the queue.
@@ -130,9 +129,9 @@ public:
      *         containing between minimum and maximum elements.
      * @version 1.7.0
      */
-    std::vector< T > timedPopRange( const unsigned timeout,
-                                    const size_t minimum = 1,
-                                    const size_t maximum = S );
+    std::vector<T> timedPopRange(const unsigned timeout,
+                                 const size_t minimum = 1,
+                                 const size_t maximum = S);
 
     /**
      * Retrieve and pop the front element from the queue if it is not empty.
@@ -142,7 +141,7 @@ public:
      *         is empty.
      * @version 1.0
      */
-    bool tryPop( T& result );
+    bool tryPop(T& result);
 
     /**
      * Try to retrieve a number of items from the front of the queue.
@@ -155,7 +154,7 @@ public:
      *         is empty.
      * @version 1.1.6
      */
-    void tryPop( const size_t num, std::vector< T >& result );
+    void tryPop(const size_t num, std::vector<T>& result);
 
     /**
      * Retrieve the front element, or abort if the barrier is reached
@@ -170,7 +169,7 @@ public:
      *         was reached.
      * @version 1.7.1
      */
-    bool popBarrier( T& result, Group& barrier );
+    bool popBarrier(T& result, Group& barrier);
 
     /**
      * @param result the front value or unmodified.
@@ -178,7 +177,7 @@ public:
      *         is empty.
      * @version 1.0
      */
-    bool getFront( T& result ) const;
+    bool getFront(T& result) const;
 
     /**
      * @param result the last value or unmodified.
@@ -186,28 +185,28 @@ public:
      *         is empty.
      * @version 1.0
      */
-    bool getBack( T& result ) const;
+    bool getBack(T& result) const;
 
     /** Push a new element to the back of the queue. @version 1.0 */
-    void push( const T& element );
+    void push(const T& element);
 
     /** Push a vector of elements to the back of the queue. @version 1.0 */
-    void push( const std::vector< T >& elements );
+    void push(const std::vector<T>& elements);
 
     /** Push a new element to the front of the queue. @version 1.0 */
-    void pushFront( const T& element );
+    void pushFront(const T& element);
 
     /** Push a vector of elements to the front of the queue. @version 1.0 */
-    void pushFront( const std::vector< T >& elements );
+    void pushFront(const std::vector<T>& elements);
 
     /** @name STL compatibility. @version 1.7.1 */
     //@{
-    void push_back( const T& element ) { push( element ); }
+    void push_back(const T& element) { push(element); }
     bool empty() const { return isEmpty(); }
     //@}
 
 private:
-    std::deque< T > _queue;
+    std::deque<T> _queue;
     mutable Condition _cond;
     size_t _maxSize;
 };
@@ -215,4 +214,4 @@ private:
 
 #include "mtQueue.ipp" // template implementation
 
-#endif //LUNCHBOX_MTQUEUE_H
+#endif // LUNCHBOX_MTQUEUE_H

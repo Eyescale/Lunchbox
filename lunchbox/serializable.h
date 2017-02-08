@@ -28,11 +28,11 @@
 
 /** Makes a class to be serializable using boost.serialization. */
 #define LB_SERIALIZABLE                                       \
-  friend class boost::serialization::access;                  \
-  template< class Archive >                                   \
-  void save( Archive& ar, const unsigned int version ) const; \
-  template< class Archive >                                   \
-  void load( Archive& ar, const unsigned int version );       \
-  BOOST_SERIALIZATION_SPLIT_MEMBER()
+    friend class boost::serialization::access;                \
+    template <class Archive>                                  \
+    void save(Archive& ar, const unsigned int version) const; \
+    template <class Archive>                                  \
+    void load(Archive& ar, const unsigned int version);       \
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 #endif // LUNCHBOX_SERIALIZABLE_H

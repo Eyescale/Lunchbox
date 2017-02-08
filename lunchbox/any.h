@@ -22,40 +22,36 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-
 #ifndef LUNCHBOX_ANY_H
 #define LUNCHBOX_ANY_H
 
 #include <lunchbox/api.h>
 #include <lunchbox/debug.h>
 
-#include <boost/type_traits/remove_reference.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 
 // Don't reorder below!
-#include <boost/serialization/singleton.hpp>
-#include <boost/serialization/extended_type_info.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/type_info_implementation.hpp>
+#include <boost/serialization/extended_type_info.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/singleton.hpp>
+#include <boost/serialization/type_info_implementation.hpp>
 
 // See boost/python/type_id.hpp
 // TODO: add BOOST_TYPEID_COMPARE_BY_NAME to config.hpp
-# if (defined(__GNUC__) && __GNUC__ >= 3) \
- || defined(_AIX) \
- || (   defined(__sgi) && defined(__host_mips)) \
- || (defined(__hpux) && defined(__HP_aCC)) \
- || (defined(linux) && defined(__INTEL_COMPILER) && defined(__ICC))
-#  define BOOST_AUX_ANY_TYPE_ID_NAME
-#  include <cstring>
-# endif
-
+#if (defined(__GNUC__) && __GNUC__ >= 3) || defined(_AIX) || \
+    (defined(__sgi) && defined(__host_mips)) ||              \
+    (defined(__hpux) && defined(__HP_aCC)) ||                \
+    (defined(linux) && defined(__INTEL_COMPILER) && defined(__ICC))
+#define BOOST_AUX_ANY_TYPE_ID_NAME
+#include <cstring>
+#endif
 
 namespace lunchbox
 {
-
 /**
  * A class which can hold instances of any type.
  *
@@ -74,12 +70,14 @@ public:
 
     /** Construct a new Any with the given value. @version 1.5.0 */
     // cppcheck-suppress noExplicitConstructor
-    template< typename ValueType > Any( const ValueType& value )
-        : content( new holder< ValueType >( value ))
-    {}
+    template <typename ValueType>
+    Any(const ValueType& value)
+        : content(new holder<ValueType>(value))
+    {
+    }
 
     /** Copy-construct a new Any with copying content of other. @version 1.5.0*/
-    LUNCHBOX_API Any( const Any& other );
+    LUNCHBOX_API Any(const Any& other);
 
     /** Destruct this Any. @version 1.5.0 */
     LUNCHBOX_API ~Any();
@@ -88,18 +86,18 @@ public:
     /** @name Modifiers */
     //@{
     /** Exchange the content of this and rhs. @version 1.5.0 */
-    LUNCHBOX_API Any& swap( Any& rhs );
+    LUNCHBOX_API Any& swap(Any& rhs);
 
     /** Assign a new value to this Any. @version 1.5.0 */
-    template< typename ValueType >
-    Any& operator=( const ValueType& rhs )
+    template <typename ValueType>
+    Any& operator=(const ValueType& rhs)
     {
-        Any( rhs ).swap( *this );
+        Any(rhs).swap(*this);
         return *this;
     }
 
     /** Exchange the content of this and rhs. @version 1.5.0 */
-    LUNCHBOX_API Any& operator=( Any rhs );
+    LUNCHBOX_API Any& operator=(Any rhs);
     //@}
 
     /** @name Queries */
@@ -118,26 +116,26 @@ public:
      * @return true if this and rhs are empty or if their values are equal.
      * @version 1.5.0
      */
-    LUNCHBOX_API bool operator == ( const Any& rhs ) const;
+    LUNCHBOX_API bool operator==(const Any& rhs) const;
 
     /**
      * @return true if the value from this and rhs are not equal.
      * @version 1.5.0
      */
-    bool operator != ( const Any& rhs ) const { return !(*this == rhs); }
+    bool operator!=(const Any& rhs) const { return !(*this == rhs); }
     //@}
-
 
     /** @cond IGNORE */
     class placeholder
     {
     public:
         virtual ~placeholder() {}
+        virtual bool operator==(const placeholder& rhs) const = 0;
 
-        virtual bool operator == ( const placeholder& rhs ) const = 0;
-
-        bool operator != ( const placeholder& rhs ) const
-            { return !(*this == rhs); }
+        bool operator!=(const placeholder& rhs) const
+        {
+            return !(*this == rhs);
+        }
 
         virtual const std::type_info& type() const = 0;
 
@@ -145,13 +143,15 @@ public:
 
     private:
         friend class boost::serialization::access;
-        template< class Archive >
-        void serialize( Archive&, const unsigned int ) {}
+        template <class Archive>
+        void serialize(Archive&, const unsigned int)
+        {
+        }
     };
 
     BOOST_SERIALIZATION_ASSUME_ABSTRACT(placeholder)
 
-    template< typename ValueType >
+    template <typename ValueType>
     class holder : public placeholder
     {
     public:
@@ -160,67 +160,58 @@ public:
         {
         }
 
-        explicit holder( const ValueType& value )
-          : held( value )
+        explicit holder(const ValueType& value)
+            : held(value)
         {
         }
 
-        virtual const std::type_info& type() const
+        virtual const std::type_info& type() const { return typeid(ValueType); }
+        virtual bool operator==(const placeholder& rhs) const
         {
-            return typeid(ValueType);
+            return held == static_cast<const holder&>(rhs).held;
         }
 
-        virtual bool operator == ( const placeholder& rhs ) const
-        {
-            return held == static_cast< const holder& >( rhs ).held;
-        }
-
-        virtual placeholder* clone() const
-        {
-            return new holder( held );
-        }
-
+        virtual placeholder* clone() const { return new holder(held); }
         ValueType held;
 
     private:
-        holder& operator=( const holder& );
+        holder& operator=(const holder&);
 
         friend class boost::serialization::access;
-        template< class Archive >
-        void serialize( Archive & ar, const unsigned int /*version*/ )
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int /*version*/)
         {
             // serialize base class information
-            ar & boost::serialization::base_object< placeholder >( *this );
-            ar & held;
+            ar& boost::serialization::base_object<placeholder>(*this);
+            ar& held;
         }
     };
     /** @endcond */
 
 private:
-    template< typename ValueType >
-    friend ValueType* any_cast( Any* );
+    template <typename ValueType>
+    friend ValueType* any_cast(Any*);
 
-    template< typename ValueType >
-    friend ValueType* unsafe_any_cast( Any* );
+    template <typename ValueType>
+    friend ValueType* unsafe_any_cast(Any*);
 
     friend class boost::serialization::access;
-    template< class Archive >
-    void serialize( Archive & ar, const unsigned int /*version*/ )
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int /*version*/)
     {
-        ar & content;
+        ar& content;
     }
 
-    boost::shared_ptr< placeholder > content;
+    boost::shared_ptr<placeholder> content;
 };
 
 /** A specialization for exceptions thrown by an unsuccessful any_cast. */
 class bad_any_cast : public std::bad_cast
 {
 public:
-    LUNCHBOX_API bad_any_cast( const std::string& from, const std::string& to );
+    LUNCHBOX_API bad_any_cast(const std::string& from, const std::string& to);
 
     virtual const char* what() const throw() { return data; }
-
 private:
     char data[256];
 };
@@ -231,17 +222,19 @@ private:
  * @return the value stored in the given Any, 0 if types are not matching
  * @version 1.5.0
  */
-template< typename ValueType >
-ValueType* any_cast( Any* operand )
+template <typename ValueType>
+ValueType* any_cast(Any* operand)
 {
     return operand &&
 #ifdef BOOST_AUX_ANY_TYPE_ID_NAME
-        std::strcmp(operand->type().name(), typeid(ValueType).name()) == 0
+                   std::strcmp(operand->type().name(),
+                               typeid(ValueType).name()) == 0
 #else
-        operand->type() == typeid(ValueType)
+                   operand->type() == typeid(ValueType)
 #endif
-        ? &static_cast<Any::holder<ValueType> *>(operand->content.get())->held
-        : 0;
+               ? &static_cast<Any::holder<ValueType>*>(operand->content.get())
+                      ->held
+               : 0;
 }
 
 /**
@@ -250,10 +243,10 @@ ValueType* any_cast( Any* operand )
  * @return the value stored in the given Any, 0 if types are not matching
  * @version 1.5.0
  */
-template< typename ValueType >
-inline const ValueType* any_cast( const Any* operand )
+template <typename ValueType>
+inline const ValueType* any_cast(const Any* operand)
 {
-    return any_cast<ValueType>(const_cast<Any *>(operand));
+    return any_cast<ValueType>(const_cast<Any*>(operand));
 }
 
 /**
@@ -263,16 +256,16 @@ inline const ValueType* any_cast( const Any* operand )
  * @throw bad_any_cast if types are not matching
  * @version 1.5.0
  */
-template< typename ValueType >
-ValueType any_cast( Any& operand )
+template <typename ValueType>
+ValueType any_cast(Any& operand)
 {
-    typedef typename boost::remove_reference< ValueType >::type nonref;
+    typedef typename boost::remove_reference<ValueType>::type nonref;
 
-    nonref* result = any_cast< nonref >( &operand );
-    if( !result )
+    nonref* result = any_cast<nonref>(&operand);
+    if (!result)
         boost::throw_exception(
-                      bad_any_cast( demangleTypeID( operand.type().name( )),
-                                    demangleTypeID( typeid( nonref ).name( ))));
+            bad_any_cast(demangleTypeID(operand.type().name()),
+                         demangleTypeID(typeid(nonref).name())));
     return *result;
 }
 
@@ -283,12 +276,12 @@ ValueType any_cast( Any& operand )
  * @throw bad_any_cast if types are not matching
  * @version 1.5.0
  */
-template< typename ValueType >
-inline ValueType any_cast( const Any& operand )
+template <typename ValueType>
+inline ValueType any_cast(const Any& operand)
 {
-    typedef typename boost::remove_reference< ValueType >::type nonref;
+    typedef typename boost::remove_reference<ValueType>::type nonref;
 
-    return any_cast< const nonref& >( const_cast< Any& >( operand ));
+    return any_cast<const nonref&>(const_cast<Any&>(operand));
 }
 
 /**
@@ -297,11 +290,10 @@ inline ValueType any_cast( const Any& operand )
  * @return the value stored in the given Any
  * @version 1.5.0
  */
-template< typename ValueType >
-inline ValueType* unsafe_any_cast( Any* operand )
+template <typename ValueType>
+inline ValueType* unsafe_any_cast(Any* operand)
 {
-    return &static_cast< Any::holder< ValueType >* >(
-                             operand->content.get( ))->held;
+    return &static_cast<Any::holder<ValueType>*>(operand->content.get())->held;
 }
 
 /**
@@ -310,10 +302,10 @@ inline ValueType* unsafe_any_cast( Any* operand )
  * @return the value stored in the given Any
  * @version 1.5.0
  */
-template< typename ValueType >
-inline const ValueType* unsafe_any_cast( const Any* operand )
+template <typename ValueType>
+inline const ValueType* unsafe_any_cast(const Any* operand)
 {
-    return unsafe_any_cast< ValueType >( const_cast< Any* > ( operand ));
+    return unsafe_any_cast<ValueType>(const_cast<Any*>(operand));
 }
 
 /**
@@ -322,11 +314,11 @@ inline const ValueType* unsafe_any_cast( const Any* operand )
  * @return the value stored in the given Any
  * @version 1.5.0
  */
-template< typename ValueType >
-ValueType unsafe_any_cast( Any& operand )
+template <typename ValueType>
+ValueType unsafe_any_cast(Any& operand)
 {
-    typedef typename boost::remove_reference< ValueType >::type nonref;
-    return *unsafe_any_cast< nonref >( &operand );
+    typedef typename boost::remove_reference<ValueType>::type nonref;
+    return *unsafe_any_cast<nonref>(&operand);
 }
 
 /**
@@ -335,13 +327,12 @@ ValueType unsafe_any_cast( Any& operand )
  * @return the value stored in the given Any
  * @version 1.5.0
  */
-template< typename ValueType >
-ValueType unsafe_any_cast( const Any& operand )
+template <typename ValueType>
+ValueType unsafe_any_cast(const Any& operand)
 {
-   typedef typename boost::remove_reference< ValueType >::type nonref;
-   return unsafe_any_cast< const nonref& >( const_cast< Any& >( operand ));
+    typedef typename boost::remove_reference<ValueType>::type nonref;
+    return unsafe_any_cast<const nonref&>(const_cast<Any&>(operand));
 }
-
 }
 
 #endif

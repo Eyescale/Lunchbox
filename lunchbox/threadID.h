@@ -19,14 +19,17 @@
 #ifndef LUNCHBOX_THREADID_H
 #define LUNCHBOX_THREADID_H
 
-#include <lunchbox/api.h>     // LUNCHBOX_API definition
+#include <lunchbox/api.h> // LUNCHBOX_API definition
 #include <lunchbox/compiler.h>
 
 #include <ostream>
 
 namespace lunchbox
 {
-namespace detail { class ThreadID; }
+namespace detail
+{
+class ThreadID;
+}
 
 /** An utility class to wrap OS-specific thread identifiers. */
 class ThreadID
@@ -36,35 +39,35 @@ public:
     LUNCHBOX_API ThreadID();
 
     /** Construct a copy of a thread identifier. @version 1.0 */
-    LUNCHBOX_API ThreadID( const ThreadID& from );
+    LUNCHBOX_API ThreadID(const ThreadID& from);
 
     /** Destruct this thread identifier. @version 1.0 */
     LUNCHBOX_API ~ThreadID();
 
     /** Assign another thread identifier. @version 1.0 */
-    LUNCHBOX_API ThreadID& operator = ( const ThreadID& from );
+    LUNCHBOX_API ThreadID& operator=(const ThreadID& from);
 
     /** @return true if the threads are equal, false if not. @version 1.0 */
-    LUNCHBOX_API bool operator == ( const ThreadID& rhs ) const;
+    LUNCHBOX_API bool operator==(const ThreadID& rhs) const;
 
     /**
      * @return true if the threads are different, false otherwise.
      * @version 1.0
      */
-    LUNCHBOX_API bool operator != ( const ThreadID& rhs ) const;
+    LUNCHBOX_API bool operator!=(const ThreadID& rhs) const;
 
     /** @internal */
-    bool operator < ( const ThreadID& rhs ) const;
+    bool operator<(const ThreadID& rhs) const;
 
 private:
     detail::ThreadID* const _impl;
     friend class Thread;
 
-    friend LUNCHBOX_API
-    std::ostream& operator << ( std::ostream& os, const ThreadID& );
+    friend LUNCHBOX_API std::ostream& operator<<(std::ostream& os,
+                                                 const ThreadID&);
 };
 
 /** Print the thread to the given output stream. */
-LUNCHBOX_API std::ostream& operator << ( std::ostream&, const ThreadID& );
+LUNCHBOX_API std::ostream& operator<<(std::ostream&, const ThreadID&);
 }
 #endif // LUNCHBOX_THREADID_H

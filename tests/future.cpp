@@ -19,24 +19,25 @@
 
 #define BOOST_TEST_MODULE Future
 
+#include <boost/test/unit_test.hpp>
 #include <lunchbox/clock.h>
 #include <lunchbox/readyFuture.h>
-#include <boost/test/unit_test.hpp>
 
-BOOST_AUTO_TEST_CASE( readyFutures )
+BOOST_AUTO_TEST_CASE(readyFutures)
 {
     lunchbox::f_bool_t ok = lunchbox::makeTrueFuture();
-    BOOST_CHECK( ok == true );
-    BOOST_CHECK( ok.isReady( ));
+    BOOST_CHECK(ok == true);
+    BOOST_CHECK(ok.isReady());
 
     lunchbox::f_bool_t nok = lunchbox::makeFalseFuture();
-    BOOST_CHECK( nok == false );
-    BOOST_CHECK( nok.isReady( ));
+    BOOST_CHECK(nok == false);
+    BOOST_CHECK(nok.isReady());
 }
 
 static lunchbox::f_bool_t futureFunction()
 {
-    return lunchbox::makeTrueFuture();;
+    return lunchbox::makeTrueFuture();
+    ;
 }
 
 static bool presentFunction()
@@ -44,23 +45,23 @@ static bool presentFunction()
     return true;
 }
 
-BOOST_AUTO_TEST_CASE( perfFuture )
+BOOST_AUTO_TEST_CASE(perfFuture)
 {
     static const size_t nLoops = 1000000;
 
     lunchbox::Clock clock;
-    for( size_t i = 0; i < nLoops; ++i )
+    for (size_t i = 0; i < nLoops; ++i)
         futureFunction();
     const float futureSync = clock.resetTimef();
 
-    std::vector< lunchbox::f_bool_t > futures;
-    futures.reserve( nLoops );
-    for( size_t i = 0; i < nLoops; ++i )
-        futures.push_back( futureFunction( ));
+    std::vector<lunchbox::f_bool_t> futures;
+    futures.reserve(nLoops);
+    for (size_t i = 0; i < nLoops; ++i)
+        futures.push_back(futureFunction());
     futures.clear();
     const float futureASync = clock.resetTimef();
 
-    for( size_t i = 0; i < nLoops; ++i )
+    for (size_t i = 0; i < nLoops; ++i)
         presentFunction();
     const float present = clock.resetTimef();
 

@@ -19,18 +19,18 @@
 
 // for NI_MAXHOST
 #ifdef _WIN32
-#  include <ws2tcpip.h>
+#include <ws2tcpip.h>
 #else
-#  include <netdb.h>
+#include <netdb.h>
 #endif
 
 namespace lunchbox
 {
 std::string getHostname()
 {
-    char hostname[NI_MAXHOST+1] = {0};
-    gethostname( hostname, NI_MAXHOST );
+    char hostname[NI_MAXHOST + 1] = {0};
+    gethostname(hostname, NI_MAXHOST);
     hostname[NI_MAXHOST] = '\0';
-    return std::string( hostname );
+    return std::string(hostname);
 }
 }

@@ -22,25 +22,25 @@
 
 #include <iostream>
 
-int main( int, char** )
+int main(int, char**)
 {
     lunchbox::TimedLock lock;
 
-    TEST( lock.set( ));
+    TEST(lock.set());
 
     lunchbox::Clock clock;
-    TEST( !lock.set( 1000 ));
+    TEST(!lock.set(1000));
     float time = clock.getTimef();
 
-    TESTINFO( time > 999.0f, "was: " << time );
-    TESTINFO( time < 1100.0f, "was: " << time );
+    TESTINFO(time > 999.0f, "was: " << time);
+    TESTINFO(time < 1100.0f, "was: " << time);
 
     clock.reset();
-    TEST( !lock.set( 100 ));
+    TEST(!lock.set(100));
     time = clock.getTimef();
 
-    TESTINFO( time > 99.0f, "was: " << time );
-    TESTINFO( time < 200.0f, "was: " << time );
+    TESTINFO(time > 99.0f, "was: " << time);
+    TESTINFO(time < 200.0f, "was: " << time);
 
     return EXIT_SUCCESS;
 }

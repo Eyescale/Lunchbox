@@ -18,14 +18,17 @@
 #ifndef LUNCHBOX_REQUESTHANDLER_H
 #define LUNCHBOX_REQUESTHANDLER_H
 
-#include <lunchbox/api.h>       // LUNCHBOX_API definition
-#include <lunchbox/thread.h>    // thread-safety macros
+#include <lunchbox/api.h>    // LUNCHBOX_API definition
+#include <lunchbox/thread.h> // thread-safety macros
 #include <lunchbox/types.h>
 #include <servus/uint128_t.h>
 
 namespace lunchbox
 {
-namespace detail { class RequestHandler; }
+namespace detail
+{
+class RequestHandler;
+}
 
 /**
  * A thread-safe request handler.
@@ -57,7 +60,8 @@ public:
      * @return A Future which will be fulfilled on serveRequest().
      * @version 1.9.1
      */
-    template< class T > Request< T > registerRequest( void* data = 0 );
+    template <class T>
+    Request<T> registerRequest(void* data = 0);
 
     /**
      * Register a request.
@@ -67,8 +71,7 @@ public:
      * @version 1.0
      * @deprecated use the future-based registerRequest()
      */
-    uint32_t registerRequest( void* data = 0 ) { return _register( data ); }
-
+    uint32_t registerRequest(void* data = 0) { return _register(data); }
     /**
      * Unregister a request.
      *
@@ -79,7 +82,7 @@ public:
      * @param requestID the request identifier.
      * @version 1.0
      */
-    LUNCHBOX_API void unregisterRequest( const uint32_t requestID );
+    LUNCHBOX_API void unregisterRequest(const uint32_t requestID);
 
     /**
      * Wait a given time for the completion of a request.
@@ -95,21 +98,24 @@ public:
      * @return true if the request was served, false if not.
      * @version 1.0
      */
-    LUNCHBOX_API bool waitRequest( const uint32_t requestID, void*& result,
-                               const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
+    LUNCHBOX_API bool waitRequest(
+        const uint32_t requestID, void*& result,
+        const uint32_t timeout = LB_TIMEOUT_INDEFINITE);
 
     /** Wait for a request with an uint32_t result. @version 1.0 */
-    LUNCHBOX_API bool waitRequest( const uint32_t requestID, uint32_t& result,
-                               const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
+    LUNCHBOX_API bool waitRequest(
+        const uint32_t requestID, uint32_t& result,
+        const uint32_t timeout = LB_TIMEOUT_INDEFINITE);
     /** Wait for a request with a bool result. @version 1.0 */
-    LUNCHBOX_API bool waitRequest( const uint32_t requestID, bool& result,
-                               const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
+    LUNCHBOX_API bool waitRequest(
+        const uint32_t requestID, bool& result,
+        const uint32_t timeout = LB_TIMEOUT_INDEFINITE);
     /** Wait for a request with an uint128_t result. @version 1.0 */
-    LUNCHBOX_API bool waitRequest( const uint32_t requestID,
-                                   servus::uint128_t& result,
-                               const uint32_t timeout = LB_TIMEOUT_INDEFINITE );
+    LUNCHBOX_API bool waitRequest(
+        const uint32_t requestID, servus::uint128_t& result,
+        const uint32_t timeout = LB_TIMEOUT_INDEFINITE);
     /** Wait for a request without a result. @version 1.0 */
-    LUNCHBOX_API bool waitRequest( const uint32_t requestID );
+    LUNCHBOX_API bool waitRequest(const uint32_t requestID);
 
     /**
      * Retrieve the user-specific data for a request.
@@ -118,7 +124,7 @@ public:
      * @return the user-specific data for the request.
      * @version 1.0
      */
-    LUNCHBOX_API void* getRequestData( const uint32_t requestID );
+    LUNCHBOX_API void* getRequestData(const uint32_t requestID);
 
     /**
      * Serve a request with a void* result.
@@ -127,44 +133,42 @@ public:
      * @param result the result of the request.
      * @version 1.0
      */
-    LUNCHBOX_API void serveRequest( const uint32_t requestID,
-                                    void* result = 0 );
+    LUNCHBOX_API void serveRequest(const uint32_t requestID, void* result = 0);
     /** Serve a request with an uint32_t result. @version 1.0 */
-    LUNCHBOX_API void serveRequest( const uint32_t requestID,
-                                    uint32_t result );
+    LUNCHBOX_API void serveRequest(const uint32_t requestID, uint32_t result);
     /** Serve a request with a bool result. @version 1.0 */
-    LUNCHBOX_API void serveRequest( const uint32_t requestID, bool result );
+    LUNCHBOX_API void serveRequest(const uint32_t requestID, bool result);
     /** Serve a request with an uint128_t result. @version 1.0 */
-    LUNCHBOX_API void serveRequest( const uint32_t requestID,
-                                    const servus::uint128_t& result );
+    LUNCHBOX_API void serveRequest(const uint32_t requestID,
+                                   const servus::uint128_t& result);
     /**
      * @return true if this request handler has pending requests.
      * @version 1.0
      */
     LUNCHBOX_API bool hasPendingRequests() const;
 
-    LUNCHBOX_API bool isRequestReady( const uint32_t ) const; //!< @internal
+    LUNCHBOX_API bool isRequestReady(const uint32_t) const; //!< @internal
 
 private:
     detail::RequestHandler* const _impl;
-    friend LUNCHBOX_API std::ostream& operator << ( std::ostream&,
-                                                    const RequestHandler& );
-    LUNCHBOX_API uint32_t _register( void* data );
-    LB_TS_VAR( _thread );
+    friend LUNCHBOX_API std::ostream& operator<<(std::ostream&,
+                                                 const RequestHandler&);
+    LUNCHBOX_API uint32_t _register(void* data);
+    LB_TS_VAR(_thread);
 };
 
-LUNCHBOX_API std::ostream& operator << ( std::ostream&, const RequestHandler& );
+LUNCHBOX_API std::ostream& operator<<(std::ostream&, const RequestHandler&);
 }
 
 #include <lunchbox/request.h>
 
 namespace lunchbox
 {
-template< class T > inline
-Request< T > RequestHandler::registerRequest( void* data )
+template <class T>
+inline Request<T> RequestHandler::registerRequest(void* data)
 {
-    return Request< T >( *this, _register( data ));
+    return Request<T>(*this, _register(data));
 }
 }
 
-#endif //LUNCHBOX_REQUESTHANDLER_H
+#endif // LUNCHBOX_REQUESTHANDLER_H

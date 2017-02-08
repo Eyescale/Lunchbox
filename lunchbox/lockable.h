@@ -18,9 +18,9 @@
 #ifndef LUNCHBOX_LOCKABLE_H
 #define LUNCHBOX_LOCKABLE_H
 
-#include <lunchbox/log.h> // used inline
 #include <boost/noncopyable.hpp>
 #include <iostream>
+#include <lunchbox/log.h> // used inline
 
 namespace lunchbox
 {
@@ -29,43 +29,49 @@ namespace lunchbox
  *
  * Locking the data still has to be done manually, e.g, using a ScopedMutex.
  */
-template< class D, class L = Lock > class Lockable : public boost::noncopyable
+template <class D, class L = Lock>
+class Lockable : public boost::noncopyable
 {
 public:
     /** Construct a new lockable data structure. @version 1.0 */
     Lockable() {}
-
     /** Construct and initialize a new data structure. @version 1.0 */
-    explicit Lockable( const D& value ) : data( value ) {}
+    explicit Lockable(const D& value)
+        : data(value)
+    {
+    }
 
     /** Construct and initialize a new data structure. @version 1.3.2 */
-    template< class P1 > Lockable( const P1& p1 ) : data( p1 ) {}
+    template <class P1>
+    Lockable(const P1& p1)
+        : data(p1)
+    {
+    }
 
     /** Access the held data. @version 1.0 */
     D* operator->() { return &data; }
-
     /** Access the held data. @version 1.0 */
     const D* operator->() const { return &data; }
-
     /** Access the held data. @version 1.1.5 */
-    D& operator *() { return data; }
-
+    D& operator*() { return data; }
     /** Access the held data. @version 1.1.5 */
     const D& operator*() const { return data; }
-
     /** @return true if the data is equal to the rhs object. @version 1.0*/
-    bool operator == ( const D& rhs ) const { return ( data == rhs ); }
-
+    bool operator==(const D& rhs) const { return (data == rhs); }
     /** Assign another value to the data. @version 1.0 */
-    Lockable& operator = ( const D& rhs ) { data = rhs; return *this; }
+    Lockable& operator=(const D& rhs)
+    {
+        data = rhs;
+        return *this;
+    }
 
     D data;
     mutable L lock;
 };
 
 /** Print the data to the given output stream. */
-template< class D, class L >
-inline std::ostream& operator << ( std::ostream& os, const Lockable<D, L>& l )
+template <class D, class L>
+inline std::ostream& operator<<(std::ostream& os, const Lockable<D, L>& l)
 {
     return os << disableFlush << "<" << l.lock.isSet() << " " << l.data << ">"
               << enableFlush;

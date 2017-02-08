@@ -20,34 +20,45 @@
 #ifndef LUNCHBOX_ARRAY_H
 #define LUNCHBOX_ARRAY_H
 
-#include <lunchbox/types.h>
 #include <lunchbox/debug.h>
+#include <lunchbox/types.h>
 
 namespace lunchbox
 {
 /** A wrapper for C arrays without any memory management. */
-template< class T > class Array
+template <class T>
+class Array
 {
 public:
     /** Create a new array wrapper for the given data. @version 1.9.1 */
-    Array( T* data_, const size_t num_ ) : data( data_ ), num( num_ ) {}
+    Array(T* data_, const size_t num_)
+        : data(data_)
+        , num(num_)
+    {
+    }
 
     /** @return the number of bytes stored in the pointer. @version 1.9.1 */
-    size_t getNumBytes() const { return num * sizeof( T ); }
-
-    T* data; //!< The data
+    size_t getNumBytes() const { return num * sizeof(T); }
+    T* data;    //!< The data
     size_t num; //!<  The number of elements in the data
 };
 
-template<> inline size_t Array< void >::getNumBytes() const { return num; }
-template<> inline size_t Array< const void >::getNumBytes() const { return num;}
-
-/** Pretty-print all members of the array. @version 1.9.1 */
-template< class T >
-inline std::ostream& operator << ( std::ostream& os, const Array< T >& array )
+template <>
+inline size_t Array<void>::getNumBytes() const
 {
-    return os << lunchbox::format( array.data, array.num );
+    return num;
+}
+template <>
+inline size_t Array<const void>::getNumBytes() const
+{
+    return num;
 }
 
+/** Pretty-print all members of the array. @version 1.9.1 */
+template <class T>
+inline std::ostream& operator<<(std::ostream& os, const Array<T>& array)
+{
+    return os << lunchbox::format(array.data, array.num);
+}
 }
 #endif // LUNCHBOX_ARRAY_H

@@ -18,31 +18,33 @@
 #ifndef LUNCHBOX_REQUEST_H
 #define LUNCHBOX_REQUEST_H
 
-#include <lunchbox/future.h>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <lunchbox/future.h>
 
 namespace lunchbox
 {
-
 class UnregisteredRequest : public std::runtime_error
 {
 public:
-    UnregisteredRequest() :
-        std::runtime_error( "wait on an unregistered request" ) {}
+    UnregisteredRequest()
+        : std::runtime_error("wait on an unregistered request")
+    {
+    }
 };
 
 /**
  * A Future implementation for a RequestHandler request.
  * @version 1.9.1
  */
-template< class T > class Request : public Future< T >
+template <class T>
+class Request : public Future<T>
 {
     class Impl;
 
 public:
     /** Construct a new request. */
-    Request( RequestHandler& handler, const uint32_t request );
+    Request(RequestHandler& handler, const uint32_t request);
 
     /**
      * Destruct and wait for completion of the request, unless relinquished.
@@ -62,7 +64,6 @@ public:
      */
     void unregister();
 };
-
 }
 
 // Implementation: Here be dragons
@@ -70,46 +71,46 @@ public:
 #include <lunchbox/requestHandler.h>
 namespace lunchbox
 {
-template< class T > class Request< T >::Impl : public FutureImpl< T >
+template <class T>
+class Request<T>::Impl : public FutureImpl<T>
 {
-    typedef typename
-    boost::mpl::if_< boost::is_same< T, void >, void*, T >::type value_t;
+    typedef typename boost::mpl::if_<boost::is_same<T, void>, void*, T>::type
+        value_t;
 
 public:
-    Impl( RequestHandler& handler, const uint32_t req )
-        : request( req )
-        , result( 0 )
-        , handler_( handler )
-        , state_( UNRESOLVED )
-    {}
+    Impl(RequestHandler& handler, const uint32_t req)
+        : request(req)
+        , result(0)
+        , handler_(handler)
+        , state_(UNRESOLVED)
+    {
+    }
     virtual ~Impl() {}
-
     const uint32_t request;
     value_t result;
 
     void unregister()
     {
-        if( state_ == UNRESOLVED )
+        if (state_ == UNRESOLVED)
         {
             state_ = UNREGISTERED;
-            handler_.unregisterRequest( request );
+            handler_.unregisterRequest(request);
         }
     }
 
     bool isUnresolved() const { return state_ == UNRESOLVED; }
-
 protected:
-    T wait( const uint32_t timeout ) final
+    T wait(const uint32_t timeout) final
     {
-        switch( state_ )
+        switch (state_)
         {
         case UNREGISTERED:
             throw UnregisteredRequest();
         case UNRESOLVED:
-             if ( !handler_.waitRequest( request, result, timeout ))
-                 throw FutureTimeout();
+            if (!handler_.waitRequest(request, result, timeout))
+                throw FutureTimeout();
             state_ = DONE;
-            // No break
+        // No break
         default: // DONE
             return result;
         }
@@ -117,10 +118,10 @@ protected:
 
     bool isReady() const final
     {
-        switch( state_ )
+        switch (state_)
         {
         case UNRESOLVED:
-            return handler_.isRequestReady( request );
+            return handler_.isRequestReady(request);
         case UNREGISTERED:
             return false;
         default: // DONE:
@@ -130,47 +131,55 @@ protected:
 
 private:
     RequestHandler& handler_;
-    enum State { UNRESOLVED, DONE, UNREGISTERED };
+    enum State
+    {
+        UNRESOLVED,
+        DONE,
+        UNREGISTERED
+    };
     State state_;
 };
 
-template<> inline void Request< void >::Impl::wait( const uint32_t timeout )
+template <>
+inline void Request<void>::Impl::wait(const uint32_t timeout)
 {
-    switch( state_ )
+    switch (state_)
     {
     case UNREGISTERED:
         throw UnregisteredRequest();
     case UNRESOLVED:
-        if ( !handler_.waitRequest( request, result, timeout ))
+        if (!handler_.waitRequest(request, result, timeout))
             throw FutureTimeout();
         state_ = DONE;
-        // No break
-    case DONE:
-        ;
+    // No break
+    case DONE:;
     }
 }
 
-template< class T > inline
-Request< T >::Request( RequestHandler& handler, const uint32_t request )
-    : Future< T >( new Impl( handler, request ))
-{}
-
-template< class T > inline Request< T >::~Request()
+template <class T>
+inline Request<T>::Request(RequestHandler& handler, const uint32_t request)
+    : Future<T>(new Impl(handler, request))
 {
-    if( static_cast< const Impl* >( this->impl_.get( ))->isUnresolved( ))
+}
+
+template <class T>
+inline Request<T>::~Request()
+{
+    if (static_cast<const Impl*>(this->impl_.get())->isUnresolved())
         this->wait();
 }
 
-template< class T > inline uint32_t Request< T >::getID() const
+template <class T>
+inline uint32_t Request<T>::getID() const
 {
-    return static_cast< const Impl* >( this->impl_.get( ))->request;
+    return static_cast<const Impl*>(this->impl_.get())->request;
 }
 
-template< class T > inline void Request< T >::unregister()
+template <class T>
+inline void Request<T>::unregister()
 {
-    static_cast< Impl* >( this->impl_.get( ))->unregister();
+    static_cast<Impl*>(this->impl_.get())->unregister();
+}
 }
 
-}
-
-#endif //LUNCHBOX_REQUEST_H
+#endif // LUNCHBOX_REQUEST_H

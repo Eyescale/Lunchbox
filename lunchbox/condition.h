@@ -18,13 +18,16 @@
 #ifndef LUNCHBOX_CONDITION_H
 #define LUNCHBOX_CONDITION_H
 
+#include <boost/noncopyable.hpp>
 #include <lunchbox/api.h>
 #include <lunchbox/types.h>
-#include <boost/noncopyable.hpp>
 
 namespace lunchbox
 {
-namespace detail { class Condition; }
+namespace detail
+{
+class Condition;
+}
 
 /**
  * A condition variable and associated lock.
@@ -67,11 +70,11 @@ public:
      * @return true on success, false on timeout.
      * @version 1.0
      */
-    LUNCHBOX_API bool timedWait( const uint32_t timeout );
+    LUNCHBOX_API bool timedWait(const uint32_t timeout);
 
 private:
     detail::Condition* const _impl;
 };
 }
 
-#endif //LUNCHBOX_CONDITION_H
+#endif // LUNCHBOX_CONDITION_H

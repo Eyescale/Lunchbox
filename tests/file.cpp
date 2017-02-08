@@ -17,40 +17,40 @@
 
 #include <lunchbox/test.h>
 
-#include <lunchbox/file.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/path.hpp>
+#include <lunchbox/file.h>
 
-int main( int, char** argv )
+int main(int, char** argv)
 {
-    const boost::filesystem::path path( argv[0] );
-    const std::string argvPath( path.parent_path().generic_string( ));
-    const boost::filesystem::path execPath( lunchbox::getExecutableDir( ));
-    TEST( boost::algorithm::ends_with( execPath.generic_string(), argvPath ));
+    const boost::filesystem::path path(argv[0]);
+    const std::string argvPath(path.parent_path().generic_string());
+    const boost::filesystem::path execPath(lunchbox::getExecutableDir());
+    TEST(boost::algorithm::ends_with(execPath.generic_string(), argvPath));
 
-    boost::filesystem::path referenceRootPath( execPath );
+    boost::filesystem::path referenceRootPath(execPath);
     referenceRootPath = referenceRootPath.parent_path();
 #ifdef _MSC_VER
-    const lunchbox::Strings buildTypes { "debug", "relwithdebinfo", "release",
-                                         "minsizerel" };
-    std::string buildType( path.stem().string( ));
-    std::transform( buildType.begin(), buildType.end(), buildType.begin(),
-                    ::tolower );
-    if( std::find( buildTypes.begin(), buildTypes.end(),
-                   buildType ) != buildTypes.end( ))
+    const lunchbox::Strings buildTypes{"debug", "relwithdebinfo", "release",
+                                       "minsizerel"};
+    std::string buildType(path.stem().string());
+    std::transform(buildType.begin(), buildType.end(), buildType.begin(),
+                   ::tolower);
+    if (std::find(buildTypes.begin(), buildTypes.end(), buildType) !=
+        buildTypes.end())
     {
         referenceRootPath = referenceRootPath.parent_path();
     }
 #endif
-    TEST( lunchbox::getRootDir() == referenceRootPath.string( ));
-    TEST( lunchbox::getExecutableDir() == lunchbox::getWorkDir( ));
+    TEST(lunchbox::getRootDir() == referenceRootPath.string());
+    TEST(lunchbox::getExecutableDir() == lunchbox::getWorkDir());
 
     const std::string filename = path.filename().generic_string();
-    TEST( filename == lunchbox::getFilename( argv[0] ));
+    TEST(filename == lunchbox::getFilename(argv[0]));
 
-    const lunchbox::Strings files = lunchbox::searchDirectory( argvPath, ".*" );
-    TEST( files.size() > 1 );
-    TEST( std::find( files.begin(), files.end(), filename ) != files.end( ));
+    const lunchbox::Strings files = lunchbox::searchDirectory(argvPath, ".*");
+    TEST(files.size() > 1);
+    TEST(std::find(files.begin(), files.end(), filename) != files.end());
 
     return EXIT_SUCCESS;
 }

@@ -23,10 +23,10 @@
 #include <errno.h>
 
 #ifdef _WIN32
-#  include "condition_w32.ipp"
+#include "condition_w32.ipp"
 #else
-#  include <pthread.h>
-#  include <sys/time.h>
+#include <pthread.h>
+#include <sys/time.h>
 #endif
 
 namespace lunchbox
@@ -37,27 +37,27 @@ class Condition
 {
 public:
     pthread_mutex_t mutex;
-    pthread_cond_t  cond;
+    pthread_cond_t cond;
 };
 }
 
 Condition::Condition()
-        : _impl( new detail::Condition )
+    : _impl(new detail::Condition)
 {
     // mutex init
-    int error = pthread_mutex_init( &_impl->mutex, 0 );
-    if( error )
+    int error = pthread_mutex_init(&_impl->mutex, 0);
+    if (error)
     {
-        LBERROR << "Error creating pthread mutex: " << strerror( error )
+        LBERROR << "Error creating pthread mutex: " << strerror(error)
                 << std::endl;
         return;
     }
 
     // condvar init
-    error = pthread_cond_init( &_impl->cond, 0 );
-    if( error )
+    error = pthread_cond_init(&_impl->cond, 0);
+    if (error)
     {
-        LBERROR << "Error creating pthread condition: " << strerror( error )
+        LBERROR << "Error creating pthread condition: " << strerror(error)
                 << std::endl;
         return;
     }
@@ -65,14 +65,14 @@ Condition::Condition()
 
 Condition::~Condition()
 {
-    int error = pthread_mutex_destroy( &_impl->mutex );
-    if( error )
-        LBERROR << "Error destroying pthread mutex: " << strerror( error )
+    int error = pthread_mutex_destroy(&_impl->mutex);
+    if (error)
+        LBERROR << "Error destroying pthread mutex: " << strerror(error)
                 << " at " << backtrace << std::endl;
 
-    error = pthread_cond_destroy( &_impl->cond );
-    if( error )
-        LBERROR << "Error destroying pthread condition: " << strerror( error )
+    error = pthread_cond_destroy(&_impl->cond);
+    if (error)
+        LBERROR << "Error destroying pthread condition: " << strerror(error)
                 << std::endl;
 
     delete _impl;
@@ -80,66 +80,65 @@ Condition::~Condition()
 
 void Condition::lock()
 {
-    pthread_mutex_lock( &_impl->mutex );
+    pthread_mutex_lock(&_impl->mutex);
 }
 
 void Condition::signal()
 {
-    pthread_cond_signal( &_impl->cond );
+    pthread_cond_signal(&_impl->cond);
 }
 
 void Condition::broadcast()
 {
-    pthread_cond_broadcast( &_impl->cond );
+    pthread_cond_broadcast(&_impl->cond);
 }
 
 void Condition::unlock()
 {
-    pthread_mutex_unlock( &_impl->mutex );
+    pthread_mutex_unlock(&_impl->mutex);
 }
 
 void Condition::wait()
 {
-    pthread_cond_wait( &_impl->cond, &_impl->mutex );
+    pthread_cond_wait(&_impl->cond, &_impl->mutex);
 }
 
-bool Condition::timedWait( const uint32_t timeout )
+bool Condition::timedWait(const uint32_t timeout)
 {
-    if( timeout == LB_TIMEOUT_INDEFINITE )
+    if (timeout == LB_TIMEOUT_INDEFINITE)
     {
         wait();
         return true;
     }
 
-    const uint32_t time = timeout == LB_TIMEOUT_DEFAULT ?
-        300000 /* 5 min */ : timeout;
+    const uint32_t time =
+        timeout == LB_TIMEOUT_DEFAULT ? 300000 /* 5 min */ : timeout;
 
 #ifdef _WIN32
-    int error = pthread_cond_timedwait_w32_np( &_impl->cond, &_impl->mutex,
-                                               time );
+    int error =
+        pthread_cond_timedwait_w32_np(&_impl->cond, &_impl->mutex, time);
 #else
-    const timespec delta = convertToTimespec( time );
+    const timespec delta = convertToTimespec(time);
     timeval now;
-    gettimeofday( &now, 0 );
+    gettimeofday(&now, 0);
 
     timespec then;
-    then.tv_sec  = delta.tv_sec + now.tv_sec;
+    then.tv_sec = delta.tv_sec + now.tv_sec;
     then.tv_nsec = delta.tv_nsec + now.tv_usec * 1000;
-    while( then.tv_nsec > 1000000000 )
+    while (then.tv_nsec > 1000000000)
     {
         ++then.tv_sec;
         then.tv_nsec -= 1000000000;
     }
 
-    int error = pthread_cond_timedwait( &_impl->cond, &_impl->mutex, &then );
+    int error = pthread_cond_timedwait(&_impl->cond, &_impl->mutex, &then);
 #endif
-    if( error == ETIMEDOUT )
+    if (error == ETIMEDOUT)
         return false;
 
-    if( error )
-        LBERROR << "pthread_cond_timedwait failed: " << strerror( error )
+    if (error)
+        LBERROR << "pthread_cond_timedwait failed: " << strerror(error)
                 << std::endl;
     return true;
 }
-
 }

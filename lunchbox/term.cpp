@@ -19,9 +19,9 @@
 #include "os.h"
 
 #ifndef _MSC_VER
-#  include <stdio.h>
-#  include <sys/ioctl.h>
-#  include <unistd.h>
+#include <stdio.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #endif
 
 #include <iostream>
@@ -33,14 +33,14 @@ size getSize()
 {
 #ifdef _MSC_VER
     CONSOLE_SCREEN_BUFFER_INFO info;
-    if( GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &info ))
-        return { info.dwSize.X, info.dwSize.Y };
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info))
+        return {info.dwSize.X, info.dwSize.Y};
 #else
     struct winsize w;
-    if( ::ioctl( STDOUT_FILENO, TIOCGWINSZ, &w ) >= 0 )
-        return { w.ws_col, w.ws_row };
+    if (::ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) >= 0)
+        return {w.ws_col, w.ws_row};
 #endif
-    return { 120, 80 };
+    return {120, 80};
 }
 }
 }

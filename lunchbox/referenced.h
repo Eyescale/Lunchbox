@@ -18,17 +18,17 @@
 #ifndef LUNCHBOX_REFERENCED_H
 #define LUNCHBOX_REFERENCED_H
 
-#include <lunchbox/api.h>      // for LUNCHBOX_API
-#include <lunchbox/atomic.h>   // member
-#include <lunchbox/debug.h>    // for LBERROR
+#include <lunchbox/api.h>    // for LUNCHBOX_API
+#include <lunchbox/atomic.h> // member
+#include <lunchbox/debug.h>  // for LBERROR
 
 //#define LUNCHBOX_REFERENCED_DEBUG
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-#  include <lunchbox/clock.h>
-#  include <lunchbox/hash.h>
-#  include <lunchbox/lockable.h>
-#  include <lunchbox/scopedMutex.h>
-#  include <lunchbox/spinLock.h>
+#include <lunchbox/clock.h>
+#include <lunchbox/hash.h>
+#include <lunchbox/lockable.h>
+#include <lunchbox/scopedMutex.h>
+#include <lunchbox/spinLock.h>
 #endif
 
 namespace lunchbox
@@ -46,24 +46,24 @@ class Referenced
 {
 public:
     /** Increase the reference count. @version 1.0 .*/
-    void ref( const void* holder LB_UNUSED = 0 ) const
+    void ref(const void* holder LB_UNUSED = 0) const
     {
 #ifndef NDEBUG
-        LBASSERT( !_hasBeenDeleted );
+        LBASSERT(!_hasBeenDeleted);
 #endif
         ++_refCount;
 
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-        if( holder )
+        if (holder)
         {
             std::stringstream cs;
             cs << "Thread " << Log::instance().getThreadName() << " @ "
                << Log::instance().getClock().getTime64() << " rc " << _refCount
                << " from " << backtrace;
-            ScopedFastWrite mutex( _holders );
-            HolderHash::iterator i = _holders->find( holder );
-            LBASSERTINFO( i == _holders->end(), i->second );
-            _holders.data[ holder ] = cs.str();
+            ScopedFastWrite mutex(_holders);
+            HolderHash::iterator i = _holders->find(holder);
+            LBASSERTINFO(i == _holders->end(), i->second);
+            _holders.data[holder] = cs.str();
         }
 #endif
     }
@@ -75,42 +75,41 @@ public:
      * @version 1.0
      * @return true if the reference count went to 0, false otherwise.
      */
-    bool unref( const void* holder LB_UNUSED = 0 ) const
+    bool unref(const void* holder LB_UNUSED = 0) const
     {
 #ifndef NDEBUG
-        LBASSERT( !_hasBeenDeleted );
+        LBASSERT(!_hasBeenDeleted);
 #endif
-        LBASSERT( _refCount > 0 );
-        const bool last = (--_refCount==0);
+        LBASSERT(_refCount > 0);
+        const bool last = (--_refCount == 0);
 
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-        if( holder )
+        if (holder)
         {
-            ScopedFastWrite mutex( _holders );
-            HolderHash::iterator i = _holders->find( holder );
-            LBASSERT( i != _holders->end( ));
-            _holders->erase( i );
-            LBASSERT( _holders->find( holder ) == _holders->end( ));
+            ScopedFastWrite mutex(_holders);
+            HolderHash::iterator i = _holders->find(holder);
+            LBASSERT(i != _holders->end());
+            _holders->erase(i);
+            LBASSERT(_holders->find(holder) == _holders->end());
         }
 #endif
 
-        if( last )
-            const_cast< Referenced* >( this )->notifyFree();
+        if (last)
+            const_cast<Referenced*>(this)->notifyFree();
         return last;
     }
 
     /** @return the current reference count. @version 1.0 */
     int32_t getRefCount() const { return _refCount; }
-
-    /** @internal print holders of this if debugging is enabled. */
+/** @internal print holders of this if debugging is enabled. */
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-    void printHolders( std::ostream& os ) const
+    void printHolders(std::ostream& os) const
     {
         os << disableFlush << disableHeader << std::endl;
         {
-            ScopedFastRead mutex( _holders );
-            for( HolderHash::const_iterator i = _holders->begin();
-                 i != _holders->end(); ++i )
+            ScopedFastRead mutex(_holders);
+            for (HolderHash::const_iterator i = _holders->begin();
+                 i != _holders->end(); ++i)
             {
                 os << "Holder " << i->first << ": " << i->second << std::endl;
             }
@@ -118,7 +117,7 @@ public:
         os << enableHeader << enableFlush;
     }
 #else
-    void printHolders( std::ostream& ) const {}
+    void printHolders(std::ostream&) const {}
 #endif
 
 protected:
@@ -126,21 +125,21 @@ protected:
     LUNCHBOX_API Referenced();
 
     /** Construct a new copy of a reference-counted object. @version 1.0 */
-    Referenced( const Referenced& )
-        : _refCount( 0 )
-        , _hasBeenDeleted( false )
+    Referenced(const Referenced&)
+        : _refCount(0)
+        , _hasBeenDeleted(false)
 #ifdef LUNCHBOX_REFERENCED_DEBUG
         , _holders()
 #endif
-    {}
+    {
+    }
 
     /** Destruct a reference-counted object. @version 1.0 */
     LUNCHBOX_API virtual ~Referenced();
 
     /** Assign another object to this object. @version 1.1.3 */
     // cppcheck-suppress operatorEqVarError
-    Referenced& operator = ( const Referenced& /*rhs*/ ) { return *this; }
-
+    Referenced& operator=(const Referenced& /*rhs*/) { return *this; }
     LUNCHBOX_API virtual void notifyFree();
 
 private:
@@ -148,8 +147,8 @@ private:
     bool _hasBeenDeleted;
 
 #ifdef LUNCHBOX_REFERENCED_DEBUG
-    typedef PtrHash< const void*, std::string > HolderHash;
-    mutable Lockable< HolderHash, SpinLock > _holders;
+    typedef PtrHash<const void*, std::string> HolderHash;
+    mutable Lockable<HolderHash, SpinLock> _holders;
 #endif
 };
 }
@@ -157,16 +156,16 @@ private:
 namespace boost
 {
 /** Allow creation of boost::intrusive_ptr from RefPtr or Referenced. */
-inline void intrusive_ptr_add_ref( lunchbox::Referenced* referenced )
+inline void intrusive_ptr_add_ref(lunchbox::Referenced* referenced)
 {
     referenced->ref();
 }
 
 /** Allow creation of boost::intrusive_ptr from RefPtr or Referenced. */
-inline void intrusive_ptr_release( lunchbox::Referenced* referenced )
+inline void intrusive_ptr_release(lunchbox::Referenced* referenced)
 {
     referenced->unref();
 }
 }
 
-#endif //LUNCHBOX_REFERENCED_H
+#endif // LUNCHBOX_REFERENCED_H

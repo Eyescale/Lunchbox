@@ -18,14 +18,17 @@
 #ifndef LUNCHBOX_MEMORYMAP_H
 #define LUNCHBOX_MEMORYMAP_H
 
-#include <lunchbox/api.h>
 #include <boost/noncopyable.hpp>
 #include <iostream>
+#include <lunchbox/api.h>
 #include <string>
 
 namespace lunchbox
 {
-namespace detail { class MemoryMap; }
+namespace detail
+{
+class MemoryMap;
+}
 
 /**
  * Helper to map a file to a memory address (mmap).
@@ -44,7 +47,7 @@ public:
      *
      * @throw std::runtime_error if file can't be mapped.
      * @version 1.7.1 */
-    LUNCHBOX_API explicit MemoryMap( const std::string& filename );
+    LUNCHBOX_API explicit MemoryMap(const std::string& filename);
 
     /**
      * Construct and initialize a new, read-write memory map.
@@ -52,7 +55,7 @@ public:
      * @throw std::runtime_error if file can't be created.
      * @version 1.9.1
      */
-    LUNCHBOX_API MemoryMap( const std::string& filename, const size_t size );
+    LUNCHBOX_API MemoryMap(const std::string& filename, const size_t size);
 
     /**
      * Destruct the memory map.
@@ -73,7 +76,7 @@ public:
      * @return the pointer to the mapped file, or 0 upon error.
      * @version 1.0
      */
-    LUNCHBOX_API const void* map( const std::string& filename );
+    LUNCHBOX_API const void* map(const std::string& filename);
 
     /**
      * Remap a different file for this memory map.
@@ -84,7 +87,7 @@ public:
      * @return the pointer to the mapped file, or 0 upon error.
      * @version 1.9.1
      */
-    LUNCHBOX_API const void* remap( const std::string& filename );
+    LUNCHBOX_API const void* remap(const std::string& filename);
 
     /**
      * Create a writable file to a memory address.
@@ -97,7 +100,7 @@ public:
      * @return the pointer to the mapped file, or 0 upon error.
      * @version 1.9.1
      */
-    LUNCHBOX_API void* create( const std::string& filename, const size_t size );
+    LUNCHBOX_API void* create(const std::string& filename, const size_t size);
 
     /**
      * Recreate a different writable file for this memory map.
@@ -109,8 +112,7 @@ public:
      * @return the pointer to the mapped file, or nullptr upon error.
      * @version 1.0
      */
-    LUNCHBOX_API void* recreate( const std::string& filename,
-                                 size_t size );
+    LUNCHBOX_API void* recreate(const std::string& filename, size_t size);
 
     /**
      * Resize a writeable memory map.
@@ -122,7 +124,7 @@ public:
      * @return the new mapping address, or nullptr on error.
      * @version 1.16
      */
-    LUNCHBOX_API void* resize( size_t size );
+    LUNCHBOX_API void* resize(size_t size);
 
     /** Unmap the file. @version 1.0 */
     LUNCHBOX_API void unmap();
@@ -134,20 +136,32 @@ public:
     LUNCHBOX_API void* getAddress();
 
     /** @return the pointer to the memory map. @version 1.9.1 */
-    template< class T > const T* getAddress() const
-        { return static_cast< const T* >( getAddress( )); }
+    template <class T>
+    const T* getAddress() const
+    {
+        return static_cast<const T*>(getAddress());
+    }
 
     /** @return the pointer to the memory map. @version 1.9.1 */
-    template< class T > T* getAddress()
-        { return static_cast< T* >( getAddress( )); }
+    template <class T>
+    T* getAddress()
+    {
+        return static_cast<T*>(getAddress());
+    }
 
     /** Access the given element in the map. @version 1.16 */
-    template< class T > T& get( const size_t i )
-        { return getAddress< T >()[i]; }
+    template <class T>
+    T& get(const size_t i)
+    {
+        return getAddress<T>()[i];
+    }
 
     /** Access the given element in the map. @version 1.16 */
-    template< class T > const T& get( const size_t i ) const
-        { return getAddress< T >()[i]; }
+    template <class T>
+    const T& get(const size_t i) const
+    {
+        return getAddress<T>()[i];
+    }
 
     /** @return the size of the memory map. @version 1.0 */
     LUNCHBOX_API size_t getSize() const;
@@ -156,11 +170,10 @@ private:
     detail::MemoryMap* const impl_;
 };
 
-inline std::ostream& operator << ( std::ostream& os, const MemoryMap& m )
+inline std::ostream& operator<<(std::ostream& os, const MemoryMap& m)
 {
     return os << "MemoryMap at " << m.getAddress() << " size " << m.getSize();
 }
-
 }
 
-#endif //LUNCHBOX_MEMORYMAP_H
+#endif // LUNCHBOX_MEMORYMAP_H

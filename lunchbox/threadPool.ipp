@@ -14,79 +14,81 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 namespace lunchbox
 {
-
-ThreadPool::ThreadPool( const size_t size )
-    : _stop( false )
+ThreadPool::ThreadPool(const size_t size)
+    : _stop(false)
 {
-    for( size_t i = 0; i < size; ++i )
-        _threads.emplace_back( [this] { this->work(); } );
+    for (size_t i = 0; i < size; ++i)
+        _threads.emplace_back([this] { this->work(); });
 }
 
 ThreadPool::~ThreadPool()
 {
     {
-        std::unique_lock<std::mutex> lock( _tasksMutex );
+        std::unique_lock<std::mutex> lock(_tasksMutex);
         _stop = true;
         _waitCondition.notify_all();
     }
     joinAll();
 }
 
-size_t ThreadPool::getSize() const { return _threads.size(); }
-
-template < typename F >
-std::future< typename std::result_of< F() >::type > ThreadPool::post( F&& f )
+size_t ThreadPool::getSize() const
 {
-    using ReturnType = typename std::result_of< F() >::type;
+    return _threads.size();
+}
+
+template <typename F>
+std::future<typename std::result_of<F()>::type> ThreadPool::post(F&& f)
+{
+    using ReturnType = typename std::result_of<F()>::type;
 
     auto task =
-        std::make_shared< std::packaged_task< ReturnType() > >( std::forward< F >( f ));
+        std::make_shared<std::packaged_task<ReturnType()> >(std::forward<F>(f));
 
     auto res = task->get_future();
     {
-        std::unique_lock< std::mutex > lock( _tasksMutex );
-        _tasks.emplace( [task]() { ( *task )(); });
+        std::unique_lock<std::mutex> lock(_tasksMutex);
+        _tasks.emplace([task]() { (*task)(); });
     }
     _waitCondition.notify_one();
     return res;
 }
 
-template < typename F >
-void ThreadPool::postDetached( F&& f )
+template <typename F>
+void ThreadPool::postDetached(F&& f)
 {
     {
-        std::unique_lock< std::mutex > lock( _tasksMutex );
-        _tasks.emplace( f );
+        std::unique_lock<std::mutex> lock(_tasksMutex);
+        _tasks.emplace(f);
     }
     _waitCondition.notify_one();
 }
 
 bool ThreadPool::hasPendingJobs() const
 {
-    std::unique_lock< std::mutex > lock( _tasksMutex );
+    std::unique_lock<std::mutex> lock(_tasksMutex);
     return !_tasks.empty();
 }
 
 void ThreadPool::joinAll()
 {
-    for( auto& thread : _threads )
+    for (auto& thread : _threads)
         thread.join();
 }
 
 void ThreadPool::work()
 {
-    for( ;; )
+    for (;;)
     {
-        std::function< void() > task;
+        std::function<void()> task;
         {
-            std::unique_lock< std::mutex > lock( _tasksMutex );
-            _waitCondition.wait( lock, [this] { return _stop || !_tasks.empty(); });
-            if( _stop )
+            std::unique_lock<std::mutex> lock(_tasksMutex);
+            _waitCondition.wait(lock,
+                                [this] { return _stop || !_tasks.empty(); });
+            if (_stop)
                 return;
-            task = std::move( _tasks.front());
+            task = std::move(_tasks.front());
             _tasks.pop();
         }
         task();

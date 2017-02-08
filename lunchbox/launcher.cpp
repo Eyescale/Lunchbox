@@ -22,159 +22,156 @@
 #include "os.h"
 
 #include <errno.h>
-#include <string.h>
 #include <signal.h>
 #include <sstream>
+#include <string.h>
 
 #ifdef _WIN32
-#  include <io.h>
+#include <io.h>
 #else
-#  include <unistd.h>
-#  include <sys/wait.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #endif
 
 namespace lunchbox
 {
-
-bool Launcher::run( const std::string& command )
+bool Launcher::run(const std::string& command)
 {
-    if( command.empty( ))
+    if (command.empty())
         return false;
 
 #ifdef _WIN32
 
-    STARTUPINFO         startupInfo;
-    ZeroMemory( &startupInfo, sizeof( STARTUPINFO ));
+    STARTUPINFO startupInfo;
+    ZeroMemory(&startupInfo, sizeof(STARTUPINFO));
 
     PROCESS_INFORMATION procInfo;
-    ZeroMemory( &procInfo, sizeof( PROCESS_INFORMATION ));
+    ZeroMemory(&procInfo, sizeof(PROCESS_INFORMATION));
 
-    const char*         cmdLine     = command.c_str();
+    const char* cmdLine = command.c_str();
 
-    startupInfo.cb = sizeof( STARTUPINFO );
+    startupInfo.cb = sizeof(STARTUPINFO);
     const bool success =
-        CreateProcess( 0, LPSTR( cmdLine ), // program, command line
-                       0, 0,                // process, thread attributes
-                       FALSE,               // inherit handles
-                       0,                   // creation flags
-                       0,                   // environment
-                       0,                   // current directory
-                       &startupInfo,
-                       &procInfo );
+        CreateProcess(0, LPSTR(cmdLine), // program, command line
+                      0, 0,              // process, thread attributes
+                      FALSE,             // inherit handles
+                      0,                 // creation flags
+                      0,                 // environment
+                      0,                 // current directory
+                      &startupInfo, &procInfo);
 
-    if( !success )
+    if (!success)
     {
         LBERROR << "CreateProcess failed: " << sysError << std::endl;
         return false;
     }
 
-    //WaitForInputIdle( procInfo.hProcess, 1000 );
-    CloseHandle( procInfo.hProcess );
-    CloseHandle( procInfo.hThread );
+    // WaitForInputIdle( procInfo.hProcess, 1000 );
+    CloseHandle(procInfo.hProcess);
+    CloseHandle(procInfo.hThread);
     return true;
 #else
     std::vector<std::string> commandLine;
-    _buildCommandLine( command, commandLine );
+    _buildCommandLine(command, commandLine);
 
     struct sigaction act;
-    setZero( &act, sizeof( act ));
+    setZero(&act, sizeof(act));
     act.sa_handler = SIG_DFL;
     act.sa_flags = SA_NOCLDWAIT;
-    ::sigaction( SIGCHLD, &act, &act );
+    ::sigaction(SIGCHLD, &act, &act);
 
     const int result = fork();
-    switch( result )
+    switch (result)
     {
-        case 0: // child
-            break;
+    case 0: // child
+        break;
 
-        case -1: // error
-            LBWARN << "Could not fork child process:" << sysError << std::endl;
-            return false;
+    case -1: // error
+        LBWARN << "Could not fork child process:" << sysError << std::endl;
+        return false;
 
-        default: // parent
-            return true;
+    default: // parent
+        return true;
     }
 
     // child
     const size_t argc = commandLine.size();
-    std::vector<char*> argv( argc + 1 );
+    std::vector<char*> argv(argc + 1);
     std::ostringstream stringStream;
 
-    for( size_t i=0; i<argc; i++ )
+    for (size_t i = 0; i < argc; i++)
     {
         argv[i] = (char*)commandLine[i].c_str();
         stringStream << commandLine[i] << " ";
     }
 
-    argv[ argc ] = 0;
+    argv[argc] = 0;
 
     LBDEBUG << "Executing: " << stringStream.str() << std::endl;
     int nTries = 10;
-    while( nTries-- )
+    while (nTries--)
     {
-        execvp( argv[0], &argv[0] );
+        execvp(argv[0], &argv[0]);
         LBWARN << "Error executing '" << argv[0] << "': " << sysError
                << std::endl;
-        if( errno != ETXTBSY )
+        if (errno != ETXTBSY)
             break;
     }
 
-    ::exit( EXIT_FAILURE );
+    ::exit(EXIT_FAILURE);
     return true; // not reached
 #endif
 }
 
 #ifndef _WIN32
-void Launcher::_buildCommandLine( const std::string& command,
-                                  std::vector<std::string>& commandLine )
+void Launcher::_buildCommandLine(const std::string& command,
+                                 std::vector<std::string>& commandLine)
 {
-    const size_t length    = command.size();
-    const char*  string    = command.c_str();
-    bool         inTicks   = false;
-    size_t       bufferPos = 0;
-    std::vector<char> buffer( length + 1 );
+    const size_t length = command.size();
+    const char* string = command.c_str();
+    bool inTicks = false;
+    size_t bufferPos = 0;
+    std::vector<char> buffer(length + 1);
 
     commandLine.clear();
 
     // tokenize command line
-    for( size_t i=0; i<length; i++ )
+    for (size_t i = 0; i < length; i++)
     {
         const char c = string[i];
-        switch( c )
+        switch (c)
         {
-            case ' ':
-                if( inTicks )
-                    buffer[bufferPos++] = c;
-                else
-                {
-                    buffer[bufferPos] = '\0';
-                    commandLine.push_back( &buffer[0] );
-                    bufferPos = 0;
-                }
-                break;
-
-            case '"':
-                inTicks = !inTicks;
-                break;
-
-            case '\\':
-                i++;
-                buffer[bufferPos++] = string[i];
-                break;
-
-            default:
+        case ' ':
+            if (inTicks)
                 buffer[bufferPos++] = c;
-                break;
+            else
+            {
+                buffer[bufferPos] = '\0';
+                commandLine.push_back(&buffer[0]);
+                bufferPos = 0;
+            }
+            break;
+
+        case '"':
+            inTicks = !inTicks;
+            break;
+
+        case '\\':
+            i++;
+            buffer[bufferPos++] = string[i];
+            break;
+
+        default:
+            buffer[bufferPos++] = c;
+            break;
         }
     }
 
-    if( bufferPos > 0 )
+    if (bufferPos > 0)
     {
         buffer[bufferPos++] = '\0';
-        commandLine.push_back( &buffer[0] );
+        commandLine.push_back(&buffer[0]);
     }
 }
 #endif
-
 }

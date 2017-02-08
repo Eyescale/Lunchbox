@@ -21,13 +21,15 @@
 
 namespace lunchbox
 {
-template< typename T > PluginFactory< T >& PluginFactory< T >::getInstance()
+template <typename T>
+PluginFactory<T>& PluginFactory<T>::getInstance()
 {
-    static PluginFactory< T > factory;
+    static PluginFactory<T> factory;
     return factory;
 }
 
-template< typename T > PluginFactory< T >::~PluginFactory()
+template <typename T>
+PluginFactory<T>::~PluginFactory()
 {
     // Do not do this: dtor is called in atexit(), at which point the other DSOs
     // might be unloaded already, causing dlclose to trip. It's pointless
@@ -36,111 +38,115 @@ template< typename T > PluginFactory< T >::~PluginFactory()
     //   deregisterAll(); // unload the DSO libraries
 }
 
-template< typename T >
-bool PluginFactory< T >::handles( const typename T::InitDataT& initData )
+template <typename T>
+bool PluginFactory<T>::handles(const typename T::InitDataT& initData)
 {
-    for( auto& plugin : _plugins )
-        if( plugin.handles( initData ))
+    for (auto& plugin : _plugins)
+        if (plugin.handles(initData))
             return true;
     return false;
 }
 
-template< typename T >
-T* PluginFactory< T >::create( const typename T::InitDataT& initData )
+template <typename T>
+T* PluginFactory<T>::create(const typename T::InitDataT& initData)
 {
-    for( auto& plugin : _plugins )
-        if( plugin.handles( initData ))
-            return plugin.construct( initData );
+    for (auto& plugin : _plugins)
+        if (plugin.handles(initData))
+            return plugin.construct(initData);
 
-    LBTHROW( std::runtime_error( "No plugin implementation available for " +
-                                 std::to_string( initData )));
+    LBTHROW(std::runtime_error("No plugin implementation available for " +
+                               std::to_string(initData)));
 }
 
-template< typename T >
-void PluginFactory< T >::register_( const PluginT& plugin )
+template <typename T>
+void PluginFactory<T>::register_(const PluginT& plugin)
 {
-    _plugins.push_back( plugin );
+    _plugins.push_back(plugin);
 }
 
-template< typename T >
-bool PluginFactory< T >::deregister( const PluginT& plugin )
+template <typename T>
+bool PluginFactory<T>::deregister(const PluginT& plugin)
 {
-    typename Plugins::iterator i = std::find( _plugins.begin(), _plugins.end(),
-                                              plugin );
-    if( i == _plugins.end( ))
+    typename Plugins::iterator i =
+        std::find(_plugins.begin(), _plugins.end(), plugin);
+    if (i == _plugins.end())
         return false;
 
-    _plugins.erase( i );
+    _plugins.erase(i);
     return true;
 }
 
-template< typename T > void PluginFactory< T >::deregisterAll()
+template <typename T>
+void PluginFactory<T>::deregisterAll()
 {
     _plugins.clear();
-    for( auto& plugin : _libraries )
+    for (auto& plugin : _libraries)
         delete plugin.first;
     _libraries.clear();
 }
 
-template< typename T > std::string PluginFactory< T >::getDescriptions() const
+template <typename T>
+std::string PluginFactory<T>::getDescriptions() const
 {
     std::string descriptions;
-    for( const auto& plugin : _plugins )
-        descriptions += (descriptions.empty() ? "" : "\n\n" ) +
-                        plugin.getDescription();
+    for (const auto& plugin : _plugins)
+        descriptions +=
+            (descriptions.empty() ? "" : "\n\n") + plugin.getDescription();
     return descriptions;
 }
 
-template< typename T >
-void PluginFactory< T >::load( const int version, const Strings& paths,
-                               const std::string& pattern )
+template <typename T>
+void PluginFactory<T>::load(const int version, const Strings& paths,
+                            const std::string& pattern)
 {
     Strings unique = paths;
-    lunchbox::usort( unique );
+    lunchbox::usort(unique);
 
-    for( const auto& path : unique )
-        load( version, path, pattern );
+    for (const auto& path : unique)
+        load(version, path, pattern);
 }
 
-template< typename T >
-void PluginFactory< T >::load( const int version, const std::string& path,
-                               const std::string& pattern )
+template <typename T>
+void PluginFactory<T>::load(const int version, const std::string& path,
+                            const std::string& pattern)
 {
 #ifdef _MSC_VER
-    const std::string regex( pattern + ".dll" );
+    const std::string regex(pattern + ".dll");
 #elif __APPLE__
-    const std::string regex( "lib" + pattern + ".dylib" );
+    const std::string regex("lib" + pattern + ".dylib");
 #else
-    const std::string regex( "lib" + pattern + ".so" );
+    const std::string regex("lib" + pattern + ".so");
 #endif
-    const Strings& libs = searchDirectory( path, regex );
+    const Strings& libs = searchDirectory(path, regex);
 
-    for( const auto& lib : libs )
+    for (const auto& lib : libs)
     {
-        lunchbox::DSO* dso = new lunchbox::DSO( path + "/" + lib );
-        if( !dso->isOpen())
+        lunchbox::DSO* dso = new lunchbox::DSO(path + "/" + lib);
+        if (!dso->isOpen())
         {
             delete dso;
             continue;
         }
 
-        typedef int( *GetVersion_t )();
-        typedef bool( *Register_t )();
+        typedef int (*GetVersion_t)();
+        typedef bool (*Register_t)();
 
-        GetVersion_t getVersion = dso->getFunctionPointer< GetVersion_t >(
-            "LunchboxPluginGetVersion" );
-        Register_t registerFunc = dso->getFunctionPointer< Register_t >(
-            "LunchboxPluginRegister" );
+        GetVersion_t getVersion =
+            dso->getFunctionPointer<GetVersion_t>("LunchboxPluginGetVersion");
+        Register_t registerFunc =
+            dso->getFunctionPointer<Register_t>("LunchboxPluginRegister");
         const bool matchesVersion = getVersion && (getVersion() == version);
 
-        if( !getVersion || !registerFunc || !matchesVersion )
+        if (!getVersion || !registerFunc || !matchesVersion)
         {
             LBERROR << "Disable " << lib << ": "
-                    << ( getVersion ? "" :
-                        "Symbol for LunchboxPluginGetVersion missing " )
-                    << ( registerFunc ? "" :
-                        "Symbol for LunchboxPluginRegister missing " );
-            if( getVersion && !matchesVersion )
+                    << (getVersion
+                            ? ""
+                            : "Symbol for LunchboxPluginGetVersion missing ")
+                    << (registerFunc
+                            ? ""
+                            : "Symbol for LunchboxPluginRegister missing ");
+            if (getVersion && !matchesVersion)
                 LBERROR << "Plugin version " << getVersion() << " does not"
                         << " match application version " << version;
             LBERROR << std::endl;
@@ -149,9 +155,9 @@ void PluginFactory< T >::load( const int version, const std::string& path,
             continue;
         }
 
-        if( registerFunc( ))
+        if (registerFunc())
         {
-            _libraries.insert( std::make_pair( dso, _plugins.back( )));
+            _libraries.insert(std::make_pair(dso, _plugins.back()));
             LBINFO << "Loaded plugin " << lib << std::endl;
         }
         else

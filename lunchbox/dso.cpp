@@ -23,10 +23,10 @@
 #include "os.h"
 
 #ifdef _WIN32 //_MSC_VER
-#  define LB_DL_ERROR sysError
+#define LB_DL_ERROR sysError
 #else
-#  include <dlfcn.h>
-#  define LB_DL_ERROR dlerror()
+#include <dlfcn.h>
+#define LB_DL_ERROR dlerror()
 #endif
 
 namespace lunchbox
@@ -36,7 +36,10 @@ namespace detail
 class DSO
 {
 public:
-    DSO() : dso( 0 ) {}
+    DSO()
+        : dso(0)
+    {
+    }
 
 #ifdef _WIN32 //_MSC_VER
     HMODULE dso;
@@ -47,13 +50,14 @@ public:
 }
 
 DSO::DSO()
-    : _impl( new detail::DSO )
-{}
-
-DSO::DSO( const std::string& name )
-    : _impl( new detail::DSO )
+    : _impl(new detail::DSO)
 {
-    open( name );
+}
+
+DSO::DSO(const std::string& name)
+    : _impl(new detail::DSO)
+{
+    open(name);
 }
 
 DSO::~DSO()
@@ -62,19 +66,19 @@ DSO::~DSO()
     delete _impl;
 }
 
-bool DSO::open( const std::string& fileName )
+bool DSO::open(const std::string& fileName)
 {
-    if( _impl->dso )
+    if (_impl->dso)
     {
         LBWARN << "DSO already open, close it first" << std::endl;
         return false;
     }
 
-    if( fileName.empty( ))
+    if (fileName.empty())
     {
 #ifdef _WIN32 //_MSC_VER
-        _impl->dso = GetModuleHandle( 0 );
-        LBASSERT( _impl->dso );
+        _impl->dso = GetModuleHandle(0);
+        LBASSERT(_impl->dso);
 #else
         _impl->dso = RTLD_DEFAULT;
 #endif
@@ -82,13 +86,13 @@ bool DSO::open( const std::string& fileName )
     else
     {
 #ifdef _WIN32 //_MSC_VER
-        _impl->dso = LoadLibrary( fileName.c_str() );
-#elif defined( RTLD_LOCAL )
-        _impl->dso = dlopen( fileName.c_str(), RTLD_LAZY | RTLD_LOCAL );
+        _impl->dso = LoadLibrary(fileName.c_str());
+#elif defined(RTLD_LOCAL)
+        _impl->dso = dlopen(fileName.c_str(), RTLD_LAZY | RTLD_LOCAL);
 #else
-        _impl->dso = dlopen( fileName.c_str(), RTLD_LAZY );
+        _impl->dso = dlopen(fileName.c_str(), RTLD_LAZY);
 #endif
-        if( !_impl->dso )
+        if (!_impl->dso)
         {
             LBDEBUG << "Can't open library " << fileName << ": " << LB_DL_ERROR
                     << std::endl;
@@ -101,29 +105,29 @@ bool DSO::open( const std::string& fileName )
 
 void DSO::close()
 {
-    if( !_impl->dso )
+    if (!_impl->dso)
         return;
 
 #ifdef _WIN32 //_MSC_VER
-    if( _impl->dso != GetModuleHandle( 0 ))
-        FreeLibrary( _impl->dso ) ;
+    if (_impl->dso != GetModuleHandle(0))
+        FreeLibrary(_impl->dso);
 #else
-    if( _impl->dso != RTLD_DEFAULT )
-        dlclose ( _impl->dso );
+    if (_impl->dso != RTLD_DEFAULT)
+        dlclose(_impl->dso);
 #endif
 
     _impl->dso = 0;
 }
 
-void* DSO::getFunctionPointer( const std::string& name ) const
+void* DSO::getFunctionPointer(const std::string& name) const
 {
-    if( !_impl->dso )
+    if (!_impl->dso)
         return 0;
 
 #ifdef _WIN32 //_MSC_VER
-    return (void*)GetProcAddress( _impl->dso, name.c_str( ));
+    return (void*)GetProcAddress(_impl->dso, name.c_str());
 #else
-    return dlsym( _impl->dso, name.c_str( ));
+    return dlsym(_impl->dso, name.c_str());
 #endif
 }
 
@@ -132,9 +136,8 @@ bool DSO::isOpen() const
     return _impl->dso != 0;
 }
 
-bool DSO::operator == ( const DSO& rhs ) const
+bool DSO::operator==(const DSO& rhs) const
 {
     return _impl->dso == rhs._impl->dso;
 }
-
 }

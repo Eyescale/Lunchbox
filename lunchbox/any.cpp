@@ -20,20 +20,18 @@
 #include <cstdio>
 
 #ifdef WIN32
-#  define snprintf _snprintf_s
+#define snprintf _snprintf_s
 #endif
-
 
 namespace lunchbox
 {
-
 Any::Any()
-  : content()
+    : content()
 {
 }
 
-Any::Any(const Any & other)
-  : content( other.content ? other.content->clone() : 0 )
+Any::Any(const Any& other)
+    : content(other.content ? other.content->clone() : 0)
 {
 }
 
@@ -41,13 +39,13 @@ Any::~Any()
 {
 }
 
-Any& Any::swap( Any& rhs )
+Any& Any::swap(Any& rhs)
 {
-    std::swap( content, rhs.content );
+    std::swap(content, rhs.content);
     return *this;
 }
 
-Any& Any::operator=( Any rhs )
+Any& Any::operator=(Any rhs)
 {
     rhs.swap(*this);
     return *this;
@@ -63,24 +61,22 @@ const std::type_info& Any::type() const
     return content ? content->type() : typeid(void);
 }
 
-bool Any::operator == ( const Any& rhs ) const
+bool Any::operator==(const Any& rhs) const
 {
-    if( (this == &rhs) || (empty() && rhs.empty( )))
+    if ((this == &rhs) || (empty() && rhs.empty()))
         return true;
 
-    if( empty() != rhs.empty() || type() != rhs.type( ))
+    if (empty() != rhs.empty() || type() != rhs.type())
         return false;
 
     return *content == *rhs.content;
 }
 
-
-bad_any_cast::bad_any_cast( const std::string& from, const std::string& to )
+bad_any_cast::bad_any_cast(const std::string& from, const std::string& to)
 {
-    snprintf( data, 256,
-              "boost::bad_any_cast: failed conversion from %s to %s\n",
-              from.c_str(), to.c_str( ));
+    snprintf(data, 256,
+             "boost::bad_any_cast: failed conversion from %s to %s\n",
+             from.c_str(), to.c_str());
     data[255] = 0;
 }
-
 }

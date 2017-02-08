@@ -19,15 +19,15 @@
 
 #include <lunchbox/init.h>
 
-int main( const int argc, char** argv )
+int main(const int argc, char** argv)
 {
-    TEST( lunchbox::init( 0, 0 ));
-    TEST( lunchbox::init( argc, argv ));
-    TEST( lunchbox::exit( ));
-    TEST( lunchbox::exit( ));
-    TEST( !lunchbox::exit( ));
+    TEST(lunchbox::init(0, 0));
+    TEST(lunchbox::init(argc, argv));
+    TEST(lunchbox::exit());
+    TEST(lunchbox::exit());
+    TEST(!lunchbox::exit());
 
-    TEST( lunchbox::init( argc, argv ));
-    TEST( lunchbox::exit( ));
+    TEST(lunchbox::init(argc, argv));
+    TEST(lunchbox::exit());
     return EXIT_SUCCESS;
 }

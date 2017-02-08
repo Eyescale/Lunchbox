@@ -20,28 +20,31 @@
 #ifndef LUNCHBOX_VISITORRESULT_H
 #define LUNCHBOX_VISITORRESULT_H
 
-#include <lunchbox/types.h>
 #include <iostream>
+#include <lunchbox/types.h>
 
 namespace lunchbox
 {
 /** The result code from any visit operation. */
 enum VisitorResult
 {
-    TRAVERSE_CONTINUE,   //!< continue the traversal
-    TRAVERSE_TERMINATE,  //!< abort the traversal
-    TRAVERSE_PRUNE       //!< do not traverse current entity downwards
+    TRAVERSE_CONTINUE,  //!< continue the traversal
+    TRAVERSE_TERMINATE, //!< abort the traversal
+    TRAVERSE_PRUNE      //!< do not traverse current entity downwards
 };
 
-inline std::ostream& operator << ( std::ostream& os,
-                                   const VisitorResult& result )
+inline std::ostream& operator<<(std::ostream& os, const VisitorResult& result)
 {
-    switch( result )
+    switch (result)
     {
-    case TRAVERSE_CONTINUE:  return os << "continue";
-    case TRAVERSE_TERMINATE: return os << "terminate";
-    case TRAVERSE_PRUNE:     return os << "prune";
-    default:                 return os << "ERROR";
+    case TRAVERSE_CONTINUE:
+        return os << "continue";
+    case TRAVERSE_TERMINATE:
+        return os << "terminate";
+    case TRAVERSE_PRUNE:
+        return os << "prune";
+    default:
+        return os << "ERROR";
     }
 }
 }

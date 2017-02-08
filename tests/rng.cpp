@@ -26,66 +26,67 @@
 
 #define MAXLOOPS 100000
 
-#define TESTLOOP( type, min, max )                                      \
-{                                                                       \
-    size_t i = MAXLOOPS;                                                \
-    while( --i )                                                        \
-        if( rng.get< type >() <= ( min ))                               \
-            break;                                                      \
-    TESTINFO( i, "Did never get value below " << std::to_string(min) << \
-                 " for " << #type );                                    \
-    i = MAXLOOPS;                                                       \
-    while( --i )                                                        \
-        if( rng.get< type >() >= ( max ))                               \
-            break;                                                      \
-    TESTINFO( i, "Did never get value above " << std::to_string(max) << \
-                 " for " << #type );                                    \
-    {                                                                   \
-        const type value = rng.get< type >();                           \
-        i = MAXLOOPS;                                                   \
-        while( --i )                                                    \
-            if( rng.get< type >() != value )                            \
-                break;                                                  \
-        TESTINFO( i, "Always get the same value " << value << " for "   \
-                  << #type );                                           \
-    }                                                                   \
-}
+#define TESTLOOP(type, min, max)                                         \
+    {                                                                    \
+        size_t i = MAXLOOPS;                                             \
+        while (--i)                                                      \
+            if (rng.get<type>() <= (min))                                \
+                break;                                                   \
+        TESTINFO(i, "Did never get value below " << std::to_string(min)  \
+                                                 << " for " << #type);   \
+        i = MAXLOOPS;                                                    \
+        while (--i)                                                      \
+            if (rng.get<type>() >= (max))                                \
+                break;                                                   \
+        TESTINFO(i, "Did never get value above " << std::to_string(max)  \
+                                                 << " for " << #type);   \
+        {                                                                \
+            const type value = rng.get<type>();                          \
+            i = MAXLOOPS;                                                \
+            while (--i)                                                  \
+                if (rng.get<type>() != value)                            \
+                    break;                                               \
+            TESTINFO(i, "Always get the same value " << value << " for " \
+                                                     << #type);          \
+        }                                                                \
+    }
 
-template< class T > void testSpeed()
+template <class T>
+void testSpeed()
 {
     lunchbox::RNG rng;
     lunchbox::Clock clock;
-    for( size_t i = 0; i < MAXLOOPS; ++i )
-        rng.get< T >();
-    std::cout << float( MAXLOOPS ) * sizeof( T ) / clock.getTimef()
-              << " byte/ms in " << sizeof( T ) << " byte reads" << std::endl;
+    for (size_t i = 0; i < MAXLOOPS; ++i)
+        rng.get<T>();
+    std::cout << float(MAXLOOPS) * sizeof(T) / clock.getTimef()
+              << " byte/ms in " << sizeof(T) << " byte reads" << std::endl;
 }
 
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
-    TEST( lunchbox::init( argc, argv ));
+    TEST(lunchbox::init(argc, argv));
 
     lunchbox::RNG rng;
 
-    TESTLOOP( uint8_t,  0,        255 );
-    TESTLOOP( uint16_t, 50,       65000 );
-    TESTLOOP( uint32_t, 1<<20,    1u<<12 );
-    TESTLOOP( uint64_t, 1ull<<52, 1ull<<12 );
+    TESTLOOP(uint8_t, 0, 255);
+    TESTLOOP(uint16_t, 50, 65000);
+    TESTLOOP(uint32_t, 1 << 20, 1u << 12);
+    TESTLOOP(uint64_t, 1ull << 52, 1ull << 12);
 
-    TESTLOOP( int8_t,  -126,       127 );
-    TESTLOOP( int16_t, -32000,     32000 );
-    TESTLOOP( int32_t, -(1<<5),      1<<5 );
-    TESTLOOP( int64_t, -(1<<10),     1<<10 );
+    TESTLOOP(int8_t, -126, 127);
+    TESTLOOP(int16_t, -32000, 32000);
+    TESTLOOP(int32_t, -(1 << 5), 1 << 5);
+    TESTLOOP(int64_t, -(1 << 10), 1 << 10);
 
-    TESTLOOP( float,  0.1f, 0.9f );
-    TESTLOOP( double, 0.1,  0.9 );
+    TESTLOOP(float, 0.1f, 0.9f);
+    TESTLOOP(double, 0.1, 0.9);
 
-    testSpeed< uint8_t >();
-    testSpeed< uint16_t >();
-    testSpeed< uint32_t >();
-    testSpeed< uint64_t >();
-    testSpeed< servus::uint128_t >();
+    testSpeed<uint8_t>();
+    testSpeed<uint16_t>();
+    testSpeed<uint32_t>();
+    testSpeed<uint64_t>();
+    testSpeed<servus::uint128_t>();
 
-    TEST( lunchbox::exit( ));
+    TEST(lunchbox::exit());
     return EXIT_SUCCESS;
 }

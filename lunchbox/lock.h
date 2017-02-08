@@ -18,13 +18,16 @@
 #ifndef LUNCHBOX_LOCK_H
 #define LUNCHBOX_LOCK_H
 
+#include <boost/noncopyable.hpp>
 #include <lunchbox/api.h>
 #include <lunchbox/compiler.h>
-#include <boost/noncopyable.hpp>
 
 namespace lunchbox
 {
-namespace detail { class Lock; }
+namespace detail
+{
+class Lock;
+}
 
 /**
  * A lock (mutex) primitive.
@@ -50,10 +53,8 @@ public:
 
     /** Acquire the lock shared with other readers. @version 1.3.2 */
     void setRead() { set(); }
-
     /** Release a shared read lock. @version 1.3.2 */
     void unsetRead() { unset(); }
-
     /**
      * Attempt to acquire the lock.
      *
@@ -78,4 +79,4 @@ private:
     detail::Lock* const _impl;
 };
 }
-#endif //LUNCHBOX_LOCK_H
+#endif // LUNCHBOX_LOCK_H

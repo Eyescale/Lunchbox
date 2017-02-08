@@ -20,21 +20,21 @@
 #ifndef LUNCHBOX_BITOPERATION_H
 #define LUNCHBOX_BITOPERATION_H
 
-#include <lunchbox/compiler.h>       // GCC version
+#include <lunchbox/compiler.h> // GCC version
 #include <lunchbox/types.h>
 #include <servus/uint128_t.h>
 
 #ifdef _MSC_VER
-#  pragma warning (push)
-#  pragma warning (disable: 4985) // inconsistent decl of ceil
-#    include <intrin.h>
-#  pragma warning (pop)
+#pragma warning(push)
+#pragma warning(disable : 4985) // inconsistent decl of ceil
+#include <intrin.h>
+#pragma warning(pop)
 #elif defined __xlC__
-#  include <builtins.h>
-#  include <byteswap.h>
-#elif defined (LB_GCC_4_3_OR_OLDER) && !defined(__clang__) && !defined( __APPLE__ )
-#  include <byteswap.h>
-#  define LB_GCC_BSWAP_FUNCTION
+#include <builtins.h>
+#include <byteswap.h>
+#elif defined(LB_GCC_4_3_OR_OLDER) && !defined(__clang__) && !defined(__APPLE__)
+#include <byteswap.h>
+#define LB_GCC_BSWAP_FUNCTION
 #endif
 
 namespace lunchbox
@@ -49,26 +49,29 @@ namespace lunchbox
  * @return the position of the last (most significant) set bit, or -1.
  * @version 1.8
  */
-template< class T > int32_t getIndexOfLastBit( T value );
+template <class T>
+int32_t getIndexOfLastBit(T value);
 
 /** Swap the byte order of the given value. @version 1.5.1 */
-template< class T > void byteswap( T& value );
+template <class T>
+void byteswap(T& value);
 //@}
 
 /** @cond IGNORE */
 // Implementation
-template<> inline int32_t getIndexOfLastBit< uint32_t >( uint32_t value )
+template <>
+inline int32_t getIndexOfLastBit<uint32_t>(uint32_t value)
 {
 #ifdef __APPLE__
-    return ::fls( value ) - 1;
+    return ::fls(value) - 1;
 #elif defined __GNUC__
-    return value ? (31 - __builtin_clz( value )) : -1;
+    return value ? (31 - __builtin_clz(value)) : -1;
 #elif defined _MSC_VER
     unsigned long i = 0;
-    return _BitScanReverse( &i, value ) ? i : -1;
+    return _BitScanReverse(&i, value) ? i : -1;
 #else
     int32_t count = -1;
-    while( value )
+    while (value)
     {
         ++count;
         value >>= 1;
@@ -77,16 +80,17 @@ template<> inline int32_t getIndexOfLastBit< uint32_t >( uint32_t value )
 #endif
 }
 
-template<> inline int32_t getIndexOfLastBit< uint64_t >( uint64_t value )
+template <>
+inline int32_t getIndexOfLastBit<uint64_t>(uint64_t value)
 {
-#ifdef  __GNUC__
-    return value ? (63 - __builtin_clzll( value )) : -1;
+#ifdef __GNUC__
+    return value ? (63 - __builtin_clzll(value)) : -1;
 #elif defined _WIN64
     unsigned long i = 0;
-    return _BitScanReverse64( &i, value ) ? i : -1;
+    return _BitScanReverse64(&i, value) ? i : -1;
 #else
     int32_t count = -1;
-    while( value )
+    while (value)
     {
         ++count;
         value >>= 1;
@@ -96,99 +100,144 @@ template<> inline int32_t getIndexOfLastBit< uint64_t >( uint64_t value )
 }
 
 #if defined(__linux__) && defined(_LP64)
-template<> inline int32_t
-getIndexOfLastBit< unsigned long long >( unsigned long long value )
-{ return getIndexOfLastBit( static_cast< uint64_t >( value )); }
+template <>
+inline int32_t getIndexOfLastBit<unsigned long long>(unsigned long long value)
+{
+    return getIndexOfLastBit(static_cast<uint64_t>(value));
+}
 #endif
 #ifdef __APPLE__
-#  ifdef _LP64
-template<> inline
-int32_t getIndexOfLastBit< unsigned long >( unsigned long value )
-{ return getIndexOfLastBit( static_cast< uint64_t >( value )); }
-#  else
-template<> inline
-int32_t getIndexOfLastBit< unsigned long >( unsigned long value )
-{ return getIndexOfLastBit( static_cast< uint32_t >( value )); }
-#  endif
+#ifdef _LP64
+template <>
+inline int32_t getIndexOfLastBit<unsigned long>(unsigned long value)
+{
+    return getIndexOfLastBit(static_cast<uint64_t>(value));
+}
+#else
+template <>
+inline int32_t getIndexOfLastBit<unsigned long>(unsigned long value)
+{
+    return getIndexOfLastBit(static_cast<uint32_t>(value));
+}
+#endif
 #endif
 
-template<> inline void byteswap( void*& ) { /*NOP*/ }
-template<> inline void byteswap( bool&) { /*NOP*/ }
-template<> inline void byteswap( char& ) { /*NOP*/ }
-template<> inline void byteswap( signed char& ) { /*NOP*/ }
-template<> inline void byteswap( unsigned char& ) { /*NOP*/ }
-template<> inline void byteswap( std::string& ) { /*NOP*/ }
+template <>
+inline void byteswap(void*&)
+{ /*NOP*/
+}
+template <>
+inline void byteswap(bool&)
+{ /*NOP*/
+}
+template <>
+inline void byteswap(char&)
+{ /*NOP*/
+}
+template <>
+inline void byteswap(signed char&)
+{ /*NOP*/
+}
+template <>
+inline void byteswap(unsigned char&)
+{ /*NOP*/
+}
+template <>
+inline void byteswap(std::string&)
+{ /*NOP*/
+}
 
-template<> inline void byteswap( uint32_t& value )
+template <>
+inline void byteswap(uint32_t& value)
 {
 #ifdef _MSC_VER
-    value = _byteswap_ulong( value );
+    value = _byteswap_ulong(value);
 #elif defined __xlC__
-    __store4r( value, &value );
+    __store4r(value, &value);
 #elif defined LB_GCC_BSWAP_FUNCTION
-    value = bswap_32( value );
+    value = bswap_32(value);
 #else
-    value = __builtin_bswap32( value );
+    value = __builtin_bswap32(value);
 #endif
 }
 
-template<> inline void byteswap( int32_t& value )
-{ byteswap( reinterpret_cast< uint32_t& >( value )); }
+template <>
+inline void byteswap(int32_t& value)
+{
+    byteswap(reinterpret_cast<uint32_t&>(value));
+}
 
-template<> inline void byteswap( float& value )
-{ byteswap( reinterpret_cast< uint32_t& >( value )); }
+template <>
+inline void byteswap(float& value)
+{
+    byteswap(reinterpret_cast<uint32_t&>(value));
+}
 
-template<> inline void byteswap( uint16_t& value )
+template <>
+inline void byteswap(uint16_t& value)
 {
 #ifdef _MSC_VER
-    value = _byteswap_ushort( value );
+    value = _byteswap_ushort(value);
 #elif defined __xlC__
-    __store2r( value, &value );
+    __store2r(value, &value);
 #else
-    value = (uint16_t)(value>>8) | (uint16_t)(value<<8);
+    value = (uint16_t)(value >> 8) | (uint16_t)(value << 8);
 #endif
 }
 
-template<> inline void byteswap( int16_t& value )
-{ byteswap( reinterpret_cast< uint16_t& >( value )); }
+template <>
+inline void byteswap(int16_t& value)
+{
+    byteswap(reinterpret_cast<uint16_t&>(value));
+}
 
 #ifdef __APPLE__
-template<> inline void byteswap( unsigned long& value )
-{ byteswap( reinterpret_cast< unsigned long& >( value )); }
+template <>
+inline void byteswap(unsigned long& value)
+{
+    byteswap(reinterpret_cast<unsigned long&>(value));
+}
 #endif
 
-template<> inline void byteswap( uint64_t& value )
+template <>
+inline void byteswap(uint64_t& value)
 {
 #ifdef _MSC_VER
-    value = _byteswap_uint64( value );
+    value = _byteswap_uint64(value);
 #elif defined __xlC__
-    value = __bswap_constant_64( value );
+    value = __bswap_constant_64(value);
 #elif defined LB_GCC_BSWAP_FUNCTION
-    value = bswap_64( value );
+    value = bswap_64(value);
 #else
-    value = __builtin_bswap64( value );
+    value = __builtin_bswap64(value);
 #endif
 }
 
-template<> inline void byteswap( int64_t& value )
-{ byteswap( reinterpret_cast< uint64_t& >( value )); }
-
-template<> inline void byteswap( double& value )
-{ byteswap( reinterpret_cast< uint64_t& >( value )); }
-
-template<> inline void byteswap( servus::uint128_t& value )
+template <>
+inline void byteswap(int64_t& value)
 {
-    byteswap( value.high( ));
-    byteswap( value.low( ));
+    byteswap(reinterpret_cast<uint64_t&>(value));
 }
 
-template< typename T >
-inline void byteswap( typename std::vector< T >& value )
+template <>
+inline void byteswap(double& value)
 {
-    for( size_t i = 0; i < value.size(); ++i )
-        byteswap( value[i] );
+    byteswap(reinterpret_cast<uint64_t&>(value));
+}
+
+template <>
+inline void byteswap(servus::uint128_t& value)
+{
+    byteswap(value.high());
+    byteswap(value.low());
+}
+
+template <typename T>
+inline void byteswap(typename std::vector<T>& value)
+{
+    for (size_t i = 0; i < value.size(); ++i)
+        byteswap(value[i]);
 }
 /** @endcond */
-
 }
-#endif //LUNCHBOX_BITOPERATION_H
+#endif // LUNCHBOX_BITOPERATION_H

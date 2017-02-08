@@ -22,22 +22,25 @@
 
 namespace lunchbox
 {
-
 /** A boolean future with a known value. Fully thread safe. */
-template< bool value > class FutureBool : public FutureImpl< bool >
+template <bool value>
+class FutureBool : public FutureImpl<bool>
 {
 protected:
-    bool wait( const uint32_t ) final { return value; }
+    bool wait(const uint32_t) final { return value; }
     bool isReady() const final { return true; }
 };
 
 /** @return a boolean future being true. */
-inline Future< bool > makeTrueFuture()
-    { return Future< bool >( new FutureBool< true >); }
+inline Future<bool> makeTrueFuture()
+{
+    return Future<bool>(new FutureBool<true>);
+}
 
 /** @return a boolean future being false. */
-inline Future< bool > makeFalseFuture()
-    { return Future< bool >( new FutureBool< false >); }
-
+inline Future<bool> makeFalseFuture()
+{
+    return Future<bool>(new FutureBool<false>);
 }
-#endif //LUNCHBOX_READYFUTURE_H
+}
+#endif // LUNCHBOX_READYFUTURE_H

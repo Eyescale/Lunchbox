@@ -23,17 +23,16 @@
 #include <lunchbox/defines.h>
 
 #ifdef LUNCHBOX_USE_V1_API
-#  include <servus/uint128_t.h>
+#include <servus/uint128_t.h>
 
 namespace lunchbox
 {
-    using servus::uint128_t;
-    using servus::make_uint128;
-    using servus::make_UUID;
-
+using servus::uint128_t;
+using servus::make_uint128;
+using servus::make_UUID;
 }
 #else
-#  error "This header file may not be included in API version 2"
+#error "This header file may not be included in API version 2"
 #endif
 
 #endif // LUNCHBOX_UINT128_H

@@ -23,14 +23,14 @@
 #include <lunchbox/defines.h>
 
 #ifdef LUNCHBOX_USE_V1_API
-#  include <servus/uri.h>
+#include <servus/uri.h>
 
 namespace lunchbox
 {
-    using servus::URI; // In case types.h is not included
+using servus::URI; // In case types.h is not included
 }
 #else
-#  error "This header file may not be included in API version 2"
+#error "This header file may not be included in API version 2"
 #endif
 
 #endif // LUNCHBOX_URI_H

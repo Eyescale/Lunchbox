@@ -24,104 +24,97 @@
 
 #include <sstream>
 
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
-#pragma warning( push )
-#pragma warning( disable: 4996 )
-#include <boost/archive/binary_oarchive.hpp>
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <boost/archive/binary_iarchive.hpp>
-#pragma warning( pop )
+#include <boost/archive/binary_oarchive.hpp>
+#pragma warning(pop)
 
-
-template< class T >
-void textSave( const T& object, std::ostream& os )
+template <class T>
+void textSave(const T& object, std::ostream& os)
 {
-    lunchbox::saveAny< boost::archive::text_oarchive >( object, os );
+    lunchbox::saveAny<boost::archive::text_oarchive>(object, os);
 }
 
-template< class T >
-void textLoad( T& object, std::istream& is )
+template <class T>
+void textLoad(T& object, std::istream& is)
 {
-    lunchbox::loadAny< boost::archive::text_iarchive >( object, is );
+    lunchbox::loadAny<boost::archive::text_iarchive>(object, is);
 }
 
-template< class T >
-void binarySave( const T& object, std::ostream& os )
+template <class T>
+void binarySave(const T& object, std::ostream& os)
 {
-    lunchbox::saveAny< boost::archive::binary_oarchive >( object, os );
+    lunchbox::saveAny<boost::archive::binary_oarchive>(object, os);
 }
 
-template< class T >
-void binaryLoad( T& object, std::istream& is )
+template <class T>
+void binaryLoad(T& object, std::istream& is)
 {
-    lunchbox::loadAny< boost::archive::binary_iarchive >( object, is );
+    lunchbox::loadAny<boost::archive::binary_iarchive>(object, is);
 }
 
-template< class T >
-void textSerialize( const T& object, T& loadedObject )
-{
-    std::stringstream stream;
-    textSave( object, stream );
-    textLoad( loadedObject, stream );
-}
-
-template< class T >
-void textSerializeAndTest( const T& object )
-{
-    T loadedObject;
-    textSerialize( object, loadedObject );
-    TEST( object == loadedObject );
-}
-
-template< class T >
-void binarySerialize( const T& object, T& loadedObject )
+template <class T>
+void textSerialize(const T& object, T& loadedObject)
 {
     std::stringstream stream;
-    binarySave( object, stream );
-    binaryLoad( loadedObject, stream );
+    textSave(object, stream);
+    textLoad(loadedObject, stream);
 }
 
-template< class T >
-void binarySerializeAndTest( const T& object )
+template <class T>
+void textSerializeAndTest(const T& object)
 {
     T loadedObject;
-    binarySerialize( object, loadedObject );
-    TEST( object == loadedObject );
+    textSerialize(object, loadedObject);
+    TEST(object == loadedObject);
 }
 
+template <class T>
+void binarySerialize(const T& object, T& loadedObject)
+{
+    std::stringstream stream;
+    binarySave(object, stream);
+    binaryLoad(loadedObject, stream);
+}
+
+template <class T>
+void binarySerializeAndTest(const T& object)
+{
+    T loadedObject;
+    binarySerialize(object, loadedObject);
+    TEST(object == loadedObject);
+}
 
 struct Foo
 {
-    bool operator == ( const Foo& rhs ) const
+    bool operator==(const Foo& rhs) const
     {
-        if( this == &rhs )
+        if (this == &rhs)
             return true;
 
         return i == rhs.i && f == rhs.f && b == rhs.b && s == rhs.s;
     }
 
-    bool operator != ( const Foo& rhs ) const
-    {
-        return !( *this == rhs );
-    }
-
+    bool operator!=(const Foo& rhs) const { return !(*this == rhs); }
     int i;
     float f;
     bool b;
     std::string s;
 
-    template< class Archive >
-    void serialize( Archive & ar, const unsigned int /*version*/ )
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int /*version*/)
     {
-        ar & i;
-        ar & f;
-        ar & b;
-        ar & s;
+        ar& i;
+        ar& f;
+        ar& b;
+        ar& s;
     }
 };
 
-SERIALIZABLEANY( Foo )
-
+SERIALIZABLEANY(Foo)
 
 #endif

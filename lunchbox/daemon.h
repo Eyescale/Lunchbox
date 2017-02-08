@@ -20,12 +20,11 @@
 
 #include <lunchbox/debug.h>
 #ifndef _MSC_VER
-#  include <unistd.h>
+#include <unistd.h>
 #endif
 
 namespace lunchbox
 {
-
 /**
  * Turn the calling process into a daemon.
  *
@@ -39,33 +38,33 @@ namespace lunchbox
 inline bool daemonize()
 {
 #ifdef _MSC_VER
-    LBABORT( "Not implemented" );
+    LBABORT("Not implemented");
     return false;
 #else
     const pid_t pid = fork();
-    if( pid < 0 )
+    if (pid < 0)
     {
         LBWARN << "Fork failed: " << sysError << std::endl;
         return false;
     }
 
-    if( pid > 0 ) // parent
-        ::exit( EXIT_SUCCESS );
+    if (pid > 0) // parent
+        ::exit(EXIT_SUCCESS);
 
     const pid_t sid = setsid(); // child, create new seesion
-    if( sid < 0 )
+    if (sid < 0)
     {
         LBWARN << "setsid failed: " << sysError << std::endl;
         return false;
     }
 
     // Close the standard file
-    ::close( STDIN_FILENO );
-    ::close( STDOUT_FILENO );
-    ::close( STDERR_FILENO );
+    ::close(STDIN_FILENO);
+    ::close(STDOUT_FILENO);
+    ::close(STDERR_FILENO);
     return true;
 #endif
 }
 }
 
-#endif //LUNCHBOX_DAEMON_H
+#endif // LUNCHBOX_DAEMON_H

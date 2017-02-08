@@ -17,65 +17,65 @@
 
 #include <lunchbox/test.h>
 
-#include <lunchbox/dso.h>
 #include <boost/filesystem.hpp>
+#include <lunchbox/dso.h>
 #ifdef __linux__
-#  include <gnu/lib-names.h>
+#include <gnu/lib-names.h>
 #endif
 
 #ifdef _WIN32
-#  include <lunchbox/os.h>
-#  define libraryFunc CreateThread
-   const std::string funcName( "CreateThread" );
+#include <lunchbox/os.h>
+#define libraryFunc CreateThread
+const std::string funcName("CreateThread");
 #else
-#  define libraryFunc malloc
-   const std::string funcName( "malloc" );
+#define libraryFunc malloc
+const std::string funcName("malloc");
 #endif
 
 namespace fs = boost::filesystem;
 
-int main( int, char** )
+int main(int, char**)
 {
     lunchbox::Strings libraries;
 #ifdef _WIN32
-    libraries.push_back( "Kernel32.dll" );
-    libraries.push_back( "Ws2_32.dll" );
-#elif defined (Darwin)
-    libraries.push_back( "/usr/lib/libc.dylib" );
-    libraries.push_back( "/usr/lib/libtermcap.dylib" );
+    libraries.push_back("Kernel32.dll");
+    libraries.push_back("Ws2_32.dll");
+#elif defined(Darwin)
+    libraries.push_back("/usr/lib/libc.dylib");
+    libraries.push_back("/usr/lib/libtermcap.dylib");
 #else
-    libraries.push_back( LIBC_SO );
-    libraries.push_back( LIBM_SO );
+    libraries.push_back(LIBC_SO);
+    libraries.push_back(LIBM_SO);
 #endif
 
-    lunchbox::DSO one( libraries[0] );
-    lunchbox::DSO two( libraries[1] );
+    lunchbox::DSO one(libraries[0]);
+    lunchbox::DSO two(libraries[1]);
     lunchbox::DSO three;
 
-    TEST( one.isOpen( ));
-    TEST( two.isOpen( ));
-    TEST( !three.isOpen( ));
+    TEST(one.isOpen());
+    TEST(two.isOpen());
+    TEST(!three.isOpen());
 
-    TEST( one != two );
-    TEST( one != three );
-    TEST( three.open( libraries[0] ));
-    TEST( one == three );
-    TEST( !three.open( libraries[0] ));
-    TEST( one == three );
+    TEST(one != two);
+    TEST(one != three);
+    TEST(three.open(libraries[0]));
+    TEST(one == three);
+    TEST(!three.open(libraries[0]));
+    TEST(one == three);
 
-    TEST( one.getFunctionPointer( funcName ));
-    TESTINFO( one.getFunctionPointer( funcName ) == &libraryFunc,
-              one.getFunctionPointer( funcName ) << " != " << (void*)&libraryFunc );
-    TEST( !one.getFunctionPointer( "fooBar" ));
+    TEST(one.getFunctionPointer(funcName));
+    TESTINFO(one.getFunctionPointer(funcName) == &libraryFunc,
+             one.getFunctionPointer(funcName) << " != " << (void*)&libraryFunc);
+    TEST(!one.getFunctionPointer("fooBar"));
 
     one.close();
-    TEST( one != two );
-    TEST( one != three );
-    TEST( !one.getFunctionPointer( funcName ));
+    TEST(one != two);
+    TEST(one != three);
+    TEST(!one.getFunctionPointer(funcName));
 
     two.close();
-    TEST( one == two );
-    TEST( one != three );
+    TEST(one == two);
+    TEST(one != three);
 
     return EXIT_SUCCESS;
 }

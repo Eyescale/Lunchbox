@@ -22,62 +22,62 @@
 #include "memoryMap.h"
 #include "os.h"
 
-#include <servus/serializable.h>
-#include <servus/uint128_t.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
 #include <boost/regex.hpp>
 #include <boost/tokenizer.hpp>
+#include <servus/serializable.h>
+#include <servus/uint128_t.h>
 #include <sys/stat.h>
 #ifdef _MSC_VER
-#  include <windows.h>
-#  include <direct.h>
-#  define getcwd _getcwd
-#  define MAXPATHLEN _MAX_PATH
+#include <direct.h>
+#include <windows.h>
+#define getcwd _getcwd
+#define MAXPATHLEN _MAX_PATH
 #elif __APPLE__
-#  include <dirent.h>
-#  include <mach-o/dyld.h>
+#include <dirent.h>
+#include <mach-o/dyld.h>
 #else
-#  include <dirent.h>
-#  include <limits.h>
-#  include <unistd.h>
+#include <dirent.h>
+#include <limits.h>
+#include <unistd.h>
 #endif
 
 namespace lunchbox
 {
-Strings searchDirectory( const std::string& directory,
-                         const std::string& pattern )
+Strings searchDirectory(const std::string& directory,
+                        const std::string& pattern)
 {
     Strings files;
-    const boost::regex regex( pattern );
+    const boost::regex regex(pattern);
 
 #ifdef _MSC_VER
     WIN32_FIND_DATA file;
     const std::string search = directory.empty() ? "*.*" : directory + "\\*.*";
-    HANDLE hSearch = FindFirstFile( search.c_str(), &file );
+    HANDLE hSearch = FindFirstFile(search.c_str(), &file);
 
-    if( hSearch == INVALID_HANDLE_VALUE )
+    if (hSearch == INVALID_HANDLE_VALUE)
     {
         LBVERB << "Error finding the first file to match " << pattern << " in "
                << directory << std::endl;
-        FindClose( hSearch );
+        FindClose(hSearch);
         return files;
     }
 
-    if( boost::regex_match( file.cFileName, regex ))
-        files.push_back( file.cFileName );
-    while( FindNextFile( hSearch, &file ))
+    if (boost::regex_match(file.cFileName, regex))
+        files.push_back(file.cFileName);
+    while (FindNextFile(hSearch, &file))
     {
-        if( boost::regex_match( file.cFileName, regex ))
-            files.push_back( file.cFileName );
+        if (boost::regex_match(file.cFileName, regex))
+            files.push_back(file.cFileName);
     }
-    FindClose( hSearch );
+    FindClose(hSearch);
 
 #else
 
-    DIR* dir = opendir( directory.c_str() );
-    if( !dir )
+    DIR* dir = opendir(directory.c_str());
+    if (!dir)
     {
         LBVERB << "Can't open directory " << directory << std::endl;
         return files;
@@ -85,11 +85,11 @@ Strings searchDirectory( const std::string& directory,
 
     struct dirent* entry;
 
-    while(( entry = readdir( dir )) != 0 )
+    while ((entry = readdir(dir)) != 0)
     {
-        const std::string candidate( entry->d_name );
-        if( boost::regex_match( candidate, regex ))
-            files.push_back( entry->d_name );
+        const std::string candidate(entry->d_name);
+        if (boost::regex_match(candidate, regex))
+            files.push_back(entry->d_name);
     }
 
     closedir(dir);
@@ -97,58 +97,61 @@ Strings searchDirectory( const std::string& directory,
     return files;
 }
 
-std::string getFilename( const std::string& filename )
+std::string getFilename(const std::string& filename)
 {
     const size_t lastSeparator = filename.find_last_of("/\\");
-    if( lastSeparator == std::string::npos )
+    if (lastSeparator == std::string::npos)
         return filename;
     // lastSeparator + 1 may be at most equal to filename.size(), which is good
-    return filename.substr( lastSeparator + 1 );
+    return filename.substr(lastSeparator + 1);
 }
 
-std::string getDirname( const std::string& filename )
+std::string getDirname(const std::string& filename)
 {
     const size_t lastSeparator = filename.find_last_of("/\\");
-    if( lastSeparator == std::string::npos )
+    if (lastSeparator == std::string::npos)
         return "./"; // The final separator is always in the output.
     // The separator will be part of the output.
     // If lastSeparator == 0 (e.g. /file-or-dir) it will assume that the rest
     // of the path is a filename.
-    return filename.substr( 0, lastSeparator + 1 );
+    return filename.substr(0, lastSeparator + 1);
 }
 
 std::string getExecutableDir()
 {
-    // http://stackoverflow.com/questions/933850
+// http://stackoverflow.com/questions/933850
 #ifdef _MSC_VER
     char result[MAX_PATH];
-    const std::string execPath( result, GetModuleFileName( NULL, result,
-                                                           MAX_PATH ));
+    const std::string execPath(result,
+                               GetModuleFileName(NULL, result, MAX_PATH));
 #elif __APPLE__
-    char result[PATH_MAX+1];
+    char result[PATH_MAX + 1];
     uint32_t size = sizeof(result);
-    if( _NSGetExecutablePath( result, &size ) != 0 )
+    if (_NSGetExecutablePath(result, &size) != 0)
         return std::string();
-    const std::string execPath( result );
+    const std::string execPath(result);
 #else
     char result[PATH_MAX];
-    const ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
-    if( count < 0 )
+    const ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    if (count < 0)
     {
         // Not all UNIX have /proc/self/exe
         LBWARN << "Could not find absolute executable path" << std::endl;
         return "";
     }
-    const std::string execPath( result, count );
+    const std::string execPath(result, count);
 #endif
 
-    const boost::filesystem::path path( execPath );
+    const boost::filesystem::path path(execPath);
 #ifdef __APPLE__
-    if( boost::algorithm::ends_with( path.parent_path().string(),
-                                     "Contents/MacOS" ))
+    if (boost::algorithm::ends_with(path.parent_path().string(),
+                                    "Contents/MacOS"))
     {
-        return
-          path.parent_path().parent_path().parent_path().parent_path().string();
+        return path.parent_path()
+            .parent_path()
+            .parent_path()
+            .parent_path()
+            .string();
     }
 #endif
     return path.parent_path().string();
@@ -156,25 +159,25 @@ std::string getExecutableDir()
 
 std::string getWorkDir()
 {
-    char cwd[ MAXPATHLEN ];
-    return ::getcwd( cwd, MAXPATHLEN );
+    char cwd[MAXPATHLEN];
+    return ::getcwd(cwd, MAXPATHLEN);
 }
 
 std::string getRootDir()
 {
     const std::string& exeDir = getExecutableDir();
-    if( exeDir.empty( ))
+    if (exeDir.empty())
         return exeDir;
 
-    const boost::filesystem::path path( exeDir );
+    const boost::filesystem::path path(exeDir);
 #ifdef _MSC_VER
-    const Strings buildTypes { "debug", "relwithdebinfo", "release",
-                               "minsizerel" };
-    std::string buildType( path.stem().string( ));
-    std::transform( buildType.begin(), buildType.end(), buildType.begin(),
-                    ::tolower );
-    if( std::find( buildTypes.begin(), buildTypes.end(),
-                   buildType ) != buildTypes.end( ))
+    const Strings buildTypes{"debug", "relwithdebinfo", "release",
+                             "minsizerel"};
+    std::string buildType(path.stem().string());
+    std::transform(buildType.begin(), buildType.end(), buildType.begin(),
+                   ::tolower);
+    if (std::find(buildTypes.begin(), buildTypes.end(), buildType) !=
+        buildTypes.end())
     {
         return path.parent_path().parent_path().string();
     }
@@ -185,109 +188,111 @@ std::string getRootDir()
 std::string getLibraryPath()
 {
     const std::string& exeDir = getExecutableDir();
-    if( exeDir.empty( ))
+    if (exeDir.empty())
         return exeDir;
 
 #ifdef _MSC_VER
     return exeDir;
 #elif __APPLE__
-    const boost::filesystem::path path( exeDir );
+    const boost::filesystem::path path(exeDir);
 
     // foo.app/Contents/MacOS/foo
-    if( boost::algorithm::ends_with( exeDir, ".app/Contents/MacOS" ))
-        return path.parent_path().parent_path().parent_path().parent_path().
-                   string() + "/lib";
+    if (boost::algorithm::ends_with(exeDir, ".app/Contents/MacOS"))
+        return path.parent_path()
+                   .parent_path()
+                   .parent_path()
+                   .parent_path()
+                   .string() +
+               "/lib";
     return path.parent_path().string() + "/lib";
 #else
-    const boost::filesystem::path path( exeDir );
+    const boost::filesystem::path path(exeDir);
     return path.parent_path().string() + "/lib";
 #endif
 }
 
-#define STDSTRING( macro ) std::string( STRINGIFY( macro ))
-#define STRINGIFY( foo ) #foo
+#define STDSTRING(macro) std::string(STRINGIFY(macro))
+#define STRINGIFY(foo) #foo
 
 Strings getLibraryPaths()
 {
     Strings paths;
     const std::string& appPath = getLibraryPath();
-    if( !appPath.empty( ))
-        paths.push_back( appPath );
+    if (!appPath.empty())
+        paths.push_back(appPath);
 
 #ifdef _MSC_VER
-    paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/bin" );
-    const char* env = ::getenv( "PATH" );
+    paths.push_back(STDSTRING(CMAKE_INSTALL_PREFIX) + "/bin");
+    const char* env = ::getenv("PATH");
 #elif __APPLE__
-    paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/lib" );
-    const char* env = ::getenv( "DYLD_LIBRARY_PATH" );
+    paths.push_back(STDSTRING(CMAKE_INSTALL_PREFIX) + "/lib");
+    const char* env = ::getenv("DYLD_LIBRARY_PATH");
 #else
-    paths.push_back( STDSTRING( CMAKE_INSTALL_PREFIX ) + "/lib" );
-    const char* env = ::getenv( "LD_LIBRARY_PATH" );
+    paths.push_back(STDSTRING(CMAKE_INSTALL_PREFIX) + "/lib");
+    const char* env = ::getenv("LD_LIBRARY_PATH");
 #endif
 
-    if( !env )
+    if (!env)
         return paths;
 
-    const std::string envString( env );
+    const std::string envString(env);
 #ifdef _MSC_VER
-    boost::char_separator< char > separator(";");
+    boost::char_separator<char> separator(";");
 #else
-    boost::char_separator< char > separator(":");
+    boost::char_separator<char> separator(":");
 #endif
-    const boost::tokenizer< boost::char_separator< char > >
-        tokens( envString, separator );
-    BOOST_FOREACH( const std::string& token, tokens )
-        paths.push_back( token );
+    const boost::tokenizer<boost::char_separator<char> > tokens(envString,
+                                                                separator);
+    BOOST_FOREACH (const std::string& token, tokens)
+        paths.push_back(token);
 
     return paths;
 }
 
-bool saveBinary( const servus::Serializable& object, const std::string& file )
+bool saveBinary(const servus::Serializable& object, const std::string& file)
 {
     const servus::Serializable::Data& data = object.toBinary();
-    MemoryMap mmap( file, sizeof( uint128_t ) + data.size );
-    if( !mmap.getAddress( ))
+    MemoryMap mmap(file, sizeof(uint128_t) + data.size);
+    if (!mmap.getAddress())
         return false;
     const uint128_t& id = object.getTypeIdentifier();
-    ::memcpy( mmap.getAddress(), &id, sizeof( id ));
-    ::memcpy( mmap.getAddress< uint8_t >() + sizeof( id ),
-              data.ptr.get(), data.size );
+    ::memcpy(mmap.getAddress(), &id, sizeof(id));
+    ::memcpy(mmap.getAddress<uint8_t>() + sizeof(id), data.ptr.get(),
+             data.size);
     return true;
 }
 
-bool loadBinary( servus::Serializable& object, const std::string& file )
+bool loadBinary(servus::Serializable& object, const std::string& file)
 {
-    const MemoryMap mmap( file );
-    if( !mmap.getAddress() || mmap.getSize() < sizeof( uint128_t ) ||
-        *mmap.getAddress< uint128_t >() != object.getTypeIdentifier( ))
+    const MemoryMap mmap(file);
+    if (!mmap.getAddress() || mmap.getSize() < sizeof(uint128_t) ||
+        *mmap.getAddress<uint128_t>() != object.getTypeIdentifier())
     {
         return false;
     }
 
-    object.fromBinary( mmap.getAddress< uint8_t >() + sizeof( uint128_t ),
-                       mmap.getSize() - sizeof( uint128_t ));
+    object.fromBinary(mmap.getAddress<uint8_t>() + sizeof(uint128_t),
+                      mmap.getSize() - sizeof(uint128_t));
     return true;
 }
 
-bool saveAscii( const servus::Serializable& object, const std::string& file )
+bool saveAscii(const servus::Serializable& object, const std::string& file)
 {
     const std::string& data = object.toJSON();
-    MemoryMap mmap( file, data.length( ));
-    if( !mmap.getAddress( ))
+    MemoryMap mmap(file, data.length());
+    if (!mmap.getAddress())
         return false;
-    ::memcpy( mmap.getAddress(), &data[0], data.length( ));
+    ::memcpy(mmap.getAddress(), &data[0], data.length());
     return true;
 }
 
-bool loadAscii( servus::Serializable& object, const std::string& file )
+bool loadAscii(servus::Serializable& object, const std::string& file)
 {
-    const MemoryMap mmap( file );
-    if( !mmap.getAddress( ))
+    const MemoryMap mmap(file);
+    if (!mmap.getAddress())
         return false;
-    const uint8_t* ptr = mmap.getAddress< uint8_t >();
-    object.fromJSON( std::string( ptr, ptr + mmap.getSize( )));
+    const uint8_t* ptr = mmap.getAddress<uint8_t>();
+    object.fromJSON(std::string(ptr, ptr + mmap.getSize()));
     return true;
 }
-
-
 }

@@ -22,9 +22,9 @@
 
 namespace lunchbox
 {
-
 /** Thread-specific storage for a RefPtr. */
-template< typename T > class PerThreadRef : public boost::noncopyable
+template <typename T>
+class PerThreadRef : public boost::noncopyable
 {
 public:
     /** Construct a new per-thread RefPtr. @version 1.0 */
@@ -33,15 +33,15 @@ public:
     ~PerThreadRef();
 
     /** Assign a RefPtr to the thread-local storage. @version 1.0 */
-    PerThreadRef<T>& operator = ( RefPtr< T > data );
+    PerThreadRef<T>& operator=(RefPtr<T> data);
 
     /** Assign a RefPtr to the thread-local storage. @version 1.0 */
-    PerThreadRef<T>& operator = ( const PerThreadRef<T>& rhs );
+    PerThreadRef<T>& operator=(const PerThreadRef<T>& rhs);
 
     /** @return the RefPtr from the thread-local storage. @version 1.0 */
-    RefPtr< const T > get() const;
+    RefPtr<const T> get() const;
     /** @return the RefPtr from the thread-local storage. @version 1.0 */
-    RefPtr< T > get();
+    RefPtr<T> get();
 
     /**
      * @return the C pointer of the RefPtr from the thread-local storage.
@@ -65,28 +65,26 @@ public:
      * @return true if the two objects hold the same C pointer.
      * @version 1.0
      */
-    bool operator == ( const PerThreadRef& rhs ) const
-        { return ( get() == rhs.get( )); }
+    bool operator==(const PerThreadRef& rhs) const
+    {
+        return (get() == rhs.get());
+    }
 
     /**
      * @return true if the two objects hold the same C pointer.
      * @version 1.0
      */
-    bool operator == ( const RefPtr< T >& rhs ) const
-        { return ( get()==rhs ); }
-
+    bool operator==(const RefPtr<T>& rhs) const { return (get() == rhs); }
     /**
      * @return true if the two objects hold the same C pointer.
      * @version 1.0
      */
-    bool operator != ( const RefPtr< T >& rhs ) const
-        { return ( get()!=rhs ); }
-
+    bool operator!=(const RefPtr<T>& rhs) const { return (get() != rhs); }
     /**
      * @return true if the thread-local storage holds a 0 pointer.
      * @version 1.0
      */
-    bool operator ! () const;
+    bool operator!() const;
 
     /**
      * @return true if the thread-local storage holds a non-0 pointer.
@@ -98,82 +96,86 @@ private:
     TLS tls_;
 };
 
-template< typename T > PerThreadRef<T>::PerThreadRef()
-    : tls_( 0 )
-{}
-
-template< typename T > PerThreadRef<T>::~PerThreadRef()
+template <typename T>
+PerThreadRef<T>::PerThreadRef()
+    : tls_(0)
 {
-    RefPtr< T > object = get();
+}
+
+template <typename T>
+PerThreadRef<T>::~PerThreadRef()
+{
+    RefPtr<T> object = get();
     object.unref();
 }
 
-template< typename T >
-PerThreadRef<T>& PerThreadRef<T>::operator = ( RefPtr< T > data )
+template <typename T>
+PerThreadRef<T>& PerThreadRef<T>::operator=(RefPtr<T> data)
 {
     data.ref(); // ref new
 
-    RefPtr< T > object = get();
-    tls_.set( static_cast<const void*>( data.get( )));
+    RefPtr<T> object = get();
+    tls_.set(static_cast<const void*>(data.get()));
 
     object.unref(); // unref old
     return *this;
 }
 
-template< typename T >
-PerThreadRef<T>& PerThreadRef<T>::operator = ( const PerThreadRef<T>& rhs )
+template <typename T>
+PerThreadRef<T>& PerThreadRef<T>::operator=(const PerThreadRef<T>& rhs)
 {
-    RefPtr< T > newObject = rhs.get();
+    RefPtr<T> newObject = rhs.get();
     newObject.ref(); // ref new
 
-    RefPtr< T > object = get();
-    tls_.set( rhs.tls_.get( ));
+    RefPtr<T> object = get();
+    tls_.set(rhs.tls_.get());
 
     object.unref(); // unref old
     return *this;
 }
 
-template< typename T > RefPtr< const T > PerThreadRef<T>::get() const
+template <typename T>
+RefPtr<const T> PerThreadRef<T>::get() const
 {
-    return static_cast< const T* >( tls_.get( ));
+    return static_cast<const T*>(tls_.get());
 }
 
-template< typename T > RefPtr< T > PerThreadRef<T>::get()
+template <typename T>
+RefPtr<T> PerThreadRef<T>::get()
 {
-    return static_cast< T* >( tls_.get( ));
+    return static_cast<T*>(tls_.get());
 }
 
-template< typename T >
+template <typename T>
 T* PerThreadRef<T>::getPointer()
 {
-    return static_cast< T* >( tls_.get( ));
+    return static_cast<T*>(tls_.get());
 }
 
-template< typename T >
+template <typename T>
 T* PerThreadRef<T>::operator->()
 {
-    LBASSERT( tls_.get( ));
-    return static_cast< T* >( tls_.get( ));
+    LBASSERT(tls_.get());
+    return static_cast<T*>(tls_.get());
 }
 
-template< typename T >
+template <typename T>
 const T* PerThreadRef<T>::operator->() const
 {
-    LBASSERT( tls_.get( ));
-    return static_cast< const T* >( tls_.get( ));
+    LBASSERT(tls_.get());
+    return static_cast<const T*>(tls_.get());
 }
 
-template< typename T >
-bool PerThreadRef<T>::operator ! () const
+template <typename T>
+bool PerThreadRef<T>::operator!() const
 {
     return tls_.get() == 0;
 }
 
-template< typename T >
+template <typename T>
 bool PerThreadRef<T>::isValid() const
 {
     return tls_.get() != 0;
 }
-
 }
-#endif //LUNCHBOX_PERTHREADREF_H
+#endif // LUNCHBOX_PERTHREADREF_H

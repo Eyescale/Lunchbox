@@ -15,22 +15,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <lunchbox/test.h>
 #include <lunchbox/result.h>
+#include <lunchbox/test.h>
 
-int main( int, char** )
+int main(int, char**)
 {
-    const lunchbox::Result success( lunchbox::Result::SUCCESS );
-    const lunchbox::Result failure( lunchbox::Result::SUCCESS + 1 );
+    const lunchbox::Result success(lunchbox::Result::SUCCESS);
+    const lunchbox::Result failure(lunchbox::Result::SUCCESS + 1);
 
-    TEST( success );
-    TEST( !failure );
+    TEST(success);
+    TEST(!failure);
 
-    if( !success )
-        TEST( false )
+    if (!success)
+        TEST(false)
 
-    if( failure )
-        TEST( false )
+    if (failure)
+        TEST(false)
 
     return EXIT_SUCCESS;
 }

@@ -1,15 +1,15 @@
 
-/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com> 
+/* Copyright (c) 2005-2012, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -27,38 +27,42 @@ namespace detail
 class TimedLock
 {
 public:
-    TimedLock() : locked( false ) {}
+    TimedLock()
+        : locked(false)
+    {
+    }
     lunchbox::Condition condition;
     bool locked;
 };
 }
 
 TimedLock::TimedLock()
-        : _impl( new detail::TimedLock )
-{}
+    : _impl(new detail::TimedLock)
+{
+}
 
 TimedLock::~TimedLock()
 {
     delete _impl;
 }
 
-bool TimedLock::set( const uint32_t timeout )
+bool TimedLock::set(const uint32_t timeout)
 {
     _impl->condition.lock();
 
     bool acquired = true;
-    while( _impl->locked )
+    while (_impl->locked)
     {
-        if( !_impl->condition.timedWait( timeout ))
+        if (!_impl->condition.timedWait(timeout))
         {
             acquired = false;
             break;
         }
     }
 
-    if( acquired )
+    if (acquired)
     {
-        LBASSERT( !_impl->locked );
+        LBASSERT(!_impl->locked);
         _impl->locked = true;
     }
 
@@ -74,15 +78,14 @@ void TimedLock::unset()
     _impl->condition.unlock();
 }
 
-
 bool TimedLock::trySet()
 {
     _impl->condition.lock();
-    
+
     bool acquired = false;
-    if( _impl->locked )
+    if (_impl->locked)
     {
-        _impl->locked  = true;
+        _impl->locked = true;
         acquired = true;
     }
 
@@ -94,5 +97,4 @@ bool TimedLock::isSet()
 {
     return _impl->locked;
 }
-
 }

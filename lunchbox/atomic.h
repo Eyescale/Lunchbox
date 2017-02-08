@@ -16,24 +16,23 @@
 #define LUNCHBOX_ATOMIC_H
 
 #include <lunchbox/api.h>
-#include <lunchbox/compiler.h>       // GCC version
+#include <lunchbox/compiler.h> // GCC version
 #include <lunchbox/types.h>
 
 #ifdef _MSC_VER
-#  pragma warning (push)
-#  pragma warning (disable: 4985) // inconsistent decl of ceil
-#    include <math.h> // include math.h early to avoid warning later
-#    include <intrin.h>
-#  pragma warning (pop)
-#  pragma intrinsic(_ReadWriteBarrier)
+#pragma warning(push)
+#pragma warning(disable : 4985) // inconsistent decl of ceil
+#include <intrin.h>
+#include <math.h> // include math.h early to avoid warning later
+#pragma warning(pop)
+#pragma intrinsic(_ReadWriteBarrier)
 #elif defined(__xlC__)
-#  include <builtins.h>
-#  include <iostream>
+#include <builtins.h>
+#include <iostream>
 #endif
 
 namespace lunchbox
 {
-
 /** Perform a full memory barrier. */
 inline void memoryBarrier()
 {
@@ -46,7 +45,7 @@ inline void memoryBarrier()
     __eieio();
     __fence();
 #else
-#  error "no memory barrier implemented for this platform"
+#error "no memory barrier implemented for this platform"
 #endif
 }
 
@@ -84,69 +83,70 @@ inline void memoryBarrierRelease()
  * which int32_t and ssize_t are implemented and typedef'd as a_int32_t and
  * a_ssize_t.
  */
-template< class T > class Atomic
+template <class T>
+class Atomic
 {
 public:
     /** @return the old value, then add the given increment. */
-    LUNCHBOX_API static T getAndAdd( T& value, const T increment );
+    LUNCHBOX_API static T getAndAdd(T& value, const T increment);
 
     /** @return the old value, then substract the increment. */
-    LUNCHBOX_API static T getAndSub( T& value, const T increment );
+    LUNCHBOX_API static T getAndSub(T& value, const T increment);
 
     /** @return the new value after adding the given increment. */
-    static T addAndGet( T& value, const T increment );
+    static T addAndGet(T& value, const T increment);
 
     /** @return the new value after substracting the increment. */
-    static T subAndGet( T& value, const T increment );
+    static T subAndGet(T& value, const T increment);
 
     /** @return the new value after incrementing the value. */
-    LUNCHBOX_API static T incAndGet( T& value );
+    LUNCHBOX_API static T incAndGet(T& value);
 
     /** @return the new value after decrementing the value. */
-    LUNCHBOX_API static T decAndGet( T& value );
+    LUNCHBOX_API static T decAndGet(T& value);
 
     /** Perform a compare-and-swap atomic operation. */
-    LUNCHBOX_API static bool compareAndSwap( T* value, const T expected,
-                                             const T newValue );
+    LUNCHBOX_API static bool compareAndSwap(T* value, const T expected,
+                                            const T newValue);
 
     /** Construct a new atomic variable with an initial value. @version 1.0 */
-    explicit Atomic( const T v = 0 );
+    explicit Atomic(const T v = 0);
 
     /** Construct a copy of an atomic variable. Not thread-safe! @version 1.0 */
-    Atomic( const Atomic< T >& v );
+    Atomic(const Atomic<T>& v);
 
     /** @return the current value @version 1.0 */
     operator T(void) const;
 
     /** Assign a new value @version 1.0 */
-    void operator = ( const T v );
+    void operator=(const T v);
 
     /** Assign a new value. Not thread-safe! @version 1.0 */
-    void operator = ( const Atomic< T >& v);
+    void operator=(const Atomic<T>& v);
 
     /** Atomically add a value and return the new value. @version 1.0 */
-    T operator +=(T v);
+    T operator+=(T v);
 
     /** Atomically substract a value and return the new value. @version 1.0 */
-    T operator -=(T v);
+    T operator-=(T v);
 
     /** Atomically increment by one and return the new value. @version 1.0 */
-    T operator ++(void);
+    T operator++(void);
 
     /** Atomically decrement by one and return the new value. @version 1.0 */
-    T operator --(void);
+    T operator--(void);
 
     /** Atomically increment by one and return the old value. @version 1.0 */
-    T operator ++(int);
+    T operator++(int);
 
     /** Atomically decrement by one and return the old value. @version 1.0 */
-    T operator --(int);
+    T operator--(int);
 
     /** @return true if the variable has the given value. @version 1.1.2 */
-    bool operator == ( const Atomic< T >& rhs ) const;
+    bool operator==(const Atomic<T>& rhs) const;
 
     /** @return true if the variable has not the given value. @version 1.1.2 */
-    bool operator != ( const Atomic< T >& rhs ) const;
+    bool operator!=(const Atomic<T>& rhs) const;
 
     /**
      * Perform a compare-and-swap atomic operation.
@@ -156,96 +156,106 @@ public:
      * @return true if the new value was set, false otherwise
      * @version 1.1.2
      */
-    bool compareAndSwap( const T expected, const T newValue );
+    bool compareAndSwap(const T expected, const T newValue);
 
 private:
-    // https://github.com/Eyescale/Lunchbox/issues/8
+// https://github.com/Eyescale/Lunchbox/issues/8
 #if _MSC_VER < 1700
     mutable T _value;
 #else
-    LB_ALIGN8( mutable T _value );
+    LB_ALIGN8(mutable T _value);
 #endif
 };
 
 // Implementation
 #ifdef __GNUC__
-template< class T > T Atomic< T >::getAndAdd( T& value, const T increment )
+template <class T>
+T Atomic<T>::getAndAdd(T& value, const T increment)
 {
-    return __sync_fetch_and_add( &value, increment );
+    return __sync_fetch_and_add(&value, increment);
 }
 
-template< class T > T Atomic< T >::getAndSub( T& value, const T increment )
+template <class T>
+T Atomic<T>::getAndSub(T& value, const T increment)
 {
-    return __sync_fetch_and_sub( &value, increment );
+    return __sync_fetch_and_sub(&value, increment);
 }
 
-template< class T > T Atomic< T >::addAndGet( T& value, const T increment )
+template <class T>
+T Atomic<T>::addAndGet(T& value, const T increment)
 {
-    return __sync_add_and_fetch( &value, increment );
+    return __sync_add_and_fetch(&value, increment);
 }
 
-template< class T > T Atomic< T >::subAndGet( T& value, const T increment )
+template <class T>
+T Atomic<T>::subAndGet(T& value, const T increment)
 {
-    return __sync_sub_and_fetch( &value, increment );
+    return __sync_sub_and_fetch(&value, increment);
 }
 
-template< class T > T Atomic< T >::incAndGet( T& value )
+template <class T>
+T Atomic<T>::incAndGet(T& value)
 {
-    return addAndGet( value, 1 );
+    return addAndGet(value, 1);
 }
 
-template< class T > T Atomic< T >::decAndGet( T& value )
+template <class T>
+T Atomic<T>::decAndGet(T& value)
 {
-    return subAndGet( value, 1 );
+    return subAndGet(value, 1);
 }
 
-template< class T >
-bool Atomic< T >::compareAndSwap( T* value, const T expected, const T newValue )
+template <class T>
+bool Atomic<T>::compareAndSwap(T* value, const T expected, const T newValue)
 {
-    return __sync_bool_compare_and_swap( value, expected, newValue );
+    return __sync_bool_compare_and_swap(value, expected, newValue);
 }
 
-#elif defined (_MSC_VER)
+#elif defined(_MSC_VER)
 
 // see also atomic.cpp
-template< class T > T Atomic< T >::addAndGet( T& value, const T increment )
+template <class T>
+T Atomic<T>::addAndGet(T& value, const T increment)
 {
-    return getAndAdd( value, increment ) + increment;
+    return getAndAdd(value, increment) + increment;
 }
 
-template< class T > T Atomic< T >::subAndGet( T& value, const T increment )
+template <class T>
+T Atomic<T>::subAndGet(T& value, const T increment)
 {
-    return getAndSub( value, increment ) - increment;
+    return getAndSub(value, increment) - increment;
 }
 
 #else
-#  ifdef __xlC__
-template< class T >
-bool Atomic< T >::compareAndSwap( T* value, const T expected, const T newValue )
+#ifdef __xlC__
+template <class T>
+bool Atomic<T>::compareAndSwap(T* value, const T expected, const T newValue)
 {
-    return __compare_and_swap( value, const_cast< T* >( &expected ), newValue );
+    return __compare_and_swap(value, const_cast<T*>(&expected), newValue);
 }
-#    ifdef __64BIT__
-template<> inline
-bool Atomic< int64_t >::compareAndSwap( int64_t* value, const int64_t expected,
-                                        const int64_t newValue )
+#ifdef __64BIT__
+template <>
+inline bool Atomic<int64_t>::compareAndSwap(int64_t* value,
+                                            const int64_t expected,
+                                            const int64_t newValue)
 {
-    return __compare_and_swaplp( value, const_cast< int64_t* >( &expected ),
-                                 newValue );
+    return __compare_and_swaplp(value, const_cast<int64_t*>(&expected),
+                                newValue);
 }
-#    endif
-#  else
-#    error No compare-and-swap implementated for this platform
-#  endif
+#endif
+#else
+#error No compare-and-swap implementated for this platform
+#endif
 
-template< class T > T Atomic< T >::getAndAdd( T& value, const T increment )
+template <class T>
+T Atomic<T>::getAndAdd(T& value, const T increment)
 {
-    for(;;)
+    for (;;)
     {
         memoryBarrierAcquire();
         const T oldv = value;
         const T newv = oldv + increment;
-        if( !compareAndSwap( &value, oldv, newv ))
+        if (!compareAndSwap(&value, oldv, newv))
             continue;
 
         memoryBarrierRelease();
@@ -253,14 +263,15 @@ template< class T > T Atomic< T >::getAndAdd( T& value, const T increment )
     }
 }
 
-template< class T > T Atomic< T >::getAndSub( T& value, const T increment )
+template <class T>
+T Atomic<T>::getAndSub(T& value, const T increment)
 {
-    for(;;)
+    for (;;)
     {
         memoryBarrierAcquire();
         const T oldv = value;
         const T newv = oldv - increment;
-        if( !compareAndSwap( &value, oldv, newv ))
+        if (!compareAndSwap(&value, oldv, newv))
             continue;
 
         memoryBarrierRelease();
@@ -268,14 +279,15 @@ template< class T > T Atomic< T >::getAndSub( T& value, const T increment )
     }
 }
 
-template< class T > T Atomic< T >::addAndGet( T& value, const T increment )
+template <class T>
+T Atomic<T>::addAndGet(T& value, const T increment)
 {
-    for(;;)
+    for (;;)
     {
         memoryBarrierAcquire();
         const T oldv = value;
         const T newv = oldv + increment;
-        if( !Atomic< T >::compareAndSwap( &value, oldv, newv ))
+        if (!Atomic<T>::compareAndSwap(&value, oldv, newv))
             continue;
 
         memoryBarrierRelease();
@@ -283,14 +295,15 @@ template< class T > T Atomic< T >::addAndGet( T& value, const T increment )
     }
 }
 
-template< class T > T Atomic< T >::subAndGet( T& value, const T increment )
+template <class T>
+T Atomic<T>::subAndGet(T& value, const T increment)
 {
-    for(;;)
+    for (;;)
     {
         memoryBarrierAcquire();
         const T oldv = value;
         const T newv = oldv - increment;
-        if( !Atomic< T >::compareAndSwap( &value, oldv, newv ))
+        if (!Atomic<T>::compareAndSwap(&value, oldv, newv))
             continue;
 
         memoryBarrierRelease();
@@ -298,88 +311,106 @@ template< class T > T Atomic< T >::subAndGet( T& value, const T increment )
     }
 }
 
-template< class T > T Atomic< T >::incAndGet( T& value )
+template <class T>
+T Atomic<T>::incAndGet(T& value)
 {
-    return addAndGet( value, 1 );
+    return addAndGet(value, 1);
 }
 
-template< class T > T Atomic< T >::decAndGet( T& value )
+template <class T>
+T Atomic<T>::decAndGet(T& value)
 {
-    return subAndGet( value, 1 );
+    return subAndGet(value, 1);
 }
 #endif
 
-template< class T > Atomic< T >::Atomic ( const T v ) : _value(v) {}
+template <class T>
+Atomic<T>::Atomic(const T v)
+    : _value(v)
+{
+}
 
 template <class T>
-Atomic< T >::Atomic( const Atomic< T >& v ) : _value( v._value ) {}
+Atomic<T>::Atomic(const Atomic<T>& v)
+    : _value(v._value)
+{
+}
 
 template <class T>
-Atomic< T >::operator T(void) const
+Atomic<T>::operator T(void) const
 {
     memoryBarrierAcquire();
     return _value;
 }
 
-template< class T > void Atomic< T >::operator = ( const T v )
+template <class T>
+void Atomic<T>::operator=(const T v)
 {
     _value = v;
     memoryBarrier();
 }
 
-template< class T > void Atomic< T >::operator = ( const Atomic< T >& v)
+template <class T>
+void Atomic<T>::operator=(const Atomic<T>& v)
 {
     _value = v._value;
     memoryBarrier();
 }
 
-template< class T >  T Atomic< T >::operator += (T v)
+template <class T>
+T Atomic<T>::operator+=(T v)
 {
-    return addAndGet( _value, v );
+    return addAndGet(_value, v);
 }
 
-template< class T > T Atomic< T >::operator -=(T v)
+template <class T>
+T Atomic<T>::operator-=(T v)
 {
-    return subAndGet( _value, v );
+    return subAndGet(_value, v);
 }
 
-template< class T > T Atomic< T >::operator ++(void)
+template <class T>
+T Atomic<T>::operator++(void)
 {
-    return incAndGet( _value );
+    return incAndGet(_value);
 }
 
-template< class T > T Atomic< T >::operator --(void)
+template <class T>
+T Atomic<T>::operator--(void)
 {
-    return decAndGet( _value );
+    return decAndGet(_value);
 }
 
-template< class T > T Atomic< T >::operator ++(int)
+template <class T>
+T Atomic<T>::operator++(int)
 {
-    return getAndAdd( _value, 1 );
+    return getAndAdd(_value, 1);
 }
 
-template< class T > T Atomic< T >::operator --(int)
+template <class T>
+T Atomic<T>::operator--(int)
 {
-    return getAndSub( _value, 1 );
+    return getAndSub(_value, 1);
 }
 
-template< class T > bool Atomic< T >::operator == ( const Atomic<T>& rhs ) const
+template <class T>
+bool Atomic<T>::operator==(const Atomic<T>& rhs) const
 {
     memoryBarrier();
     return _value == rhs._value;
 }
 
-template< class T > bool Atomic< T >::operator != ( const Atomic<T>& rhs ) const
+template <class T>
+bool Atomic<T>::operator!=(const Atomic<T>& rhs) const
 {
     memoryBarrier();
     return _value != rhs._value;
 }
 
-template< class T >
-bool Atomic< T >::compareAndSwap( const T expected, const T newValue )
+template <class T>
+bool Atomic<T>::compareAndSwap(const T expected, const T newValue)
 {
-    return compareAndSwap( &_value, expected, newValue );
+    return compareAndSwap(&_value, expected, newValue);
 }
-
 }
-#endif  // LUNCHBOX_ATOMIC_H
+#endif // LUNCHBOX_ATOMIC_H

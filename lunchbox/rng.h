@@ -18,15 +18,18 @@
 #ifndef LUNCHBOX_RNG_H
 #define LUNCHBOX_RNG_H
 
+#include <boost/noncopyable.hpp>
+#include <limits>
 #include <lunchbox/debug.h> // for LBASSERT
 #include <lunchbox/init.h>  // friend function
 #include <lunchbox/types.h>
-#include <boost/noncopyable.hpp>
-#include <limits>
 
 namespace lunchbox
 {
-namespace detail { class RNG; }
+namespace detail
+{
+class RNG;
+}
 
 /**
  * A random number generator.
@@ -54,35 +57,39 @@ public:
      * @return a random number.
      * @version 1.0
      */
-    template< typename T > T get()
+    template <typename T>
+    T get()
     {
         T value;
-        if( !_get( &value, sizeof( T )))
+        if (!_get(&value, sizeof(T)))
             return T();
         return value;
     }
 
 private:
-    LUNCHBOX_API bool _get( void* data, size_t size );
+    LUNCHBOX_API bool _get(void* data, size_t size);
 };
 
-template<> inline float RNG::get()
+template <>
+inline float RNG::get()
 {
     const float max_limits =
-        static_cast< float >( std::numeric_limits< uint32_t >::max( ));
-    return ((float)get< uint32_t >() / max_limits);
+        static_cast<float>(std::numeric_limits<uint32_t>::max());
+    return ((float)get<uint32_t>() / max_limits);
 }
 
-template<> inline double RNG::get()
+template <>
+inline double RNG::get()
 {
     const double max_limits =
-        static_cast< double >( std::numeric_limits< uint64_t >::max( ));
-    return ((double)get< uint64_t >() / max_limits);
+        static_cast<double>(std::numeric_limits<uint64_t>::max());
+    return ((double)get<uint64_t>() / max_limits);
 }
 
-template<> inline bool RNG::get()
+template <>
+inline bool RNG::get()
 {
-    return ( get< uint32_t >() & 1 );
+    return (get<uint32_t>() & 1);
 }
 }
-#endif  // LUNCHBOX_RNG_H
+#endif // LUNCHBOX_RNG_H

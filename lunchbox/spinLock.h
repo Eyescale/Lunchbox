@@ -18,12 +18,15 @@
 #ifndef LUNCHBOX_SPINLOCK_H
 #define LUNCHBOX_SPINLOCK_H
 
-#include <lunchbox/atomic.h>         // member
-#include <lunchbox/thread.h>         // used in inline method
+#include <lunchbox/atomic.h> // member
+#include <lunchbox/thread.h> // used in inline method
 
 namespace lunchbox
 {
-namespace detail { class SpinLock; }
+namespace detail
+{
+class SpinLock;
+}
 
 /**
  * A fast lock for uncontended memory access.
@@ -100,4 +103,4 @@ private:
     detail::SpinLock* const _impl;
 };
 }
-#endif //LUNCHBOX_SPINLOCK_H
+#endif // LUNCHBOX_SPINLOCK_H

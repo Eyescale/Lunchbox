@@ -17,30 +17,31 @@
  */
 
 #define TEST_RUNTIME 300 // seconds
-#include <lunchbox/test.h>
+#include <iostream>
 #include <lunchbox/clock.h>
 #include <lunchbox/refPtr.h>
 #include <lunchbox/referenced.h>
+#include <lunchbox/test.h>
 #include <lunchbox/thread.h>
-#include <iostream>
 
 #include <boost/intrusive_ptr.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 
 #define NTHREADS 24
-#define NREFS    200000
+#define NREFS 200000
 
 class Foo : public lunchbox::Referenced
 {
 public:
     Foo() {}
-
 private:
     virtual ~Foo() {}
-
     friend class boost::serialization::access;
-    template< class Archive > void serialize( Archive&, unsigned int ) {}
+    template <class Archive>
+    void serialize(Archive&, unsigned int)
+    {
+    }
 };
 
 typedef lunchbox::RefPtr<Foo> FooPtr;
@@ -50,15 +51,15 @@ class TestThread : public lunchbox::Thread
 {
 public:
     virtual void run()
+    {
+        FooPtr myFoo;
+        for (size_t i = 0; i < NREFS; ++i)
         {
-            FooPtr myFoo;
-            for( size_t i = 0; i<NREFS; ++i )
-            {
-                myFoo = foo;
-                foo   = myFoo;
-                myFoo = 0;
-            }
+            myFoo = foo;
+            foo = myFoo;
+            myFoo = 0;
         }
+    }
 };
 
 typedef boost::intrusive_ptr<Foo> BoostPtr;
@@ -68,15 +69,15 @@ class BThread : public lunchbox::Thread
 {
 public:
     virtual void run()
+    {
+        BoostPtr myBoost;
+        for (size_t i = 0; i < NREFS; ++i)
         {
-            BoostPtr myBoost;
-            for( size_t i = 0; i<NREFS; ++i )
-            {
-                myBoost = bFoo;
-                bFoo    = myBoost;
-                myBoost = 0;
-            }
+            myBoost = bFoo;
+            bFoo = myBoost;
+            myBoost = 0;
         }
+    }
 };
 
 class Bar : public lunchbox::Referenced
@@ -93,84 +94,90 @@ class BarThread : public lunchbox::Thread
 {
 public:
     virtual void run()
+    {
+        BarPtr myBar;
+        for (size_t i = 0; i < NREFS; ++i)
         {
-            BarPtr myBar;
-            for( size_t i = 0; i<NREFS; ++i )
-            {
-                myBar = bBar;
-                bBar  = myBar;
-                myBar.reset();
-            }
+            myBar = bBar;
+            bBar = myBar;
+            myBar.reset();
         }
+    }
 };
 
-int main( int, char** )
+int main(int, char**)
 {
     foo = new Foo;
 
     TestThread threads[NTHREADS];
     lunchbox::Clock clock;
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( threads[i].start( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(threads[i].start());
 
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( threads[i].join( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(threads[i].join());
 
     const float time = clock.getTimef();
-    std::cout << time << " ms for " << 3*NREFS << " lunchbox::RefPtr operations"
+    std::cout << time << " ms for " << 3 * NREFS
+              << " lunchbox::RefPtr operations"
               << " in " << NTHREADS << " threads ("
-              << time/(3*NREFS*NTHREADS)*1000000 << "ns/op)" << std::endl;
+              << time / (3 * NREFS * NTHREADS) * 1000000 << "ns/op)"
+              << std::endl;
 
-    TEST( foo->getRefCount() == 1 );
+    TEST(foo->getRefCount() == 1);
 
     bFoo = new Foo;
     BThread bThreads[NTHREADS];
     clock.reset();
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( bThreads[i].start( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(bThreads[i].start());
 
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( bThreads[i].join( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(bThreads[i].join());
 
     const float bTime = clock.getTimef();
-    std::cout << bTime << " ms for " << 3*NREFS << " boost::intrusive_ptr ops "
+    std::cout << bTime << " ms for " << 3 * NREFS
+              << " boost::intrusive_ptr ops "
               << "in " << NTHREADS << " threads ("
-              << bTime/(3*NREFS*NTHREADS)*1000000 << "ns/op)" << std::endl;
+              << bTime / (3 * NREFS * NTHREADS) * 1000000 << "ns/op)"
+              << std::endl;
 
-    TEST( bFoo->getRefCount() == 1 );
+    TEST(bFoo->getRefCount() == 1);
 
-    boost::intrusive_ptr< Foo > boostFoo( foo.get( ));
-    TEST( foo->getRefCount() == 2 );
+    boost::intrusive_ptr<Foo> boostFoo(foo.get());
+    TEST(foo->getRefCount() == 2);
 
     boostFoo = 0;
-    TEST( foo->getRefCount() == 1 );
+    TEST(foo->getRefCount() == 1);
 
-    bBar = BarPtr( new Bar );
+    bBar = BarPtr(new Bar);
     BarThread barThreads[NTHREADS];
 
     clock.reset();
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( barThreads[i].start( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(barThreads[i].start());
 
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( barThreads[i].join( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(barThreads[i].join());
 
     const float barTime = clock.getTimef();
-    std::cout << barTime << " ms for " << 3*NREFS <<" boost::shared_ptr ops in "
-              << NTHREADS << " threads (" << barTime/(3*NREFS*NTHREADS)*1000000
-              << "ns/op)" << std::endl;
+    std::cout << barTime << " ms for " << 3 * NREFS
+              << " boost::shared_ptr ops in " << NTHREADS << " threads ("
+              << barTime / (3 * NREFS * NTHREADS) * 1000000 << "ns/op)"
+              << std::endl;
 
-    bBar = boost::make_shared< Bar >();
+    bBar = boost::make_shared<Bar>();
     clock.reset();
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( barThreads[i].start( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(barThreads[i].start());
 
-    for( size_t i=0; i<NTHREADS; ++i )
-        TEST( barThreads[i].join( ));
+    for (size_t i = 0; i < NTHREADS; ++i)
+        TEST(barThreads[i].join());
 
     const float barTime2 = clock.getTimef();
-    std::cout << barTime2 << " ms for " << 3*NREFS<<" boost::shared_ptr ops in "
-              << NTHREADS << " threads (" << barTime2/(3*NREFS*NTHREADS)*1000000
+    std::cout << barTime2 << " ms for " << 3 * NREFS
+              << " boost::shared_ptr ops in " << NTHREADS << " threads ("
+              << barTime2 / (3 * NREFS * NTHREADS) * 1000000
               << "ns/op) using make_shared" << std::endl;
 
     foo = 0;

@@ -20,34 +20,34 @@
 #define LUNCHBOX_OS_H
 
 #include <lunchbox/api.h>
-#include <lunchbox/defines.h>
 #include <lunchbox/compiler.h>
+#include <lunchbox/defines.h>
 
 #ifdef _WIN32
-#  ifndef WIN32
-#    define WIN32
-#  endif
-#  ifndef WIN32_API
-#    define WIN32_API
-#  endif
-#  ifndef _MSC_VER
-#    define USE_SYS_TYPES_FD_SET
-#  endif
-#  ifndef _WIN32_WINNT // Hopefully to higher than 0x500...
-#     define _WIN32_WINNT 0x501 // => XP, for WM_XBUTTONDOWN and others
-#  endif
-#  ifndef _USE_MATH_DEFINES
-#    define _USE_MATH_DEFINES
-#  endif
-#  ifndef WIN32_LEAN_AND_MEAN
-#    define WIN32_LEAN_AND_MEAN
-#  endif
-#  ifndef NOMINMAX
-#    define NOMINMAX
-#  endif
-#  include <winsock2.h>
-#  include <windows.h>
-#  include <windef.h>
+#ifndef WIN32
+#define WIN32
+#endif
+#ifndef WIN32_API
+#define WIN32_API
+#endif
+#ifndef _MSC_VER
+#define USE_SYS_TYPES_FD_SET
+#endif
+#ifndef _WIN32_WINNT       // Hopefully to higher than 0x500...
+#define _WIN32_WINNT 0x501 // => XP, for WM_XBUTTONDOWN and others
+#endif
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windef.h>
+#include <windows.h>
+#include <winsock2.h>
 #endif
 
 #include <cmath>
@@ -56,27 +56,27 @@
 #include <string>
 
 #ifndef _MSC_VER
-#  include <stdint.h>
-#  include <sys/param.h>  // for MIN/MAX
-#  include <strings.h>
+#include <stdint.h>
+#include <strings.h>
+#include <sys/param.h> // for MIN/MAX
 #endif
 
 #ifdef __APPLE__
-#  include <crt_externs.h>
-#  define environ (*_NSGetEnviron())
+#include <crt_externs.h>
+#define environ (*_NSGetEnviron())
 #elif !defined(_WIN32)
-extern "C" char **environ;
+extern "C" char** environ;
 #endif
 
 namespace lunchbox
 {
 /** OS-independent call to bzero(3). @version 1.7.1 */
-static inline void setZero( void* ptr, const size_t size )
+static inline void setZero(void* ptr, const size_t size)
 {
 #ifdef _WIN32
-    ::memset( ptr, 0, size );
+    ::memset(ptr, 0, size);
 #else
-    ::bzero( ptr, size );
+    ::bzero(ptr, size);
 #endif
 }
 
@@ -84,4 +84,4 @@ static inline void setZero( void* ptr, const size_t size )
 LUNCHBOX_API std::string getHostname();
 }
 
-#endif //LUNCHBOX_OS_H
+#endif // LUNCHBOX_OS_H

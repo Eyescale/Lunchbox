@@ -24,9 +24,8 @@ namespace lunchbox
 {
 namespace term
 {
-
 /** Terminal sizes in width, height. @version 1.16 */
-using size = std::pair< uint32_t, uint32_t >;
+using size = std::pair<uint32_t, uint32_t>;
 
 /**
  * @return the width and height of the shell running the program.

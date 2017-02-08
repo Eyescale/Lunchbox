@@ -29,20 +29,26 @@
 #include <iostream>
 
 #pragma warning(push)
-#pragma warning(disable: 4985) // ceil: attributes not present on previous...
+#pragma warning(disable : 4985) // ceil: attributes not present on previous...
 #include <limits>
 #pragma warning(pop)
 
 #define MAXTHREADS 256
-#define TIME       500  // ms
+#define TIME 500 // ms
 
 lunchbox::Clock _clock;
 bool _running = false;
 
-template< class T, uint32_t hold > class WriteThread : public lunchbox::Thread
+template <class T, uint32_t hold>
+class WriteThread : public lunchbox::Thread
 {
 public:
-    WriteThread() : lock( 0 ), ops( 0 ), sTime( 0. ) {}
+    WriteThread()
+        : lock(0)
+        , ops(0)
+        , sTime(0.)
+    {
+    }
 
     T* lock;
     size_t ops;
@@ -52,15 +58,15 @@ public:
     {
         ops = 0;
         sTime = 0.;
-        while( LB_LIKELY( _running ))
+        while (LB_LIKELY(_running))
         {
             lock->set();
-            TEST( lock->isSetWrite( ));
+            TEST(lock->isSetWrite());
             // cppcheck-suppress duplicateExpression
-            if( hold > 0 ) // static, optimized out
+            if (hold > 0) // static, optimized out
             {
                 const double begin = _clock.getTimed();
-                lunchbox::sleep( hold );
+                lunchbox::sleep(hold);
                 sTime += _clock.getTimef() - begin;
             }
             lock->unset();
@@ -70,10 +76,16 @@ public:
     }
 };
 
-template< class T, uint32_t hold > class ReadThread : public lunchbox::Thread
+template <class T, uint32_t hold>
+class ReadThread : public lunchbox::Thread
 {
 public:
-    ReadThread() : lock( 0 ), ops( 0 ), sTime( 0. ) {}
+    ReadThread()
+        : lock(0)
+        , ops(0)
+        , sTime(0.)
+    {
+    }
 
     T* lock;
     size_t ops;
@@ -83,15 +95,15 @@ public:
     {
         ops = 0;
         sTime = 0.;
-        while( LB_LIKELY( _running ))
+        while (LB_LIKELY(_running))
         {
             lock->setRead();
-            TEST( lock->isSetRead( ));
+            TEST(lock->isSetRead());
             // cppcheck-suppress duplicateExpression
-            if( hold > 0 ) // static, optimized out
+            if (hold > 0) // static, optimized out
             {
                 const double begin = _clock.getTimed();
-                lunchbox::sleep( hold );
+                lunchbox::sleep(hold);
                 sTime += _clock.getTimef() - begin;
             }
             lock->unsetRead();
@@ -101,80 +113,80 @@ public:
     }
 };
 
-template< class T, uint32_t hold > void _test()
+template <class T, uint32_t hold>
+void _test()
 {
     const size_t nThreads = 16;
 
     T lock;
     lock.set();
 
-    WriteThread< T, hold > writers[MAXTHREADS];
-    ReadThread< T, hold > readers[MAXTHREADS];
+    WriteThread<T, hold> writers[MAXTHREADS];
+    ReadThread<T, hold> readers[MAXTHREADS];
 
     std::cout << "               Class, write ops/ms,  read ops/ms, w threads, "
               << "r threads" << std::endl;
-    for( size_t nWrite = 0; nWrite <= nThreads;
-         nWrite = (nWrite == 0) ? 1 : nWrite << 1 )
+    for (size_t nWrite = 0; nWrite <= nThreads;
+         nWrite = (nWrite == 0) ? 1 : nWrite << 1)
     {
-        for( size_t i = 1; i <= nThreads; i = i << 1 )
+        for (size_t i = 1; i <= nThreads; i = i << 1)
         {
-            if( i < nWrite )
+            if (i < nWrite)
                 continue;
 
             const size_t nRead = i - nWrite;
             _running = true;
-            for( size_t j = 0; j < nWrite; ++j )
+            for (size_t j = 0; j < nWrite; ++j)
             {
                 writers[j].lock = &lock;
-                TEST( writers[j].start( ));
+                TEST(writers[j].start());
             }
-            for( size_t j = 0; j < nRead; ++j )
+            for (size_t j = 0; j < nRead; ++j)
             {
                 readers[j].lock = &lock;
-                TESTINFO( readers[j].start(), j );
+                TESTINFO(readers[j].start(), j);
             }
-            lunchbox::sleep( 10 ); // let threads initialize
+            lunchbox::sleep(10); // let threads initialize
 
             _clock.reset();
             lock.unset();
-            lunchbox::sleep( TIME ); // let threads run
+            lunchbox::sleep(TIME); // let threads run
             _running = false;
 
-            for( size_t j = 0; j < nWrite; ++j )
-                TEST( writers[j].join( ));
-            for( size_t j = 0; j < nRead; ++j )
-                TEST( readers[j].join( ));
+            for (size_t j = 0; j < nWrite; ++j)
+                TEST(writers[j].join());
+            for (size_t j = 0; j < nRead; ++j)
+                TEST(readers[j].join());
             const double time = _clock.getTimed();
 
-            TEST( !lock.isSet( ));
+            TEST(!lock.isSet());
             lock.set();
 
             size_t nWriteOps = 0;
-            double wTime = time * double( nWrite );
-            for( size_t j = 0; j < nWrite; ++j )
+            double wTime = time * double(nWrite);
+            for (size_t j = 0; j < nWrite; ++j)
             {
                 nWriteOps += writers[j].ops;
                 wTime -= writers[j].sTime;
             }
-            if( nWrite > 0 )
-                wTime /= double( nWrite );
-            if( wTime == 0.f )
-                wTime = std::numeric_limits< double >::epsilon();
-
+            if (nWrite > 0)
+                wTime /= double(nWrite);
+            if (wTime == 0.f)
+                wTime = std::numeric_limits<double>::epsilon();
 
             size_t nReadOps = 0;
-            double rTime = time * double( nRead );
-            for( size_t j = 0; j < nRead; ++j )
+            double rTime = time * double(nRead);
+            for (size_t j = 0; j < nRead; ++j)
             {
                 nReadOps += readers[j].ops;
                 rTime -= readers[j].sTime;
             }
-            if( nRead > 0 )
-                rTime /= double( nRead );
-            if( rTime == 0.f )
-                rTime = std::numeric_limits< double >::epsilon();
+            if (nRead > 0)
+                rTime /= double(nRead);
+            if (rTime == 0.f)
+                rTime = std::numeric_limits<double>::epsilon();
 
-            std::cout << std::setw(20)<< lunchbox::className( lock ) << ", "
+            std::cout << std::setw(20) << lunchbox::className(lock) << ", "
                       << std::setw(12) << 3 * nWriteOps / wTime << ", "
                       << std::setw(12) << 3 * nReadOps / rTime << ", "
                       << std::setw(9) << nWrite << ", " << std::setw(9) << nRead
@@ -183,13 +195,13 @@ template< class T, uint32_t hold > void _test()
     }
 }
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
-    TEST( lunchbox::init( argc, argv ));
-//    lunchbox::sleep( 5000 );
+    TEST(lunchbox::init(argc, argv));
+    //    lunchbox::sleep( 5000 );
 
     std::cerr << "0 ms in locked region" << std::endl;
-    _test< lunchbox::SpinLock, 0 >();
+    _test<lunchbox::SpinLock, 0>();
 #if 0 // time collection not yet correct
     std::cerr << "1 ms in locked region" << std::endl;
     _test< lunchbox::SpinLock, 1 >();
@@ -199,6 +211,6 @@ int main( int argc, char **argv )
     _test< lunchbox::SpinLock, 4 >();
 #endif
 
-    TEST( lunchbox::exit( ));
+    TEST(lunchbox::exit());
     return EXIT_SUCCESS;
 }

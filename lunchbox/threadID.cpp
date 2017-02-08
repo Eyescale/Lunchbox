@@ -19,21 +19,21 @@
 
 #include "log.h"
 
+#include <cstring> // for memset
 #include <pthread.h>
-#include <cstring>   // for memset
 
 #include "detail/threadID.h"
 
 namespace lunchbox
 {
 ThreadID::ThreadID()
-        : _impl( new detail::ThreadID )
+    : _impl(new detail::ThreadID)
 {
-    memset( &_impl->pthread, 0, sizeof( pthread_t ));
+    memset(&_impl->pthread, 0, sizeof(pthread_t));
 }
 
-ThreadID::ThreadID( const ThreadID& from )
-        : _impl( new detail::ThreadID )
+ThreadID::ThreadID(const ThreadID& from)
+    : _impl(new detail::ThreadID)
 {
     _impl->pthread = from._impl->pthread;
 }
@@ -43,23 +43,23 @@ ThreadID::~ThreadID()
     delete _impl;
 }
 
-ThreadID& ThreadID::operator = ( const ThreadID& from )
+ThreadID& ThreadID::operator=(const ThreadID& from)
 {
     _impl->pthread = from._impl->pthread;
     return *this;
 }
 
-bool ThreadID::operator == ( const ThreadID& rhs ) const
+bool ThreadID::operator==(const ThreadID& rhs) const
 {
-    return pthread_equal( _impl->pthread, rhs._impl->pthread );
+    return pthread_equal(_impl->pthread, rhs._impl->pthread);
 }
 
-bool ThreadID::operator != ( const ThreadID& rhs ) const
+bool ThreadID::operator!=(const ThreadID& rhs) const
 {
-    return !pthread_equal( _impl->pthread, rhs._impl->pthread );
+    return !pthread_equal(_impl->pthread, rhs._impl->pthread);
 }
 
-bool ThreadID::operator < ( const ThreadID& rhs ) const
+bool ThreadID::operator<(const ThreadID& rhs) const
 {
 #ifdef PTW32_VERSION
     return _impl->pthread.p < rhs._impl->pthread.p;
@@ -68,7 +68,7 @@ bool ThreadID::operator < ( const ThreadID& rhs ) const
 #endif
 }
 
-std::ostream& operator << ( std::ostream& os, const ThreadID& threadID )
+std::ostream& operator<<(std::ostream& os, const ThreadID& threadID)
 {
 #ifdef PTW32_VERSION
     os << threadID._impl->pthread.p;
@@ -77,5 +77,4 @@ std::ostream& operator << ( std::ostream& os, const ThreadID& threadID )
 #endif
     return os;
 }
-
 }

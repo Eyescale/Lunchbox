@@ -19,32 +19,37 @@
 
 #include <lunchbox/any.h>
 
-int main( int, char** )
+int main(int, char**)
 {
     lunchbox::Any any;
     lunchbox::Any otherAny;
-    TEST( any.empty( ));
-    TEST( any.type() == typeid(void));
-    TEST( any == otherAny );
+    TEST(any.empty());
+    TEST(any.type() == typeid(void));
+    TEST(any == otherAny);
 
     any = 5;
     otherAny = any;
-    TEST( lunchbox::any_cast< int >( any ) == 5 );
-    TEST( any.type() == typeid(int));
-    TEST( any == otherAny );
+    TEST(lunchbox::any_cast<int>(any) == 5);
+    TEST(any.type() == typeid(int));
+    TEST(any == otherAny);
 
     any = 42;
     otherAny = 42;
-    TEST( lunchbox::any_cast< int >( any ) == 42 );
-    TEST( any == otherAny );
+    TEST(lunchbox::any_cast<int>(any) == 42);
+    TEST(any == otherAny);
 
-    any = std::string( "blablub" );
-    TEST( lunchbox::any_cast< std::string >( any ) == "blablub" );
-    TEST( any.type() == typeid(std::string));
-    TEST( any != otherAny );
+    any = std::string("blablub");
+    TEST(lunchbox::any_cast<std::string>(any) == "blablub");
+    TEST(any.type() == typeid(std::string));
+    TEST(any != otherAny);
 
-    try { TEST( lunchbox::any_cast< int >( any ) != 42 ); }
-    catch( const lunchbox::bad_any_cast& ) {}
+    try
+    {
+        TEST(lunchbox::any_cast<int>(any) != 42);
+    }
+    catch (const lunchbox::bad_any_cast&)
+    {
+    }
 
     return EXIT_SUCCESS;
 }

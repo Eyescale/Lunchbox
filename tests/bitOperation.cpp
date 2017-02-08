@@ -15,31 +15,31 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <lunchbox/test.h>
 #include <lunchbox/bitOperation.h>
+#include <lunchbox/test.h>
 
-int main( int, char** )
+int main(int, char**)
 {
-    TESTINFO( lunchbox::getIndexOfLastBit( 0u ) == -1,
-              lunchbox::getIndexOfLastBit( 0u ));
-    TESTINFO( lunchbox::getIndexOfLastBit( 42u ) == 5,
-              lunchbox::getIndexOfLastBit( 42u ));
-    TESTINFO( lunchbox::getIndexOfLastBit( LB_BIT12 ) == 11,
-              lunchbox::getIndexOfLastBit( LB_BIT12 ));
-    TESTINFO( lunchbox::getIndexOfLastBit( LB_BIT48 ) == 47,
-              lunchbox::getIndexOfLastBit( LB_BIT48 ));
+    TESTINFO(lunchbox::getIndexOfLastBit(0u) == -1,
+             lunchbox::getIndexOfLastBit(0u));
+    TESTINFO(lunchbox::getIndexOfLastBit(42u) == 5,
+             lunchbox::getIndexOfLastBit(42u));
+    TESTINFO(lunchbox::getIndexOfLastBit(LB_BIT12) == 11,
+             lunchbox::getIndexOfLastBit(LB_BIT12));
+    TESTINFO(lunchbox::getIndexOfLastBit(LB_BIT48) == 47,
+             lunchbox::getIndexOfLastBit(LB_BIT48));
 
     uint16_t twoByte = 1;
-    lunchbox::byteswap( twoByte );
-    TESTINFO( twoByte == LB_BIT9, twoByte );
+    lunchbox::byteswap(twoByte);
+    TESTINFO(twoByte == LB_BIT9, twoByte);
 
     uint32_t fourByte = 1;
-    lunchbox::byteswap( fourByte );
-    TESTINFO( fourByte == LB_BIT25, fourByte );
+    lunchbox::byteswap(fourByte);
+    TESTINFO(fourByte == LB_BIT25, fourByte);
 
     uint64_t eightByte = 1;
-    lunchbox::byteswap( eightByte );
-    TESTINFO( eightByte == LB_BIT57, eightByte );
+    lunchbox::byteswap(eightByte);
+    TESTINFO(eightByte == LB_BIT57, eightByte);
 
     return EXIT_SUCCESS;
 }

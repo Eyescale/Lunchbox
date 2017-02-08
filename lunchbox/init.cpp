@@ -34,37 +34,37 @@ namespace
 static a_int32_t _initialized;
 }
 
-bool init( const int argc, char** argv )
+bool init(const int argc, char** argv)
 {
-    for( int i = 1; i < argc; ++i )
+    for (int i = 1; i < argc; ++i)
     {
         // verbose options
-        if( std::string( argv[i] ) == "-vv" )
+        if (std::string(argv[i]) == "-vv")
             Log::level += 2;
-        else if( std::string( argv[i] ) == "-v" )
+        else if (std::string(argv[i]) == "-v")
             ++Log::level;
-        else if( std::string( argv[i] ) == "--lb-logfile" )
+        else if (std::string(argv[i]) == "--lb-logfile")
         {
-            std::string logfile = getFilename( argv[0] ) + ".log";
-            if( i+1 < argc )
+            std::string logfile = getFilename(argv[0]) + ".log";
+            if (i + 1 < argc)
                 logfile = argv[++i];
-            Log::setOutput( logfile );
+            Log::setOutput(logfile);
         }
     }
 
-    if( ++_initialized > 1 ) // not first
+    if (++_initialized > 1) // not first
         return true;
 
-    Log::instance().setThreadName( "Main" );
+    Log::instance().setThreadName("Main");
 
     const time_t now = ::time(0);
 #ifdef _WIN32
-    char* gmtString = ::ctime( &now );
+    char* gmtString = ::ctime(&now);
 #else
     char gmtString[32];
-    ::ctime_r( &now, gmtString );
+    ::ctime_r(&now, gmtString);
 
-    setenv( "AVAHI_COMPAT_NOWARN", "1", 0 ); // get rid of annoying avahi warning
+    setenv("AVAHI_COMPAT_NOWARN", "1", 0); // get rid of annoying avahi warning
 #endif
 
     LBDEBUG << "Log level " << Log::getLogLevelString() << " topics "
@@ -74,12 +74,12 @@ bool init( const int argc, char** argv )
 
 bool exit()
 {
-    if( --_initialized > 0 ) // not last
+    if (--_initialized > 0) // not last
         return true;
 
     Log::reset();
 
-    if( _initialized < 0 )
+    if (_initialized < 0)
     {
         LBERROR << "init/exit call mismatch" << std::endl;
         _initialized = 0;
@@ -87,5 +87,4 @@ bool exit()
     }
     return true;
 }
-
 }

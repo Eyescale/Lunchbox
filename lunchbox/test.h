@@ -37,88 +37,91 @@
 #include <fstream>
 #include <stdexcept>
 
-#define OUTPUT lunchbox::Log::instance( __FILE__, __LINE__ )
+#define OUTPUT lunchbox::Log::instance(__FILE__, __LINE__)
 
-#define TEST( x )                                                       \
-    {                                                                   \
-        LBVERB << "Test " << #x << std::endl;                           \
-        if( !(x) )                                                      \
-        {                                                               \
+#define TEST(x)                                                            \
+    {                                                                      \
+        LBVERB << "Test " << #x << std::endl;                              \
+        if (!(x))                                                          \
+        {                                                                  \
             OUTPUT << #x << " failed (l." << __LINE__ << ')' << std::endl; \
-            lunchbox::abort();                                          \
-            ::exit( EXIT_FAILURE );                                     \
-        }                                                               \
+            lunchbox::abort();                                             \
+            ::exit(EXIT_FAILURE);                                          \
+        }                                                                  \
     }
 
-#define TESTINFO( x, info )                                           \
-    {                                                                 \
-        LBVERB << "Test " << #x << ": " << info << std::endl;         \
-        if( !(x) )                                                    \
-        {                                                             \
-            OUTPUT << #x << " failed (l." << __LINE__ << "): " << info  \
-                   << std::endl;                                        \
-            lunchbox::abort();                                          \
-            ::exit( EXIT_FAILURE );                                     \
-        }                                                               \
+#define TESTINFO(x, info)                                              \
+    {                                                                  \
+        LBVERB << "Test " << #x << ": " << info << std::endl;          \
+        if (!(x))                                                      \
+        {                                                              \
+            OUTPUT << #x << " failed (l." << __LINE__ << "): " << info \
+                   << std::endl;                                       \
+            lunchbox::abort();                                         \
+            ::exit(EXIT_FAILURE);                                      \
+        }                                                              \
     }
 
-#define TESTRESULT( x, type )                                           \
-    {                                                                   \
-        LBVERB << "Test " << #x << std::endl;                           \
-        const type& testRes = (x);                                      \
-        if( !testRes )                                                  \
-        {                                                               \
-            OUTPUT << #x << " failed with " << testRes << " (l."        \
-                   << __LINE__ << ")" << std::endl;                     \
-            lunchbox::abort();                                          \
-            ::exit( EXIT_FAILURE );                                     \
-        }                                                               \
+#define TESTRESULT(x, type)                                                  \
+    {                                                                        \
+        LBVERB << "Test " << #x << std::endl;                                \
+        const type& testRes = (x);                                           \
+        if (!testRes)                                                        \
+        {                                                                    \
+            OUTPUT << #x << " failed with " << testRes << " (l." << __LINE__ \
+                   << ")" << std::endl;                                      \
+            lunchbox::abort();                                               \
+            ::exit(EXIT_FAILURE);                                            \
+        }                                                                    \
     }
 
-int testMain( int argc, char **argv );
+int testMain(int argc, char** argv);
 
 namespace
 {
 class Watchdog : public lunchbox::Thread
 {
 public:
-    explicit Watchdog( const std::string& name ) : _name( name ) {}
+    explicit Watchdog(const std::string& name)
+        : _name(name)
+    {
+    }
 
     virtual void run()
-        {
-            lunchbox::Thread::setName( "Watchdog" );
+    {
+        lunchbox::Thread::setName("Watchdog");
 #ifdef TEST_RUNTIME
-            lunchbox::sleep( TEST_RUNTIME * 1000 );
-            std::cerr << "Watchdog triggered - " << _name
-                      << " did not terminate within " << TEST_RUNTIME << "s"
-                      << std::endl;
+        lunchbox::sleep(TEST_RUNTIME * 1000);
+        std::cerr << "Watchdog triggered - " << _name
+                  << " did not terminate within " << TEST_RUNTIME << "s"
+                  << std::endl;
 #else
-            lunchbox::sleep( 60000 );
-            std::cerr << "Watchdog triggered - " << _name
-                      << " did not terminate within 1 minute" << std::endl;
+        lunchbox::sleep(60000);
+        std::cerr << "Watchdog triggered - " << _name
+                  << " did not terminate within 1 minute" << std::endl;
 #endif
-            lunchbox::abort( true /*dumpThreads*/ );
-        }
+        lunchbox::abort(true /*dumpThreads*/);
+    }
 
 private:
     const std::string _name;
 };
 }
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
 #ifndef TEST_NO_WATCHDOG
-    Watchdog watchdog( argv[0] );
+    Watchdog watchdog(argv[0]);
     watchdog.start();
 #endif
 
     try
     {
-        const int result = testMain( argc, argv );
-        if( result != EXIT_SUCCESS )
+        const int result = testMain(argc, argv);
+        if (result != EXIT_SUCCESS)
             return result;
     }
-    catch( const std::runtime_error& e )
+    catch (const std::runtime_error& e)
     {
         LBINFO << "Test exception: " << e.what() << std::endl;
         return EXIT_FAILURE;
@@ -126,11 +129,11 @@ int main( int argc, char **argv )
 
 #ifndef TEST_NO_WATCHDOG
     watchdog.cancel();
-    lunchbox::sleep( 10 ); // give watchdog time to terminate
+    lunchbox::sleep(10); // give watchdog time to terminate
 #endif
     return EXIT_SUCCESS;
 }
 
-#  define main testMain
+#define main testMain
 
 #endif // LBTEST_TEST_H

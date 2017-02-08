@@ -18,26 +18,25 @@
 
 #include "rng.h"
 
-#pragma warning (push)
-#pragma warning (disable: 4985) // inconsistent decl of ceil
+#pragma warning(push)
+#pragma warning(disable : 4985) // inconsistent decl of ceil
 
 #ifdef _WIN32
-#  ifndef NOMINMAX
-#    define NOMINMAX
-#  endif
-#  include <wtypes.h>
-#  include <wincrypt.h>
-#  pragma comment(lib, "advapi32.lib")
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <wincrypt.h>
+#include <wtypes.h>
+#pragma comment(lib, "advapi32.lib")
 #else
-#  include <unistd.h>
+#include <unistd.h>
 #endif
 
 #include <cstdlib>
 #include <fcntl.h>
 #include <limits>
 #include <stdio.h>
-#pragma warning (pop)
-
+#pragma warning(pop)
 
 namespace lunchbox
 {
@@ -49,18 +48,18 @@ static int _fd = -1;
 
 void _exit()
 {
-    if( _fd >= 0 )
+    if (_fd >= 0)
     {
-        ::close( _fd );
+        ::close(_fd);
         _fd = -1;
     }
 }
 
 int _init()
 {
-    const int fd = ::open( "/dev/urandom", O_RDONLY );
-    if( fd >= 0 )
-        ::atexit( _exit );
+    const int fd = ::open("/dev/urandom", O_RDONLY);
+    if (fd >= 0)
+        ::atexit(_exit);
     else
     {
         LBERROR << "Failed to open /dev/urandom: " << sysError << std::endl;
@@ -70,12 +69,12 @@ int _init()
     return fd;
 }
 
-#elif defined  _MSC_VER
+#elif defined _MSC_VER
 static HCRYPTPROV _provider = 0;
 
 void _exit()
 {
-    if( _provider && !CryptReleaseContext( _provider, 0 ))
+    if (_provider && !CryptReleaseContext(_provider, 0))
         LBERROR << "Failed to release crypto context: " << sysError
                 << std::endl;
     _provider = 0;
@@ -84,14 +83,16 @@ void _exit()
 HCRYPTPROV _init()
 {
     HCRYPTPROV provider = 0;
-    if( CryptAcquireContext( &provider, 0, 0, PROV_RSA_FULL,
-                              CRYPT_VERIFYCONTEXT ) || !provider )
+    if (CryptAcquireContext(&provider, 0, 0, PROV_RSA_FULL,
+                            CRYPT_VERIFYCONTEXT) ||
+        !provider)
     {
-        ::atexit( _exit );
+        ::atexit(_exit);
     }
     else
     {
-        LBERROR << "Failed to acquire crypto context: " << sysError <<std::endl;
+        LBERROR << "Failed to acquire crypto context: " << sysError
+                << std::endl;
         return 0;
     }
 
@@ -109,16 +110,17 @@ RNG::RNG()
 }
 
 RNG::~RNG()
-{}
+{
+}
 
-bool RNG::_get( void* data, const size_t size )
+bool RNG::_get(void* data, const size_t size)
 {
 #ifdef __linux__
     static int fd = _init();
-    int read = ::read( fd, data, size );
-    LBASSERTINFO( read == ssize_t( size ),
-                  read << " != " << size << ": " << sysError );
-    if( read != ssize_t( size ))
+    int read = ::read(fd, data, size);
+    LBASSERTINFO(read == ssize_t(size), read << " != " << size << ": "
+                                             << sysError);
+    if (read != ssize_t(size))
     {
         LBERROR << "random number generator not working" << std::endl;
         return false;
@@ -126,17 +128,16 @@ bool RNG::_get( void* data, const size_t size )
 
 #elif defined _MSC_VER
     static HCRYPTPROV provider = _init();
-    if( !CryptGenRandom( provider, (DWORD)size, (BYTE*)data ))
+    if (!CryptGenRandom(provider, (DWORD)size, (BYTE*)data))
     {
         LBERROR << "random number generator not working" << std::endl;
         return false;
     }
 #else // __APPLE__
-    uint8_t* ptr = reinterpret_cast< uint8_t* >( data );
-    for( size_t i=0; i < size; ++i )
-        ptr[i] = ( random() & 0xff );
+    uint8_t* ptr = reinterpret_cast<uint8_t*>(data);
+    for (size_t i = 0; i < size; ++i)
+        ptr[i] = (random() & 0xff);
 #endif
     return true;
 }
-
 }

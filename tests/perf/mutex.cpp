@@ -22,19 +22,24 @@
 #include <lunchbox/debug.h>
 #include <lunchbox/init.h>
 
-#include <mutex>
 #include <iostream>
+#include <mutex>
 
 #define MAXTHREADS 256
-#define TIME       500  // ms
+#define TIME 500 // ms
 
 lunchbox::Clock _clock;
 bool _running = false;
 
-template< class T > class Thread : public lunchbox::Thread
+template <class T>
+class Thread : public lunchbox::Thread
 {
 public:
-    Thread() : mutex( 0 ), ops( 0 ) {}
+    Thread()
+        : mutex(0)
+        , ops(0)
+    {
+    }
 
     T* mutex;
     size_t ops;
@@ -42,7 +47,7 @@ public:
     virtual void run()
     {
         ops = 0;
-        while( LB_LIKELY( _running ))
+        while (LB_LIKELY(_running))
         {
             mutex->lock();
             mutex->unlock();
@@ -51,54 +56,55 @@ public:
     }
 };
 
-template< class T > void _test()
+template <class T>
+void _test()
 {
     const size_t nThreads = 16;
 
     T mutex;
     mutex.lock();
 
-    Thread< T > threads[MAXTHREADS];
-    for( size_t i = 1; i <= nThreads; i = i << 1 )
+    Thread<T> threads[MAXTHREADS];
+    for (size_t i = 1; i <= nThreads; i = i << 1)
     {
         _running = true;
-        for( size_t j = 0; j < i; ++j )
+        for (size_t j = 0; j < i; ++j)
         {
             threads[j].mutex = &mutex;
-            TEST( threads[j].start( ));
+            TEST(threads[j].start());
         }
-        lunchbox::sleep( 10 ); // let threads initialize
+        lunchbox::sleep(10); // let threads initialize
 
         _clock.reset();
         mutex.unlock();
-        lunchbox::sleep( TIME ); // let threads run
+        lunchbox::sleep(TIME); // let threads run
         _running = false;
 
-        for( size_t j = 0; j < i; ++j )
-            TEST( threads[j].join( ));
+        for (size_t j = 0; j < i; ++j)
+            TEST(threads[j].join());
         const float time = _clock.getTimef();
 
         mutex.lock();
 
         size_t ops = 0;
-        for( size_t j = 0; j < nThreads; ++j )
+        for (size_t j = 0; j < nThreads; ++j)
             ops += threads[j].ops;
 
-        std::cout << std::setw(20) << lunchbox::className( mutex ) << ", "
+        std::cout << std::setw(20) << lunchbox::className(mutex) << ", "
                   << std::setw(12) << /*set, test, unset*/ 3 * ops / time
                   << ", " << std::setw(3) << i << std::endl;
     }
 }
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
-    TEST( lunchbox::init( argc, argv ));
+    TEST(lunchbox::init(argc, argv));
 
     std::cout << "               Class,       ops/ms, threads" << std::endl;
-    _test< std::mutex >();
+    _test<std::mutex>();
     std::cout << std::endl;
 
-    _test< std::timed_mutex >();
-    TEST( lunchbox::exit( ));
+    _test<std::timed_mutex>();
+    TEST(lunchbox::exit());
     return EXIT_SUCCESS;
 }

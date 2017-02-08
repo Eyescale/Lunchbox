@@ -19,36 +19,36 @@
 
 #include "thread.h"
 
-#include "os.h"
 #include "debug.h"
 #include "lock.h"
 #include "log.h"
 #include "monitor.h"
+#include "os.h"
 #include "rng.h"
 #include "scopedMutex.h"
 #include "sleep.h"
 #include "spinLock.h"
 
+#include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <errno.h>
-#include <pthread.h>
-#include <algorithm>
 #include <map>
+#include <pthread.h>
 #include <set>
 
 // Experimental Win32 thread pinning
 #ifdef _WIN32
 //#  define LB_WIN32_THREAD_AFFINITY
-#  pragma message ("Thread affinity not supported on WIN32")
+#pragma message("Thread affinity not supported on WIN32")
 #endif
 
 #ifdef __linux__
-#  include <signal.h>
-#  include <sys/prctl.h>
+#include <signal.h>
+#include <sys/prctl.h>
 #endif
 
 #ifdef LUNCHBOX_USE_HWLOC
-#  include <hwloc.h>
+#include <hwloc.h>
 #endif
 
 #include "detail/threadID.h"
@@ -64,18 +64,17 @@ enum ThreadState //!< The current state of a thread.
     STATE_STOPPED,
     STATE_STARTING, // start() in progress
     STATE_RUNNING,
-    STATE_STOPPING  // child no longer active, join() not yet called
+    STATE_STOPPING // child no longer active, join() not yet called
 };
 
 #ifdef __linux__
-typedef std::set< ThreadID > ThreadIDSet;
-static Lockable< ThreadIDSet, SpinLock > _threads;
-void _sigUserHandler( int, siginfo_t*, void* )
+typedef std::set<ThreadID> ThreadIDSet;
+static Lockable<ThreadIDSet, SpinLock> _threads;
+void _sigUserHandler(int, siginfo_t*, void*)
 {
     LBERROR << ":" << backtrace << std::endl;
 }
 #endif
-
 }
 
 namespace detail
@@ -83,21 +82,25 @@ namespace detail
 class Thread
 {
 public:
-    Thread() : state( STATE_STOPPED ), index( ++_threadIDs ) {}
+    Thread()
+        : state(STATE_STOPPED)
+        , index(++_threadIDs)
+    {
+    }
 
     lunchbox::ThreadID id;
-    Monitor< ThreadState > state;
+    Monitor<ThreadState> state;
     int32_t index;
 };
 }
 
 Thread::Thread()
-    : _impl( new detail::Thread )
+    : _impl(new detail::Thread)
 {
 }
 
-Thread::Thread( const Thread& )
-    : _impl( new detail::Thread )
+Thread::Thread(const Thread&)
+    : _impl(new detail::Thread)
 {
 }
 
@@ -108,15 +111,15 @@ Thread::~Thread()
 
 bool Thread::isStopped() const
 {
-    return ( _impl->state == STATE_STOPPED );
+    return (_impl->state == STATE_STOPPED);
 }
 
 bool Thread::isRunning() const
 {
-    return ( _impl->state == STATE_RUNNING );
+    return (_impl->state == STATE_RUNNING);
 }
 
-void* Thread::runChild( void* arg )
+void* Thread::runChild(void* arg)
 {
     Thread* thread = static_cast<Thread*>(arg);
     thread->_runChild();
@@ -125,40 +128,40 @@ void* Thread::runChild( void* arg )
 
 void Thread::_runChild()
 {
-    setName( boost::lexical_cast< std::string >( _impl->index ));
+    setName(boost::lexical_cast<std::string>(_impl->index));
     _impl->id._impl->pthread = pthread_self();
 #ifdef __linux__
     {
-        ScopedFastWrite mutex( _threads );
-        _threads->insert( _impl->id );
+        ScopedFastWrite mutex(_threads);
+        _threads->insert(_impl->id);
     }
     // install signal handler to dump thread state for debugging
     struct sigaction sa;
-    ::sigfillset( &sa.sa_mask );
+    ::sigfillset(&sa.sa_mask);
     sa.sa_flags = SA_SIGINFO;
     sa.sa_sigaction = _sigUserHandler;
-    ::sigaction( SIGUSR1, &sa, 0 );
+    ::sigaction(SIGUSR1, &sa, 0);
 #endif
 
-    if( !init( ))
+    if (!init())
     {
-        LBWARN << "Thread " << className( this ) << " failed to initialize"
+        LBWARN << "Thread " << className(this) << " failed to initialize"
                << std::endl;
         _impl->state = STATE_STOPPED;
-        pthread_exit( 0 );
+        pthread_exit(0);
         LBUNREACHABLE;
     }
 
     _impl->state = STATE_RUNNING;
-    LBDEBUG << "Thread #" << _impl->index << " type " << className( *this )
-           << " successfully initialized" << std::endl;
+    LBDEBUG << "Thread #" << _impl->index << " type " << className(*this)
+            << " successfully initialized" << std::endl;
 
     run();
-    LBVERB << "Thread " << className( this ) << " finished" << std::endl;
+    LBVERB << "Thread " << className(this) << " finished" << std::endl;
 #ifdef __linux__
     {
-        ScopedFastWrite mutex( _threads );
-        _threads->erase( _impl->id );
+        ScopedFastWrite mutex(_threads);
+        _threads->erase(_impl->id);
     }
 #endif
     this->exit();
@@ -168,81 +171,81 @@ void Thread::_runChild()
 
 bool Thread::start()
 {
-    if( _impl->state != STATE_STOPPED )
+    if (_impl->state != STATE_STOPPED)
         return false;
 
     _impl->state = STATE_STARTING;
 
     pthread_attr_t attributes;
-    pthread_attr_init( &attributes );
-    pthread_attr_setscope( &attributes, PTHREAD_SCOPE_SYSTEM );
+    pthread_attr_init(&attributes);
+    pthread_attr_setscope(&attributes, PTHREAD_SCOPE_SYSTEM);
 
     int nTries = 10;
-    while( nTries-- )
+    while (nTries--)
     {
-        const int error = pthread_create( &_impl->id._impl->pthread,
-                                          &attributes, runChild, this );
-        if( error == 0 ) // succeeded
+        const int error = pthread_create(&_impl->id._impl->pthread, &attributes,
+                                         runChild, this);
+        if (error == 0) // succeeded
         {
             LBVERB << "Created pthread " << this << std::endl;
             break;
         }
-        if( error != EAGAIN || nTries == 0 )
+        if (error != EAGAIN || nTries == 0)
         {
-            LBWARN << "Could not create thread: " << strerror( error )
+            LBWARN << "Could not create thread: " << strerror(error)
                    << std::endl;
             return false;
         }
-        sleep( 1 ); // Give EAGAIN some time to recover
+        sleep(1); // Give EAGAIN some time to recover
     }
 
     // avoid memleak, we don't use pthread_join
-    pthread_detach( _impl->id._impl->pthread );
-    _impl->state.waitNE( STATE_STARTING );
+    pthread_detach(_impl->id._impl->pthread);
+    _impl->state.waitNE(STATE_STARTING);
     return (_impl->state != STATE_STOPPED);
 }
 
 void Thread::exit()
 {
-    LBASSERTINFO( isCurrent(), "Thread::exit not called from child thread" );
-    LBVERB << "Exiting thread " << className( this ) << std::endl;
+    LBASSERTINFO(isCurrent(), "Thread::exit not called from child thread");
+    LBVERB << "Exiting thread " << className(this) << std::endl;
     Log::instance().forceFlush();
     Log::instance().exit();
 
     _impl->state = STATE_STOPPING;
-    pthread_exit( 0 );
+    pthread_exit(0);
     LBUNREACHABLE;
 }
 
 void Thread::cancel()
 {
-    LBASSERTINFO( !isCurrent(), "Thread::cancel called from child thread" );
+    LBASSERTINFO(!isCurrent(), "Thread::cancel called from child thread");
 
-    LBVERB << "Canceling thread " << className( this ) << std::endl;
+    LBVERB << "Canceling thread " << className(this) << std::endl;
     _impl->state = STATE_STOPPING;
 
-    const int error = pthread_cancel( _impl->id._impl->pthread );
-    if( error !=  0 )
-        LBWARN << "Could not cancel thread: " << strerror( error ) << std::endl;
+    const int error = pthread_cancel(_impl->id._impl->pthread);
+    if (error != 0)
+        LBWARN << "Could not cancel thread: " << strerror(error) << std::endl;
 }
 
 bool Thread::join()
 {
-    if( _impl->state == STATE_STOPPED )
+    if (_impl->state == STATE_STOPPED)
         return false;
-    if( isCurrent( )) // can't join self
+    if (isCurrent()) // can't join self
         return false;
 
-    _impl->state.waitNE( STATE_RUNNING );
+    _impl->state.waitNE(STATE_RUNNING);
     _impl->state = STATE_STOPPED;
 
-    LBVERB << "Joined thread " << className( this ) << std::endl;
+    LBVERB << "Joined thread " << className(this) << std::endl;
     return true;
 }
 
 bool Thread::isCurrent() const
 {
-    return pthread_equal( pthread_self(), _impl->id._impl->pthread );
+    return pthread_equal(pthread_self(), _impl->id._impl->pthread);
 }
 
 ThreadID Thread::getSelfThreadID()
@@ -255,9 +258,9 @@ ThreadID Thread::getSelfThreadID()
 void Thread::yield()
 {
 #ifdef _MSC_VER
-    ::Sleep( 0 ); // sleeps thread
-    // or ::SwitchToThread() ? // switches to another waiting thread, if exists
-#elif defined (__APPLE__)
+    ::Sleep(0); // sleeps thread
+// or ::SwitchToThread() ? // switches to another waiting thread, if exists
+#elif defined(__APPLE__)
     ::pthread_yield_np();
 #else
     ::sched_yield();
@@ -265,20 +268,20 @@ void Thread::yield()
 }
 
 #ifdef _MSC_VER
-#  ifndef MS_VC_EXCEPTION
-#    define MS_VC_EXCEPTION 0x406D1388
-#  endif
+#ifndef MS_VC_EXCEPTION
+#define MS_VC_EXCEPTION 0x406D1388
+#endif
 
-#  pragma pack(push,8)
+#pragma pack(push, 8)
 typedef struct tagTHREADNAME_INFO
 {
-    DWORD dwType; // Must be 0x1000.
-    LPCSTR szName; // Pointer to name (in user addr space).
+    DWORD dwType;     // Must be 0x1000.
+    LPCSTR szName;    // Pointer to name (in user addr space).
     DWORD dwThreadID; // Thread ID (-1=caller thread).
-    DWORD dwFlags; // Reserved for future use, must be zero.
+    DWORD dwFlags;    // Reserved for future use, must be zero.
 } THREADNAME_INFO;
-#  pragma pack(pop)
-static void _setVCName( const char* name )
+#pragma pack(pop)
+static void _setVCName(const char* name)
 {
     ::Sleep(10);
 
@@ -290,27 +293,27 @@ static void _setVCName( const char* name )
 
     __try
     {
-        RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR),
-                        (ULONG_PTR*)&info );
+        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR),
+                       (ULONG_PTR*)&info);
     }
-    __except(EXCEPTION_EXECUTE_HANDLER)
+    __except (EXCEPTION_EXECUTE_HANDLER)
     {
     }
 }
 #endif
 
-void Thread::setName( const std::string& name )
+void Thread::setName(const std::string& name)
 {
-    Log::instance().setThreadName( name );
+    Log::instance().setThreadName(name);
 
 #ifdef _MSC_VER
-#  ifndef NDEBUG
-    _setVCName( name.c_str( ));
-#  endif
+#ifndef NDEBUG
+    _setVCName(name.c_str());
+#endif
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-    pthread_setname_np( name.c_str( ));
+    pthread_setname_np(name.c_str());
 #elif defined(__linux__)
-    prctl( PR_SET_NAME, name.c_str(), 0, 0, 0 );
+    prctl(PR_SET_NAME, name.c_str(), 0, 0, 0);
 #else
     // Not implemented
     LBVERB << "Thread::setName() not implemented" << std::endl;
@@ -318,16 +321,16 @@ void Thread::setName( const std::string& name )
 }
 
 #ifdef LUNCHBOX_USE_HWLOC
-static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
-                                  hwloc_topology_t topology )
+static hwloc_bitmap_t _getCpuSet(const int32_t affinity,
+                                 hwloc_topology_t topology)
 {
     hwloc_bitmap_t cpuSet = hwloc_bitmap_alloc(); // HWloc CPU set
-    hwloc_bitmap_zero( cpuSet ); // Initialize to zeros
+    hwloc_bitmap_zero(cpuSet);                    // Initialize to zeros
 
-    if( affinity >= Thread::CORE )
+    if (affinity >= Thread::CORE)
     {
         const int32_t coreIndex = affinity - Thread::CORE;
-        if( hwloc_get_obj_by_type( topology, HWLOC_OBJ_CORE, coreIndex ) == 0 )
+        if (hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, coreIndex) == 0)
         {
             LBWARN << "Core " << coreIndex << " does not exist in the topology"
                    << std::endl;
@@ -335,22 +338,21 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
         }
 
         // Getting the core object #coreIndex
-        const hwloc_obj_t coreObj = hwloc_get_obj_by_type( topology,
-                                                           HWLOC_OBJ_CORE,
-                                                           coreIndex );
+        const hwloc_obj_t coreObj =
+            hwloc_get_obj_by_type(topology, HWLOC_OBJ_CORE, coreIndex);
         // Get the CPU set associated with the specified core
         cpuSet = coreObj->allowed_cpuset;
         return cpuSet;
     }
 
-    if( affinity == Thread::NONE )
+    if (affinity == Thread::NONE)
         return cpuSet;
 
     // Sets the affinity to a specific CPU or "socket"
-    LBASSERT( affinity >= Thread::SOCKET && affinity < Thread::SOCKET_MAX );
+    LBASSERT(affinity >= Thread::SOCKET && affinity < Thread::SOCKET_MAX);
     const int32_t socketIndex = affinity - Thread::SOCKET;
 
-    if( hwloc_get_obj_by_type( topology, HWLOC_OBJ_SOCKET, socketIndex ) == 0 )
+    if (hwloc_get_obj_by_type(topology, HWLOC_OBJ_SOCKET, socketIndex) == 0)
     {
         LBWARN << "Socket " << socketIndex << " does not exist in the topology"
                << std::endl;
@@ -358,41 +360,40 @@ static hwloc_bitmap_t _getCpuSet( const int32_t affinity,
     }
 
     // Getting the CPU object #cpuIndex (subtree node)
-    const hwloc_obj_t socketObj = hwloc_get_obj_by_type( topology,
-                                                         HWLOC_OBJ_SOCKET,
-                                                         socketIndex );
+    const hwloc_obj_t socketObj =
+        hwloc_get_obj_by_type(topology, HWLOC_OBJ_SOCKET, socketIndex);
     // Get the CPU set associated with the specified socket
-    hwloc_bitmap_copy( cpuSet, socketObj->allowed_cpuset );
+    hwloc_bitmap_copy(cpuSet, socketObj->allowed_cpuset);
     return cpuSet;
 }
 #endif
 
-void Thread::setAffinity( const int32_t affinity )
+void Thread::setAffinity(const int32_t affinity)
 {
-    if( affinity == Thread::NONE )
+    if (affinity == Thread::NONE)
         return;
 
 #ifdef LUNCHBOX_USE_HWLOC
     hwloc_topology_t topology;
-    hwloc_topology_init( &topology ); // Allocate & initialize the topology
-    hwloc_topology_load( topology );  // Perform HW topology detection
-    const hwloc_bitmap_t cpuSet = _getCpuSet( affinity, topology );
-    const int result = hwloc_set_cpubind( topology, cpuSet,
-                                          HWLOC_CPUBIND_THREAD );
+    hwloc_topology_init(&topology); // Allocate & initialize the topology
+    hwloc_topology_load(topology);  // Perform HW topology detection
+    const hwloc_bitmap_t cpuSet = _getCpuSet(affinity, topology);
+    const int result =
+        hwloc_set_cpubind(topology, cpuSet, HWLOC_CPUBIND_THREAD);
     char* cpuSetString;
-    hwloc_bitmap_asprintf( &cpuSetString, cpuSet );
+    hwloc_bitmap_asprintf(&cpuSetString, cpuSet);
 
-    if( result == 0 )
+    if (result == 0)
     {
-        LBVERB << "Bound to cpu set "  << cpuSetString << std::endl;
+        LBVERB << "Bound to cpu set " << cpuSetString << std::endl;
     }
     else
     {
         LBWARN << "Error binding to cpu set " << cpuSetString << std::endl;
     }
-    ::free( cpuSetString );
-    hwloc_bitmap_free( cpuSet );
-    hwloc_topology_destroy( topology );
+    ::free(cpuSetString);
+    hwloc_bitmap_free(cpuSet);
+    hwloc_topology_destroy(topology);
 
 #else
     LBWARN << "Thread::setAffinity not implemented, hwloc library missing"
@@ -403,24 +404,24 @@ void Thread::setAffinity( const int32_t affinity )
 void Thread::_dumpAll()
 {
 #ifdef __linux__
-    ScopedFastRead mutex( _threads );
-    for( ThreadIDSet::const_iterator i = _threads.data.begin();
-         i != _threads.data.end(); ++i )
+    ScopedFastRead mutex(_threads);
+    for (ThreadIDSet::const_iterator i = _threads.data.begin();
+         i != _threads.data.end(); ++i)
     {
-        pthread_kill( i->_impl->pthread, SIGUSR1 );
+        pthread_kill(i->_impl->pthread, SIGUSR1);
     }
 #endif
 }
 
-std::ostream& operator << ( std::ostream& os, const Thread::Affinity affinity )
+std::ostream& operator<<(std::ostream& os, const Thread::Affinity affinity)
 {
-    if( affinity == Thread::NONE )
+    if (affinity == Thread::NONE)
         return os << "No affinity";
-    if( affinity >= Thread::CORE )
+    if (affinity >= Thread::CORE)
         return os << "Core " << affinity - Thread::CORE;
 
-    LBASSERT( affinity >= Thread::SOCKET && affinity < Thread::SOCKET_MAX );
-    return os << "Socket " <<  affinity - Thread::SOCKET;
+    LBASSERT(affinity >= Thread::SOCKET && affinity < Thread::SOCKET_MAX);
+    return os << "Socket " << affinity - Thread::SOCKET;
 }
 
 #if 0

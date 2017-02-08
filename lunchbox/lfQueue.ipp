@@ -17,50 +17,55 @@
 
 namespace lunchbox
 {
-template< typename T > void LFQueue< T >::clear()
+template <typename T>
+void LFQueue<T>::clear()
 {
-    LB_TS_SCOPED( _reader );
+    LB_TS_SCOPED(_reader);
     _readPos = 0;
     _writePos = 0;
 }
 
-template< typename T > void LFQueue< T >::resize( const int32_t size )
+template <typename T>
+void LFQueue<T>::resize(const int32_t size)
 {
-    LBASSERT( isEmpty( ));
+    LBASSERT(isEmpty());
     _readPos = 0;
     _writePos = 0;
-    _data.resize( size + 1 );
+    _data.resize(size + 1);
 }
 
-template< typename T > bool LFQueue< T >::pop( T& result )
+template <typename T>
+bool LFQueue<T>::pop(T& result)
 {
-    LB_TS_SCOPED( _reader );
-    if( _readPos == _writePos )
+    LB_TS_SCOPED(_reader);
+    if (_readPos == _writePos)
         return false;
 
-    result = _data[ _readPos ];
+    result = _data[_readPos];
     _readPos = (_readPos + 1) % _data.size();
     return true;
 }
 
-template< typename T > bool LFQueue< T >::getFront( T& result )
+template <typename T>
+bool LFQueue<T>::getFront(T& result)
 {
-    LB_TS_SCOPED( _reader );
-    if( _readPos == _writePos )
+    LB_TS_SCOPED(_reader);
+    if (_readPos == _writePos)
         return false;
 
-    result = _data[ _readPos ];
+    result = _data[_readPos];
     return true;
 }
 
-template< typename T > bool LFQueue< T >::push( const T& element )
+template <typename T>
+bool LFQueue<T>::push(const T& element)
 {
-    LB_TS_SCOPED( _writer );
+    LB_TS_SCOPED(_writer);
     int32_t nextPos = (_writePos + 1) % _data.size();
-    if( nextPos == _readPos )
+    if (nextPos == _readPos)
         return false;
 
-    _data[ _writePos ] = element;
+    _data[_writePos] = element;
     _writePos = nextPos;
     return true;
 }

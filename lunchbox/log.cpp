@@ -30,20 +30,20 @@
 #include <fstream>
 
 #ifdef _MSC_VER
-#  include <process.h>
-#  define atoll _atoi64
-#  define snprintf _snprintf
-#  define getpid _getpid
+#include <process.h>
+#define atoll _atoi64
+#define snprintf _snprintf
+#define getpid _getpid
 #else
-#  include <unistd.h>
+#include <unistd.h>
 #endif
 
 namespace lunchbox
 {
 static unsigned getLogTopics();
-static Clock    _defaultClock;
-static Clock*   _clock = &_defaultClock;
-static Lock     _lock; // The write lock
+static Clock _defaultClock;
+static Clock* _clock = &_defaultClock;
+static Lock _lock; // The write lock
 
 const size_t LENGTH_PID = 5;
 const size_t LENGTH_THREAD = 8;
@@ -56,72 +56,74 @@ namespace detail
 class Log : public std::streambuf
 {
 public:
-    explicit Log( std::ostream& stream )
-        : _indent(0), _blocked(0), _noHeader(0),
-          _newLine(true), _stream(stream)
+    explicit Log(std::ostream& stream)
+        : _indent(0)
+        , _blocked(0)
+        , _noHeader(0)
+        , _newLine(true)
+        , _stream(stream)
     {
         _file[0] = 0;
-        setThreadName( "Unknown" );
+        setThreadName("Unknown");
     }
 
     virtual ~Log() {}
-
     void indent() { ++_indent; }
     void exdent() { --_indent; }
-
-    void disableFlush() { ++_blocked; assert( _blocked < 100 ); }
+    void disableFlush()
+    {
+        ++_blocked;
+        assert(_blocked < 100);
+    }
     void enableFlush()
     {
-        assert( _blocked );// Too many enableFlush on log stream
+        assert(_blocked); // Too many enableFlush on log stream
         --_blocked;
     }
 
     void disableHeader() { ++_noHeader; } // use counted variable to allow
-    void enableHeader()  { --_noHeader; } //   nested enable/disable calls
-
-    void setThreadName( const std::string& name )
+    void enableHeader() { --_noHeader; }  //   nested enable/disable calls
+    void setThreadName(const std::string& name)
     {
-        LBASSERT( !name.empty( ));
-        _thread = name.substr( 0, LENGTH_THREAD );
+        LBASSERT(!name.empty());
+        _thread = name.substr(0, LENGTH_THREAD);
     }
 
     const std::string& getThreadName() const { return _thread; }
-
-    void setLogInfo( const char* f, const int line )
+    void setLogInfo(const char* f, const int line)
     {
-        LBASSERT( f );
-        std::string file( f );
+        LBASSERT(f);
+        std::string file(f);
         const size_t length = file.length();
 
-        if( length > LENGTH_FILE )
-            file = file.substr( length - LENGTH_FILE, length );
+        if (length > LENGTH_FILE)
+            file = file.substr(length - LENGTH_FILE, length);
 
-        snprintf( _file, LENGTH_FILE+6, "%29s:%-4d", file.c_str(), line );
+        snprintf(_file, LENGTH_FILE + 6, "%29s:%-4d", file.c_str(), line);
     }
 
 protected:
-    int_type overflow( Log::int_type c ) override
+    int_type overflow(Log::int_type c) override
     {
-        if( c == EOF )
+        if (c == EOF)
             return EOF;
 
-        if( _newLine )
+        if (_newLine)
         {
-            if( !_noHeader )
+            if (!_noHeader)
             {
-                if( lunchbox::Log::level > LOG_INFO )
-                    _stringStream << std::right << std::setw( LENGTH_PID )
-                                  << getpid() << "."
-                                  << std::left << std::setw( LENGTH_THREAD )
-                                  << _thread << " " << _file << " "
-                                  << std::right << std::setw( LENGTH_TIME )
-                                  << _clock->getTime64() << " ";
+                if (lunchbox::Log::level > LOG_INFO)
+                    _stringStream
+                        << std::right << std::setw(LENGTH_PID) << getpid()
+                        << "." << std::left << std::setw(LENGTH_THREAD)
+                        << _thread << " " << _file << " " << std::right
+                        << std::setw(LENGTH_TIME) << _clock->getTime64() << " ";
                 else
-                    _stringStream << std::right << std::setw( LENGTH_TIME )
+                    _stringStream << std::right << std::setw(LENGTH_TIME)
                                   << _clock->getTime64() << " ";
             }
 
-            for( int i=0; i<_indent; ++i )
+            for (int i = 0; i < _indent; ++i)
                 _stringStream << "    ";
             _newLine = false;
         }
@@ -132,23 +134,23 @@ protected:
 
     int sync() override
     {
-        if( !_blocked )
+        if (!_blocked)
         {
             const std::string& string = _stringStream.str();
             {
-                ScopedMutex< lunchbox::Lock > mutex( _lock );
-                _stream.write( string.c_str(), string.length( ));
+                ScopedMutex<lunchbox::Lock> mutex(_lock);
+                _stream.write(string.c_str(), string.length());
                 _stream.rdbuf()->pubsync();
             }
-            _stringStream.str( "" );
+            _stringStream.str("");
         }
         _newLine = true;
         return 0;
     }
 
 private:
-    Log( const Log& );
-    Log& operator = ( const Log& );
+    Log(const Log&);
+    Log& operator=(const Log&);
 
     /** Short thread name. */
     std::string _thread;
@@ -181,31 +183,28 @@ namespace
 class LogTable
 {
 public:
-    LogTable( const LogLevel _level, const std::string& _name )
-            : level( _level ), name( _name ) {}
+    LogTable(const LogLevel _level, const std::string& _name)
+        : level(_level)
+        , name(_name)
+    {
+    }
 
     LogLevel level;
     std::string name;
 };
 
-#define LOG_TABLE_ENTRY( name ) LogTable( LOG_ ## name, std::string( #name ))
+#define LOG_TABLE_ENTRY(name) LogTable(LOG_##name, std::string(#name))
 #define LOG_TABLE_SIZE (6)
 
-static LogTable _logTable[ LOG_TABLE_SIZE ] =
-{
-    LOG_TABLE_ENTRY( ERROR ),
-    LogTable( LOG_ERROR, "WARN" ),
-    LOG_TABLE_ENTRY( INFO ),
-    LOG_TABLE_ENTRY( DEBUG ),
-    LOG_TABLE_ENTRY( VERB ),
-    LOG_TABLE_ENTRY( ALL )
-};
+static LogTable _logTable[LOG_TABLE_SIZE] = {
+    LOG_TABLE_ENTRY(ERROR), LogTable(LOG_ERROR, "WARN"), LOG_TABLE_ENTRY(INFO),
+    LOG_TABLE_ENTRY(DEBUG), LOG_TABLE_ENTRY(VERB),       LOG_TABLE_ENTRY(ALL)};
 }
 
-int      Log::level  = Log::getLogLevel( getenv( "LB_LOG_LEVEL" ));
+int Log::level = Log::getLogLevel(getenv("LB_LOG_LEVEL"));
 unsigned Log::topics = getLogTopics();
 
-static PerThread< Log > _logInstance;
+static PerThread<Log> _logInstance;
 
 #ifdef NDEBUG
 static std::ostream* _logStream = &std::cout;
@@ -215,9 +214,10 @@ static std::ostream* _logStream = &std::cerr;
 static std::ostream* _logFile = 0;
 
 Log::Log()
-    : std::ostream( new detail::Log( getOutput( )))
-    , impl_( dynamic_cast< detail::Log* >( rdbuf( )))
-{}
+    : std::ostream(new detail::Log(getOutput()))
+    , impl_(dynamic_cast<detail::Log*>(rdbuf()))
+{
+}
 
 Log::~Log()
 {
@@ -260,14 +260,14 @@ void Log::enableHeader()
     impl_->enableHeader();
 }
 
-void Log::setLogInfo( const char* file, const int line )
+void Log::setLogInfo(const char* file, const int line)
 {
-    impl_->setLogInfo( file, line );
+    impl_->setLogInfo(file, line);
 }
 
-void Log::setThreadName( const std::string& name )
+void Log::setThreadName(const std::string& name)
 {
-    impl_->setThreadName( name );
+    impl_->setThreadName(name);
 }
 
 const std::string& Log::getThreadName() const
@@ -275,16 +275,16 @@ const std::string& Log::getThreadName() const
     return impl_->getThreadName();
 }
 
-int Log::getLogLevel( const char* text )
+int Log::getLogLevel(const char* text)
 {
-    if( text )
+    if (text)
     {
-        const int num = atoi( text );
-        if( num > 0 && num <= LOG_ALL )
+        const int num = atoi(text);
+        if (num > 0 && num <= LOG_ALL)
             return num;
 
-        for( uint32_t i = 0; i < LOG_TABLE_SIZE; ++i )
-            if( _logTable[i].name == text )
+        for (uint32_t i = 0; i < LOG_TABLE_SIZE; ++i)
+            if (_logTable[i].name == text)
                 return _logTable[i].level;
     }
 
@@ -297,22 +297,22 @@ int Log::getLogLevel( const char* text )
 
 std::string& Log::getLogLevelString()
 {
-    for( uint32_t i=0; i<LOG_TABLE_SIZE; ++i )
-        if( _logTable[i].level == level )
-                return _logTable[i].name;
+    for (uint32_t i = 0; i < LOG_TABLE_SIZE; ++i)
+        if (_logTable[i].level == level)
+            return _logTable[i].name;
 
     return _logTable[0].name;
 }
 
 unsigned getLogTopics()
 {
-    Log::level = Log::getLogLevel( getenv( "LB_LOG_LEVEL" ));
-    const char *env = getenv( "LB_LOG_TOPICS" );
+    Log::level = Log::getLogLevel(getenv("LB_LOG_LEVEL"));
+    const char* env = getenv("LB_LOG_TOPICS");
 
-    if( env )
+    if (env)
         return atoll(env);
 
-    if( Log::level == LOG_ALL )
+    if (Log::level == LOG_ALL)
         return LOG_ANY;
 
 #ifdef NDEBUG
@@ -325,20 +325,21 @@ unsigned getLogTopics()
 Log& Log::instance()
 {
     Log* log = _logInstance.get();
-    if( !log )
+    if (!log)
     {
         log = new Log();
         _logInstance = log;
         static bool first = true;
-        if( first && lunchbox::Log::level > LOG_INFO )
+        if (first && lunchbox::Log::level > LOG_INFO)
         {
             first = false;
             log->disableHeader();
             log->disableFlush();
-            *log << std::setw( LENGTH_PID ) << std::right << "PID" << "."
-                 << std::setw( LENGTH_THREAD ) << std::left << "Thread " << "|"
-                 << std::setw( LENGTH_FILE+5 ) << " Filename:line " << "|"
-                 << std::right << std::setw( LENGTH_TIME ) << " ms " << "|"
+            *log << std::setw(LENGTH_PID) << std::right << "PID"
+                 << "." << std::setw(LENGTH_THREAD) << std::left << "Thread "
+                 << "|" << std::setw(LENGTH_FILE + 5) << " Filename:line "
+                 << "|" << std::right << std::setw(LENGTH_TIME) << " ms "
+                 << "|"
                  << " Message" << std::endl;
             log->enableFlush();
             log->enableHeader();
@@ -348,10 +349,10 @@ Log& Log::instance()
     return *log;
 }
 
-Log& Log::instance( const char* file, const int line )
+Log& Log::instance(const char* file, const int line)
 {
     Log& log = instance();
-    log.setLogInfo( file, line );
+    log.setLogInfo(file, line);
     return log;
 }
 
@@ -376,17 +377,17 @@ void Log::reset()
 #endif
 }
 
-void Log::setOutput( std::ostream& stream )
+void Log::setOutput(std::ostream& stream)
 {
     _logStream = &stream;
     exit();
 }
 
-bool Log::setOutput( const std::string& file )
+bool Log::setOutput(const std::string& file)
 {
-    std::ofstream* newLog = new std::ofstream( file.c_str( ));
+    std::ofstream* newLog = new std::ofstream(file.c_str());
 
-    if( !newLog->is_open( ))
+    if (!newLog->is_open())
     {
         LBERROR << "Can't open log file " << file << ": " << sysError
                 << std::endl;
@@ -395,16 +396,16 @@ bool Log::setOutput( const std::string& file )
     }
 
     LBDEBUG << "Redirect log to " << file << std::endl;
-    setOutput( *newLog );
+    setOutput(*newLog);
 
     delete _logFile;
     _logFile = newLog;
     return true;
 }
 
-void Log::setClock( Clock* clock )
+void Log::setClock(Clock* clock)
 {
-    if( clock )
+    if (clock)
         _clock = clock;
     else
         _clock = &_defaultClock;
@@ -420,56 +421,55 @@ std::ostream& Log::getOutput()
     return *_logStream;
 }
 
-std::ostream& indent( std::ostream& os )
+std::ostream& indent(std::ostream& os)
 {
     Log* log = dynamic_cast<Log*>(&os);
-    if( log )
+    if (log)
         log->indent();
     return os;
 }
-std::ostream& exdent( std::ostream& os )
+std::ostream& exdent(std::ostream& os)
 {
     Log* log = dynamic_cast<Log*>(&os);
-    if( log )
+    if (log)
         log->exdent();
     return os;
 }
 
-std::ostream& disableFlush( std::ostream& os )
+std::ostream& disableFlush(std::ostream& os)
 {
     Log* log = dynamic_cast<Log*>(&os);
-    if( log )
+    if (log)
         log->disableFlush();
     return os;
 }
-std::ostream& enableFlush( std::ostream& os )
+std::ostream& enableFlush(std::ostream& os)
 {
     Log* log = dynamic_cast<Log*>(&os);
-    if( log )
+    if (log)
         log->enableFlush();
     return os;
 }
-std::ostream& forceFlush( std::ostream& os )
+std::ostream& forceFlush(std::ostream& os)
 {
     Log* log = dynamic_cast<Log*>(&os);
-    if( log )
+    if (log)
         log->forceFlush();
     return os;
 }
 
-std::ostream& disableHeader( std::ostream& os )
+std::ostream& disableHeader(std::ostream& os)
 {
     Log* log = dynamic_cast<Log*>(&os);
-    if( log )
+    if (log)
         log->disableHeader();
     return os;
 }
-std::ostream& enableHeader( std::ostream& os )
+std::ostream& enableHeader(std::ostream& os)
 {
     Log* log = dynamic_cast<Log*>(&os);
-    if( log )
+    if (log)
         log->enableHeader();
     return os;
 }
-
 }

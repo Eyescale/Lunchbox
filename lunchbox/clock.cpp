@@ -15,7 +15,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 #include "clock.h"
 
 #include "os.h"
@@ -23,10 +22,10 @@
 #include <lunchbox/os.h>
 #ifdef __APPLE__
 // http://developer.apple.com/qa/qa2004/qa1398.html
-#  include <mach/mach_time.h>
+#include <mach/mach_time.h>
 #endif
 #ifndef _WIN32
-#  include <time.h>
+#include <time.h>
 #endif
 
 namespace lunchbox
@@ -39,7 +38,7 @@ public:
 #ifdef __APPLE__
     uint64_t start;
     mach_timebase_info_data_t timebaseInfo;
-#elif defined (_WIN32)
+#elif defined(_WIN32)
     LARGE_INTEGER start;
     LARGE_INTEGER frequency;
 #else
@@ -49,21 +48,22 @@ public:
 }
 
 Clock::Clock()
-        : _impl( new detail::Clock )
+    : _impl(new detail::Clock)
 {
     reset();
 #ifdef __APPLE__
-    mach_timebase_info( &_impl->timebaseInfo );
-#elif defined (_WIN32)
-    QueryPerformanceFrequency( &_impl->frequency );
+    mach_timebase_info(&_impl->timebaseInfo);
+#elif defined(_WIN32)
+    QueryPerformanceFrequency(&_impl->frequency);
 #endif
 }
 
-Clock::Clock( const Clock& from )
-    : _impl( new detail::Clock( *from._impl ))
-{}
+Clock::Clock(const Clock& from)
+    : _impl(new detail::Clock(*from._impl))
+{
+}
 
-Clock & Clock::operator= ( const Clock& ref )
+Clock& Clock::operator=(const Clock& ref)
 {
     *_impl = *ref._impl;
     return *this;
@@ -78,31 +78,29 @@ void Clock::reset()
 {
 #ifdef __APPLE__
     _impl->start = mach_absolute_time();
-#elif defined (_WIN32)
-    QueryPerformanceCounter( &_impl->start );
+#elif defined(_WIN32)
+    QueryPerformanceCounter(&_impl->start);
 #else
-    clock_gettime( CLOCK_REALTIME, &_impl->start );
+    clock_gettime(CLOCK_REALTIME, &_impl->start);
 #endif
 }
 
-void Clock::set( const int64_t time )
+void Clock::set(const int64_t time)
 {
     reset();
 #ifdef __APPLE__
-    _impl->start -= static_cast< uint64_t >(
-        time * _impl->timebaseInfo.denom / _impl->timebaseInfo.numer *
-                                     1000000 );
-#elif defined (_WIN32)
-    _impl->start.QuadPart -= static_cast<long long>(
-        time * _impl->frequency.QuadPart / 1000 );
+    _impl->start -= static_cast<uint64_t>(time * _impl->timebaseInfo.denom /
+                                          _impl->timebaseInfo.numer * 1000000);
+#elif defined(_WIN32)
+    _impl->start.QuadPart -=
+        static_cast<long long>(time * _impl->frequency.QuadPart / 1000);
 #else
-    const int sec   = static_cast< int >( time / 1000 ) + 1;
-    _impl->start.tv_sec  -= sec;
-    _impl->start.tv_nsec -= static_cast<int>(
-        (time - sec * 1000) * 1000000 );
-    if( _impl->start.tv_nsec > 1000000000 )
+    const int sec = static_cast<int>(time / 1000) + 1;
+    _impl->start.tv_sec -= sec;
+    _impl->start.tv_nsec -= static_cast<int>((time - sec * 1000) * 1000000);
+    if (_impl->start.tv_nsec > 1000000000)
     {
-        _impl->start.tv_sec  += 1;
+        _impl->start.tv_sec += 1;
         _impl->start.tv_nsec -= 1000000000;
     }
 #endif
@@ -112,18 +110,18 @@ float Clock::getTimef() const
 {
 #ifdef __APPLE__
     const int64_t elapsed = mach_absolute_time() - _impl->start;
-    return ( elapsed * _impl->timebaseInfo.numer / _impl->timebaseInfo.denom /
-             1000000.f );
-#elif defined (_WIN32)
+    return (elapsed * _impl->timebaseInfo.numer / _impl->timebaseInfo.denom /
+            1000000.f);
+#elif defined(_WIN32)
     LARGE_INTEGER now;
-    QueryPerformanceCounter( &now );
+    QueryPerformanceCounter(&now);
     return 1000.0f * (now.QuadPart - _impl->start.QuadPart) /
-        _impl->frequency.QuadPart;
+           _impl->frequency.QuadPart;
 #else
     struct timespec now;
-    clock_gettime( CLOCK_REALTIME, &now );
-    return ( 1000.0f * (now.tv_sec - _impl->start.tv_sec) +
-             0.000001f * (now.tv_nsec - _impl->start.tv_nsec));
+    clock_gettime(CLOCK_REALTIME, &now);
+    return (1000.0f * (now.tv_sec - _impl->start.tv_sec) +
+            0.000001f * (now.tv_nsec - _impl->start.tv_nsec));
 #endif
 }
 
@@ -133,17 +131,17 @@ float Clock::resetTimef()
     const uint64_t now = mach_absolute_time();
     const int64_t elapsed = now - _impl->start;
     const float time = elapsed * _impl->timebaseInfo.numer /
-        _impl->timebaseInfo.denom / 1000000.f;
-#elif defined (_WIN32)
+                       _impl->timebaseInfo.denom / 1000000.f;
+#elif defined(_WIN32)
     LARGE_INTEGER now;
-    QueryPerformanceCounter( &now );
+    QueryPerformanceCounter(&now);
     const float time = 1000.0f * (now.QuadPart - _impl->start.QuadPart) /
-        _impl->frequency.QuadPart;
+                       _impl->frequency.QuadPart;
 #else
     struct timespec now;
-    clock_gettime( CLOCK_REALTIME, &now );
-    const float time = ( 1000.0f * (now.tv_sec - _impl->start.tv_sec) +
-                         0.000001f * (now.tv_nsec - _impl->start.tv_nsec));
+    clock_gettime(CLOCK_REALTIME, &now);
+    const float time = (1000.0f * (now.tv_sec - _impl->start.tv_sec) +
+                        0.000001f * (now.tv_nsec - _impl->start.tv_nsec));
 #endif
     _impl->start = now;
     return time;
@@ -153,18 +151,20 @@ int64_t Clock::getTime64() const
 {
 #ifdef __APPLE__
     const int64_t elapsed = mach_absolute_time() - _impl->start;
-    return ( elapsed * _impl->timebaseInfo.numer /
-            _impl->timebaseInfo.denom + 500000 ) / 1000000;
-#elif defined (_WIN32)
+    return (elapsed * _impl->timebaseInfo.numer / _impl->timebaseInfo.denom +
+            500000) /
+           1000000;
+#elif defined(_WIN32)
     LARGE_INTEGER now;
-    QueryPerformanceCounter( &now );
-    return ( 1000 * (now.QuadPart-_impl->start.QuadPart) +
-             (_impl->frequency.QuadPart>>1) ) / _impl->frequency.QuadPart;
+    QueryPerformanceCounter(&now);
+    return (1000 * (now.QuadPart - _impl->start.QuadPart) +
+            (_impl->frequency.QuadPart >> 1)) /
+           _impl->frequency.QuadPart;
 #else
     struct timespec now;
-    clock_gettime( CLOCK_REALTIME, &now );
-    return ( 1000 * (now.tv_sec - _impl->start.tv_sec) +
-             int64_t( 0.000001f * (now.tv_nsec - _impl->start.tv_nsec+500000)));
+    clock_gettime(CLOCK_REALTIME, &now);
+    return (1000 * (now.tv_sec - _impl->start.tv_sec) +
+            int64_t(0.000001f * (now.tv_nsec - _impl->start.tv_nsec + 500000)));
 #endif
 }
 
@@ -172,19 +172,18 @@ double Clock::getTimed() const
 {
 #ifdef __APPLE__
     const int64_t elapsed = mach_absolute_time() - _impl->start;
-    return ( elapsed * _impl->timebaseInfo.numer / _impl->timebaseInfo.denom /
-             1000000. );
-#elif defined (_WIN32)
+    return (elapsed * _impl->timebaseInfo.numer / _impl->timebaseInfo.denom /
+            1000000.);
+#elif defined(_WIN32)
     LARGE_INTEGER now;
-    QueryPerformanceCounter( &now );
+    QueryPerformanceCounter(&now);
     return 1000.0 * (now.QuadPart - _impl->start.QuadPart) /
-        _impl->frequency.QuadPart;
+           _impl->frequency.QuadPart;
 #else
     struct timespec now;
-    clock_gettime( CLOCK_REALTIME, &now );
-    return ( 1000.0 * (now.tv_sec - _impl->start.tv_sec) +
-             0.000001 * (now.tv_nsec - _impl->start.tv_nsec));
+    clock_gettime(CLOCK_REALTIME, &now);
+    return (1000.0 * (now.tv_sec - _impl->start.tv_sec) +
+            0.000001 * (now.tv_nsec - _impl->start.tv_nsec));
 #endif
 }
-
 }

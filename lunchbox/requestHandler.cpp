@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2016, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -21,10 +21,10 @@
 
 #include <lunchbox/debug.h>
 #include <lunchbox/spinLock.h>
-#include <lunchbox/stdExt.h>
 #include <lunchbox/timedLock.h>
 
 #include <list>
+#include <unordered_map>
 
 namespace lunchbox
 {
@@ -49,7 +49,7 @@ struct Record
         } rUint128;
     } result;
 };
-typedef stde::hash_map<uint32_t, Record*> RecordHash;
+typedef std::unordered_map<uint32_t, Record*> RecordHash;
 typedef RecordHash::const_iterator RecordHashCIter;
 }
 

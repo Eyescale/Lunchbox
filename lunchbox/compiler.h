@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2014, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2010-2017, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -15,26 +15,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef LUNCHBOX_COMPILER_H
-#define LUNCHBOX_COMPILER_H
+#pragma once
 
 #ifdef __cplusplus
 #  include <boost/config.hpp>
-
-// C++11 features 'backported' to C++03
-#  ifdef LUNCHBOX_USE_CXX03
-#    ifndef nullptr
-#      define nullptr 0
-#    endif
-#    ifndef final
-#      define final
-#    endif
-#    ifndef override
-#      define override
-#    endif
-#  endif
 #endif
-
 // align macros
 #ifdef _MSC_VER
 #  define LB_ALIGN8( var )  __declspec (align (8)) var;
@@ -136,5 +121,3 @@
 #    define LB_POP_DEPRECATED
 #  endif
 #endif
-
-#endif //LUNCHBOX_COMPILER_H

@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2015, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -118,26 +118,14 @@ LB_STDEXT_NAMESPACE_OPEN
 //----- Our extensions of the STL
 #if defined LB_STDEXT_TR1 || defined LB_STDEXT_STD11
 #  ifndef LB_HAVE_HASH_MAP
-#    ifndef LUNCHBOX_USE_CXX03 // have alias templates
 template< class K, class T, class H = hash< K >, class P = std::equal_to< K >,
           class A = std::allocator< std::pair< const K, T > > >
 using hash_map = unordered_map< K, T, H, P, A >;
-#    else
-template< class K, class T, class H = hash< K >, class P = std::equal_to< K >,
-          class A = std::allocator< std::pair< const K, T > > >
-class hash_map : public unordered_map< K, T, H, P, A > {};
-#    endif
 #  endif // LB_HAVE_HASH_MAP
 #  ifndef LB_HAVE_HASH_SET
-#    ifndef LUNCHBOX_USE_CXX03 // have alias templates
 template< class T, class H = hash< T >,
           class P = std::equal_to< T >, class A = std::allocator< T > >
 using hash_set = unordered_set< T, H, P, A >;
-#    else
-template< class T, class H = hash< T >,
-          class P = std::equal_to< T >, class A = std::allocator< T > >
-class hash_set : public unordered_set< T, H, P, A > {};
-#    endif
 #  endif // LB_HAVE_HASH_SET
 #endif
 

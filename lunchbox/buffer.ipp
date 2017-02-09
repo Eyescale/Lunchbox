@@ -19,10 +19,32 @@
 namespace lunchbox
 {
 template <class T>
+template <typename A, typename D>
+Buffer<T>::Buffer(const A& alloc, const D& dealloc)
+    : _data(nullptr)
+    , _size(0)
+    , _maxSize(0)
+    , _alloc(alloc)
+    , _dealloc(dealloc)
+{
+}
+
+template <class T>
+template <typename A, typename D>
+Buffer<T>::Buffer(const uint64_t size, const A& alloc, const D& dealloc)
+    : _alloc(alloc)
+    , _dealloc(dealloc)
+{
+    reset(size);
+}
+
+template <class T>
 Buffer<T>::Buffer(const Buffer<T>& from)
     : _data(nullptr)
     , _size(0)
     , _maxSize(0)
+    , _alloc(from._alloc)
+    , _dealloc(from._dealloc)
 {
     if (!from.isEmpty())
         *this = from;
@@ -33,6 +55,8 @@ Buffer<T>::Buffer(Buffer<T>&& from)
     : _data(std::move(from._data))
     , _size(from._size)
     , _maxSize(from._maxSize)
+    , _alloc(std::move(from._alloc))
+    , _dealloc(std::move(from._dealloc))
 {
     from._data = nullptr;
     from._size = 0;
@@ -40,13 +64,26 @@ Buffer<T>::Buffer(Buffer<T>&& from)
 }
 
 template <class T>
+void Buffer<T>::clear()
+{
+    if (_data)
+    {
+        if (_dealloc)
+            _dealloc(_data);
+        else
+            free(_data);
+    }
+    _data = 0;
+    _size = 0;
+    _maxSize = 0;
+}
+
+template <class T>
 T* Buffer<T>::pack()
 {
     if (_maxSize != _size)
-    {
-        _data = static_cast<T*>(realloc(_data, _size * sizeof(T)));
-        _maxSize = _size;
-    }
+        _realloc(_size);
+
     return _data;
 }
 
@@ -66,6 +103,8 @@ Buffer<T>& Buffer<T>::operator=(Buffer<T>&& from)
     std::swap(_data, from._data);
     std::swap(_size, from._size);
     std::swap(_maxSize, from._maxSize);
+    std::swap(_alloc, from._alloc);
+    std::swap(_dealloc, from._dealloc);
     return *this;
 }
 
@@ -78,9 +117,7 @@ T* Buffer<T>::resize(const uint64_t newSize)
 
     // avoid excessive reallocs
     const uint64_t nElems = newSize + (newSize >> 3);
-    const uint64_t nBytes = nElems * sizeof(T);
-    _data = static_cast<T*>(realloc(_data, nBytes));
-    _maxSize = nElems;
+    _realloc(nElems);
     return _data;
 }
 
@@ -97,8 +134,7 @@ T* Buffer<T>::reserve(const uint64_t newSize)
     if (newSize <= _maxSize)
         return _data;
 
-    _data = static_cast<T*>(realloc(_data, newSize * sizeof(T)));
-    _maxSize = newSize;
+    _realloc(newSize);
     return _data;
 }
 
@@ -133,25 +169,29 @@ void Buffer<T>::replace(const void* data, const uint64_t size)
     LBASSERT(data);
     LBASSERT(size);
 
+    // Possible optimization, do not use reserve as it performs a useless
+    // memcpy if it needs to realloc.
     reserve(size);
     memcpy(_data, data, size * sizeof(T));
     _size = size;
 }
 
 template <class T>
+void Buffer<T>::replace(const Buffer& from)
+{
+    replace(from._data, from._size);
+    _alloc = from._alloc;
+    _dealloc = from._dealloc;
+}
+
+template <class T>
 void Buffer<T>::swap(Buffer<T>& buffer)
 {
-    T* tmpData = buffer._data;
-    const uint64_t tmpSize = buffer._size;
-    const uint64_t tmpMaxSize = buffer._maxSize;
-
-    buffer._data = _data;
-    buffer._size = _size;
-    buffer._maxSize = _maxSize;
-
-    _data = tmpData;
-    _size = tmpSize;
-    _maxSize = tmpMaxSize;
+    std::swap(_data, buffer._data);
+    std::swap(_size, buffer._size);
+    std::swap(_maxSize, buffer._maxSize);
+    std::swap(_alloc, buffer._alloc);
+    std::swap(_dealloc, buffer._dealloc);
 }
 
 template <class T>
@@ -163,5 +203,25 @@ bool Buffer<T>::setSize(const uint64_t size)
 
     _size = size;
     return true;
+}
+
+template <class T>
+void Buffer<T>::_realloc(const uint64_t size)
+{
+    if (_alloc)
+    {
+        T* data = _alloc(size * sizeof(T));
+        if (_data)
+        {
+            memcpy(data, _data, std::min(_size, size) * sizeof(T));
+            _dealloc(_data);
+        }
+        _data = data;
+    }
+    else
+    {
+        _data = static_cast<T*>(realloc(_data, size * sizeof(T)));
+    }
+    _maxSize = size;
 }
 }

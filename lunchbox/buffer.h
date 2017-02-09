@@ -25,6 +25,7 @@
 
 #include <cstdlib> // for malloc
 #include <cstring> // for memcpy
+#include <functional>
 
 namespace lunchbox
 {
@@ -44,6 +45,9 @@ template <class T>
 class Buffer
 {
 public:
+    typedef T*(AllocateFunc)(size_t);
+    typedef void(DeallocateFunc)(T*);
+
     /** Construct a new, empty buffer. @version 1.0 */
     Buffer()
         : _data(nullptr)
@@ -61,6 +65,12 @@ public:
         reset(size);
     }
 
+    template <typename A, typename D>
+    Buffer(const A& alloc, const D& dealloc);
+
+    template <typename A, typename D>
+    Buffer(const uint64_t size, const A& alloc, const D& dealloc);
+
     /** Copy constructor, copies data to new Buffer. @version 1.14 */
     Buffer(const Buffer& from);
 
@@ -70,14 +80,7 @@ public:
     /** Destruct the buffer. @version 1.0 */
     ~Buffer() { clear(); }
     /** Flush the buffer, deleting all data. @version 1.0 */
-    void clear()
-    {
-        if (_data)
-            free(_data);
-        _data = 0;
-        _size = 0;
-        _maxSize = 0;
-    }
+    void clear();
 
     /**
      * Tighten the allocated memory to the size of the buffer.
@@ -133,7 +136,7 @@ public:
     T* reserve(const uint64_t newSize);
 
     /**
-     * Set the buffer size and malloc enough memory.
+     * Set the buffer size and allocate enough memory.
      *
      * Existing data may be deleted.
      * @return the new pointer to the first element.
@@ -153,7 +156,8 @@ public:
     void replace(const void* data, const uint64_t size);
 
     /** Replace the existing data. @version 1.5.1 */
-    void replace(const Buffer& from) { replace(from._data, from._size); }
+    void replace(const Buffer& from);
+
     /** Swap the buffer contents with another Buffer. @version 1.0 */
     void swap(Buffer& buffer);
 
@@ -188,6 +192,12 @@ private:
 
     /** The allocation _size of the buffer. */
     uint64_t _maxSize;
+
+    /** User given alloc and dealloc methods */
+    std::function<AllocateFunc> _alloc;
+    std::function<DeallocateFunc> _dealloc;
+
+    void _realloc(const uint64_t size);
 };
 }
 

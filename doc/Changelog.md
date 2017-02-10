@@ -2,6 +2,8 @@
 
 # git master
 
+* [301](https://github.com/Eyescale/Lunchbox/pull/301):
+  Rename Launcher to standalone fork() function
 * [298](https://github.com/Eyescale/Lunchbox/pull/298):
   Add MemoryMap::resize()
 * [294](https://github.com/Eyescale/Lunchbox/pull/294):

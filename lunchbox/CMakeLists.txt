@@ -17,6 +17,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   debug.h
   dso.h
   file.h
+  fork.h
   future.h
   futureFunction.h
   hash.h
@@ -24,7 +25,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   init.h
   intervalSet.h
   intervalSet.ipp
-  launcher.h
   lfQueue.h
   lfQueue.ipp
   lfVector.h
@@ -90,8 +90,8 @@ set(LUNCHBOX_SOURCES
   debug.cpp
   dso.cpp
   file.cpp
+  fork.cpp
   init.cpp
-  launcher.cpp
   lock.cpp
   log.cpp
   memoryMap.cpp

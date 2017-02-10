@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -15,27 +15,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef LUNCHBOX_LAUNCHER_H
-#define LUNCHBOX_LAUNCHER_H
+#pragma once
 
 #include <lunchbox/api.h>
-#include <lunchbox/types.h>
+#include <string>
 
 namespace lunchbox
 {
-/** The launcher executes a command from a separate process. */
-class Launcher
-{
-public:
-    /** Execute the given command in a new process. @version 1.0 */
-    LUNCHBOX_API static bool run(const std::string& command);
-
-private:
-    Launcher() {}
-#ifndef _WIN32
-    static void _buildCommandLine(const std::string&, Strings&);
-#endif
-};
+/** Execute the given command in a new process. @version 1.0 */
+LUNCHBOX_API bool fork(const std::string& command);
 }
-
-#endif // LUNCHBOX_LAUNCHER_H

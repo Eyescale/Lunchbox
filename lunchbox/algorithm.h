@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2013, Stefan.Eilemann@epfl.ch
+/* Copyright (c) 2013-2017, Stefan.Eilemann@epfl.ch
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -18,15 +18,12 @@
 #ifndef LUNCHBOX_ALGORITHM_H
 #define LUNCHBOX_ALGORITHM_H
 
-#include <algorithm>
 #include <lunchbox/compiler.h>
-#include <vector>
 
-#ifndef __MINGW32__ // MinGW does not provide the header
+#include <algorithm>
+#include <vector>
 #ifdef LB_GCC_4_4_OR_LATER
 #include <parallel/algorithm>
-#define LB_USE_STD_PARALLEL
-#endif
 #endif
 
 namespace lunchbox

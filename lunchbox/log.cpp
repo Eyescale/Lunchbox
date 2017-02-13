@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
- *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2005-2017, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,6 +23,7 @@
 #include "clock.h"
 #include "perThread.h"
 #include "scopedMutex.h"
+#include "spinLock.h"
 #include "thread.h"
 
 #include <cstdio>
@@ -43,7 +44,7 @@ namespace lunchbox
 static unsigned getLogTopics();
 static Clock _defaultClock;
 static Clock* _clock = &_defaultClock;
-static Lock _lock; // The write lock
+static SpinLock _lock; // The write lock
 
 const size_t LENGTH_PID = 5;
 const size_t LENGTH_THREAD = 8;
@@ -138,7 +139,7 @@ protected:
         {
             const std::string& string = _stringStream.str();
             {
-                ScopedMutex<lunchbox::Lock> mutex(_lock);
+                ScopedFastWrite mutex(_lock);
                 _stream.write(string.c_str(), string.length());
                 _stream.rdbuf()->pubsync();
             }

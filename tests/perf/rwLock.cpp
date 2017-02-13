@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2011-2016, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2011-2017, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -22,7 +22,6 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/debug.h>
 #include <lunchbox/init.h>
-#include <lunchbox/lock.h>
 #include <lunchbox/spinLock.h>
 #include <lunchbox/timedLock.h>
 

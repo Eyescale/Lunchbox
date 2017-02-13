@@ -21,7 +21,6 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/debug.h>
 #include <lunchbox/init.h>
-#include <lunchbox/lock.h>
 #include <lunchbox/spinLock.h>
 #include <lunchbox/timedLock.h>
 
@@ -107,9 +106,6 @@ int main(int argc, char** argv)
 
     std::cout << "               Class,       ops/ms, threads" << std::endl;
     _test<lunchbox::SpinLock>();
-    std::cout << std::endl;
-
-    _test<lunchbox::Lock>();
     std::cout << std::endl;
 
     _test<lunchbox::TimedLock>();

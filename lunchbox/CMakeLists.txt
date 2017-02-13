@@ -30,7 +30,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   lfVector.h
   lfVector.ipp
   lfVectorIterator.h
-  lock.h
   lockable.h
   log.h
   memoryMap.h
@@ -92,7 +91,6 @@ set(LUNCHBOX_SOURCES
   file.cpp
   fork.cpp
   init.cpp
-  lock.cpp
   log.cpp
   memoryMap.cpp
   os.cpp
@@ -111,7 +109,7 @@ set(LUNCHBOX_SOURCES
 set(LUNCHBOX_PUBLIC_INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIRS})
 
 list(APPEND LUNCHBOX_LINK_LIBRARIES PUBLIC ${Boost_LIBRARIES} Servus
-                                    ${PTHREAD_LIBRARIES})
+  ${PTHREAD_LIBRARIES} PRIVATE)
 
 if(WIN32)
   list(APPEND LUNCHBOX_LINK_LIBRARIES ws2_32 mswsock imagehlp)

@@ -21,7 +21,6 @@
 
 #include <lunchbox/debug.h>
 #include <lunchbox/spinLock.h>
-#include <lunchbox/timedLock.h>
 
 #include <list>
 #include <unordered_map>
@@ -33,9 +32,9 @@ namespace
 {
 struct Record
 {
-    Record() { lock.set(); }
+    Record() { lock.lock(); }
     ~Record() {}
-    TimedLock lock;
+    std::timed_mutex lock;
     void* data;
 
     union Result {
@@ -97,7 +96,8 @@ public:
             request = i->second;
         }
 
-        const bool requestServed = request->lock.set(timeout);
+        const bool requestServed =
+            request->lock.try_lock_for(std::chrono::milliseconds(timeout));
         if (requestServed)
         {
             result = request->result;
@@ -226,7 +226,7 @@ void RequestHandler::serveRequest(const uint32_t requestID, void* result)
     if (request)
     {
         request->result.rPointer = result;
-        request->lock.unset();
+        request->lock.unlock();
     }
 }
 
@@ -243,7 +243,7 @@ void RequestHandler::serveRequest(const uint32_t requestID, uint32_t result)
     if (request)
     {
         request->result.rUint32 = result;
-        request->lock.unset();
+        request->lock.unlock();
     }
 }
 
@@ -260,7 +260,7 @@ void RequestHandler::serveRequest(const uint32_t requestID, bool result)
     if (request)
     {
         request->result.rBool = result;
-        request->lock.unset();
+        request->lock.unlock();
     }
 }
 
@@ -280,7 +280,7 @@ void RequestHandler::serveRequest(const uint32_t requestID,
     {
         request->result.rUint128.low = result.low();
         request->result.rUint128.high = result.high();
-        request->lock.unset();
+        request->lock.unlock();
     }
 }
 
@@ -292,28 +292,14 @@ bool RequestHandler::isRequestReady(const uint32_t requestID) const
         return false;
 
     Record* request = i->second;
-    return !request->lock.isSet();
+    const bool isReady = request->lock.try_lock();
+    if (isReady)
+        request->lock.unlock();
+    return isReady;
 }
 
 bool RequestHandler::hasPendingRequests() const
 {
     return !_impl->requests.empty();
-}
-
-std::ostream& operator<<(std::ostream& os, const detail::RequestHandler& rh)
-{
-    ScopedFastWrite mutex(rh.lock);
-    for (RecordHashCIter i = rh.requests.begin(); i != rh.requests.end(); ++i)
-    {
-        os << "request " << i->first << " served " << i->second->lock.isSet()
-           << std::endl;
-    }
-
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const RequestHandler& rh)
-{
-    return os << *rh._impl;
 }
 }

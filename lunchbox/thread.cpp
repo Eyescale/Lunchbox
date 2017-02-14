@@ -1,7 +1,7 @@
 
-/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
- *                    2012, Marwan Abdellah <marwan.abdellah@epfl.ch>
- *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2005-2017, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Marwan Abdellah <marwan.abdellah@epfl.ch>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -20,7 +20,6 @@
 #include "thread.h"
 
 #include "debug.h"
-#include "lock.h"
 #include "log.h"
 #include "monitor.h"
 #include "os.h"

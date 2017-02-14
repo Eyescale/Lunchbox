@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2016, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2016-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -21,6 +21,7 @@
 #include <lunchbox/clock.h>
 #include <lunchbox/debug.h>
 #include <lunchbox/init.h>
+#include <lunchbox/spinLock.h>
 
 #include <iostream>
 #include <mutex>
@@ -94,6 +95,7 @@ void _test()
                   << std::setw(12) << /*set, test, unset*/ 3 * ops / time
                   << ", " << std::setw(3) << i << std::endl;
     }
+    std::cout << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -102,9 +104,9 @@ int main(int argc, char** argv)
 
     std::cout << "               Class,       ops/ms, threads" << std::endl;
     _test<std::mutex>();
-    std::cout << std::endl;
-
     _test<std::timed_mutex>();
+    _test<lunchbox::SpinLock>();
+
     TEST(lunchbox::exit());
     return EXIT_SUCCESS;
 }

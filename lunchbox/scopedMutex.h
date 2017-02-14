@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2006-2013, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2006-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,9 +19,9 @@
 #define LUNCHBOX_SCOPEDMUTEX_H
 
 #include <lunchbox/condition.h> // used in inline method
-#include <lunchbox/lock.h>      // used in inline method
 #include <lunchbox/lockable.h>  // used in inline method
 #include <lunchbox/types.h>
+#include <mutex>
 
 namespace lunchbox
 {
@@ -36,9 +36,10 @@ struct ScopedMutexLocker
 template <class L>
 struct ScopedMutexLocker<L, WriteOp>
 {
-    static inline void set(L& lock) { lock.set(); }
-    static inline void unset(L& lock) { lock.unset(); }
+    static inline void set(L& lock) { lock.lock(); }
+    static inline void unset(L& lock) { lock.unlock(); }
 };
+
 template <class L>
 struct ScopedMutexLocker<L, ReadOp>
 {
@@ -46,10 +47,10 @@ struct ScopedMutexLocker<L, ReadOp>
     static inline void unset(L& lock) { lock.unsetRead(); }
 };
 template <>
-struct ScopedMutexLocker<Condition, WriteOp>
+struct ScopedMutexLocker<std::mutex, ReadOp>
 {
-    static inline void set(Condition& cond) { cond.lock(); }
-    static inline void unset(Condition& cond) { cond.unlock(); }
+    static inline void set(std::mutex& lock) { lock.lock(); }
+    static inline void unset(std::mutex& lock) { lock.unlock(); }
 };
 /** @endcond */
 
@@ -61,7 +62,7 @@ struct ScopedMutexLocker<Condition, WriteOp>
  * nothing if a 0 pointer for the lock is passed.
  * @deprecated Use boost::scoped_lock
  */
-template <class L = Lock, class T = WriteOp>
+template <class L = std::mutex, class T = WriteOp>
 class ScopedMutex
 {
     typedef ScopedMutexLocker<L, T> LockTraits;
@@ -141,10 +142,10 @@ typedef ScopedMutex<SpinLock, ReadOp> ScopedFastRead;
 typedef ScopedMutex<SpinLock, WriteOp> ScopedFastWrite;
 
 /** A scoped mutex for a read operation. @version 1.1.5 */
-typedef ScopedMutex<Lock, ReadOp> ScopedRead;
+typedef ScopedMutex<std::mutex, ReadOp> ScopedRead;
 
 /** A scoped mutex for a write operation. @version 1.1.5 */
-typedef ScopedMutex<Lock, WriteOp> ScopedWrite;
+typedef ScopedMutex<std::mutex, WriteOp> ScopedWrite;
 
 /** A scoped mutex for a write operation on a condition. @version 1.3.6 */
 typedef ScopedMutex<Condition, WriteOp> ScopedCondition;

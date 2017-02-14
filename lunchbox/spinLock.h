@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2015, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2010-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -23,11 +23,6 @@
 
 namespace lunchbox
 {
-namespace detail
-{
-class SpinLock;
-}
-
 /**
  * A fast lock for uncontended memory access.
  *
@@ -49,10 +44,10 @@ public:
 
     /** Acquire the lock exclusively. @version 1.0 */
     LUNCHBOX_API void set();
-
+    void lock() { set(); }
     /** Release an exclusive lock. @version 1.0 */
     LUNCHBOX_API void unset();
-
+    void unlock() { unset(); }
     /**
      * Attempt to acquire the lock exclusively.
      *
@@ -100,7 +95,13 @@ public:
     LUNCHBOX_API bool isSetRead();
 
 private:
-    detail::SpinLock* const _impl;
+    class Impl;
+    std::unique_ptr<Impl> _impl;
+
+    SpinLock(const SpinLock&) = delete;
+    SpinLock(SpinLock&&) = delete;
+    SpinLock& operator=(const SpinLock&) = delete;
+    SpinLock& operator=(SpinLock&&) = delete;
 };
 }
 #endif // LUNCHBOX_SPINLOCK_H

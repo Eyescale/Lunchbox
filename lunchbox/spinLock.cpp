@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2012-2017, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -26,16 +26,17 @@ namespace
 static const long _writelocked = -1;
 static const long _unlocked = 0;
 }
-namespace detail
-{
-class SpinLock
+
+class SpinLock::Impl
 {
 public:
-    SpinLock()
+    Impl()
         : _state(_unlocked)
     {
     }
-    ~SpinLock() { _state = _unlocked; }
+
+    ~Impl() { _state = _unlocked; }
+
     inline void set()
     {
         while (true)
@@ -100,19 +101,18 @@ public:
     inline bool isSet() { return (_state != _unlocked); }
     inline bool isSetWrite() { return (_state == _writelocked); }
     inline bool isSetRead() { return (_state > _unlocked); }
+
 private:
     a_int32_t _state;
 };
-}
 
 SpinLock::SpinLock()
-    : _impl(new detail::SpinLock)
+    : _impl(new SpinLock::Impl)
 {
 }
 
 SpinLock::~SpinLock()
 {
-    delete _impl;
 }
 
 void SpinLock::set()

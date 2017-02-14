@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2014, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -151,13 +151,10 @@ public:
 
 private:
     detail::RequestHandler* const _impl;
-    friend LUNCHBOX_API std::ostream& operator<<(std::ostream&,
-                                                 const RequestHandler&);
+
     LUNCHBOX_API uint32_t _register(void* data);
     LB_TS_VAR(_thread);
 };
-
-LUNCHBOX_API std::ostream& operator<<(std::ostream&, const RequestHandler&);
 }
 
 #include <lunchbox/request.h>

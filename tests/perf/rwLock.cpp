@@ -23,7 +23,6 @@
 #include <lunchbox/debug.h>
 #include <lunchbox/init.h>
 #include <lunchbox/spinLock.h>
-#include <lunchbox/timedLock.h>
 
 #include <iostream>
 

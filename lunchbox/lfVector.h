@@ -54,7 +54,7 @@ template <class T, int32_t nSlots = 32>
 class LFVector
 {
 public:
-    typedef ScopedFastWrite ScopedWrite;
+    using ScopedWrite = std::unique_lock<SpinLock>;
     typedef T value_type;
 
     /** @version 1.3.2 */

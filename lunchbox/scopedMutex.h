@@ -24,141 +24,97 @@
 
 namespace lunchbox
 {
-class WriteOp;
-class ReadOp;
-
-/** @cond IGNORE */
-template <class L, class T>
-struct ScopedMutexLocker
-{
-};
+/**
+ * A scoped shared mutex.
+ *
+ * The mutex is automatically set upon creation, and released when the scoped
+ * mutex is destroyed, e.g., when the scope is left. The scoped mutex does
+ * nothing if a nullptr for the lock is passed.
+ */
 template <class L>
-struct ScopedMutexLocker<L, WriteOp>
+class UniqueSharedLock
 {
-    static inline void set(L& lock) { lock.lock(); }
-    static inline void unset(L& lock) { lock.unlock(); }
-};
+public:
+    explicit UniqueSharedLock(L& lock)
+        : _lock(&lock)
+    {
+        lock.lock_shared();
+    }
 
-template <class L>
-struct ScopedMutexLocker<L, ReadOp>
-{
-    static inline void set(L& lock) { lock.setRead(); }
-    static inline void unset(L& lock) { lock.unsetRead(); }
+    explicit UniqueSharedLock(L* lock)
+        : _lock(lock)
+    {
+        if (lock)
+            lock->lock_shared();
+    }
+
+    template <typename LB>
+    explicit UniqueSharedLock(const LB& lockable)
+        : UniqueSharedLock(lockable.lock)
+    {
+    }
+
+    /** Destruct the scoped mutex and unset the mutex. @version 1.0 */
+    ~UniqueSharedLock()
+    {
+        if (_lock)
+            _lock->unlock_shared();
+    }
+
+private:
+    UniqueSharedLock() = delete;
+    UniqueSharedLock(const UniqueSharedLock&) = delete;
+    UniqueSharedLock(UniqueSharedLock&&) = delete;
+    UniqueSharedLock& operator=(const UniqueSharedLock&) = delete;
+    UniqueSharedLock& operator=(UniqueSharedLock&&) = delete;
+
+    L* const _lock;
 };
-template <>
-struct ScopedMutexLocker<std::mutex, ReadOp>
-{
-    static inline void set(std::mutex& lock) { lock.lock(); }
-    static inline void unset(std::mutex& lock) { lock.unlock(); }
-};
-/** @endcond */
 
 /**
  * A scoped mutex.
  *
  * The mutex is automatically set upon creation, and released when the scoped
  * mutex is destroyed, e.g., when the scope is left. The scoped mutex does
- * nothing if a 0 pointer for the lock is passed.
- * @deprecated Use boost::scoped_lock
+ * nothing if a nullptr for the lock is passed.
  */
-template <class L = std::mutex, class T = WriteOp>
-class ScopedMutex
+template <class L>
+class UniqueLock : public std::unique_lock<L>
 {
-    typedef ScopedMutexLocker<L, T> LockTraits;
-
 public:
-    /**
-     * Construct a new scoped mutex and set the given lock.
-     *
-     * Providing no Lock (0) is allowed, in which case the scoped mutex does
-     * nothing.
-     *
-     * @param lock the mutex to set and unset, or 0.
-     * @version 1.0
-     */
-    explicit ScopedMutex(L* lock)
-        : _lock(lock)
+    UniqueLock(L* lock)
+        : std::unique_lock<L>(lock ? std::unique_lock<L>(*lock)
+                                   : std::unique_lock<L>())
     {
-        if (lock)
-            LockTraits::set(*lock);
     }
 
-    /** Construct a new scoped mutex and set the given lock. @version 1.0 */
-    explicit ScopedMutex(L& lock)
-        : _lock(&lock)
+    UniqueLock(L& lock)
+        : std::unique_lock<L>(lock)
     {
-        LockTraits::set(lock);
     }
 
-    /** Move lock from rhs to new mutex. @version 1.5 */
-    ScopedMutex(const ScopedMutex& rhs)
-        : _lock(rhs._lock)
-    {
-        const_cast<ScopedMutex&>(rhs)._lock = 0;
-    }
-
-    /** Move lock from rhs to this mutex. @version 1.5 */
-    ScopedMutex& operator=(ScopedMutex& rhs)
-    {
-        if (this != &rhs)
-        {
-            _lock = rhs._lock;
-            rhs._lock = 0;
-        }
-        return *this;
-    }
-
-    /**
-     * Construct a new scoped mutex for the given Lockable data structure.
-     * @version 1.0
-     */
     template <typename LB>
-    explicit ScopedMutex(const LB& lockable)
-        : _lock(&lockable.lock)
+    explicit UniqueLock(const LB& lockable)
+        : UniqueLock(lockable.lock)
     {
-        LockTraits::set(lockable.lock);
-    }
-
-    /** Destruct the scoped mutex and unset the mutex. @version 1.0 */
-    ~ScopedMutex()
-    {
-        if (_lock)
-            LockTraits::unset(*_lock);
     }
 
 private:
-    ScopedMutex();
-    L* _lock;
-};
-
-template <class L>
-class LockGuard : public std::lock_guard<L>
-{
-public:
-    LockGuard(L& mutex)
-        : std::lock_guard<L>(mutex)
-    {
-    }
-
-    template <typename LB>
-    explicit LockGuard(const LB& lockable)
-        : std::lock_guard<L>(lockable.lock)
-    {
-    }
+    UniqueLock() = delete;
+    UniqueLock(const UniqueLock&) = delete;
+    UniqueLock& operator=(const UniqueLock&) = delete;
 };
 
 /** A scoped mutex for a fast uncontended read operation. @version 1.1.2 */
-typedef ScopedMutex<SpinLock, ReadOp> ScopedFastRead;
+using ScopedFastRead = UniqueSharedLock<SpinLock>;
 
 /** A scoped mutex for a fast uncontended write operation. @version 1.1.2 */
-using ScopedFastWrite = LockGuard<SpinLock>;
+using ScopedFastWrite = UniqueLock<SpinLock>;
 
 /** A scoped mutex for a read operation. @version 1.1.5 */
-using ScopedRead = LockGuard<std::mutex>;
+using ScopedRead = UniqueLock<std::mutex>;
 
 /** A scoped mutex for a write operation. @version 1.1.5 */
-using ScopedWrite = LockGuard<std::mutex>;
-
-typedef ScopedMutex<std::mutex, WriteOp> ScopedRegion;
+using ScopedWrite = UniqueLock<std::mutex>;
 }
 #endif // LUNCHBOX_SCOPEDMUTEX_H

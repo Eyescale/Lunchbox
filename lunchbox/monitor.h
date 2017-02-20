@@ -23,9 +23,11 @@
 #include <lunchbox/types.h>
 
 #include <boost/bind.hpp>
+#include <condition_variable>
 #include <errno.h>
 #include <functional>
 #include <iostream>
+#include <mutex>
 #include <string.h>
 #include <typeinfo>
 

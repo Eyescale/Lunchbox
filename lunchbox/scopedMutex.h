@@ -18,8 +18,7 @@
 #ifndef LUNCHBOX_SCOPEDMUTEX_H
 #define LUNCHBOX_SCOPEDMUTEX_H
 
-#include <lunchbox/condition.h> // used in inline method
-#include <lunchbox/lockable.h>  // used in inline method
+#include <lunchbox/lockable.h> // used in inline method
 #include <lunchbox/types.h>
 #include <mutex>
 
@@ -121,13 +120,10 @@ public:
     }
 
     /** Destruct the scoped mutex and unset the mutex. @version 1.0 */
-    ~ScopedMutex() { leave(); }
-    /** Leave and unlock the mutex immediately. @version 1.0 */
-    void leave()
+    ~ScopedMutex()
     {
         if (_lock)
             LockTraits::unset(*_lock);
-        _lock = 0;
     }
 
 private:
@@ -135,19 +131,34 @@ private:
     L* _lock;
 };
 
+template <class L>
+class LockGuard : public std::lock_guard<L>
+{
+public:
+    LockGuard(L& mutex)
+        : std::lock_guard<L>(mutex)
+    {
+    }
+
+    template <typename LB>
+    explicit LockGuard(const LB& lockable)
+        : std::lock_guard<L>(lockable.lock)
+    {
+    }
+};
+
 /** A scoped mutex for a fast uncontended read operation. @version 1.1.2 */
 typedef ScopedMutex<SpinLock, ReadOp> ScopedFastRead;
 
 /** A scoped mutex for a fast uncontended write operation. @version 1.1.2 */
-typedef ScopedMutex<SpinLock, WriteOp> ScopedFastWrite;
+using ScopedFastWrite = LockGuard<SpinLock>;
 
 /** A scoped mutex for a read operation. @version 1.1.5 */
-typedef ScopedMutex<std::mutex, ReadOp> ScopedRead;
+using ScopedRead = LockGuard<std::mutex>;
 
 /** A scoped mutex for a write operation. @version 1.1.5 */
-typedef ScopedMutex<std::mutex, WriteOp> ScopedWrite;
+using ScopedWrite = LockGuard<std::mutex>;
 
-/** A scoped mutex for a write operation on a condition. @version 1.3.6 */
-typedef ScopedMutex<Condition, WriteOp> ScopedCondition;
+typedef ScopedMutex<std::mutex, WriteOp> ScopedRegion;
 }
 #endif // LUNCHBOX_SCOPEDMUTEX_H

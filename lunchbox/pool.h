@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2010-2014, Stefan Eilemann <eile@eyescale.ch>
+/* Copyright (c) 2010-2017, Stefan Eilemann <eile@eyescale.ch>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -24,29 +24,19 @@
 
 namespace lunchbox
 {
-/** An object allocation pool. */
-template <typename T, bool locked = false>
+/** A thread-safe object allocation pool. */
+template <typename T>
 class Pool : public boost::noncopyable
 {
 public:
     /** Construct a new pool. @version 1.0 */
-    Pool()
-        : _lock(locked ? new SpinLock : 0)
-    {
-    }
-
+    Pool() {}
     /** Destruct this pool. @version 1.0 */
-    virtual ~Pool()
-    {
-        flush();
-        delete _lock;
-    }
-
+    virtual ~Pool() { flush(); }
     /** @return a reusable or new item. @version 1.0 */
     T* alloc()
     {
         ScopedFastWrite mutex(_lock);
-        LB_TS_SCOPED(_thread);
         if (_cache.empty())
             return new T;
 
@@ -59,7 +49,6 @@ public:
     void release(T* item)
     {
         ScopedFastWrite mutex(_lock);
-        LB_TS_SCOPED(_thread);
         _cache.push_back(item);
     }
 
@@ -67,7 +56,6 @@ public:
     void flush()
     {
         ScopedFastWrite mutex(_lock);
-        LB_TS_SCOPED(_thread);
         while (!_cache.empty())
         {
             delete _cache.back();
@@ -76,9 +64,8 @@ public:
     }
 
 private:
-    SpinLock* const _lock;
+    SpinLock _lock;
     std::vector<T*> _cache;
-    LB_TS_VAR(_thread);
 };
 }
 #endif // LUNCHBOX_POOL_H

@@ -207,8 +207,13 @@ void LFVector<T, nSlots>::expand(const size_t newSize, const T& item)
 template <class T, int32_t nSlots>
 void LFVector<T, nSlots>::push_back(const T& item, bool lock)
 {
-    ScopedWrite mutex(lock ? &lock_ : 0);
-    push_back_unlocked_(item);
+    if (lock)
+    {
+        ScopedWrite mutex(lock_);
+        push_back_unlocked_(item);
+    }
+    else
+        push_back_unlocked_(item);
 }
 
 template <class T, int32_t nSlots>
@@ -312,7 +317,8 @@ void LFVector<T, nSlots>::clear()
 template <class T, int32_t nSlots>
 typename LFVector<T, nSlots>::ScopedWrite LFVector<T, nSlots>::getWriteLock()
 {
-    return ScopedWrite(lock_);
+    lock_.set();
+    return {lock_, std::adopt_lock};
 }
 
 template <class T, int32_t nSlots>

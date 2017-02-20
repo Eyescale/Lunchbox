@@ -26,9 +26,9 @@ ThreadPool::ThreadPool(const size_t size)
 ThreadPool::~ThreadPool()
 {
     {
-        std::unique_lock<std::mutex> lock(_tasksMutex);
+        std::unique_lock<std::mutex> lock(_mutex);
         _stop = true;
-        _waitCondition.notify_all();
+        _condition.notify_all();
     }
     joinAll();
 }
@@ -48,10 +48,10 @@ std::future<typename std::result_of<F()>::type> ThreadPool::post(F&& f)
 
     auto res = task->get_future();
     {
-        std::unique_lock<std::mutex> lock(_tasksMutex);
+        std::unique_lock<std::mutex> lock(_mutex);
         _tasks.emplace([task]() { (*task)(); });
     }
-    _waitCondition.notify_one();
+    _condition.notify_one();
     return res;
 }
 
@@ -59,15 +59,15 @@ template <typename F>
 void ThreadPool::postDetached(F&& f)
 {
     {
-        std::unique_lock<std::mutex> lock(_tasksMutex);
+        std::unique_lock<std::mutex> lock(_mutex);
         _tasks.emplace(f);
     }
-    _waitCondition.notify_one();
+    _condition.notify_one();
 }
 
 bool ThreadPool::hasPendingJobs() const
 {
-    std::unique_lock<std::mutex> lock(_tasksMutex);
+    std::unique_lock<std::mutex> lock(_mutex);
     return !_tasks.empty();
 }
 
@@ -83,9 +83,8 @@ void ThreadPool::work()
     {
         std::function<void()> task;
         {
-            std::unique_lock<std::mutex> lock(_tasksMutex);
-            _waitCondition.wait(lock,
-                                [this] { return _stop || !_tasks.empty(); });
+            std::unique_lock<std::mutex> lock(_mutex);
+            _condition.wait(lock, [this] { return _stop || !_tasks.empty(); });
             if (_stop)
                 return;
             task = std::move(_tasks.front());

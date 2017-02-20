@@ -79,8 +79,8 @@ private:
 
     std::vector<std::thread> _threads;
     std::queue<std::function<void()> > _tasks;
-    mutable std::mutex _tasksMutex;
-    std::condition_variable _waitCondition;
+    mutable std::mutex _mutex;
+    std::condition_variable _condition;
     bool _stop;
 };
 }

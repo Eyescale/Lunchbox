@@ -2,8 +2,14 @@
 
 # git master
 
+* [303](https://github.com/Eyescale/Lunchbox/pull/303):
+  Remove TimedLock, functionality is covered by std::timed_mutex
+* [302](https://github.com/Eyescale/Lunchbox/pull/302):
+  Remove Lock, functionality is covered by std::mutex
 * [301](https://github.com/Eyescale/Lunchbox/pull/301):
   Rename Launcher to standalone fork() function
+* [300](https://github.com/Eyescale/Lunchbox/pull/300):
+  Remove stdExt.h, functionality is covered by std::unordered_map
 * [298](https://github.com/Eyescale/Lunchbox/pull/298):
   Add MemoryMap::resize()
 * [294](https://github.com/Eyescale/Lunchbox/pull/294):

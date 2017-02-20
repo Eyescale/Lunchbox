@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2005-2013, Stefan Eilemann <eile@equalizergraphics.com>
- *                    2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2005-2017, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,7 +19,6 @@
 #ifndef LUNCHBOX_MTQUEUE_H
 #define LUNCHBOX_MTQUEUE_H
 
-#include <lunchbox/condition.h>
 #include <lunchbox/debug.h>
 
 #include <algorithm>
@@ -207,7 +206,8 @@ public:
 
 private:
     std::deque<T> _queue;
-    mutable Condition _cond;
+    mutable std::mutex _mutex;
+    mutable std::condition_variable _condition;
     size_t _maxSize;
 };
 }

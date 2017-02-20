@@ -12,7 +12,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   buffer.ipp
   clock.h
   compiler.h
-  condition.h
   daemon.h
   debug.h
   dso.h
@@ -83,8 +82,6 @@ set(LUNCHBOX_SOURCES
   any.cpp
   atomic.cpp
   clock.cpp
-  condition.cpp
-  condition_w32.ipp
   debug.cpp
   dso.cpp
   file.cpp

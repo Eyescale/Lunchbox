@@ -1,6 +1,6 @@
-/* Copyright (c) 2006-2013, Stefan Eilemann <eile@equalizergraphics.com>
- *                    2011, Cedric Stalder <cedric.stalder@gmail.com>
- *               2011-2012, Daniel Nachbaur <danielnachbaur@gmail.com>
+/* Copyright (c) 2006-2017, Stefan Eilemann <eile@equalizergraphics.com>
+ *                          Cedric Stalder <cedric.stalder@gmail.com>
+ *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 2.1 as published
@@ -19,7 +19,6 @@
 #ifndef LUNCHBOX_MONITOR_H
 #define LUNCHBOX_MONITOR_H
 
-#include <lunchbox/condition.h>   // member
 #include <lunchbox/scopedMutex.h> // used inline
 #include <lunchbox/types.h>
 
@@ -72,18 +71,18 @@ public:
     /** Increment the monitored value, prefix only. @version 1.0 */
     Monitor& operator++()
     {
-        ScopedCondition mutex(_cond);
+        std::unique_lock<std::mutex> lock(_mutex);
         ++_value;
-        _cond.broadcast();
+        _condition.notify_all();
         return *this;
     }
 
     /** Decrement the monitored value, prefix only. @version 1.0 */
     Monitor& operator--()
     {
-        ScopedCondition mutex(_cond);
+        std::unique_lock<std::mutex> lock(_mutex);
         --_value;
-        _cond.broadcast();
+        _condition.notify_all();
         return *this;
     }
 
@@ -104,28 +103,28 @@ public:
     /** Perform an or operation on the value. @version 1.0 */
     Monitor& operator|=(const T& value)
     {
-        ScopedCondition mutex(_cond);
+        std::unique_lock<std::mutex> lock(_mutex);
         _value |= value;
-        _cond.broadcast();
+        _condition.notify_all();
         return *this;
     }
 
     /** Perform an and operation on the value. @version 1.7 */
     Monitor& operator&=(const T& value)
     {
-        ScopedCondition mutex(_cond);
+        std::unique_lock<std::mutex> lock(_mutex);
         _value &= value;
-        _cond.broadcast();
+        _condition.notify_all();
         return *this;
     }
 
     /** Set a new value. @return the old value @version 1.0 */
     T set(const T& value)
     {
-        ScopedCondition mutex(_cond);
+        std::unique_lock<std::mutex> lock(_mutex);
         const T old = _value;
         _value = value;
-        _cond.broadcast();
+        _condition.notify_all();
         return old;
     }
     //@}
@@ -139,7 +138,7 @@ public:
      */
     const T waitEQ(const T& value) const
     {
-        return _waitPredicate(boost::bind(std::equal_to<T>(), value, _1));
+        return _wait([&] { return _value == value; });
     }
 
     /**
@@ -149,7 +148,7 @@ public:
      */
     const T waitNE(const T& value) const
     {
-        return _waitPredicate(boost::bind(std::not_equal_to<T>(), value, _1));
+        return _wait([&] { return _value != value; });
     }
 
     /**
@@ -159,15 +158,8 @@ public:
      */
     const T waitNE(const T& v1, const T& v2) const
     {
-        if (sizeof(T) <= 8) // issue #1
-        {
-            const T current = _value;
-            if (current != v1 && current != v2)
-                return current;
-        }
-        ScopedCondition mutex(_cond);
-        while (_value == v1 || _value == v2)
-            _cond.wait();
+        std::unique_lock<std::mutex> lock(_mutex);
+        _condition.wait(lock, [&] { return _value != v1 && _value != v2; });
         return _value;
     }
 
@@ -178,7 +170,7 @@ public:
      */
     const T waitGE(const T& value) const
     {
-        return _waitPredicate(boost::bind(std::greater_equal<T>(), _1, value));
+        return _wait([&] { return _value >= value; });
     }
 
     /**
@@ -188,7 +180,7 @@ public:
      */
     const T waitLE(const T& value) const
     {
-        return _waitPredicate(boost::bind(std::less_equal<T>(), _1, value));
+        return _wait([&] { return _value <= value; });
     }
 
     /**
@@ -198,7 +190,7 @@ public:
      */
     const T waitGT(const T& value) const
     {
-        return _waitPredicate(boost::bind(std::greater<T>(), _1, value));
+        return _wait([&] { return _value > value; });
     }
 
     /**
@@ -208,7 +200,7 @@ public:
      */
     const T waitLT(const T& value) const
     {
-        return _waitPredicate(boost::bind(std::less<T>(), _1, value));
+        return _wait([&] { return _value < value; });
     }
 
     /** @name Monitor the value with a timeout. */
@@ -222,8 +214,7 @@ public:
      */
     bool timedWaitEQ(const T& value, const uint32_t timeout) const
     {
-        return _timedWaitPredicate(boost::bind(std::equal_to<T>(), _1, value),
-                                   timeout);
+        return _timedWait([&] { return _value == value; }, timeout);
     }
 
     /**
@@ -235,9 +226,7 @@ public:
      */
     bool timedWaitNE(const T& value, const uint32_t timeout) const
     {
-        return _timedWaitPredicate(boost::bind(std::not_equal_to<T>(), _1,
-                                               value),
-                                   timeout);
+        return _timedWait([&] { return _value != value; }, timeout);
     }
 
     /**
@@ -249,9 +238,7 @@ public:
      */
     bool timedWaitGE(const T& value, const uint32_t timeout) const
     {
-        return _timedWaitPredicate(boost::bind(std::greater_equal<T>(), _1,
-                                               value),
-                                   timeout);
+        return _timedWait([&] { return _value >= value; }, timeout);
     }
 
     /**
@@ -263,8 +250,7 @@ public:
      */
     bool timedWaitLE(const T& value, const uint32_t timeout) const
     {
-        return _timedWaitPredicate(boost::bind(std::less_equal<T>(), _1, value),
-                                   timeout);
+        return _timedWait([&] { return _value <= value; }, timeout);
     }
 
     /**
@@ -276,8 +262,7 @@ public:
      */
     bool timedWaitGT(const T& value, const uint32_t timeout) const
     {
-        return _timedWaitPredicate(boost::bind(std::greater<T>(), _1, value),
-                                   timeout);
+        return _timedWait([&] { return _value > value; }, timeout);
     }
 
     /**
@@ -289,8 +274,7 @@ public:
      */
     bool timedWaitLT(const T& value, const uint32_t timeout) const
     {
-        return _timedWaitPredicate(boost::bind(std::less<T>(), _1, value),
-                                   timeout);
+        return _timedWait([&] { return _value < value; }, timeout);
     }
 
     //@}
@@ -299,69 +283,69 @@ public:
     //@{
     bool operator==(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value == value;
     }
     bool operator!=(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value != value;
     }
     bool operator<(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value < value;
     }
     bool operator>(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value > value;
     }
     bool operator<=(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value <= value;
     }
     bool operator>=(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value >= value;
     }
 
     bool operator==(const Monitor<T>& rhs) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value == rhs._value;
     }
     bool operator!=(const Monitor<T>& rhs) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value != rhs._value;
     }
     bool operator<(const Monitor<T>& rhs) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value < rhs._value;
     }
     bool operator>(const Monitor<T>& rhs) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value > rhs._value;
     }
     bool operator<=(const Monitor<T>& rhs) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value <= rhs._value;
     }
     bool operator>=(const Monitor<T>& rhs) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value >= rhs._value;
     }
     /** @return a bool conversion of the result. @version 1.9.1 */
     operator bool_t()
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value ? &Monitor<T>::bool_true : 0;
     }
     //@}
@@ -375,62 +359,44 @@ public:
     /** @return the current plus the given value. @version 1.0 */
     T operator+(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return _value + value;
     }
 
     /** @return the current or'ed with the given value. @version 1.0 */
     T operator|(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return static_cast<T>(_value | value);
     }
 
     /** @return the current and the given value. @version 1.0 */
     T operator&(const T& value) const
     {
-        ScopedCondition mutex(sizeof(T) > 8 ? &_cond : 0); // issue #1
+        std::unique_lock<std::mutex> lock(_mutex);
         return static_cast<T>(_value & value);
     }
     //@}
 
 private:
     T _value;
-    mutable Condition _cond;
+    mutable std::mutex _mutex;
+    mutable std::condition_variable _condition;
 
     template <typename F>
-    const T _waitPredicate(const F& predicate) const
+    const T _wait(const F& predicate) const
     {
-        if (sizeof(T) <= 8) // issue #1
-        {
-            const T current = _value;
-            if (predicate(current))
-                return current;
-        }
-        ScopedCondition mutex(_cond);
-        while (!predicate(_value))
-            _cond.wait();
+        std::unique_lock<std::mutex> lock(_mutex);
+        _condition.wait(lock, predicate);
         return _value;
     }
 
     template <typename F>
-    bool _timedWaitPredicate(const F& predicate, const uint32_t timeout) const
+    bool _timedWait(const F& predicate, const uint32_t timeout) const
     {
-        if (sizeof(T) <= 8) // issue #1
-        {
-            const T current = _value;
-            if (predicate(current))
-                return true;
-        }
-        ScopedCondition mutex(_cond);
-        while (!predicate(_value))
-        {
-            if (!_cond.timedWait(timeout))
-            {
-                return false;
-            }
-        }
-        return true;
+        std::unique_lock<std::mutex> lock(_mutex);
+        return _condition.wait_for(lock, std::chrono::milliseconds(timeout),
+                                   predicate);
     }
 };
 
@@ -448,20 +414,20 @@ inline std::ostream& operator<<(std::ostream& os, const Monitor<T>& monitor)
 template <>
 inline Monitor<bool>& Monitor<bool>::operator++()
 {
-    ScopedCondition mutex(_cond);
+    std::unique_lock<std::mutex> lock(_mutex);
     assert(!_value);
     _value = !_value;
-    _cond.broadcast();
+    _condition.notify_all();
     return *this;
 }
 
 template <>
 inline Monitor<bool>& Monitor<bool>::operator--()
 {
-    ScopedCondition mutex(_cond);
+    std::unique_lock<std::mutex> lock(_mutex);
     assert(!_value);
     _value = !_value;
-    _cond.broadcast();
+    _condition.notify_all();
     return *this;
 }
 
@@ -470,9 +436,9 @@ inline Monitor<bool>& Monitor<bool>::operator|=(const bool& value)
 {
     if (value)
     {
-        ScopedCondition mutex(_cond);
+        std::unique_lock<std::mutex> lock(_mutex);
         _value = value;
-        _cond.broadcast();
+        _condition.notify_all();
     }
     return *this;
 }

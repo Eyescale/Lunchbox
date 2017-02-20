@@ -2,6 +2,8 @@
 
 # git master
 
+* [304](https://github.com/Eyescale/Lunchbox/pull/304):
+  Remove Condition, functionality is covered by std::condition_variable
 * [303](https://github.com/Eyescale/Lunchbox/pull/303):
   Remove TimedLock, functionality is covered by std::timed_mutex
 * [302](https://github.com/Eyescale/Lunchbox/pull/302):

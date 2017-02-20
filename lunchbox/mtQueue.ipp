@@ -32,7 +32,7 @@ MTQueue<T, S>& MTQueue<T, S>::operator=(const MTQueue<T, S>& from)
     std::unique_lock<std::mutex> lock(_mutex);
     _maxSize = maxSize;
     _queue.swap(copy);
-    _condition.notify_one();
+    _condition.notify_all();
     return *this;
 }
 
@@ -52,7 +52,7 @@ void MTQueue<T, S>::setMaxSize(const size_t maxSize)
     _condition.wait(lock, [&] { return _queue.size() <= maxSize; });
 
     _maxSize = maxSize;
-    _condition.notify_one();
+    _condition.notify_all();
 }
 
 template <typename T, size_t S>
@@ -80,7 +80,7 @@ T MTQueue<T, S>::pop()
 
     T element = _queue.front();
     _queue.pop_front();
-    _condition.notify_one();
+    _condition.notify_all();
     return element;
 }
 
@@ -95,7 +95,7 @@ bool MTQueue<T, S>::timedPop(const unsigned timeout, T& element)
 
     element = _queue.front();
     _queue.pop_front();
-    _condition.notify_one();
+    _condition.notify_all();
     return true;
 }
 
@@ -118,7 +118,7 @@ std::vector<T> MTQueue<T, S>::timedPopRange(const unsigned timeout,
     result.insert(result.end(), _queue.begin(), _queue.begin() + size);
     _queue.erase(_queue.begin(), _queue.begin() + size);
 
-    _condition.notify_one();
+    _condition.notify_all();
     return result;
 }
 
@@ -131,7 +131,7 @@ bool MTQueue<T, S>::tryPop(T& result)
 
     result = _queue.front();
     _queue.pop_front();
-    _condition.notify_one();
+    _condition.notify_all();
     return true;
 }
 
@@ -148,7 +148,7 @@ void MTQueue<T, S>::tryPop(const size_t num, std::vector<T>& result)
             result.push_back(_queue.front());
             _queue.pop_front();
         }
-        _condition.notify_one();
+        _condition.notify_all();
     }
 }
 
@@ -196,7 +196,7 @@ bool MTQueue<T, S>::popBarrier(T& element, Group& barrier)
     element = _queue.front();
     _queue.pop_front();
     --barrier.waiting_;
-    _condition.notify_one();
+    _condition.notify_all();
     return true;
 }
 
@@ -230,7 +230,7 @@ void MTQueue<T, S>::push(const T& element)
     std::unique_lock<std::mutex> lock(_mutex);
     _condition.wait(lock, [&] { return _queue.size() < _maxSize; });
     _queue.push_back(element);
-    _condition.notify_one();
+    _condition.notify_all();
 }
 
 template <typename T, size_t S>
@@ -243,7 +243,7 @@ void MTQueue<T, S>::push(const std::vector<T>& elements)
     });
     ;
     _queue.insert(_queue.end(), elements.begin(), elements.end());
-    _condition.notify_one();
+    _condition.notify_all();
 }
 
 template <typename T, size_t S>
@@ -253,7 +253,7 @@ void MTQueue<T, S>::pushFront(const T& element)
     _condition.wait(lock, [&] { return _queue.size() < _maxSize; });
     ;
     _queue.push_front(element);
-    _condition.notify_one();
+    _condition.notify_all();
 }
 
 template <typename T, size_t S>
@@ -266,6 +266,6 @@ void MTQueue<T, S>::pushFront(const std::vector<T>& elements)
     });
     ;
     _queue.insert(_queue.begin(), elements.begin(), elements.end());
-    _condition.notify_one();
+    _condition.notify_all();
 }
 }

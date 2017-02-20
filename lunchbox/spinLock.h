@@ -58,10 +58,10 @@ public:
 
     /** Acquire the lock shared with other readers. @version 1.1.2 */
     LUNCHBOX_API void setRead();
-
+    void lock_shared() { setRead(); }
     /** Release a shared read lock. @version 1.1.2 */
     LUNCHBOX_API void unsetRead();
-
+    void unlock_shared() { unsetRead(); }
     /**
      * Attempt to acquire the lock shared with other readers.
      *

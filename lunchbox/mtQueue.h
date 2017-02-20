@@ -22,7 +22,9 @@
 #include <lunchbox/debug.h>
 
 #include <algorithm>
+#include <condition_variable>
 #include <limits.h>
+#include <mutex>
 #include <queue>
 #include <string.h>
 
@@ -205,6 +207,9 @@ public:
     //@}
 
 private:
+    MTQueue(MTQueue<T, S>&&) = delete;
+    MTQueue<T, S>& operator=(MTQueue<T, S>&&) = delete;
+
     std::deque<T> _queue;
     mutable std::mutex _mutex;
     mutable std::condition_variable _condition;

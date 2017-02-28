@@ -21,6 +21,8 @@
 #include <lunchbox/atomic.h> // member
 #include <lunchbox/thread.h> // used in inline method
 
+#include <memory>
+
 namespace lunchbox
 {
 /**

@@ -18,6 +18,7 @@
 #ifndef LUNCHBOX_SPINLOCK_H
 #define LUNCHBOX_SPINLOCK_H
 
+#include <memory>
 #include <lunchbox/atomic.h> // member
 #include <lunchbox/thread.h> // used in inline method
 

@@ -30,7 +30,7 @@ namespace string
  * @return the prepended string
  * @version 1.16
  */
-std::string prepend(const std::string& input, const std::string& text)
+inline std::string prepend(const std::string& input, const std::string& text)
 {
     std::string output;
     size_t pos = 0;

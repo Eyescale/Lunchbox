@@ -55,6 +55,7 @@ set(LUNCHBOX_PUBLIC_HEADERS
   serializable.h
   sleep.h
   spinLock.h
+  string.h
   term.h
   thread.h
   threadID.h

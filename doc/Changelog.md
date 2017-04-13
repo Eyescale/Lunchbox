@@ -2,6 +2,8 @@
 
 # git master
 
+* [310](https://github.com/Eyescale/Lunchbox/pull/310):
+  Fix static initializers in Log
 * [304](https://github.com/Eyescale/Lunchbox/pull/304):
   Remove Condition, functionality is covered by std::condition_variable
 * [303](https://github.com/Eyescale/Lunchbox/pull/303):

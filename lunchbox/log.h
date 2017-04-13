@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2005-2015, Stefan Eilemann <eile@equalizergraphics.com>
+/* Copyright (c) 2005-2017, Stefan Eilemann <eile@equalizergraphics.com>
  *                          Daniel Nachbaur <danielnachbaur@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -46,7 +46,7 @@ enum LogLevel
     LOG_INFO,             //!< Output informational messages
     LOG_DEBUG,            //!< Output debugging information
     LOG_VERB,             //!< Be noisy
-    LOG_ALL
+    LOG_ALL = 6
 };
 
 /** The logging topics. @version 1.0 */

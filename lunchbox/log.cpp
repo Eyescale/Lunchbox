@@ -42,14 +42,59 @@
 namespace lunchbox
 {
 static unsigned getLogTopics();
-static Clock _defaultClock;
-static Clock* _clock = &_defaultClock;
-static SpinLock _lock; // The write lock
-
 const size_t LENGTH_PID = 5;
 const size_t LENGTH_THREAD = 8;
 const size_t LENGTH_FILE = 29;
 const size_t LENGTH_TIME = 6;
+
+namespace
+{
+struct LogTable
+{
+    LogLevel level;
+    std::string name;
+};
+#define LOG_TABLE_ENTRY(name)          \
+    {                                  \
+        LOG_##name, std::string(#name) \
+    }
+
+struct LogGlobals
+{
+    // clang-format off
+    LogGlobals()
+        : levels{LOG_TABLE_ENTRY(ERROR),
+                 {LOG_ERROR, "WARN"},
+                 LOG_TABLE_ENTRY(INFO),
+                 LOG_TABLE_ENTRY(DEBUG),
+                 LOG_TABLE_ENTRY(VERB),
+                 LOG_TABLE_ENTRY(ALL)}
+#ifdef NDEBUG
+        , stream(&std::cout)
+#else
+        , stream(&std::cerr)
+#endif
+        , file(nullptr)
+        , clock(&defaultClock)
+    {
+    }
+    // clang-format on
+
+    LogTable levels[LOG_ALL];
+    std::ostream* stream;
+    std::ostream* file;
+    Clock defaultClock;
+    const Clock* clock;
+    SpinLock lock; // The write lock
+    PerThread<Log> log;
+};
+
+LogGlobals& globals()
+{
+    static LogGlobals global;
+    return global;
+}
+}
 
 namespace detail
 {
@@ -114,14 +159,15 @@ protected:
             if (!_noHeader)
             {
                 if (lunchbox::Log::level > LOG_INFO)
-                    _stringStream
-                        << std::right << std::setw(LENGTH_PID) << getpid()
-                        << "." << std::left << std::setw(LENGTH_THREAD)
-                        << _thread << " " << _file << " " << std::right
-                        << std::setw(LENGTH_TIME) << _clock->getTime64() << " ";
+                    _stringStream << std::right << std::setw(LENGTH_PID)
+                                  << getpid() << "." << std::left
+                                  << std::setw(LENGTH_THREAD) << _thread << " "
+                                  << _file << " " << std::right
+                                  << std::setw(LENGTH_TIME)
+                                  << globals().clock->getTime64() << " ";
                 else
                     _stringStream << std::right << std::setw(LENGTH_TIME)
-                                  << _clock->getTime64() << " ";
+                                  << globals().clock->getTime64() << " ";
             }
 
             for (int i = 0; i < _indent; ++i)
@@ -139,7 +185,7 @@ protected:
         {
             const std::string& string = _stringStream.str();
             {
-                ScopedFastWrite mutex(_lock);
+                ScopedFastWrite mutex(globals().lock);
                 _stream.write(string.c_str(), string.length());
                 _stream.rdbuf()->pubsync();
             }
@@ -179,40 +225,8 @@ private:
 };
 }
 
-namespace
-{
-class LogTable
-{
-public:
-    LogTable(const LogLevel _level, const std::string& _name)
-        : level(_level)
-        , name(_name)
-    {
-    }
-
-    LogLevel level;
-    std::string name;
-};
-
-#define LOG_TABLE_ENTRY(name) LogTable(LOG_##name, std::string(#name))
-#define LOG_TABLE_SIZE (6)
-
-static LogTable _logTable[LOG_TABLE_SIZE] = {
-    LOG_TABLE_ENTRY(ERROR), LogTable(LOG_ERROR, "WARN"), LOG_TABLE_ENTRY(INFO),
-    LOG_TABLE_ENTRY(DEBUG), LOG_TABLE_ENTRY(VERB),       LOG_TABLE_ENTRY(ALL)};
-}
-
 int Log::level = Log::getLogLevel(getenv("LB_LOG_LEVEL"));
 unsigned Log::topics = getLogTopics();
-
-static PerThread<Log> _logInstance;
-
-#ifdef NDEBUG
-static std::ostream* _logStream = &std::cout;
-#else
-static std::ostream* _logStream = &std::cerr;
-#endif
-static std::ostream* _logFile = 0;
 
 Log::Log()
     : std::ostream(new detail::Log(getOutput()))
@@ -284,9 +298,9 @@ int Log::getLogLevel(const char* text)
         if (num > 0 && num <= LOG_ALL)
             return num;
 
-        for (uint32_t i = 0; i < LOG_TABLE_SIZE; ++i)
-            if (_logTable[i].name == text)
-                return _logTable[i].level;
+        for (uint32_t i = 0; i < LOG_ALL; ++i)
+            if (globals().levels[i].name == text)
+                return globals().levels[i].level;
     }
 
 #ifdef NDEBUG
@@ -298,11 +312,11 @@ int Log::getLogLevel(const char* text)
 
 std::string& Log::getLogLevelString()
 {
-    for (uint32_t i = 0; i < LOG_TABLE_SIZE; ++i)
-        if (_logTable[i].level == level)
-            return _logTable[i].name;
+    for (uint32_t i = 0; i < LOG_ALL; ++i)
+        if (globals().levels[i].level == level)
+            return globals().levels[i].name;
 
-    return _logTable[0].name;
+    return globals().levels[0].name;
 }
 
 unsigned getLogTopics()
@@ -325,11 +339,11 @@ unsigned getLogTopics()
 
 Log& Log::instance()
 {
-    Log* log = _logInstance.get();
+    Log* log = globals().log.get();
     if (!log)
     {
         log = new Log();
-        _logInstance = log;
+        globals().log = log;
         static bool first = true;
         if (first && lunchbox::Log::level > LOG_INFO)
         {
@@ -359,8 +373,8 @@ Log& Log::instance(const char* file, const int line)
 
 void Log::exit()
 {
-    Log* log = _logInstance.get();
-    _logInstance = 0;
+    Log* log = globals().log.get();
+    globals().log = nullptr;
     delete log;
 }
 
@@ -368,19 +382,19 @@ void Log::reset()
 {
     exit();
 
-    delete _logFile;
-    _logFile = 0;
+    delete globals().file;
+    globals().file = nullptr;
 
 #ifdef NDEBUG
-    _logStream = &std::cout;
+    globals().stream = &std::cout;
 #else
-    _logStream = &std::cerr;
+    globals().stream = &std::cerr;
 #endif
 }
 
 void Log::setOutput(std::ostream& stream)
 {
-    _logStream = &stream;
+    globals().stream = &stream;
     exit();
 }
 
@@ -399,27 +413,27 @@ bool Log::setOutput(const std::string& file)
     LBDEBUG << "Redirect log to " << file << std::endl;
     setOutput(*newLog);
 
-    delete _logFile;
-    _logFile = newLog;
+    delete globals().file;
+    globals().file = newLog;
     return true;
 }
 
 void Log::setClock(Clock* clock)
 {
     if (clock)
-        _clock = clock;
+        globals().clock = clock;
     else
-        _clock = &_defaultClock;
+        globals().clock = &globals().defaultClock;
 }
 
 const Clock& Log::getClock()
 {
-    return *_clock;
+    return *globals().clock;
 }
 
 std::ostream& Log::getOutput()
 {
-    return *_logStream;
+    return *globals().stream;
 }
 
 std::ostream& indent(std::ostream& os)

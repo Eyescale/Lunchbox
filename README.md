@@ -56,8 +56,8 @@ environments are tested:
 
 Building from source is as simple as:
 
-    git clone https://github.com/Eyescale/Lunchbox.git
+    git clone --recursive https://github.com/Eyescale/Lunchbox.git
     mkdir Lunchbox/build
     cd Lunchbox/build
-    cmake -GNinja ..
+    cmake -GNinja -DCLONE_SUBPROJECTS=ON ..
     ninja

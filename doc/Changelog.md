@@ -1,6 +1,6 @@
 # Changelog {#Changelog}
 
-# git master
+# Release 1.16 (23-05-2017)
 
 * [310](https://github.com/Eyescale/Lunchbox/pull/310):
   Fix static initializers in Log

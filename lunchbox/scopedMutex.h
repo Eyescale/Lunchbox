@@ -82,14 +82,14 @@ template <class L>
 class UniqueLock : public std::unique_lock<L>
 {
 public:
-    UniqueLock(L* lock)
-        : std::unique_lock<L>(lock ? std::unique_lock<L>(*lock)
-                                   : std::unique_lock<L>())
+    UniqueLock(L* lock_)
+        : std::unique_lock<L>(lock_ ? std::unique_lock<L>(*lock_)
+                                    : std::unique_lock<L>())
     {
     }
 
-    UniqueLock(L& lock)
-        : std::unique_lock<L>(lock)
+    UniqueLock(L& lock_)
+        : std::unique_lock<L>(lock_)
     {
     }
 

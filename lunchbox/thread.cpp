@@ -127,7 +127,7 @@ void* Thread::runChild(void* arg)
 
 void Thread::_runChild()
 {
-    setName(boost::lexical_cast<std::string>(_impl->index));
+    setName(std::to_string(_impl->index));
     _impl->id._impl->pthread = pthread_self();
 #ifdef __linux__
     {
@@ -197,10 +197,10 @@ bool Thread::start()
         }
         sleep(1); // Give EAGAIN some time to recover
     }
+    _impl->state.waitNE(STATE_STARTING);
 
     // avoid memleak, we don't use pthread_join
     pthread_detach(_impl->id._impl->pthread);
-    _impl->state.waitNE(STATE_STARTING);
     return (_impl->state != STATE_STOPPED);
 }
 

@@ -60,7 +60,6 @@ set(LUNCHBOX_PUBLIC_HEADERS
   thread.h
   threadID.h
   threadPool.h
-  threadPool.ipp
   tls.h
   types.h
   visitorResult.h
@@ -99,6 +98,7 @@ set(LUNCHBOX_SOURCES
   term.cpp
   thread.cpp
   threadID.cpp
+  threadPool.cpp
   tls.cpp
   )
 

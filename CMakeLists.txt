@@ -1,9 +1,9 @@
 
-# Copyright (c) 2012-2016 Stefan Eilemann <eile@eyescale.ch>
+# Copyright (c) 2012-2017 Stefan Eilemann <eile@eyescale.ch>
 
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-project(Lunchbox VERSION 1.16.0)
-set(Lunchbox_VERSION_ABI 9)
+project(Lunchbox VERSION 1.17.0)
+set(Lunchbox_VERSION_ABI 10)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake
                               ${CMAKE_SOURCE_DIR}/CMake/common)

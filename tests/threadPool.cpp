@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(size)
 BOOST_AUTO_TEST_CASE(queue)
 {
     lunchbox::ThreadPool threadPool{1};
-    for (int i = 0; i < 10; ++i)
+    for (size_t i = 0; i < 10; ++i)
     {
         threadPool.postDetached([] {
             std::this_thread::sleep_for(
@@ -44,18 +44,18 @@ BOOST_AUTO_TEST_CASE(queue)
 BOOST_AUTO_TEST_CASE(dispatcher)
 {
     std::vector<std::future<int> > futures;
-    lunchbox::ThreadPool threadPool{4};
 
-    for (int i = 0; i < 10; ++i)
+    for (size_t i = 0; i < lunchbox::ThreadPool::getInstance().getSize() * 2;
+         ++i)
     {
-        futures.push_back(threadPool.post([] {
+        futures.push_back(lunchbox::ThreadPool::getInstance().post([] {
             std::this_thread::sleep_for(
                 std::chrono::milliseconds(50 + rand() % 50));
             return 42;
         }));
     }
 
-    BOOST_CHECK(threadPool.hasPendingJobs());
+    BOOST_CHECK(lunchbox::ThreadPool::getInstance().hasPendingJobs());
 
     for (auto& future : futures)
     {
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(join)
 
     {
         lunchbox::ThreadPool threadPool{4};
-        for (int i = 0; i < 100; ++i)
+        for (size_t i = 0; i < 100; ++i)
         {
             futures.push_back(threadPool.post(task));
         }

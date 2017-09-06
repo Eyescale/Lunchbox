@@ -46,6 +46,10 @@ endif()
 
 add_definitions("-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
+if(MSVC)
+  add_definitions("-DHAVE_STRUCT_TIMESPEC")
+endif()
+
 include(pthreads/CMakeLists.txt)
 
 add_subdirectory(lunchbox)

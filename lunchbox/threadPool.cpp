@@ -14,8 +14,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "threadPool.h"
+
 namespace lunchbox
 {
+ThreadPool& ThreadPool::getInstance()
+{
+    static ThreadPool pool(std::thread::hardware_concurrency());
+    return pool;
+}
+
 ThreadPool::ThreadPool(const size_t size)
     : _stop(false)
 {
@@ -36,33 +44,6 @@ ThreadPool::~ThreadPool()
 size_t ThreadPool::getSize() const
 {
     return _threads.size();
-}
-
-template <typename F>
-std::future<typename std::result_of<F()>::type> ThreadPool::post(F&& f)
-{
-    using ReturnType = typename std::result_of<F()>::type;
-
-    auto task =
-        std::make_shared<std::packaged_task<ReturnType()> >(std::forward<F>(f));
-
-    auto res = task->get_future();
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _tasks.emplace([task]() { (*task)(); });
-    }
-    _condition.notify_one();
-    return res;
-}
-
-template <typename F>
-void ThreadPool::postDetached(F&& f)
-{
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _tasks.emplace(f);
-    }
-    _condition.notify_one();
 }
 
 bool ThreadPool::hasPendingJobs() const

@@ -14,16 +14,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef LUNCHBOX_THREADPOOL_H
-#define LUNCHBOX_THREADPOOL_H
+#pragma once
 
-#include <condition_variable>
+#include <lunchbox/api.h>
+
+#include <condition_variable> // member
 #include <functional>
-#include <future>
-#include <memory>
-#include <queue>
-#include <thread>
-#include <vector>
+#include <future> // inline return value
+#include <queue>  // member
+#include <thread> // member
+#include <vector> // member
 
 namespace lunchbox
 {
@@ -37,22 +37,26 @@ namespace lunchbox
 class ThreadPool
 {
 public:
+    /** @return the application-global thread pool. */
+    static LUNCHBOX_API ThreadPool& getInstance();
+
     /**
-     * Construct a ThreadPool
+     * Construct a new ThreadPool.
+     *
      * @param size number of threads in the thread pool
+     * @sa getInstance() for the recommended thread pool.
      */
-    inline ThreadPool(
-        const size_t size = std::max(1u, std::thread::hardware_concurrency()));
+    LUNCHBOX_API ThreadPool(const size_t size);
     /**
      * Destroy this thread pool.
      * Will block until all the tasks are done.
      */
-    inline ~ThreadPool();
+    LUNCHBOX_API ~ThreadPool();
 
     /**
      * @return the number of threads used in the thread pool
      */
-    inline size_t getSize() const;
+    LUNCHBOX_API size_t getSize() const;
 
     /**
      * Post a new task in the thread pool.
@@ -68,14 +72,17 @@ public:
     template <typename F>
     inline void postDetached(F&& f);
 
-    /**
-     * @return true if there are pending tasks to be executed.
-     */
-    inline bool hasPendingJobs() const;
+    /** @return true if there are pending tasks to be executed. */
+    LUNCHBOX_API bool hasPendingJobs() const;
 
 private:
-    inline void joinAll();
-    inline void work();
+    ThreadPool(const ThreadPool&) = delete;
+    ThreadPool(ThreadPool&&) = delete;
+    ThreadPool& operator=(const ThreadPool&) = delete;
+    ThreadPool& operator=(ThreadPool&&) = delete;
+
+    LUNCHBOX_API void joinAll();
+    LUNCHBOX_API void work();
 
     std::vector<std::thread> _threads;
     std::queue<std::function<void()> > _tasks;
@@ -83,8 +90,31 @@ private:
     std::condition_variable _condition;
     bool _stop;
 };
+
+template <typename F>
+std::future<typename std::result_of<F()>::type> ThreadPool::post(F&& f)
+{
+    using ReturnType = typename std::result_of<F()>::type;
+
+    auto task =
+        std::make_shared<std::packaged_task<ReturnType()> >(std::forward<F>(f));
+
+    auto res = task->get_future();
+    {
+        std::unique_lock<std::mutex> lock(_mutex);
+        _tasks.emplace([task]() { (*task)(); });
+    }
+    _condition.notify_one();
+    return res;
 }
 
-#include "threadPool.ipp"
-
-#endif // LUNCHBOX_THREADPOOL_H
+template <typename F>
+void ThreadPool::postDetached(F&& f)
+{
+    {
+        std::unique_lock<std::mutex> lock(_mutex);
+        _tasks.emplace(f);
+    }
+    _condition.notify_one();
+}
+}

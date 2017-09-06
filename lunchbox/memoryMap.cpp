@@ -104,7 +104,7 @@ private:
         {
             LBWARN << "Can't open " << filename << ": " << sysError
                    << std::endl;
-            return;
+            return NULL;
         }
         return _mapFile(size_);
     }

@@ -45,7 +45,6 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include <windef.h>
 #include <windows.h>
 #include <winsock2.h>
 #endif

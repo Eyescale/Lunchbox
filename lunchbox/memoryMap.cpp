@@ -104,7 +104,7 @@ private:
         {
             LBWARN << "Can't open " << filename << ": " << sysError
                    << std::endl;
-            return NULL;
+            return nullptr;
         }
         return _mapFile(size_);
     }
@@ -136,8 +136,8 @@ private:
 
         // get size
         DWORD highSize;
-        const DWORD lowSize = ::GetFileSize( _file, &highSize );
-        size = lowSize | ( static_cast< uint64_t >( highSize ) << 32 );
+        const DWORD lowSize = ::GetFileSize(_file, &highSize);
+        size = lowSize | (static_cast<uint64_t>(highSize) << 32);
         return ptr;
     }
 

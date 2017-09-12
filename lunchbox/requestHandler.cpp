@@ -96,6 +96,14 @@ public:
             request = i->second;
         }
 
+        if (timeout == LB_TIMEOUT_INDEFINITE) // opt
+        {
+            request->lock.lock();
+            result = request->result;
+            unregisterRequest(requestID_);
+            return true;
+        }
+
         const bool requestServed =
             request->lock.try_lock_for(std::chrono::milliseconds(timeout));
         if (requestServed)
@@ -197,6 +205,7 @@ bool RequestHandler::waitRequest(const uint32_t requestID, bool& rBool,
     rBool = result.rBool;
     return true;
 }
+
 bool RequestHandler::waitRequest(const uint32_t requestID)
 {
     Record::Result result;

@@ -25,8 +25,8 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include <wtypes.h>
 #include <wincrypt.h>
+#include <wtypes.h>
 #pragma comment(lib, "advapi32.lib")
 #else
 #include <unistd.h>

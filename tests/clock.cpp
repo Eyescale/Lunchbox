@@ -30,10 +30,10 @@ int main(int, char**)
 
     lunchbox::sleep(10.f);
     TEST(clock.resetTimef() > 0.f);
-    lunchbox::sleep(100.f);
-    TEST(clock.getTimef() > 99.f);
-    TEST(clock.getTimef() < 110.f);
-    TEST(clock.getTimed() < 110.f);
+    lunchbox::sleep(1000.f);
+    TEST(clock.getTimef() > 990.f);
+    TEST(clock.getTimef() < 1100.f);
+    TEST(clock.getTimed() < 1100.f);
 
     return EXIT_SUCCESS;
 }

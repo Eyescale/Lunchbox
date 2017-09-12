@@ -23,8 +23,8 @@
 #include "sleep.h"
 #include "thread.h"
 
-#include <mutex>
 #include <errno.h>
+#include <mutex>
 
 #define LB_BACKTRACE_DEPTH 256
 #ifdef _WIN32

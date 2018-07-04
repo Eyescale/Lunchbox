@@ -64,7 +64,7 @@ public:
      */
     void unregister();
 };
-}
+} // namespace lunchbox
 
 // Implementation: Here be dragons
 
@@ -99,6 +99,7 @@ public:
     }
 
     bool isUnresolved() const { return state_ == UNRESOLVED; }
+
 protected:
     T wait(const uint32_t timeout) final
     {
@@ -110,10 +111,12 @@ protected:
             if (!handler_.waitRequest(request, result, timeout))
                 throw FutureTimeout();
             state_ = DONE;
-        // No break
-        default: // DONE
-            return result;
+            break;
+        case DONE:
+        default:
+            break;
         }
+        return result;
     }
 
     bool isReady() const final
@@ -180,6 +183,6 @@ inline void Request<T>::unregister()
 {
     static_cast<Impl*>(this->impl_.get())->unregister();
 }
-}
+} // namespace lunchbox
 
 #endif // LUNCHBOX_REQUEST_H

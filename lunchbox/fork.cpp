@@ -90,7 +90,7 @@ Strings _buildCommandLine(const std::string& command)
     return commandLine;
 }
 #endif
-}
+} // namespace
 
 bool fork(const std::string& command)
 {
@@ -133,7 +133,7 @@ bool fork(const std::string& command)
     setZero(&act, sizeof(act));
     act.sa_handler = SIG_DFL;
     act.sa_flags = SA_NOCLDWAIT;
-    ::sigaction(SIGCHLD, &act, &act);
+    ::sigaction(SIGCHLD, &act, nullptr);
 
     const int result = ::fork();
     switch (result)
@@ -177,4 +177,4 @@ bool fork(const std::string& command)
     return true; // not reached
 #endif
 }
-}
+} // namespace lunchbox

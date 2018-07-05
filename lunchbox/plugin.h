@@ -74,13 +74,22 @@ public:
 
     /** @return the plugin's description. @version 1.17 */
     std::string getDescription() const { return _description(); }
+    bool operator==(const Plugin& rhs) const // TEST
+    {
+        return &_constructor == &rhs._constructor &&
+               &_handles == &rhs._handles &&
+               _description() == rhs._description();
+    }
+
+    bool operator!=(const Plugin& rhs) const // TEST
+    {
+        return !(*this == rhs);
+    }
+
 private:
     Constructor _constructor;
     HandlesFunc _handles;
     DescriptionFunc _description;
-
-    bool operator==(const Plugin& rhs) const = delete;
-    bool operator!=(const Plugin& rhs) const = delete;
 };
 }
 

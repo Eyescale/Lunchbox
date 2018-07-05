@@ -1,10 +1,10 @@
-Name:		@CPACK_PACKAGE_NAME@
+Name:		@PROJECT_NAME@
 Version:	@VERSION@
 Release:	1%{?dist}
 Summary:	@CPACK_PACKAGE_DESCRIPTION_SUMMARY@
 
 Group:		Development/Libraries
-License:	@CPACK_PACKAGE_LICENSE@
+License:	@_package_license@
 URL:		http://www.equalizergraphics.com/
 Source0:	http://www.equalizergraphics.com/downloads/@PROJECT_NAME@-%{version}.tar.gz
 #Patch0:		@PROJECT_NAME@-@VERSION@-build-fix.patch

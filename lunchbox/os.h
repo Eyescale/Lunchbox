@@ -49,9 +49,9 @@
 #include <winsock2.h>
 #endif
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <math.h>
 #include <string>
 
 #ifndef _MSC_VER

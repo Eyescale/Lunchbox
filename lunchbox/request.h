@@ -99,7 +99,6 @@ public:
     }
 
     bool isUnresolved() const { return state_ == UNRESOLVED; }
-
 protected:
     T wait(const uint32_t timeout) final
     {
@@ -154,7 +153,7 @@ inline void Request<void>::Impl::wait(const uint32_t timeout)
         if (!handler_.waitRequest(request, result, timeout))
             throw FutureTimeout();
         state_ = DONE;
-    // No break
+    /* falls through */
     case DONE:;
     }
 }

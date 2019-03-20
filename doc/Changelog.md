@@ -1,8 +1,10 @@
 # Changelog {#Changelog}
 
-# git master
+# Relese 1.17 (20-03-2019)
+
 * [317](https://github.com/Eyescale/Lunchbox/pull/317):
   Add app-global ThreadPool support
+* Compilation fixes for more modern compilers
 
 # Release 1.16 (23-05-2017)
 

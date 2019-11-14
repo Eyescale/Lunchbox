@@ -99,6 +99,7 @@ public:
     }
 
     bool isUnresolved() const { return state_ == UNRESOLVED; }
+
 protected:
     T wait(const uint32_t timeout) final
     {
@@ -106,12 +107,14 @@ protected:
         {
         case UNREGISTERED:
             throw UnregisteredRequest();
+        /* fall-thru */
         case UNRESOLVED:
             if (!handler_.waitRequest(request, result, timeout))
                 throw FutureTimeout();
             state_ = DONE;
             break;
         case DONE:
+        /* fall-thru */
         default:
             break;
         }

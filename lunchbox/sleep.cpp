@@ -19,6 +19,7 @@
 
 #include "os.h"
 #include "time.h"
+#include <time.h>
 
 namespace lunchbox
 {

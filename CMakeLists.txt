@@ -1,7 +1,7 @@
 
 # Copyright (c) 2012-2017 Stefan Eilemann <eile@eyescale.ch>
 
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(Lunchbox VERSION 1.17.0)
 set(Lunchbox_VERSION_ABI 10)
 

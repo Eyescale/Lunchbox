@@ -34,7 +34,7 @@ else()
 endif()
 
 common_find_package(Boost REQUIRED COMPONENTS
-  filesystem regex serialization system unit_test_framework)
+  filesystem regex serialization unit_test_framework)
 common_find_package(hwloc)
 common_find_package(Servus REQUIRED)
 common_find_package_post()
